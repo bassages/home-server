@@ -26,7 +26,7 @@ public class RestServicesConfig extends ResourceConfig {
         beanConfig.setPrettyPrint(true);
         beanConfig.setTitle(title);
         beanConfig.setSchemes(new String[]{"http", "https"});
-        beanConfig.setBasePath("/homecontrol-services/rest");
+        beanConfig.setBasePath("/homecontrol/rest");
         beanConfig.setResourcePackage("nl.wiegman.homecontrol.services.service");
         beanConfig.setScan(true);
     }

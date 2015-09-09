@@ -6,8 +6,7 @@ http://blog.codeleak.pl/2014/10/spring-boot-java-8-tomcat-8-on-openshift.html
 Connect to server:
 ssh 55ef0c9c89f5cff36b000041@homecontrol-bassages.rhcloud.com
 
-http://homecontrol-bassages.rhcloud.com/homecontrol-services/rest/afvalinzameling/volgende
-http://homecontrol-bassages.rhcloud.com/homecontrol-services/rest/gas/huidig
+https://forums.openshift.com/how-to-erase-all-history-from-a-git-repository-on-openshift-and-start-over-with
 
 Swagger
 http://homecontrol-bassages.rhcloud.com/homecontrol-services/rest/swagger.json
