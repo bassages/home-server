@@ -1,5 +1,6 @@
 package nl.wiegman.homecontrol.services.config;
 
+import com.jcabi.manifests.Manifests;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.jersey.listing.ApiListingResourceJSON;
@@ -7,22 +8,26 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
 import javax.ws.rs.ApplicationPath;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 @Configuration
 @ApplicationPath("/rest")
-public class JerseyConfig extends ResourceConfig {
+public class RestServicesConfig extends ResourceConfig {
 
-    public JerseyConfig() {
+    public RestServicesConfig() {
         packages("nl.wiegman.homecontrol.services.service");
         registerClasses(ApiListingResourceJSON.class, SwaggerSerializers.class);
 
-        // TODO: host and basepath not hardcoded
-        // Swagger config
+        String version = Manifests.read("Implementation-Version");
+        String title = Manifests.read("Implementation-Title");
+
+        // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig
         BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setVersion("1.0.0");
-        beanConfig.setTitle("HomeControl Services");
+        beanConfig.setVersion(version);
+        beanConfig.setPrettyPrint(true);
+        beanConfig.setTitle(title);
         beanConfig.setSchemes(new String[]{"http", "https"});
-        beanConfig.setHost("localhost:8080");
         beanConfig.setBasePath("/homecontrol-services/rest");
         beanConfig.setResourcePackage("nl.wiegman.homecontrol.services.service");
         beanConfig.setScan(true);
