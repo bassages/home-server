@@ -8,8 +8,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
 import javax.ws.rs.ApplicationPath;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 
 @Configuration
 @ApplicationPath("/rest")
