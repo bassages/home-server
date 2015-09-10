@@ -5,4 +5,4 @@ export JAVACMD=$JAVA_HOME/bin/java
 export M2_HOME=/usr/share/java/apache-maven-3.0.4
 cd $OPENSHIFT_REPO_DIR
 sh $M2_HOME/bin/mvn -version
-sh $M2_HOME/bin/mvn package -s .openshift/settings.xml -Dmaven.test.skip=true
+sh $M2_HOME/bin/mvn clean package -s .openshift/settings.xml -Dmaven.test.skip=true
