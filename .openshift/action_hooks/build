@@ -2,6 +2,5 @@
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=${JAVA_HOME}/bin:${PATH}
 echo "JAVA_HOME=$JAVA_HOME"
-mvn -version
 cd $OPENSHIFT_REPO_DIR
-./$OPENSHIFT_DATA_DIR/mvn package -s .openshift/settings.xml -Dmaven.test.skip=true
+sh $OPENSHIFT_DATA_DIR/mvn package -s .openshift/settings.xml -Dmaven.test.skip=true
