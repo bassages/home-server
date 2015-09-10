@@ -15,12 +15,12 @@ public class RestServicesConfig extends ResourceConfig {
 
     public RestServicesConfig() {
         packages("nl.wiegman.homecontrol.services.service");
-        registerClasses(ApiListingResourceJSON.class, SwaggerSerializers.class);
 
+        // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig
+        registerClasses(ApiListingResourceJSON.class, SwaggerSerializers.class);
         String version = Manifests.read("Implementation-Version");
         String title = Manifests.read("Implementation-Title");
 
-        // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion(version);
         beanConfig.setPrettyPrint(true);

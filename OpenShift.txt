@@ -15,9 +15,3 @@ http://homecontrol-bassages.rhcloud.com/homecontrol/webjars/swagger-ui/2.1.1/ind
 Server monitor:
 http://dashboard.monitor.us/
 
-
-Install java 8:
-wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie"  http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.tar.gz
-tar -zxf jdk-8u60-linux-x64.tar.gz
-export PATH=$OPENSHIFT_DATA_DIR/jdk1.8.0_60/bin:$PATH
-export JAVA_HOME="$OPENSHIFT_DATA_DIR/jdk1.8.0_60"
