@@ -4,4 +4,4 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 echo "JAVA_HOME=$JAVA_HOME"
 mvn -version
 cd $OPENSHIFT_REPO_DIR
-mvn package -s .openshift/settings.xml -Dmaven.test.skip=true
+./$OPENSHIFT_DATA_DIR/mvn package -s .openshift/settings.xml -Dmaven.test.skip=true
