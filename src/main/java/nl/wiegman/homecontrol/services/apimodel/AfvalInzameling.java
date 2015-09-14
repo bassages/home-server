@@ -1,23 +1,25 @@
-package nl.wiegman.homecontrol.services.model;
+package nl.wiegman.homecontrol.services.apimodel;
 
-import java.util.Date;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  *
  */
 public class AfvalInzameling {
 
-    private Date datum;
+    private String datum;
     private String omschrijving;
 
-    public Date getDatum() {
+    @ApiModelProperty(required = true)
+    public String getDatum() {
         return datum;
     }
 
-    public void setDatum(Date datum) {
+    public void setDatum(String datum) {
         this.datum = datum;
     }
 
+    @ApiModelProperty(required = true)
     public String getOmschrijving() {
         return omschrijving;
     }

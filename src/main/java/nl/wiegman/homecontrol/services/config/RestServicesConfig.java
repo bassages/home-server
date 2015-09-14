@@ -14,7 +14,7 @@ import javax.ws.rs.ApplicationPath;
 public class RestServicesConfig extends ResourceConfig {
 
     public RestServicesConfig() {
-        packages("nl.wiegman.homecontrol.services.service");
+        packages("nl.wiegman.homecontrol.services.service", "nl.wiegman.homecontrol.services.config.converters");
 
         // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig
         registerClasses(ApiListingResourceJSON.class, SwaggerSerializers.class);
@@ -30,5 +30,4 @@ public class RestServicesConfig extends ResourceConfig {
         beanConfig.setResourcePackage("nl.wiegman.homecontrol.services.service");
         beanConfig.setScan(true);
     }
-
 }

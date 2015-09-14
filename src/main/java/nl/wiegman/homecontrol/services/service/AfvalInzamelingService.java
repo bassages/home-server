@@ -7,8 +7,7 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
-import nl.wiegman.homecontrol.services.model.AfvalInzameling;
-import org.apache.commons.io.IOUtils;
+import nl.wiegman.homecontrol.services.apimodel.AfvalInzameling;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Api(value=AfvalInzamelingService.SERVICE_PATH, description="Geeft informatie over de afval inzameling")
@@ -38,7 +37,6 @@ public class AfvalInzamelingService {
         CALENDAR_TO_SERVICE_TYPE_MAP.put("Inzameling Sallcon wordt opgehaald", "SALLCON");
     }
 
-
     @ApiOperation(value = "Geeft de eerstvolgende inzameling(en) terug. Als er op de huidige datum inzameling(en) gepland zijn, dan worden deze terug gegeven.")
     @GET
     @Path("volgende")
@@ -51,7 +49,7 @@ public class AfvalInzamelingService {
         List<AfvalInzameling> volgendeInzameling = new ArrayList<>();
         for (VEvent event : firstEventsFromNow) {
             AfvalInzameling inzameling = new AfvalInzameling();
-            inzameling.setDatum(event.getStartDate().getDate());
+            inzameling.setDatum(Long.toString(event.getStartDate().getDate().getTime()));
             inzameling.setOmschrijving(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
             volgendeInzameling.add(inzameling);
         }
