@@ -6,7 +6,7 @@ angular.module('homecontrol', [])
             var afvaltypes = [];
             for (var i=0; i<data.length; i++) {
                 afvaltypes.push({
-                    'type': data[i].omschrijving,
+                    'type': data[i].omschrijving.toLowerCase(),
                     'omschrijving': getAfvalIconTitle(data[i].omschrijving.toLowerCase())});
             }
             $scope.afvaltypes = afvaltypes;
