@@ -1,16 +1,19 @@
 package nl.wiegman.homecontrol.services.apimodel;
 
-import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 
-/**
- *
- */
 public class AfvalInzameling {
 
-    private String datum;
-    private String omschrijving;
+    public enum AfvalType {
+        GFT,
+        REST,
+        SALLCON,
+        PLASTIC
+    }
 
-    @ApiModelProperty(required = true)
+    private String datum;
+    private List<AfvalType> afvalTypes;
+
     public String getDatum() {
         return datum;
     }
@@ -19,12 +22,11 @@ public class AfvalInzameling {
         this.datum = datum;
     }
 
-    @ApiModelProperty(required = true)
-    public String getOmschrijving() {
-        return omschrijving;
+    public List<AfvalType> getAfvalTypes() {
+        return afvalTypes;
     }
 
-    public void setOmschrijving(String omschrijving) {
-        this.omschrijving = omschrijving;
+    public void setAfvalTypes(List<AfvalType> afvalTypes) {
+        this.afvalTypes = afvalTypes;
     }
 }

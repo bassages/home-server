@@ -1,31 +1,29 @@
-angular.module('homecontrol', [])
-    .controller('dashboard', function ($scope, $http) {
+angular.module('appHomecontrol', [])
+    .controller('DashboardController', function ($scope, $http) {
         $http.get('rest/afvalinzameling/volgende/').success(function(data) {
-            $scope.afvalinzamelingdatum = formatDate(new Date(parseFloat(data[0].datum)));
-
+            $scope.afvalinzamelingdatum = formatDate(new Date(parseFloat(data.datum)));
             var afvaltypes = [];
-            for (var i=0; i<data.length; i++) {
+            for (var i=0; i<data.afvalTypes.length; i++) {
                 afvaltypes.push({
-                    'type': data[i].omschrijving.toLowerCase(),
-                    'omschrijving': getAfvalIconTitle(data[i].omschrijving.toLowerCase())});
+                    'type': data.afvalTypes[i],
+                    'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
             }
             $scope.afvaltypes = afvaltypes;
-            console.log($scope.afvaltypes);
         })
-    })
+    });
 
 function formatDate(dateToFormat) {
     return weekday[dateToFormat.getDay()] + " " + pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
 }
 
-function getAfvalIconTitle(afvalcode) {
-    if (afvalcode == "rest") {
+function getAfvalIconTitel(afvalcode) {
+    if (afvalcode == "REST") {
         return "Grijze container";
-    } else if (afvalcode == "gft") {
+    } else if (afvalcode == "GFT") {
         return "Groene container";
-    } else if (afvalcode == "sallcon") {
+    } else if (afvalcode == "SALLCON") {
         return "Papier, glas, blik, drankkarton";
-    } else if (afvalcode == "plastic") {
+    } else if (afvalcode == "PLASTIC") {
         return "Oranje container";
     }
 }

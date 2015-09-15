@@ -28,30 +28,29 @@ import java.util.*;
 public class AfvalInzamelingService {
     public static final String SERVICE_PATH = "afvalinzameling";
 
-    public static final Map<String, String> CALENDAR_TO_SERVICE_TYPE_MAP = new HashMap<>();
+    public static final Map<String, AfvalInzameling.AfvalType> CALENDAR_TO_SERVICE_TYPE_MAP = new HashMap<>();
 
     static {
-        CALENDAR_TO_SERVICE_TYPE_MAP.put("Restafval wordt opgehaald", "REST");
-        CALENDAR_TO_SERVICE_TYPE_MAP.put("GFT wordt opgehaald", "GFT");
-        CALENDAR_TO_SERVICE_TYPE_MAP.put("Plastic verpakkingen of PMD wordt opgehaald", "PLASTIC");
-        CALENDAR_TO_SERVICE_TYPE_MAP.put("Inzameling Sallcon wordt opgehaald", "SALLCON");
+        CALENDAR_TO_SERVICE_TYPE_MAP.put("Restafval wordt opgehaald", AfvalInzameling.AfvalType.REST);
+        CALENDAR_TO_SERVICE_TYPE_MAP.put("GFT wordt opgehaald", AfvalInzameling.AfvalType.GFT);
+        CALENDAR_TO_SERVICE_TYPE_MAP.put("Plastic verpakkingen of PMD wordt opgehaald", AfvalInzameling.AfvalType.PLASTIC);
+        CALENDAR_TO_SERVICE_TYPE_MAP.put("Inzameling Sallcon wordt opgehaald", AfvalInzameling.AfvalType.SALLCON);
     }
 
     @ApiOperation(value = "Geeft de eerstvolgende inzameling(en) terug. Als er op de huidige datum inzameling(en) gepland zijn, dan worden deze terug gegeven.")
     @GET
     @Path("volgende")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AfvalInzameling> next() throws IOException, ParserException {
+    public AfvalInzameling next() throws IOException, ParserException {
         Calendar calendar = getCalendar();
 
         List<VEvent> firstEventsFromNow = getNextEvents(calendar);
 
-        List<AfvalInzameling> volgendeInzameling = new ArrayList<>();
+        AfvalInzameling volgendeInzameling = new AfvalInzameling();
+        volgendeInzameling.setAfvalTypes(new ArrayList<>());
         for (VEvent event : firstEventsFromNow) {
-            AfvalInzameling inzameling = new AfvalInzameling();
-            inzameling.setDatum(Long.toString(event.getStartDate().getDate().getTime()));
-            inzameling.setOmschrijving(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
-            volgendeInzameling.add(inzameling);
+            volgendeInzameling.setDatum(Long.toString(event.getStartDate().getDate().getTime()));
+            volgendeInzameling.getAfvalTypes().add(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
         }
         return volgendeInzameling;
     }
