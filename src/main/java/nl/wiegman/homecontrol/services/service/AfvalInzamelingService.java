@@ -82,6 +82,8 @@ public class AfvalInzamelingService {
                 if (cachedCalendar != null) {
                     CalendarBuilder builder = new CalendarBuilder();
                     result = builder.build(new ByteArrayInputStream(cachedCalendar));
+                } else {
+                    logger.error("Unable to download/parse afvalkalendar");
                 }
             } catch (IOException | ParserException e) {
                 logger.error("Unable to download/parse afvalkalendar", e);
@@ -161,11 +163,19 @@ public class AfvalInzamelingService {
             nvps.add(new BasicNameValuePair("huisnummer", "71"));
             nvps.add(new BasicNameValuePair("toon", ""));
             login.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
-            httpclient.execute(login, context);
+            CloseableHttpResponse response = httpclient.execute(login, context);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 302) {
+                throw new IOException("Invalid statuscode (expected 302): " + statusCode);
+            }
 
             HttpGet downloadIcs = new HttpGet("http://kalender.afvalvrij.nl/Afvalkalender/download_ical.php?p=7425%20RH&h=71&t=");
-            CloseableHttpResponse response = httpclient.execute(downloadIcs, context);
+            response = httpclient.execute(downloadIcs, context);
             try {
+                statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode != 200) {
+                    throw new IOException("Invalid statuscode (expected 200): " + statusCode);
+                }
                 result = EntityUtils.toByteArray(response.getEntity());
             } finally {
                 response.close();
