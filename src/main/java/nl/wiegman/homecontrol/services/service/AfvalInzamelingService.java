@@ -84,16 +84,21 @@ public class AfvalInzamelingService {
         if (cachedCalendar == null) {
             try {
                 cachedCalendar = downloadLatestCalendar();
-                if (cachedCalendar != null) {
-                    CalendarBuilder builder = new CalendarBuilder();
-                    result = builder.build(new ByteArrayInputStream(cachedCalendar));
-                } else {
-                    logger.error("Unable to download/parse afvalkalendar");
-                }
-            } catch (IOException | ParserException e) {
-                logger.error("Unable to download/parse afvalkalendar", e);
+            } catch (IOException e) {
+                logger.error("Unable to download the latest afvalkalendar", e);
             }
         }
+        if (cachedCalendar != null) {
+            CalendarBuilder builder = new CalendarBuilder();
+            try {
+                result = builder.build(new ByteArrayInputStream(cachedCalendar));
+            } catch (IOException | ParserException e) {
+                logger.error("Unable to parse the latest afvalkalendar");
+            }
+        } else {
+            logger.error("Unable to download the latest afvalkalendar");
+        }
+
         return result;
     }
 
