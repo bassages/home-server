@@ -8,6 +8,7 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
 import nl.wiegman.homecontrol.services.apimodel.AfvalInzameling;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
@@ -59,7 +60,9 @@ public class AfvalInzamelingService {
     @GET
     @Path("volgende")
     @Produces(MediaType.APPLICATION_JSON)
-    public AfvalInzameling next() throws IOException, ParserException {
+    public AfvalInzameling ophalenVolgendeAfvalInzameling() throws IOException, ParserException {
+        logger.info("start ophalenVolgendeAfvalInzameling()");
+
         AfvalInzameling volgendeInzameling = new AfvalInzameling();
 
         Calendar calendar = getCalendar();
@@ -71,6 +74,8 @@ public class AfvalInzamelingService {
                 volgendeInzameling.getAfvalTypes().add(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
             }
         }
+
+        logger.info("end ophalenVolgendeAfvalInzameling() result=" + ReflectionToStringBuilder.toString(volgendeInzameling));
         return volgendeInzameling;
     }
 
