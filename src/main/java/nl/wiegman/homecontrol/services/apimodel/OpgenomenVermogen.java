@@ -1,22 +1,23 @@
 package nl.wiegman.homecontrol.services.apimodel;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import nl.wiegman.homecontrol.services.config.converters.LocalDateTimeJsonSerializer;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Bevat opgenomen vermogen op een bepaald moment
+ * Bevat het opgenomen vermogen op een bepaald moment in tijd.
  */
 public class OpgenomenVermogen {
 
-    private String datumtijd;
+    @ApiModelProperty(required = true, value = "Datum uitgedrukt in het aantal miliseconden sinds de zogenaamde 'Epoch (1 januari 1970, 0:00 uur)", example = "1318388699000")
+    private long datumtijd;
+
+    @ApiModelProperty(required = true)
     private int opgenomenVermogenInWatt;
 
-    public String getDatumtijd() {
+    public long getDatumtijd() {
         return datumtijd;
     }
 
-//    @JsonSerialize(using = LocalDateTimeJsonSerializer.class)
-    public void setDatumtijd(String datumtijd) {
+    public void setDatumtijd(long datumtijd) {
         this.datumtijd = datumtijd;
     }
 

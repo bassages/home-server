@@ -1,7 +1,7 @@
 angular.module('appHomecontrol', [])
     .controller('DashboardController', function ($scope, $http) {
         $http.get('rest/afvalinzameling/volgende/').success(function(data) {
-            $scope.afvalinzamelingdatum = formatDate(new Date(parseFloat(data.datum)));
+            $scope.afvalinzamelingdatum = formatDate(new Date(data.datum));
             var afvaltypes = [];
             for (var i=0; i<data.afvalTypes.length; i++) {
                 afvaltypes.push({

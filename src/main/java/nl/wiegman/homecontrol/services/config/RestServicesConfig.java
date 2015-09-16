@@ -18,8 +18,12 @@ public class RestServicesConfig extends ResourceConfig {
 
         // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig
         registerClasses(ApiListingResourceJSON.class, SwaggerSerializers.class);
-        String version = Manifests.read("Implementation-Version");
-        String title = Manifests.read("Implementation-Title");
+
+        String version = "Unknown (not running in jar/war?)";
+        String title = "HomeControl";
+        if (title.equals(Manifests.read("Implementation-Title"))) {
+            version = Manifests.read("Implementation-Version");
+        }
 
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion(version);

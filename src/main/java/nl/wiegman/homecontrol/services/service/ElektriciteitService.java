@@ -39,7 +39,7 @@ public class ElektriciteitService {
     @POST
     @Path("opgenomenVermogen")
     public void opslaanAfgenomenVermogen(@FormParam("vermogenInWatt") int vermogenInWatt,
-                                         @FormParam("datumtijd") @ApiParam(value = "Meetmoment in ISO8601 formaat") String datumtijd) {
+                                         @FormParam("datumtijd") @ApiParam(value = "Meetmoment in ISO8601 formaat") long datumtijd) {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setOpgenomenVermogenInWatt(vermogenInWatt);
