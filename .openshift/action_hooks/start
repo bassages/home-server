@@ -1,9 +1,9 @@
 #!/bin/bash
 # The logic to start up your application should be put in this
 # script. The application will work only if it binds to
-# $OPENSHIFT_DIY_IP:8080
+# $OPENSHIFT_DIY_IP:$OPENSHIFT_DIY_IP
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=${JAVA_HOME}/bin:${PATH}
 echo "JAVA_HOME=$JAVA_HOME"
 cd $OPENSHIFT_REPO_DIR
-nohup java -jar target/*.jar -Duser.timezone=Europe/Amsterdam --server.port=${OPENSHIFT_DIY_PORT} --server.address=${OPENSHIFT_DIY_IP} --spring.profiles.active=openshift &
+nohup java -jar target/*.jar -Duser.timezone="Europe/Amsterdam" --server.port=${OPENSHIFT_DIY_PORT} --server.address=${OPENSHIFT_DIY_IP} --spring.profiles.active=openshift &
