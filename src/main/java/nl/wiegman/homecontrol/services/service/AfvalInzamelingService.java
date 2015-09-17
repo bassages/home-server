@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Api(value=AfvalInzamelingService.SERVICE_PATH, description="Geeft informatie over de afval inzameling")
@@ -42,6 +43,9 @@ import java.util.*;
 @Path(AfvalInzamelingService.SERVICE_PATH)
 public class AfvalInzamelingService {
     public static final String SERVICE_PATH = "afvalinzameling";
+
+    public static final String AFVALVRIJ_POSTCODE = "7425 RH";
+    public static final String AFVALVRIJ_HUISNUMMER = "71";
 
     public static final Map<String, AfvalInzameling.AfvalType> CALENDAR_TO_SERVICE_TYPE_MAP = new HashMap<>();
 
@@ -124,7 +128,6 @@ public class AfvalInzamelingService {
 
     private Date findFirstDayFromTodayWithAtLeastOneEvent(Calendar calendar) {
         Date today = new Date();
-        logger.info("new Date(): " + today + " TimeZone.getDefault().getDisplayName(): " + TimeZone.getDefault().getDisplayName() + " user.timezone: " + System.getProperty("user.timezone"));
         today = DateUtils.truncate(today, java.util.Calendar.DATE);
 
         VEvent firstEventFromNow = null;
@@ -169,18 +172,20 @@ public class AfvalInzamelingService {
             context.setCookieStore(cookieStore);
 
             HttpPost login = new HttpPost("http://kalender.afvalvrij.nl/Afvalkalender/login.php");
-            List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-            nvps.add(new BasicNameValuePair("postcode", "7425 RH"));
-            nvps.add(new BasicNameValuePair("huisnummer", "71"));
-            nvps.add(new BasicNameValuePair("toon", ""));
-            login.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
+
+            List <NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("postcode", AFVALVRIJ_POSTCODE));
+            nameValuePairs.add(new BasicNameValuePair("huisnummer", AFVALVRIJ_HUISNUMMER));
+            nameValuePairs.add(new BasicNameValuePair("toon", ""));
+            login.setEntity(new UrlEncodedFormEntity(nameValuePairs, Consts.UTF_8));
+
             CloseableHttpResponse response = httpclient.execute(login, context);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 302) {
                 throw new IOException("Invalid statuscode (expected 302): " + statusCode);
             }
 
-            HttpGet downloadIcs = new HttpGet("http://kalender.afvalvrij.nl/Afvalkalender/download_ical.php?p=7425%20RH&h=71&t=");
+            HttpGet downloadIcs = new HttpGet("http://kalender.afvalvrij.nl/Afvalkalender/download_ical.php?p=" + URLEncoder.encode(AFVALVRIJ_POSTCODE, "UTF-8") + "%20RH&h=" + AFVALVRIJ_HUISNUMMER + "&t=");
             response = httpclient.execute(downloadIcs, context);
             try {
                 statusCode = response.getStatusLine().getStatusCode();
@@ -196,5 +201,4 @@ public class AfvalInzamelingService {
         }
         return result;
     }
-
 }
