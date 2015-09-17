@@ -124,7 +124,7 @@ public class AfvalInzamelingService {
 
     private Date findFirstDayFromTodayWithAtLeastOneEvent(Calendar calendar) {
         Date today = new Date();
-        logger.info("TODAY:" + today);
+        logger.info("new Date(): " + today + " TimeZone.getDefault().getDisplayName(): " + TimeZone.getDefault().getDisplayName() + " user.timezone: " + System.getProperty("user.timezone"));
         today = DateUtils.truncate(today, java.util.Calendar.DATE);
 
         VEvent firstEventFromNow = null;
