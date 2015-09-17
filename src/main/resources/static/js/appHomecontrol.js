@@ -1,14 +1,19 @@
 angular.module('appHomecontrol', [])
     .controller('DashboardController', function ($scope, $http) {
         $http.get('rest/afvalinzameling/volgende/').success(function(data) {
-            $scope.afvalinzamelingdatum = formatDate(new Date(data.datum));
-            var afvaltypes = [];
-            for (var i=0; i<data.afvalTypes.length; i++) {
-                afvaltypes.push({
-                    'type': data.afvalTypes[i],
-                    'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
+            if (data) {
+                var afvaltypes = [];
+                for (var i=0; i<data.afvalTypes.length; i++) {
+                    afvaltypes.push({
+                        'type': data.afvalTypes[i],
+                        'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
+                }
+                $scope.afvalinzamelingdatum = formatDate(new Date(data.datum));
+                $scope.separator = ": ";
+                $scope.afvaltypes = afvaltypes;
+            } else {
+                $scope.separator = "Kon niet worden bepaald door een technische fout";
             }
-            $scope.afvaltypes = afvaltypes;
         })
     });
 

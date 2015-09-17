@@ -11,16 +11,16 @@ public class AfvalInzameling {
     }
 
     @ApiModelProperty(required = true, value = "Datum uitgedrukt in het aantal miliseconden sinds de zogenaamde 'Epoch (1 januari 1970, 0:00 uur)", example = "1318388699000")
-    private long datum;
+    private Long datum;
 
     @ApiModelProperty(required = true)
     private List<AfvalType> afvalTypes;
 
-    public long getDatum() {
+    public Long getDatum() {
         return datum;
     }
 
-    public void setDatum(long datum) {
+    public void setDatum(Long datum) {
         this.datum = datum;
     }
 

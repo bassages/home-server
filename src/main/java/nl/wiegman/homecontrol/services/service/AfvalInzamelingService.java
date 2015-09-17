@@ -67,10 +67,12 @@ public class AfvalInzamelingService {
     public AfvalInzameling ophalenVolgendeAfvalInzameling() throws IOException, ParserException {
         logger.info("start ophalenVolgendeAfvalInzameling()");
 
-        AfvalInzameling volgendeInzameling = new AfvalInzameling();
+        AfvalInzameling volgendeInzameling = null;
 
         Calendar calendar = getCalendar();
         if (calendar != null) {
+            volgendeInzameling = new AfvalInzameling();
+
             List<VEvent> firstEventsFromNow = getNextEvents(calendar);
             volgendeInzameling.setAfvalTypes(new ArrayList<>());
             for (VEvent event : firstEventsFromNow) {
