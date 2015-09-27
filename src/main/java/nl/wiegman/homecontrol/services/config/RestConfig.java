@@ -11,9 +11,9 @@ import javax.ws.rs.ApplicationPath;
 
 @Configuration
 @ApplicationPath("/rest")
-public class RestServicesConfig extends ResourceConfig {
+public class RestConfig extends ResourceConfig {
 
-    public RestServicesConfig() {
+    public RestConfig() {
         packages("nl.wiegman.homecontrol.services.service", "nl.wiegman.homecontrol.services.config.converters");
 
         // Swagger config, see https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-Jersey-2.X-Project-Setup#using-swaggers-beanconfig

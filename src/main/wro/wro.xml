@@ -5,5 +5,7 @@
         <js>webjar:jquery/2.1.4/jquery.min.js</js>
         <js>webjar:bootstrap/3.3.4/js/bootstrap.min.js</js>
         <js>webjar:angularjs/1.4.4/angular.min.js</js>
+        <js>webjar:stomp-websocket/2.3.3/stomp.min.js</js>
+        <js>webjar:sockjs-client/1.0.2/sockjs.min.js</js>
     </group>
 </groups>

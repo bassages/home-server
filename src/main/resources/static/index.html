@@ -42,13 +42,27 @@
     <div class="container">
 
         <div class="row">
+            <!-- huidig verbruik elektra -->
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Elektriciteit verbruik</h3>
+                    </div>
+                    <div class="panel-body" ng-controller="OpgenomenVermogenController" ng-cloak class="ng-cloak">
+                        <p>{{huidigOpgenomenVermogen}}</p>
+                    </div>
+                </div>
+            </div><!-- End huidig verbruik elektra -->
+        </div>
+
+        <div class="row">
             <!-- Afval -->
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-trash-o"></i> Volgende aanbieding afval</h3>
+                        <h3 class="panel-title">Volgende aanbieding afval</h3>
                     </div>
-                    <div class="panel-body" ng-controller="DashboardController" ng-cloak class="ng-cloak">
+                    <div class="panel-body" ng-controller="AfvalController" ng-cloak class="ng-cloak">
                         <p>{{afvalinzamelingdatum}}{{separator}}<img class="afval-icon" ng-src="images/afval/{{afvaltype.type}}.png" title="{{afvaltype.omschrijving}}" ng-repeat="afvaltype in afvaltypes"/></p>
                     </div>
                 </div>
