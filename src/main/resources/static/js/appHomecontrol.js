@@ -66,7 +66,7 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
     $scope.config={};
     $scope.config.data=[];
 
-    $scope.config.Watt="bar";
+    $scope.config.Watt="area-spline";
     $scope.config.keys={"x":"x","value":["Watt"]};
 
     RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
@@ -92,8 +92,16 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
         config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M:%S"}};
         config.axis.y = {"label":{"text":"Watt","position":"outer-middle"}};
         config.data.types={"Watt":$scope.config.Watt};
+
         config.legend = {};
         config.legend.show = false;
+
+        config.bar = {};
+        config.bar.width = {};
+        config.bar.width.ratio = 1;
+
+        config.point = {};
+        config.point.show = false;
         $scope.chart = c3.generate(config);
     }
 });
