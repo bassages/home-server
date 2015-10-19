@@ -102,6 +102,10 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
 
         config.point = {};
         config.point.show = false;
+
+        config.transition = {};
+        config.transition.duration = 0;
+
         $scope.chart = c3.generate(config);
     }
 });
