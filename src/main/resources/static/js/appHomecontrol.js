@@ -1,4 +1,19 @@
-var app = angular.module('appHomecontrol', []);
+var app = angular.module('appHomecontrol', ['ngRoute', 'ngAnimate']);
+
+// configure our routes
+app.config(function($routeProvider) {
+    $routeProvider
+
+    // route for the home page
+    .when('/', {
+        templateUrl : 'dashboard.html'
+    })
+
+    // route for the about page
+    .when('/grafieken/:type', {
+        templateUrl : 'grafieken.html'
+    });
+});
 
 app.controller('AfvalController', function ($scope, $http) {
     $http.get('rest/afvalinzameling/volgende/').success(function(data) {
@@ -18,19 +33,88 @@ app.controller('AfvalController', function ($scope, $http) {
     })
 });
 
-app.controller("OpgenomenVermogenController", function($scope, RealTimeOpgenomenVermogenService) {
+app.controller("OpgenomenVermogenController", function($scope, $timeout, RealTimeOpgenomenVermogenService) {
+
+    // Turn off all leds
+    for (i = 0; i < 10; i++) {
+        $scope['led'+i] = false;
+    }
+
+    $scope.huidigOpgenomenVermogen = '0';
+
     RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
-        $scope.huidigOpgenomenVermogen = jsonData.opgenomenVermogenInWatt;
+        var huidigOpgenomenVermogen = jsonData.opgenomenVermogenInWatt;
+        $scope.huidigOpgenomenVermogen = huidigOpgenomenVermogen;
+
+        var step = 150;
+
+        $scope.led0 = huidigOpgenomenVermogen > 0;
+        $scope.led1 = huidigOpgenomenVermogen >= (1 * step);
+        $scope.led2 = huidigOpgenomenVermogen >= (2 * step);
+        $scope.led3 = huidigOpgenomenVermogen >= (3 * step);
+        $scope.led4 = huidigOpgenomenVermogen >= (4 * step);
+        $scope.led5 = huidigOpgenomenVermogen >= (5 * step);
+        $scope.led6 = huidigOpgenomenVermogen >= (6 * step);
+        $scope.led7 = huidigOpgenomenVermogen >= (7 * step);
+        $scope.led8 = huidigOpgenomenVermogen >= (8 * step);
+        $scope.led9 = huidigOpgenomenVermogen >= (9 * step);
     });
 });
 
-app.service("RealTimeOpgenomenVermogenService", function($q, $timeout) {
-    var service = {}, listener = $q.defer(), socket = {
+app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgenomenVermogenService) {
+    $scope.chart = null;
+    $scope.config={};
+    $scope.config.data=[];
+
+    $scope.config.Watt="bar";
+    $scope.config.keys={"x":"x","value":["Watt"]};
+
+    RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
+        var huidigOpgenomenVermogen = jsonData.opgenomenVermogenInWatt;
+        var timestamp = new Date(jsonData.datumtijd);
+
+        $scope.chart.flow({
+            columns: [
+                ['x', timestamp],
+                ['Watt', huidigOpgenomenVermogen]
+            ],
+            length: 0
+        });
+    });
+
+    $scope.showGraph = function() {
+        var config = {};
+        config.bindto = '#chart';
+        config.data = {};
+        config.data.keys = $scope.config.keys;
+        config.data.json = $scope.config.data;
+        config.axis = {};
+        config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M:%S"}};
+        config.axis.y = {"label":{"text":"Watt","position":"outer-middle"}};
+        config.data.types={"Watt":$scope.config.Watt};
+        config.legend = {};
+        config.legend.show = false;
+        $scope.chart = c3.generate(config);
+    }
+});
+
+function addToGraph(keys) {
+
+}
+
+function randomNumber() {
+    return Math.floor((Math.random() * 100) + 1);
+}
+
+app.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
+    var service = {};
+    var listener = $q.defer();
+    var socket = {
         client: null,
         stomp: null
     };
 
-    service.RECONNECT_TIMEOUT = 30000;
+    service.RECONNECT_TIMEOUT = 10000;
     service.SOCKET_URL = "/homecontrol/ws/elektra";
     service.UPDATE_TOPIC = "/topic/elektriciteit/opgenomenVermogen";
 
@@ -39,9 +123,8 @@ app.service("RealTimeOpgenomenVermogenService", function($q, $timeout) {
     };
 
     var reconnect = function() {
-        $timeout(function() {
-            initialize();
-        }, this.RECONNECT_TIMEOUT);
+        $log.info("Trying to reconnect in " + service.RECONNECT_TIMEOUT + " ms.");
+        $timeout(connect, service.RECONNECT_TIMEOUT);
     };
 
     var startListener = function() {
@@ -50,14 +133,17 @@ app.service("RealTimeOpgenomenVermogenService", function($q, $timeout) {
         });
     };
 
-    var initialize = function() {
+    var connect = function() {
         socket.client = new SockJS(service.SOCKET_URL);
         socket.stomp = Stomp.over(socket.client);
         socket.stomp.connect({}, startListener);
-        socket.stomp.onclose = reconnect;
+
+        socket.client.onclose = function() {
+            reconnect();
+        };
     };
 
-    initialize();
+    connect();
     return service;
 });
 
@@ -71,9 +157,9 @@ function getAfvalIconTitel(afvalcode) {
     } else if (afvalcode == "GFT") {
         return "Groene container";
     } else if (afvalcode == "SALLCON") {
-        return "Papier, glas, blik, drankkarton";
+        return "Papier, glas";
     } else if (afvalcode == "PLASTIC") {
-        return "Oranje container";
+        return "Oranje container (PMD)";
     }
 }
 

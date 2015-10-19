@@ -2,31 +2,20 @@ package nl.wiegman.homecontrol.services.realtime;
 
 import nl.wiegman.homecontrol.services.apimodel.OpgenomenVermogen;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Controller;
-
-import javax.annotation.PostConstruct;
 
 @Controller
 public class RealTimeOpgenomenVermogenController {
 
+    public static final String TOPIC_ELEKTRICITEIT_OPGENOMEN_VERMOGEN = "/topic/elektriciteit/opgenomenVermogen";
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    private TaskScheduler scheduler = new ConcurrentTaskScheduler();
-
-    @PostConstruct
-    private void broadcastPeriodically() {
-        scheduler.scheduleAtFixedRate(() -> messagingTemplate.convertAndSend("/topic/elektriciteit/opgenomenVermogen", getRandomOpgenomenVermogen()), 1000);
+    @EventListener
+    public void onApplicationEvent(OpgenomenVermogen opgenomenVermogen) {
+        messagingTemplate.convertAndSend(TOPIC_ELEKTRICITEIT_OPGENOMEN_VERMOGEN, opgenomenVermogen);
     }
-
-    private OpgenomenVermogen getRandomOpgenomenVermogen() {
-        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(System.currentTimeMillis());
-        opgenomenVermogen.setOpgenomenVermogenInWatt((int)(Math.random() * (2000 - 50)) + 50);
-        return opgenomenVermogen;
-    }
-
 }

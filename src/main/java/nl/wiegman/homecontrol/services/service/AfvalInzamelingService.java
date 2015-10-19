@@ -116,15 +116,15 @@ public class AfvalInzamelingService {
     private List<VEvent> getAllEventsOnDay(Date day, Calendar calendar) {
         List<VEvent> eventsOnDay = new ArrayList<>();
 
-        for (CalendarComponent calComp : calendar.getComponents()) {
-            if (calComp instanceof VEvent) {
-                VEvent event = (VEvent) calComp;
+        calendar.getComponents().forEach(calendarComponent -> {
+            if (calendarComponent instanceof VEvent) {
+                VEvent event = (VEvent) calendarComponent;
                 net.fortuna.ical4j.model.Date eventDate = event.getStartDate().getDate();
                 if (DateUtils.isSameDay(eventDate, day)) {
                     eventsOnDay.add(event);
                 }
             }
-        }
+        });
         return eventsOnDay;
     }
 

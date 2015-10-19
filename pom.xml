@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.2.5.RELEASE</version>
+		<version>1.2.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -20,6 +20,7 @@
 		<start-class>nl.wiegman.homecontrol.services.HomeControlApplication</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
@@ -48,6 +49,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
 		<dependency>
@@ -63,7 +65,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5</version>
+            <version>4.5.1</version>
         </dependency>
 
         <!-- For reading data from the Manifest.mf file -->
@@ -94,6 +96,12 @@
             <groupId>org.webjars</groupId>
             <artifactId>stomp-websocket</artifactId>
             <version>2.3.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>4.4.0</version>
         </dependency>
 
         <dependency>
