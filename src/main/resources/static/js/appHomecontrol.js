@@ -66,7 +66,10 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
     $scope.config={};
     $scope.config.data=[];
 
-    $scope.config.Watt="area-spline";
+    //$scope.config.Watt="area-spline";
+    //$scope.config.Watt="bar";
+    //$scope.config.Watt="area";
+    $scope.config.Watt="area-step";
     $scope.config.keys={"x":"x","value":["Watt"]};
 
     RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
@@ -83,40 +86,34 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
     });
 
     $scope.showGraph = function() {
+        var start = new Date();
+        start.setHours(0,0,0,0);
+
+        var end = new Date();
+        end.setHours(23,59,59,999);
+
         var config = {};
         config.bindto = '#chart';
         config.data = {};
+        config.data.xFormat = '%Y-%m-%d %H:%M:%S';
         config.data.keys = $scope.config.keys;
         config.data.json = $scope.config.data;
-        config.axis = {};
-        config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M:%S"}};
-        config.axis.y = {"label":{"text":"Watt","position":"outer-middle"}};
         config.data.types={"Watt":$scope.config.Watt};
 
-        config.legend = {};
-        config.legend.show = false;
+        config.axis = {};
+        config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M", centered: true, culling: {max: 13}}, "min":start, "max":end, padding: {left: 0, right:0}};
+        config.axis.y = {"label":{"text":"Watt","position":"outer-middle"}};
 
-        config.bar = {};
-        config.bar.width = {};
-        config.bar.width.ratio = 1;
-
-        config.point = {};
-        config.point.show = false;
-
-        config.transition = {};
-        config.transition.duration = 0;
+        config.legend = {"show":false};
+        config.bar = {"width":{"ratio":1}};
+        config.point = {"show":false};
+        config.transition = {"duration":0};
+        config.grid = {y: {show: true}};
+        config.tooltip = {show: false};
 
         $scope.chart = c3.generate(config);
     }
 });
-
-function addToGraph(keys) {
-
-}
-
-function randomNumber() {
-    return Math.floor((Math.random() * 100) + 1);
-}
 
 app.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
     var service = {};
