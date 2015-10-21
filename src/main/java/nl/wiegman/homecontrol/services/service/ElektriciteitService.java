@@ -52,4 +52,6 @@ public class ElektriciteitService {
     public List<OpgenomenVermogen> getOpgenomenVermogenHistorie() {
         return electriciteitStore.getAll();
     }
+
+
 }

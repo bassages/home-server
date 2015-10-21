@@ -99,6 +99,7 @@ app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgeno
         config.data.keys = $scope.config.keys;
         config.data.json = $scope.config.data;
         config.data.types={"Watt":$scope.config.Watt};
+        config.data.empty = {label: {text: "Geen gegevens beschikbaar"}};
 
         config.axis = {};
         config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M", centered: true, culling: {max: 13}}, "min":start, "max":end, padding: {left: 0, right:0}};
