@@ -47,12 +47,14 @@ public class DummyDataService {
     }
 
     private void sendDummyData() {
+        elektriciteitService.opslaanAfgenomenVermogen(opgenomenVermogen, System.currentTimeMillis());
+
         if (oplopend) {
             opgenomenVermogen += 20;
+            oplopend = opgenomenVermogen < 1400;
         } else {
             opgenomenVermogen -= 20;
+            oplopend = opgenomenVermogen <= 0;
         }
-        oplopend = opgenomenVermogen < 2000;
-        elektriciteitService.opslaanAfgenomenVermogen(opgenomenVermogen, System.currentTimeMillis());
     }
 }
