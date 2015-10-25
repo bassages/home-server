@@ -1,8 +1,32 @@
-<h1>Grafiek</h1>
-
 <div ng-controller="GrafiekController" ng-init="showGraph()" ng-cloak>
+    <h1>Grafiek</h1>
 
     <!-- Voor week selectie zie http://plnkr.co/edit/7RMrNOGrdVVIuVFDM49T?p=preview -->
+
+    <form class="form-inline">
+        <div class="form-group">
+            <div class="input-group" width="">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="previousDay()"><i class="fa fa-angle-left"></i></button>
+                </span>
+
+                <input class="form-control datepicker" style="text-align: center; width: 150px;" formatteddate ng-model="from" ng-change="dateChanged()" ng-readonly="true" data-provide="datepicker" data-date-language="nl" data-date-format="dd-mm-yyyy" />
+
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="nextDay()"><i class="fa fa-angle-right"></i></button>
+                </span>
+            </div><!-- /input-group -->
+        </div>
+    </form>
+    <script>
+        jQuery('.datepicker').datepicker({
+            autoclose: true,
+            todayBtn: "linked",
+            calendarWeeks: true,
+            todayHighlight: true
+        });
+    </script>
+    <!-- See http://bootstrap-datepicker.readthedocs.org/en/stable/ -->
 
     <div id="chart"></div>
 </div>

@@ -1,7 +1,6 @@
-var app = angular.module('appHomecontrol', ['ngRoute', 'ngAnimate']);
+var module = angular.module('appHomecontrol', ['ngRoute', 'ngAnimate']);
 
-// configure our routes
-app.config(function($routeProvider) {
+module.config(function($routeProvider) {
     $routeProvider
 
     // route for the home page
@@ -15,7 +14,24 @@ app.config(function($routeProvider) {
     });
 });
 
-app.controller('AfvalController', function ($scope, $http) {
+module.directive('formatteddate', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attr, ngModel) {
+            function fromUser(text) {
+                return Date.parse(text);
+            }
+            function toUser(date) {
+                return formatDate(date);
+            }
+            ngModel.$parsers.push(fromUser);
+            ngModel.$formatters.push(toUser);
+        }
+    };
+});
+
+module.controller('AfvalController', function ($scope, $http) {
     $http.get('rest/afvalinzameling/volgende/').success(function(data) {
         if (data) {
             var afvaltypes = [];
@@ -24,7 +40,7 @@ app.controller('AfvalController', function ($scope, $http) {
                     'type': data.afvalTypes[i],
                     'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
             }
-            $scope.afvalinzamelingdatum = formatDate(new Date(data.datum));
+            $scope.afvalinzamelingdatum = formatDateWithdayname(new Date(data.datum));
             $scope.separator = ": ";
             $scope.afvaltypes = afvaltypes;
         } else {
@@ -33,7 +49,7 @@ app.controller('AfvalController', function ($scope, $http) {
     })
 });
 
-app.controller("OpgenomenVermogenController", function($scope, $timeout, RealTimeOpgenomenVermogenService) {
+module.controller("OpgenomenVermogenController", function($scope, $timeout, RealTimeOpgenomenVermogenService) {
 
     // Turn off all leds
     for (i = 0; i < 10; i++) {
@@ -61,15 +77,12 @@ app.controller("OpgenomenVermogenController", function($scope, $timeout, RealTim
     });
 });
 
-app.controller("GrafiekController", function ($scope, $timeout, $http) {
+module.controller("GrafiekController", function ($scope, $timeout, $http) {
     $scope.chart = null;
     $scope.config={};
 
     $scope.from = new Date();
     $scope.from.setHours(0,0,0,0);
-
-    $scope.to = new Date($scope.from);
-    $scope.to.setDate($scope.from.getDate() + 1);
 
     var tickValues = [];
     for (var i=0; i<=25; i++) {
@@ -77,8 +90,30 @@ app.controller("GrafiekController", function ($scope, $timeout, $http) {
         tickValues.push(tickValue);
     }
 
+    $scope.dateChanged = function() {
+        $scope.showGraph();
+    };
+
+    $scope.previousDay = function() {
+        var previous = new Date($scope.from);
+        previous.setDate($scope.from.getDate() - 1);
+        $scope.from = previous;
+
+        $scope.showGraph();
+    };
+
+    $scope.nextDay = function() {
+        var next = new Date($scope.from);
+        next.setDate($scope.from.getDate() + 1);
+        $scope.from = next;
+        $scope.showGraph();
+    };
+
     $scope.showGraph = function() {
-        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + $scope.to.getTime() ).success(function(data) {
+        var to = new Date($scope.from);
+        to.setDate($scope.from.getDate() + 1);
+
+        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + to.getTime() ).success(function(data) {
             if (data) {
                 for (var i=0; i<data.length; i++) {
                     //data[i].datumtijd = data[i].datumtijd + 450000;
@@ -94,7 +129,7 @@ app.controller("GrafiekController", function ($scope, $timeout, $http) {
                 graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
                 graphConfig.axis = {};
-                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:20}};
+                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: to, padding: {left: 0, right:20}};
                 graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
 
                 graphConfig.legend = {show: false};
@@ -111,7 +146,7 @@ app.controller("GrafiekController", function ($scope, $timeout, $http) {
     }
 });
 
-app.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
+module.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
     var service = {};
     var listener = $q.defer();
     var socket = {
@@ -152,8 +187,14 @@ app.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
     return service;
 });
 
-function formatDate(dateToFormat) {
+// Returns a formatted date. Example: zondag 21-10-2015
+function formatDateWithdayname(dateToFormat) {
     return weekday[dateToFormat.getDay()] + " " + pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
+}
+
+// Returns a formatted date. Example: 21-10-2015
+function formatDate(dateToFormat) {
+    return pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
 }
 
 function getAfvalIconTitel(afvalcode) {
