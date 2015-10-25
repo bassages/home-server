@@ -1,6 +1,6 @@
 package nl.wiegman.homecontrol.services.realtime;
 
-import nl.wiegman.homecontrol.services.apimodel.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,7 +15,7 @@ public class RealTimeOpgenomenVermogenController {
     private SimpMessagingTemplate messagingTemplate;
 
     @EventListener
-    public void onApplicationEvent(OpgenomenVermogen opgenomenVermogen) {
-        messagingTemplate.convertAndSend(TOPIC_ELEKTRICITEIT_OPGENOMEN_VERMOGEN, opgenomenVermogen);
+    public void onApplicationEvent(UpdateEvent event) {
+        messagingTemplate.convertAndSend(TOPIC_ELEKTRICITEIT_OPGENOMEN_VERMOGEN, event.getUpdatedObject());
     }
 }

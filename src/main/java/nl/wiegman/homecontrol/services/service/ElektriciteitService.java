@@ -3,7 +3,9 @@ package nl.wiegman.homecontrol.services.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import nl.wiegman.homecontrol.services.apimodel.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,12 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 @Api(value=ElektriciteitService.SERVICE_PATH, description="Onvangt en verspreid informatie over het elektriciteitsverbruik")
@@ -42,16 +49,53 @@ public class ElektriciteitService {
 
         electriciteitStore.add(opgenomenVermogen);
 
-        eventPublisher.publishEvent(opgenomenVermogen);
+        eventPublisher.publishEvent(new UpdateEvent(opgenomenVermogen));
     };
 
     @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
     @GET
-    @Path("opgenomenVermogenHistorie")
+    @Path("opgenomenVermogenHistorie/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistorie() {
-        return electriciteitStore.getAll();
+    public List<OpgenomenVermogen> getOpgenomenVermogenPerKwartier(@PathParam("from") long from, @PathParam("to") long to) {
+        logger.info("getOpgenomenVermogenPerKwartier() from=" +from + " to=" + to);
+
+        List<OpgenomenVermogen> result = new ArrayList<>();
+
+        long start = DateUtils.truncate(new Date(), Calendar.DATE).getTime();
+        long end = DateUtils.truncate(DateUtils.addDays(new Date(), 1), Calendar.DATE).getTime();
+
+        List<OpgenomenVermogen> list = electriciteitStore.getAll()
+                                            .stream()
+                                            .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
+                                            .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
+                                            .collect(Collectors.toList());
+
+        long nrOfQuartersInPeriod = (((to-from)/1000)/60/60)*4;
+
+        for (int i=0; i<nrOfQuartersInPeriod; i++) {
+            long quarterStart = start + (i * TimeUnit.MINUTES.toMillis(15));
+            long quarterEnd = quarterStart + TimeUnit.MINUTES.toMillis(15);
+
+            OpgenomenVermogen maximumOpgenomenVermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, quarterStart, quarterEnd);
+            if (maximumOpgenomenVermogenInPeriode != null) {
+                maximumOpgenomenVermogenInPeriode.setDatumtijd(quarterStart);
+                result.add(maximumOpgenomenVermogenInPeriode);
+            } else {
+                OpgenomenVermogen onbekend = new OpgenomenVermogen();
+                onbekend.setDatumtijd(quarterStart);
+                onbekend.setOpgenomenVermogenInWatt(100);
+                result.add(onbekend);
+            }
+        }
+
+        return result;
     }
 
+    private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<OpgenomenVermogen> list, long start, long end) {
+        return list.stream()
+                .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
+                .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
+                .orElse(null);
+    }
 
 }

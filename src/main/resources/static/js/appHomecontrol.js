@@ -11,7 +11,7 @@ app.config(function($routeProvider) {
 
     // route for the about page
     .when('/grafieken/:type', {
-        templateUrl : 'grafieken.html'
+        templateUrl : 'grafiek.html'
     });
 });
 
@@ -61,58 +61,53 @@ app.controller("OpgenomenVermogenController", function($scope, $timeout, RealTim
     });
 });
 
-app.controller("GrafiekenController", function ($scope, $timeout, RealTimeOpgenomenVermogenService) {
+app.controller("GrafiekController", function ($scope, $timeout, $http) {
     $scope.chart = null;
     $scope.config={};
-    $scope.config.data=[];
 
-    //$scope.config.Watt="area-spline";
-    //$scope.config.Watt="bar";
-    //$scope.config.Watt="area";
-    $scope.config.Watt="area-step";
-    $scope.config.keys={"x":"x","value":["Watt"]};
+    $scope.from = new Date();
+    $scope.from.setHours(0,0,0,0);
 
-    RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
-        var huidigOpgenomenVermogen = jsonData.opgenomenVermogenInWatt;
-        var timestamp = new Date(jsonData.datumtijd);
+    $scope.to = new Date($scope.from);
+    $scope.to.setDate($scope.from.getDate() + 1);
 
-        $scope.chart.flow({
-            columns: [
-                ['x', timestamp],
-                ['Watt', huidigOpgenomenVermogen]
-            ],
-            length: 0
-        });
-    });
+    var tickValues = [];
+    for (var i=0; i<=25; i++) {
+        var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
+        tickValues.push(tickValue);
+    }
 
     $scope.showGraph = function() {
-        var start = new Date();
-        start.setHours(0,0,0,0);
+        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + $scope.to.getTime() ).success(function(data) {
+            if (data) {
+                for (var i=0; i<data.length; i++) {
+                    //data[i].datumtijd = data[i].datumtijd + 450000;
+                }
 
-        var end = new Date();
-        end.setHours(23,59,59,999);
+                var graphConfig = {};
+                graphConfig.bindto = '#chart';
 
-        var config = {};
-        config.bindto = '#chart';
-        config.data = {};
-        config.data.xFormat = '%Y-%m-%d %H:%M:%S';
-        config.data.keys = $scope.config.keys;
-        config.data.json = $scope.config.data;
-        config.data.types={"Watt":$scope.config.Watt};
-        config.data.empty = {label: {text: "Geen gegevens beschikbaar"}};
+                graphConfig.data = {};
+                graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
+                graphConfig.data.json = data;
+                graphConfig.data.types={"opgenomenVermogenInWatt": "area-step"};
+                graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
-        config.axis = {};
-        config.axis.x = {"type":"timeseries", "tick":{"format":"%H:%M", centered: true, culling: {max: 13}}, "min":start, "max":end, padding: {left: 0, right:0}};
-        config.axis.y = {"label":{"text":"Watt","position":"outer-middle"}};
+                graphConfig.axis = {};
+                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:20}};
+                graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
 
-        config.legend = {"show":false};
-        config.bar = {"width":{"ratio":1}};
-        config.point = {"show":false};
-        config.transition = {"duration":0};
-        config.grid = {y: {show: true}};
-        config.tooltip = {show: false};
+                graphConfig.legend = {show: false};
+                graphConfig.bar = {width: {ratio: 1}};
+                graphConfig.point = { show: false};
+                graphConfig.transition = { duration: 0};
+                graphConfig.grid = {y: {show: true}};
+                graphConfig.tooltip = {show: true};
+                graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
 
-        $scope.chart = c3.generate(config);
+                $scope.chart = c3.generate(graphConfig);
+            }
+        });
     }
 });
 

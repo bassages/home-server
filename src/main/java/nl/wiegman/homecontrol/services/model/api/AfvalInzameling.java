@@ -1,4 +1,4 @@
-package nl.wiegman.homecontrol.services.apimodel;
+package nl.wiegman.homecontrol.services.model.api;
 
 import io.swagger.annotations.ApiModelProperty;
 

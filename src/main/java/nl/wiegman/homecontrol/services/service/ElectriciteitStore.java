@@ -1,9 +1,8 @@
 package nl.wiegman.homecontrol.services.service;
 
-import nl.wiegman.homecontrol.services.apimodel.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

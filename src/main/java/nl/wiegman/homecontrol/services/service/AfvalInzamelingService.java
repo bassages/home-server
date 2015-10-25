@@ -7,7 +7,7 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.VEvent;
-import nl.wiegman.homecontrol.services.apimodel.AfvalInzameling;
+import nl.wiegman.homecontrol.services.model.api.AfvalInzameling;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.Consts;
