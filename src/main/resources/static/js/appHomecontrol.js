@@ -77,28 +77,33 @@ module.controller("OpgenomenVermogenController", function($scope, $timeout, Real
     });
 });
 
-module.controller("GrafiekController", function ($scope, $timeout, $http) {
+module.controller("GrafiekController", function ($scope, $timeout, $http, $log) {
     $scope.chart = null;
     $scope.config={};
 
+    // By default, today is selected
     $scope.from = new Date();
     $scope.from.setHours(0,0,0,0);
 
-    var tickValues = [];
-    for (var i=0; i<=25; i++) {
-        var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
-        tickValues.push(tickValue);
-    }
+    $scope.to = new Date($scope.from);
+    $scope.to.setDate($scope.from.getDate() + 1);
 
-    $scope.dateChanged = function() {
-        $scope.showGraph();
-    };
+    $('.datepicker').datepicker({
+        autoclose: true,
+        todayBtn: "linked",
+        calendarWeeks: true,
+        todayHighlight: true
+    }).on('changeDate', function(e) {
+        $scope.$apply(function() {
+            $scope.from = new Date(e.date);
+            $scope.showGraph();
+        });
+    });
 
     $scope.previousDay = function() {
         var previous = new Date($scope.from);
         previous.setDate($scope.from.getDate() - 1);
         $scope.from = previous;
-
         $scope.showGraph();
     };
 
@@ -109,39 +114,57 @@ module.controller("GrafiekController", function ($scope, $timeout, $http) {
         $scope.showGraph();
     };
 
-    $scope.showGraph = function() {
-        var to = new Date($scope.from);
-        to.setDate($scope.from.getDate() + 1);
+    $scope.dateChanged = function() {
+        log.info("Date changed");
+        $scope.showGraph();
+    };
 
-        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + to.getTime() ).success(function(data) {
+    $scope.showGraph = function() {
+        $scope.to = new Date($scope.from);
+        $scope.to.setDate($scope.from.getDate() + 1);
+
+        $log.info('From: ' + $scope.from + ' To: ' + $scope.to);
+
+        var numberOfHoursInDay = (($scope.to-$scope.from)/1000)/60/60;
+        $log.info('numberOfHoursInDay: ' + numberOfHoursInDay);
+
+        var tickValues = [];
+        for (var i=0; i<= numberOfHoursInDay; i++) {
+            var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
+            tickValues.push(tickValue);
+        }
+
+        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + $scope.to.getTime() ).success(function(data) {
             if (data) {
                 for (var i=0; i<data.length; i++) {
                     //data[i].datumtijd = data[i].datumtijd + 450000;
                 }
 
-                var graphConfig = {};
-                graphConfig.bindto = '#chart';
+            } else {
 
-                graphConfig.data = {};
-                graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
-                graphConfig.data.json = data;
-                graphConfig.data.types={"opgenomenVermogenInWatt": "area-step"};
-                graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
-
-                graphConfig.axis = {};
-                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: to, padding: {left: 0, right:20}};
-                graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
-
-                graphConfig.legend = {show: false};
-                graphConfig.bar = {width: {ratio: 1}};
-                graphConfig.point = { show: false};
-                graphConfig.transition = { duration: 0};
-                graphConfig.grid = {y: {show: true}};
-                graphConfig.tooltip = {show: true};
-                graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
-
-                $scope.chart = c3.generate(graphConfig);
             }
+            var graphConfig = {};
+            graphConfig.bindto = '#chart';
+
+            graphConfig.data = {};
+            graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
+            graphConfig.data.json = data;
+            graphConfig.data.types={"opgenomenVermogenInWatt": "area-step"};
+            graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
+
+            graphConfig.axis = {};
+            graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:20}};
+            graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
+
+            graphConfig.legend = {show: false};
+            graphConfig.bar = {width: {ratio: 1}};
+            graphConfig.point = { show: false};
+            graphConfig.transition = { duration: 0};
+            graphConfig.grid = {y: {show: true}};
+            graphConfig.tooltip = {show: true};
+            graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
+
+            $scope.chart = c3.generate(graphConfig);
         });
     }
 });
