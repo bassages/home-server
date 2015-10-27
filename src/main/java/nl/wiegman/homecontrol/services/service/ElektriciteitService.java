@@ -72,7 +72,7 @@ public class ElektriciteitService {
 
         long nrOfQuartersInPeriod = (((to-from)/1000)/60/60)*4;
 
-        for (int i=0; i<nrOfQuartersInPeriod; i++) {
+        for (int i=0; i<=nrOfQuartersInPeriod; i++) {
             long quarterStart = start + (i * TimeUnit.MINUTES.toMillis(15));
             long quarterEnd = quarterStart + TimeUnit.MINUTES.toMillis(15);
 

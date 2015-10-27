@@ -84,7 +84,6 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
     // By default, today is selected
     $scope.from = new Date();
     $scope.from.setHours(0,0,0,0);
-
     $scope.to = new Date($scope.from);
     $scope.to.setDate($scope.from.getDate() + 1);
 
@@ -136,20 +135,19 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
 
         $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + $scope.to.getTime() ).success(function(data) {
             if (data) {
-                for (var i=0; i<data.length; i++) {
-                    //data[i].datumtijd = data[i].datumtijd + 450000;
+                var length = data.length;
+                for (var i=0; i<length; i++) {
+                    data.push({datumtijd: data[i].datumtijd + 899999, opgenomenVermogenInWatt: data[i].opgenomenVermogenInWatt});
                 }
-
-            } else {
-
             }
+
             var graphConfig = {};
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
             graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
             graphConfig.data.json = data;
-            graphConfig.data.types={"opgenomenVermogenInWatt": "area-step"};
+            graphConfig.data.types={"opgenomenVermogenInWatt": "area"};
             graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
             graphConfig.axis = {};
@@ -161,7 +159,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.point = { show: false};
             graphConfig.transition = { duration: 0};
             graphConfig.grid = {y: {show: true}};
-            graphConfig.tooltip = {show: true};
+            graphConfig.tooltip = {show: false};
             graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
 
             $scope.chart = c3.generate(graphConfig);
