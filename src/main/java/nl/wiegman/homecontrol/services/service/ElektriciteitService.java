@@ -83,11 +83,10 @@ public class ElektriciteitService {
             } else {
                 OpgenomenVermogen onbekend = new OpgenomenVermogen();
                 onbekend.setDatumtijd(quarterStart);
-                onbekend.setOpgenomenVermogenInWatt(100);
+                onbekend.setOpgenomenVermogenInWatt(0);
                 result.add(onbekend);
             }
         }
-
         return result;
     }
 
