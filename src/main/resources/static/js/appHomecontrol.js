@@ -131,6 +131,10 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
         return tickValues;
     }
 
+    function setDataColor() {
+        $('.c3-area-opgenomenVermogenInWatt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
+    }
+
     $scope.showGraph = function() {
         var subPeriodLength = 5 * 60 * 1000;
 
@@ -153,7 +157,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
 
             var graphConfig = {};
             graphConfig.bindto = '#chart';
-
+            graphConfig.onresized = setDataColor;
             graphConfig.data = {};
             graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
             graphConfig.data.json = data;
@@ -174,7 +178,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
 
             $scope.chart = c3.generate(graphConfig);
 
-            $('.c3-area-opgenomenVermogenInWatt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
+            setDataColor();
         });
     }
 });
