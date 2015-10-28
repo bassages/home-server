@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class ElectriciteitStore {
 
-    public static final int MAX_NR_OF_ITEMS = 5000;
+    public static final int MAX_NR_OF_ITEMS = 9000;
 
     public LinkedList<OpgenomenVermogen> opgenomenVermogenHistorie = new LinkedList<>();
 

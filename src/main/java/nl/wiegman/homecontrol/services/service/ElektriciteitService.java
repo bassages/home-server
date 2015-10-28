@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
@@ -56,8 +55,8 @@ public class ElektriciteitService {
     @GET
     @Path("opgenomenVermogenHistorie/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<OpgenomenVermogen> getOpgenomenVermogenPerKwartier(@PathParam("from") long from, @PathParam("to") long to) {
-        logger.info("getOpgenomenVermogenPerKwartier() from=" +from + " to=" + to);
+    public List<OpgenomenVermogen> getOpgenomenVermogenPerKwartier(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
+        logger.info("getOpgenomenVermogenPerKwartier() from=" +from + " to=" + to + " subPeriodLength=" + subPeriodLength);
 
         List<OpgenomenVermogen> result = new ArrayList<>();
 
@@ -70,19 +69,19 @@ public class ElektriciteitService {
                                             .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
                                             .collect(Collectors.toList());
 
-        long nrOfQuartersInPeriod = (((to-from)/1000)/60/60)*4;
+        long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
 
-        for (int i=0; i<=nrOfQuartersInPeriod; i++) {
-            long quarterStart = start + (i * TimeUnit.MINUTES.toMillis(15));
-            long quarterEnd = quarterStart + TimeUnit.MINUTES.toMillis(15);
+        for (int i=0; i<=nrOfSubPeriodsInPeriod; i++) {
+            long subStart = start + (i * subPeriodLength);
+            long subEnd = subStart + subPeriodLength;
 
-            OpgenomenVermogen maximumOpgenomenVermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, quarterStart, quarterEnd);
+            OpgenomenVermogen maximumOpgenomenVermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
             if (maximumOpgenomenVermogenInPeriode != null) {
-                maximumOpgenomenVermogenInPeriode.setDatumtijd(quarterStart);
+                maximumOpgenomenVermogenInPeriode.setDatumtijd(subStart);
                 result.add(maximumOpgenomenVermogenInPeriode);
             } else {
                 OpgenomenVermogen onbekend = new OpgenomenVermogen();
-                onbekend.setDatumtijd(quarterStart);
+                onbekend.setDatumtijd(subStart);
                 onbekend.setOpgenomenVermogenInWatt(0);
                 result.add(onbekend);
             }

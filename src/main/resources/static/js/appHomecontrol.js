@@ -118,28 +118,38 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
         $scope.showGraph();
     };
 
-    $scope.showGraph = function() {
-        $scope.to = new Date($scope.from);
-        $scope.to.setDate($scope.from.getDate() + 1);
-
-        $log.info('From: ' + $scope.from + ' To: ' + $scope.to);
-
-        var numberOfHoursInDay = (($scope.to-$scope.from)/1000)/60/60;
+    function getTicksForEveryHourInPeriod() {
+        var numberOfHoursInDay = (($scope.to - $scope.from) / 1000) / 60 / 60;
         $log.info('numberOfHoursInDay: ' + numberOfHoursInDay);
 
+        // Add one tick for every hour
         var tickValues = [];
-        for (var i=0; i<= numberOfHoursInDay; i++) {
+        for (var i = 0; i <= numberOfHoursInDay; i++) {
             var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
             tickValues.push(tickValue);
         }
+        return tickValues;
+    }
 
-        $http.get('rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + "/" + $scope.to.getTime() ).success(function(data) {
+    $scope.showGraph = function() {
+        var subPeriodLength = 5 * 60 * 1000;
+
+        $scope.to = new Date($scope.from);
+        $scope.to.setDate($scope.from.getDate() + 1);
+
+        var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + '/' + $scope.to.getTime() + '?subPeriodLength=' + subPeriodLength;
+        $log.info('URL: ' + graphDataUrl);
+
+        $http.get(graphDataUrl).success(function(data) {
             if (data) {
                 var length = data.length;
                 for (var i=0; i<length; i++) {
-                    data.push({datumtijd: data[i].datumtijd + 899999, opgenomenVermogenInWatt: data[i].opgenomenVermogenInWatt});
+                    var subPeriodEnd = data[i].datumtijd + (subPeriodLength - 1);
+                    data.push({datumtijd: subPeriodEnd, opgenomenVermogenInWatt: data[i].opgenomenVermogenInWatt});
                 }
             }
+
+            var tickValues = getTicksForEveryHourInPeriod();
 
             var graphConfig = {};
             graphConfig.bindto = '#chart';
@@ -151,7 +161,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
             graphConfig.axis = {};
-            graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:20}};
+            graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:10}};
             graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
 
             graphConfig.legend = {show: false};
@@ -163,6 +173,8 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
 
             $scope.chart = c3.generate(graphConfig);
+
+            $('.c3-area-opgenomenVermogenInWatt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
         });
     }
 });
