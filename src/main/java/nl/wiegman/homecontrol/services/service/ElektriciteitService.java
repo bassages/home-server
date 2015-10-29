@@ -60,19 +60,16 @@ public class ElektriciteitService {
 
         List<OpgenomenVermogen> result = new ArrayList<>();
 
-        long start = DateUtils.truncate(new Date(), Calendar.DATE).getTime();
-        long end = DateUtils.truncate(DateUtils.addDays(new Date(), 1), Calendar.DATE).getTime();
-
         List<OpgenomenVermogen> list = electriciteitStore.getAll()
                                             .stream()
-                                            .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
+                                            .filter(ov -> ov.getDatumtijd() >= from && ov.getDatumtijd() < to)
                                             .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
                                             .collect(Collectors.toList());
 
         long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
 
         for (int i=0; i<=nrOfSubPeriodsInPeriod; i++) {
-            long subStart = start + (i * subPeriodLength);
+            long subStart = from + (i * subPeriodLength);
             long subEnd = subStart + subPeriodLength;
 
             OpgenomenVermogen maximumOpgenomenVermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
@@ -95,5 +92,4 @@ public class ElektriciteitService {
                 .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
                 .orElse(null);
     }
-
 }
