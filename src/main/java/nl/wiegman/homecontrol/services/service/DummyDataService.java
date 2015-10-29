@@ -1,6 +1,10 @@
 package nl.wiegman.homecontrol.services.service;
 
 import io.swagger.annotations.Api;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,9 @@ import java.util.concurrent.*;
 public class DummyDataService {
 
     public static final String SERVICE_PATH = "dummydata";
+    public static final int INTERVAL_IN_SECONDS = 10;
+
+    private final Logger logger = LoggerFactory.getLogger(DummyDataService.class);
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -34,8 +41,9 @@ public class DummyDataService {
     @POST
     @Path("start")
     public void start() {
+        loadInitialData();
         if (scheduledFuture == null) {
-            scheduledFuture = scheduler.scheduleAtFixedRate(this::sendDummyData, 0, 10, TimeUnit.SECONDS);
+            scheduledFuture = scheduler.scheduleAtFixedRate(this::sendDummyData, 0, INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
@@ -48,15 +56,26 @@ public class DummyDataService {
         }
     }
 
-    private void sendDummyData() {
-        elektriciteitService.opslaanAfgenomenVermogen(ThreadLocalRandom.current().nextInt(50, 1000 + 1), System.currentTimeMillis());
+    private void loadInitialData() {
+        long before = Runtime.getRuntime().totalMemory();
+        logger.info("Memory usage before generating dummy data: " + FileUtils.byteCountToDisplaySize(before));
 
-//        if (oplopend) {
-//            opgenomenVermogen += 20;
-//            oplopend = opgenomenVermogen < 1400;
-//        } else {
-//            opgenomenVermogen -= 20;
-//            oplopend = opgenomenVermogen <= 0;
-//        }
+        long timestamp = System.currentTimeMillis();
+        for (int i=0; i<ElectriciteitStore.MAX_NR_OF_ITEMS; i++) {
+            elektriciteitService.opslaanAfgenomenVermogen(getDummyVermogenInWatt(), timestamp);
+            timestamp -= TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
+        }
+
+        long after = Runtime.getRuntime().totalMemory();
+        logger.info("Memory usage after generating dummy data: " + FileUtils.byteCountToDisplaySize(before));
+        logger.info("Memory usage difference: " + FileUtils.byteCountToDisplaySize(after-before));
+    }
+
+    private int getDummyVermogenInWatt() {
+        return ThreadLocalRandom.current().nextInt(50, 1000 + 1);
+    }
+
+    private void sendDummyData() {
+        elektriciteitService.opslaanAfgenomenVermogen(getDummyVermogenInWatt(), System.currentTimeMillis());
     }
 }

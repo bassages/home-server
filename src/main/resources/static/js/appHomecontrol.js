@@ -87,22 +87,32 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
     $scope.to = new Date($scope.from);
     $scope.to.setDate($scope.from.getDate() + 1);
 
-    $('.datepicker').datepicker({
+    var applyDatePickerUpdatesInAngularScope = false;
+    var theDatepicker = $('.datepicker');
+    theDatepicker.datepicker({
         autoclose: true,
         todayBtn: "linked",
         calendarWeeks: true,
         todayHighlight: true
-    }).on('changeDate', function(e) {
-        $scope.$apply(function() {
-            $scope.from = new Date(e.date);
-            $scope.showGraph();
-        });
     });
+    theDatepicker.on('changeDate', function(e) {
+        if (applyDatePickerUpdatesInAngularScope) {
+            $scope.$apply(function() {
+                $scope.from = new Date(e.date);
+                $scope.showGraph();
+            });
+        }
+        applyDatePickerUpdatesInAngularScope = true;
+    });
+    theDatepicker.datepicker('setDate', $scope.from);
 
     $scope.previousDay = function() {
         var previous = new Date($scope.from);
         previous.setDate($scope.from.getDate() - 1);
         $scope.from = previous;
+
+        applyDatePickerUpdatesInAngularScope = false;
+        theDatepicker.datepicker('setDate', $scope.from);
         $scope.showGraph();
     };
 
@@ -110,11 +120,13 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
         var next = new Date($scope.from);
         next.setDate($scope.from.getDate() + 1);
         $scope.from = next;
+
+        applyDatePickerUpdatesInAngularScope = false;
+        theDatepicker.datepicker('setDate', $scope.from);
         $scope.showGraph();
     };
 
     $scope.dateChanged = function() {
-        log.info("Date changed");
         $scope.showGraph();
     };
 
