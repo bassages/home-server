@@ -31,8 +31,7 @@ public class DummyDataService {
 
     private ScheduledFuture<?> scheduledFuture = null;
 
-    private boolean oplopend = true;
-    private int opgenomenVermogen = 0;
+    private int lastGenerated = 0;
 
     @Autowired
     private ElektriciteitService elektriciteitService;
@@ -72,7 +71,8 @@ public class DummyDataService {
     }
 
     private int getDummyVermogenInWatt() {
-        return ThreadLocalRandom.current().nextInt(50, 1000 + 1);
+        int max = ThreadLocalRandom.current().nextInt(50, 1000 + 1);
+        return ThreadLocalRandom.current().nextInt(50, max + 1);
     }
 
     private void sendDummyData() {
