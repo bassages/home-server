@@ -93,7 +93,8 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
         autoclose: true,
         todayBtn: "linked",
         calendarWeeks: true,
-        todayHighlight: true
+        todayHighlight: true,
+        endDate: "0d"
     });
     theDatepicker.on('changeDate', function(e) {
         if (applyDatePickerUpdatesInAngularScope) {
@@ -105,6 +106,18 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
         applyDatePickerUpdatesInAngularScope = true;
     });
     theDatepicker.datepicker('setDate', $scope.from);
+
+    $scope.isTodaySelected = function() {
+        var result = false;
+
+        var today = new Date();
+        today.setHours(0,0,0,0);
+
+        if ($scope.from) {
+            result = today.getTime() == $scope.from.getTime();
+        }
+        return result;
+    };
 
     $scope.previousDay = function() {
         var previous = new Date($scope.from);
