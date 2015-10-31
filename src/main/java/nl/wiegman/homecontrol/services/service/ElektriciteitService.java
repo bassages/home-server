@@ -2,22 +2,16 @@ package nl.wiegman.homecontrol.services.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
-import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,36 +25,18 @@ public class ElektriciteitService {
     private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
     @Inject
-    private ElectriciteitStore electriciteitStore;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    @ApiOperation(value = "Ontvangt het opgenomen vermogen op een bepaald moment")
-    @POST
-    @Path("opgenomenVermogen")
-    public void opslaanAfgenomenVermogen(@FormParam("vermogenInWatt") int vermogenInWatt,
-                                         @FormParam("datumtijd") @ApiParam(value = "Meetmoment in ISO8601 formaat") long datumtijd) {
-
-        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(datumtijd);
-        opgenomenVermogen.setOpgenomenVermogenInWatt(vermogenInWatt);
-
-        electriciteitStore.add(opgenomenVermogen);
-
-        eventPublisher.publishEvent(new UpdateEvent(opgenomenVermogen));
-    };
+    private MeterstandenStore meterstandenStore;
 
     @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
     @GET
     @Path("opgenomenVermogenHistorie/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<OpgenomenVermogen> getOpgenomenVermogenPerKwartier(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
-        logger.info("getOpgenomenVermogenPerKwartier() from=" +from + " to=" + to + " subPeriodLength=" + subPeriodLength);
+    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
+        logger.info("getOpgenomenVermogenHistory() from=" +from + " to=" + to + " subPeriodLength=" + subPeriodLength);
 
         List<OpgenomenVermogen> result = new ArrayList<>();
 
-        List<OpgenomenVermogen> list = electriciteitStore.getAll()
+        List<Meterstand> list = meterstandenStore.getAll()
                                             .stream()
                                             .filter(ov -> ov.getDatumtijd() >= from && ov.getDatumtijd() < to)
                                             .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
@@ -72,23 +48,21 @@ public class ElektriciteitService {
             long subStart = from + (i * subPeriodLength);
             long subEnd = subStart + subPeriodLength;
 
-            OpgenomenVermogen maximumOpgenomenVermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
-            if (maximumOpgenomenVermogenInPeriode != null) {
-                maximumOpgenomenVermogenInPeriode.setDatumtijd(subStart);
-                result.add(maximumOpgenomenVermogenInPeriode);
+            OpgenomenVermogen vermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
+            if (vermogenInPeriode != null) {
+                vermogenInPeriode.setDatumtijd(subStart);
+                result.add(vermogenInPeriode);
             } else {
-                OpgenomenVermogen onbekend = new OpgenomenVermogen();
-                onbekend.setDatumtijd(subStart);
-                onbekend.setOpgenomenVermogenInWatt(0);
-                result.add(onbekend);
+                result.add(new OpgenomenVermogen(subStart, 0));
             }
         }
         return result;
     }
 
-    private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<OpgenomenVermogen> list, long start, long end) {
+    private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {
         return list.stream()
                 .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
+                .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt()))
                 .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
                 .orElse(null);
     }

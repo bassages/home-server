@@ -49,7 +49,7 @@ module.controller('AfvalController', function ($scope, $http) {
     })
 });
 
-module.controller("OpgenomenVermogenController", function($scope, $timeout, RealTimeOpgenomenVermogenService) {
+module.controller("OpgenomenVermogenController", function($scope, $timeout, $http, RealTimeOpgenomenVermogenService) {
 
     // Turn off all leds
     for (i = 0; i < 10; i++) {
@@ -58,12 +58,21 @@ module.controller("OpgenomenVermogenController", function($scope, $timeout, Real
 
     $scope.huidigOpgenomenVermogen = '0';
 
+    $http.get('rest/meterstanden/laatste')
+        .success(function(data) {
+            updateOpgenomenVermogen(data);
+        }
+    );
+
     RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
-        var huidigOpgenomenVermogen = jsonData.opgenomenVermogenInWatt;
+        updateOpgenomenVermogen(jsonData);
+    });
+
+    function updateOpgenomenVermogen(data) {
+        var huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
         $scope.huidigOpgenomenVermogen = huidigOpgenomenVermogen;
 
         var step = 150;
-
         $scope.led0 = huidigOpgenomenVermogen > 0;
         $scope.led1 = huidigOpgenomenVermogen >= (1 * step);
         $scope.led2 = huidigOpgenomenVermogen >= (2 * step);
@@ -74,7 +83,7 @@ module.controller("OpgenomenVermogenController", function($scope, $timeout, Real
         $scope.led7 = huidigOpgenomenVermogen >= (7 * step);
         $scope.led8 = huidigOpgenomenVermogen >= (8 * step);
         $scope.led9 = huidigOpgenomenVermogen >= (9 * step);
-    });
+    }
 });
 
 module.controller("GrafiekController", function ($scope, $timeout, $http, $log) {
@@ -157,7 +166,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
     }
 
     function setDataColor() {
-        $('.c3-area-opgenomenVermogenInWatt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
+        $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
     }
 
     $scope.showGraph = function() {
@@ -173,8 +182,8 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             if (data) {
                 var length = data.length;
                 for (var i=0; i<length; i++) {
-                    var subPeriodEnd = data[i].datumtijd + (subPeriodLength - 1);
-                    data.push({datumtijd: subPeriodEnd, opgenomenVermogenInWatt: data[i].opgenomenVermogenInWatt});
+                    var subPeriodEnd = data[i].dt + (subPeriodLength - 1);
+                    data.push({dt: subPeriodEnd, watt: data[i].watt});
                 }
             }
 
@@ -184,9 +193,9 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.bindto = '#chart';
             graphConfig.onresized = setDataColor;
             graphConfig.data = {};
-            graphConfig.data.keys = {x: "datumtijd", value: ["opgenomenVermogenInWatt"]};
+            graphConfig.data.keys = {x: "dt", value: ["watt"]};
             graphConfig.data.json = data;
-            graphConfig.data.types={"opgenomenVermogenInWatt": "area"};
+            graphConfig.data.types={"watt": "area"};
             graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
             graphConfig.axis = {};

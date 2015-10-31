@@ -17,6 +17,6 @@ do
         WATT=$(($WATT - 20))
     fi
 
-    curl -X POST --header "Content-Type: application/x-www-form-urlencoded" --header "Accept: application/json" -d "vermogenInWatt=$WATT&datumtijd=$DATE" "http://localhost:8080/homecontrol/rest/elektriciteit/opgenomenVermogen"
+    curl -X POST --header "Content-Type: application/x-www-form-urlencoded" --header "Accept: application/json" -d "vermogenInWatt=$WATT&dt=$DATE" "http://localhost:8080/homecontrol/rest/elektriciteit/opgenomenVermogen"
     DATE=$(($DATE + 900000))
 done
