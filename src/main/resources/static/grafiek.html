@@ -1,20 +1,28 @@
-<div ng-controller="GrafiekController" ng-init="showGraph()" ng-cloak>
-    <form class="form-inline">
-        <div class="form-group">
-            <div class="input-group date-selector">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="previousDay()"><i class="fa fa-angle-left"></i></button>
-                </span>
-
-                <input class="form-control datepicker" style="text-align: center;" formatteddate ng-model="from" ng-readonly="true" data-provide="datepicker" data-date-language="nl" data-date-format="dd-mm-yyyy" />
-
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-disabled="isTodaySelected()" ng-class="{'disabled': isTodaySelected()}" ng-click="nextDay()"><i class="fa fa-angle-right"></i></button>
-                </span>
-            </div>
+<nav class="navbar navbar-default" ng-controller="GrafiekController" ng-init="showGraph()" ng-cloak>
+    <div class="container-fluid">
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
+                <li><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
+                <li><a href="/homecontrol/#/grafiek/stroom/week">Week</a></li>
+                <li><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
+                <li><a href="/homecontrol/#/grafiek/stroom/jaar">Jaar</a></li>
+            </ul>
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <div class="input-group date-selector">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="previousDay()"><i class="fa fa-angle-left"></i></button>
+                        </span>
+                        <input class="form-control datepicker" style="text-align: center;" formatteddate ng-model="from" ng-readonly="true" data-provide="datepicker" data-date-language="nl" data-date-format="dd-mm-yyyy" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-disabled="isTodaySelected()" ng-class="{'disabled': isTodaySelected()}" ng-click="nextDay()"><i class="fa fa-angle-right"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
+</nav>
 
-    <div id="chart"></div>
-</div>
-
+<div id="chart"></div>

@@ -3,13 +3,11 @@ var module = angular.module('appHomecontrol', ['ngRoute', 'ngAnimate']);
 module.config(function($routeProvider) {
     $routeProvider
 
-    // route for the home page
     .when('/', {
         templateUrl : 'dashboard.html'
     })
 
-    // route for the about page
-    .when('/grafieken/:type', {
+    .when('/grafiek/:type/:periode', {
         templateUrl : 'grafiek.html'
     });
 });
