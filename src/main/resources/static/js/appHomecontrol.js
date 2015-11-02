@@ -1,18 +1,25 @@
-var module = angular.module('appHomecontrol', ['ngRoute', 'ngAnimate']);
+'use strict';
 
-module.config(function($routeProvider) {
-    $routeProvider
+// Declare app level module which depends on views, and components
+var app = angular.module('appHomecontrol', [
+    'ngRoute',
+    'appHomecontrol.afvalController',
+    'appHomecontrol.opgenomenVermogenService',
+    'appHomecontrol.opgenomenVermogenController'
+]).
+config(['$routeProvider', function($routeProvider) {
+        $routeProvider.when('/grafiek/:type/:periode', {
+            templateUrl : 'grafiek.html'
+        });
 
-    .when('/', {
-        templateUrl : 'dashboard.html'
-    })
+        $routeProvider.when('/', {
+            templateUrl : 'dashboard.html'
+        });
 
-    .when('/grafiek/:type/:periode', {
-        templateUrl : 'grafiek.html'
-    });
-});
+        $routeProvider.otherwise({redirectTo: 'dashboard.html'});
+}]);
 
-module.directive('formatteddate', function() {
+app.directive('formatteddate', function() {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -29,64 +36,11 @@ module.directive('formatteddate', function() {
     };
 });
 
-module.controller('AfvalController', function ($scope, $http) {
-    $http.get('rest/afvalinzameling/volgende/').success(function(data) {
-        if (data) {
-            var afvaltypes = [];
-            for (var i=0; i<data.afvalTypes.length; i++) {
-                afvaltypes.push({
-                    'type': data.afvalTypes[i],
-                    'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
-            }
-            $scope.afvalinzamelingdatum = formatDateWithdayname(new Date(data.datum));
-            $scope.separator = ": ";
-            $scope.afvaltypes = afvaltypes;
-        } else {
-            $scope.separator = "Kon niet worden bepaald door een technische fout";
-        }
-    })
-});
-
-module.controller("OpgenomenVermogenController", function($scope, $timeout, $http, RealTimeOpgenomenVermogenService) {
-
-    // Turn off all leds
-    for (i = 0; i < 10; i++) {
-        $scope['led'+i] = false;
-    }
-
-    $scope.huidigOpgenomenVermogen = '0';
-
-    $http.get('rest/meterstanden/laatste')
-        .success(function(data) {
-            updateOpgenomenVermogen(data);
-        }
-    );
-
-    RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
-        updateOpgenomenVermogen(jsonData);
-    });
-
-    function updateOpgenomenVermogen(data) {
-        var huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
-        $scope.huidigOpgenomenVermogen = huidigOpgenomenVermogen;
-
-        var step = 150;
-        $scope.led0 = huidigOpgenomenVermogen > 0;
-        $scope.led1 = huidigOpgenomenVermogen >= (1 * step);
-        $scope.led2 = huidigOpgenomenVermogen >= (2 * step);
-        $scope.led3 = huidigOpgenomenVermogen >= (3 * step);
-        $scope.led4 = huidigOpgenomenVermogen >= (4 * step);
-        $scope.led5 = huidigOpgenomenVermogen >= (5 * step);
-        $scope.led6 = huidigOpgenomenVermogen >= (6 * step);
-        $scope.led7 = huidigOpgenomenVermogen >= (7 * step);
-        $scope.led8 = huidigOpgenomenVermogen >= (8 * step);
-        $scope.led9 = huidigOpgenomenVermogen >= (9 * step);
-    }
-});
-
-module.controller("GrafiekController", function ($scope, $timeout, $http, $log) {
+app.controller("DagGrafiekController", function ($scope, $timeout, $http, $log, $routeParams) {
     $scope.chart = null;
     $scope.config={};
+
+    $log.debug($routeParams.type, $routeParams.periode);
 
     // By default, today is selected
     $scope.from = new Date();
@@ -164,6 +118,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
     }
 
     function setDataColor() {
+        // Dirty fix to set opacity...
         $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
     }
 
@@ -193,7 +148,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.data = {};
             graphConfig.data.keys = {x: "dt", value: ["watt"]};
             graphConfig.data.json = data;
-            graphConfig.data.types={"watt": "area"};
+            graphConfig.data.types= {"watt": "area"};
             graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
 
             graphConfig.axis = {};
@@ -206,7 +161,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
             graphConfig.transition = { duration: 0};
             graphConfig.grid = {y: {show: true}};
             graphConfig.tooltip = {show: false};
-            graphConfig.padding = {top: 0, right: 50, bottom: 40, left: 50};
+            graphConfig.padding = {top: 0, right: 5, bottom: 40, left: 50};
 
             $scope.chart = c3.generate(graphConfig);
 
@@ -215,78 +170,7 @@ module.controller("GrafiekController", function ($scope, $timeout, $http, $log) 
     }
 });
 
-module.service("RealTimeOpgenomenVermogenService", function($q, $timeout, $log) {
-    var service = {};
-    var listener = $q.defer();
-    var socket = {
-        client: null,
-        stomp: null
-    };
-
-    service.RECONNECT_TIMEOUT = 10000;
-    service.SOCKET_URL = "/homecontrol/ws/elektra";
-    service.UPDATE_TOPIC = "/topic/elektriciteit/opgenomenVermogen";
-
-    service.receive = function() {
-        return listener.promise;
-    };
-
-    var reconnect = function() {
-        $log.info("Trying to reconnect in " + service.RECONNECT_TIMEOUT + " ms.");
-        $timeout(connect, service.RECONNECT_TIMEOUT);
-    };
-
-    var startListener = function() {
-        socket.stomp.subscribe(service.UPDATE_TOPIC, function(data) {
-            listener.notify(JSON.parse(data.body));
-        });
-    };
-
-    var connect = function() {
-        socket.client = new SockJS(service.SOCKET_URL);
-        socket.stomp = Stomp.over(socket.client);
-        socket.stomp.connect({}, startListener);
-
-        socket.client.onclose = function() {
-            reconnect();
-        };
-    };
-
-    connect();
-    return service;
-});
-
-// Returns a formatted date. Example: zondag 21-10-2015
-function formatDateWithdayname(dateToFormat) {
-    return weekday[dateToFormat.getDay()] + " " + pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
-}
-
 // Returns a formatted date. Example: 21-10-2015
 function formatDate(dateToFormat) {
     return pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
 }
-
-function getAfvalIconTitel(afvalcode) {
-    if (afvalcode == "REST") {
-        return "Grijze container";
-    } else if (afvalcode == "GFT") {
-        return "Groene container";
-    } else if (afvalcode == "SALLCON") {
-        return "Papier, glas";
-    } else if (afvalcode == "PLASTIC") {
-        return "Oranje container (PMD)";
-    }
-}
-
-function pad2(number) {
-    return (number < 10 ? '0' : '') + number;
-}
-
-var weekday = new Array(7);
-weekday[0]=  "zondag";
-weekday[1] = "maandag";
-weekday[2] = "dinsdag";
-weekday[3] = "woensdag";
-weekday[4] = "donderdag";
-weekday[5] = "vrijdag";
-weekday[6] = "zaterdag";
