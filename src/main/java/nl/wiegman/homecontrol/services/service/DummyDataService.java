@@ -26,7 +26,9 @@ public class DummyDataService {
 
     private ScheduledFuture<?> scheduledFuture = null;
 
-    private int lastGenerated = 50;
+    private int lastGeneratedOpgenomenVermogen = 50;
+    private int lastGeneratedStroomTarief1 = 0;
+    private int lastGeneratedStroomTarief2 = 0;
 
     @Autowired
     private MeterstandService meterstandService;
@@ -57,7 +59,7 @@ public class DummyDataService {
         long timestamp = System.currentTimeMillis() - (TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS) * MeterstandenStore.MAX_NR_OF_ITEMS);
 
         for (int i=0; i< MeterstandenStore.MAX_NR_OF_ITEMS; i++) {
-            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), 0, 0, 0);
+            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), getStroomTarief1(), getStroomTarief2(), 0);
             timestamp += TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
         }
 
@@ -67,12 +69,22 @@ public class DummyDataService {
     }
 
     private int getDummyVermogenInWatt() {
-        int min = ThreadLocalRandom.current().nextInt(50, lastGenerated + 1);
-        int max = ThreadLocalRandom.current().nextInt(lastGenerated, 1200 + 1);
+        int min = ThreadLocalRandom.current().nextInt(50, lastGeneratedOpgenomenVermogen + 1);
+        int max = ThreadLocalRandom.current().nextInt(lastGeneratedOpgenomenVermogen, 1200 + 1);
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     private void storeDummyData() {
-        meterstandService.opslaanMeterstand(System.currentTimeMillis(), getDummyVermogenInWatt(), 0, 0, 0);
+        meterstandService.opslaanMeterstand(System.currentTimeMillis(), getDummyVermogenInWatt(), getStroomTarief1(), getStroomTarief2(), 0);
+    }
+
+    private int getStroomTarief2() {
+        lastGeneratedStroomTarief2 += 1;
+        return lastGeneratedStroomTarief2;
+    }
+
+    private int getStroomTarief1() {
+        lastGeneratedStroomTarief1 += 1;
+        return lastGeneratedStroomTarief1;
     }
 }

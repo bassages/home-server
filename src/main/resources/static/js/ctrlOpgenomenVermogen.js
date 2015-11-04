@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('appHomecontrol.opgenomenVermogenService', [])
+
     .service("RealTimeOpgenomenVermogenService", ['$q', '$timeout', '$log', function($q, $timeout, $log) {
         var service = {};
         var listener = $q.defer();
