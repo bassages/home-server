@@ -1,5 +1,9 @@
 'use strict';
 
+
+// TODO: https://github.com/eternicode/bootstrap-datepicker/issues/615
+
+
 angular.module('appHomecontrol.dagGrafiekController', [])
 
     .controller('DagGrafiekController', ['$scope', '$http', '$log', '$routeParams', function($scope, $http, $log, $routeParams) {
