@@ -6,11 +6,10 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         $scope.chart = null;
         $scope.config= {};
 
-        $log.debug($routeParams.type, $routeParams.periode);
-
         // By default, today is selected
         $scope.from = new Date();
         $scope.from.setHours(0,0,0,0);
+
         $scope.to = new Date($scope.from);
         $scope.to.setDate($scope.from.getDate() + 1);
 
@@ -21,7 +20,9 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             todayBtn: "linked",
             calendarWeeks: true,
             todayHighlight: true,
-            endDate: "0d"
+            endDate: "0d",
+            language:"nl",
+            format: "dd-mm-yyyy"
         });
         theDatepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
