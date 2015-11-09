@@ -20,7 +20,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.from = new Date($scope.to);
         $scope.from.setDate($scope.from.getDate() - 6);
 
-        var numberOfDaysInPeriod = (($scope.to.getTime() - $scope.from.getTime()) / 1000 / 60 / 60 / 24) + 1;
+        var numberOfDaysInPeriod = (($scope.to.getTime() - $scope.from.getTime()) / oneDay) + 1;
         $log.debug('Period: ' + $scope.from + ' - ' + $scope.to);
         $log.debug('numberOfDaysInPeriod: ' + numberOfDaysInPeriod);
 
@@ -38,7 +38,11 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         theDatepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
-                    $scope.from = new Date(e.date);
+                    $scope.to = new Date(e.date);
+                    var from = new Date($scope.to);
+                    from.setDate(from.getDate() - 6);
+                    $scope.from = from;
+                    $log.debug("changeDate() " + $scope.from + ' - ' + $scope.to);
                     $scope.showGraph();
                 });
             }
@@ -86,10 +90,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             $scope.showGraph();
         };
 
-        $scope.dateChanged = function() {
-            $scope.showGraph();
-        };
-
         function getTicksForEveryDayInPeriod() {
             // Add one tick for every day
             var tickValues = [];
@@ -125,60 +125,56 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         });
         d3.time.format = myFormatters.timeFormat;
 
-        $scope.showGraph = function() {
-
-            //var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + '/' + $scope.to.getTime() + '?subPeriodLength=' + subPeriodLength;
-            //$log.info('URL: ' + graphDataUrl);
-
-            //$http.get(graphDataUrl).success(function(data) {
-            //if (data) {
-            //    var length = data.length;
-            //    for (var i=0; i<length; i++) {
-            //        var subPeriodEnd = data[i].dt + (subPeriodLength - 1);
-            //        data.push({dt: subPeriodEnd, watt: data[i].watt});
-            //    }
-            //}
-
-            var tickValues = getTicksForEveryDayInPeriod();
-
-            var graphConfig = {};
-            graphConfig.bindto = '#chart';
-            graphConfig.onresized = setDataColor;
-            graphConfig.data = {};
-            graphConfig.data.keys = {x: "dt", value: ["kWh"]};
-
-            graphConfig.data.json = [];
-
+        function generateDummyData(graphConfig) {
             var dt = $scope.to.getTime();
-            for (var i=0; i<numberOfDaysInPeriod; i++) {
+            for (var i = 0; i < numberOfDaysInPeriod; i++) {
                 var date = new Date(dt);
                 $log.debug('Add value for ' + date);
                 graphConfig.data.json.push({dt: dt, kWh: date.getDate()});
                 dt = dt - oneDay;
             }
+            return dt;
+        }
 
-            graphConfig.data.types= {"kWh": "bar"};
-            graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
+        $scope.showGraph = function() {
 
-            var xMin = new Date($scope.from.getTime()) - halfDay;
-            var xMax = new Date($scope.to.getTime() + halfDay);
+            var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + $scope.from.getTime() + '/' + $scope.to.getTime();
+            $log.info('URL: ' + graphDataUrl);
 
-            graphConfig.axis = {};
-            graphConfig.axis.x = {type: "timeseries", tick: {format: "%a %d-%m", values: tickValues, centered: true, multiline: true, width: 35}, min: xMin, max: xMax, padding: {left: 0, right:10}};
-            graphConfig.axis.y = {label: {text: "kWh", position: "outer-middle"}};
+            $http.get(graphDataUrl).success(function(data) {
 
-            graphConfig.legend = {show: false};
-            graphConfig.bar = {width: {ratio: 0.8}};
-            graphConfig.point = { show: false};
-            graphConfig.transition = { duration: 0};
-            graphConfig.grid = {y: {show: true}};
-            graphConfig.tooltip = {show: false};
-            graphConfig.padding = {top: 0, right: 5, bottom: 40, left: 50};
-            graphConfig.interaction= {enabled: false};
+                $log.debug(data);
 
-            $scope.chart = c3.generate(graphConfig);
+                var tickValues = getTicksForEveryDayInPeriod();
 
-            setDataColor();
-            //});
+                var graphConfig = {};
+                graphConfig.bindto = '#chart';
+                graphConfig.onresized = setDataColor;
+                graphConfig.data = {};
+                graphConfig.data.keys = {x: "dt", value: ["kWh"]};
+                graphConfig.data.json = data;
+                graphConfig.data.types= {"kWh": "bar"};
+                graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
+
+                var xMin = new Date($scope.from.getTime()) - halfDay;
+                var xMax = new Date($scope.to.getTime() + halfDay);
+
+                graphConfig.axis = {};
+                graphConfig.axis.x = {type: "timeseries", tick: {format: "%a %d-%m", values: tickValues, centered: true, multiline: true, width: 35}, min: xMin, max: xMax, padding: {left: 0, right:10}};
+                graphConfig.axis.y = {label: {text: "kWh", position: "outer-middle"}};
+
+                graphConfig.legend = {show: false};
+                graphConfig.bar = {width: {ratio: 0.8}};
+                graphConfig.point = { show: false};
+                graphConfig.transition = { duration: 0};
+                graphConfig.grid = {y: {show: true}};
+                graphConfig.tooltip = {show: false};
+                graphConfig.padding = {top: 0, right: 5, bottom: 40, left: 50};
+                graphConfig.interaction= {enabled: false};
+
+                $scope.chart = c3.generate(graphConfig);
+
+                setDataColor();
+            });
         }
     }]);

@@ -1,8 +1,6 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
-import nl.wiegman.homecontrol.services.model.api.StroomMeterstand;
-import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;

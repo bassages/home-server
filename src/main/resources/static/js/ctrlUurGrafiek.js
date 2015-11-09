@@ -67,10 +67,6 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             $scope.showGraph();
         };
 
-        $scope.dateChanged = function() {
-            $scope.showGraph();
-        };
-
         function getTicksForEveryHourInPeriod() {
             var numberOfHoursInDay = (($scope.to - $scope.from) / 1000) / 60 / 60;
             $log.info('numberOfHoursInDay: ' + numberOfHoursInDay);
@@ -134,7 +130,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
                 graphConfig.grid = {y: {show: true}};
                 if (average > 0) {
-                    graphConfig.grid.y.lines = [{value: average, text: 'Gemiddelde'}];
+                    graphConfig.grid.y.lines = [{value: average, text: 'Gemiddelde', class: 'black'}];
                 }
 
                 graphConfig.tooltip = {show: false};

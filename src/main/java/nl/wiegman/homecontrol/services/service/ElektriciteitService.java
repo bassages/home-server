@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,71 @@ public class ElektriciteitService {
 
     @Inject
     private MeterstandenStore meterstandenStore;
+
+    @ApiOperation(value = "Geeft stroomverbruik per dag terug in de opgegeven periode")
+    @GET
+    @Path("verbruikPerDag/{van}/{totEnMet}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StroomVerbruikOpDag> getOpgenomenVermogenHistory(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
+        List<StroomVerbruikOpDag> result = new ArrayList<>();
+
+        List<Date> dagenInPeriode = getDagenInPeriode(van, totEnMet);
+        for (Date dag : dagenInPeriode) {
+            result.add(getStroomVerbruikOpDag(dag));
+        }
+        return result;
+    }
+
+    private StroomVerbruikOpDag getStroomVerbruikOpDag(Date dag) {
+        long van = dag.getTime();
+        long totEnMet = DateUtils.addDays(dag, 1).getTime() - 1;
+
+        List<Meterstand> meterstandenOpDag = meterstandenStore.getAll()
+                .stream()
+                .filter(ov -> ov.getDatumtijd() >= van && ov.getDatumtijd() <= totEnMet)
+                .collect(Collectors.toList());
+
+        Meterstand meterstandOpStartVanDag = meterstandenOpDag
+                .stream()
+                .max((ov1, ov2) -> Long.compare(ov2.getDatumtijd(), ov1.getDatumtijd()))
+                .orElse(null);
+
+        Meterstand meterstandOpEindVanDag = meterstandenOpDag
+                .stream()
+                .max((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
+                .orElse(null);
+
+        int verbruikInKwh = 0;
+        if (meterstandOpStartVanDag != null && meterstandOpEindVanDag != null) {
+            verbruikInKwh = (meterstandOpEindVanDag.getStroomTarief1() - meterstandOpStartVanDag.getStroomTarief1())
+                    + (meterstandOpEindVanDag.getStroomTarief2() - meterstandOpStartVanDag.getStroomTarief2());
+        }
+        StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
+        stroomVerbruikOpDag.setDt(dag.getTime());
+        stroomVerbruikOpDag.setkWh(verbruikInKwh);
+
+        return stroomVerbruikOpDag;
+    }
+
+    public List<Date> getDagenInPeriode(long van, long totEnMet) {
+        List<Date> dagenInPeriode = new ArrayList<>();
+
+        Date datumVan = DateUtils.truncate(new Date(van), Calendar.DATE);
+        Date datumTotEnMet = DateUtils.truncate(new Date(totEnMet), Calendar.DATE);
+
+        Date datum = datumVan;
+
+        while (true) {
+            dagenInPeriode.add(datum);
+
+            if (DateUtils.isSameDay(datum, datumTotEnMet)) {
+                break;
+            } else {
+                datum = DateUtils.addDays(datum, 1);
+            }
+        }
+        return  dagenInPeriode;
+    }
 
     @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
     @GET
