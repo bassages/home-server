@@ -86,7 +86,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         }
 
         $scope.showGraph = function() {
-            var subPeriodLength = 5 * 60 * 1000;
+            var subPeriodLength = 6 * 60 * 1000;
 
             $scope.to = new Date($scope.from);
             $scope.to.setDate($scope.from.getDate() + 1);
