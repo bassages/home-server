@@ -101,11 +101,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return tickValues;
         }
 
-        function setDataColor() {
-            // Dirty fix to set opacity...
-            $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
-        }
-
         // TODO: https://github.com/mbostock/d3/wiki/Localization#locale_timeFormat
         // TODO: http://stackoverflow.com/questions/24385582/localization-of-d3-js-d3-locale-example-of-usage
 
@@ -142,27 +137,21 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             $log.info('URL: ' + graphDataUrl);
 
             $http.get(graphDataUrl).success(function(data) {
-
-                $log.debug(data);
-
                 var tickValues = getTicksForEveryDayInPeriod();
+
+                var xMin = new Date($scope.from.getTime()) - halfDay;
+                var xMax = new Date($scope.to.getTime() + halfDay);
 
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
-                graphConfig.onresized = setDataColor;
                 graphConfig.data = {};
                 graphConfig.data.keys = {x: "dt", value: ["kWh"]};
                 graphConfig.data.json = data;
                 graphConfig.data.types= {"kWh": "bar"};
                 graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
-
-                var xMin = new Date($scope.from.getTime()) - halfDay;
-                var xMax = new Date($scope.to.getTime() + halfDay);
-
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%a %d-%m", values: tickValues, centered: true, multiline: true, width: 35}, min: xMin, max: xMax, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "kWh", position: "outer-middle"}};
-
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 0.8}};
                 graphConfig.point = { show: false};
@@ -173,8 +162,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 graphConfig.interaction= {enabled: false};
 
                 $scope.chart = c3.generate(graphConfig);
-
-                setDataColor();
             });
         }
     }]);

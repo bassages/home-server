@@ -45,6 +45,38 @@ public class ElektriciteitService {
         return result;
     }
 
+    @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
+    @GET
+    @Path("opgenomenVermogenHistorie/{from}/{to}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
+        logger.info("getOpgenomenVermogenHistory() from=" +from + " to=" + to + " subPeriodLength=" + subPeriodLength);
+
+        List<OpgenomenVermogen> result = new ArrayList<>();
+
+        List<Meterstand> list = meterstandenStore.getAll()
+                .stream()
+                .filter(ov -> ov.getDatumtijd() >= from && ov.getDatumtijd() < to)
+                .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
+                .collect(Collectors.toList());
+
+        long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
+
+        for (int i=0; i<=nrOfSubPeriodsInPeriod; i++) {
+            long subStart = from + (i * subPeriodLength);
+            long subEnd = subStart + subPeriodLength;
+
+            OpgenomenVermogen vermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
+            if (vermogenInPeriode != null) {
+                vermogenInPeriode.setDatumtijd(subStart);
+                result.add(vermogenInPeriode);
+            } else {
+                result.add(new OpgenomenVermogen(subStart, 0));
+            }
+        }
+        return result;
+    }
+
     private StroomVerbruikOpDag getStroomVerbruikOpDag(Date dag) {
         long van = dag.getTime();
         long totEnMet = DateUtils.addDays(dag, 1).getTime() - 1;
@@ -94,38 +126,6 @@ public class ElektriciteitService {
             }
         }
         return  dagenInPeriode;
-    }
-
-    @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
-    @GET
-    @Path("opgenomenVermogenHistorie/{from}/{to}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
-        logger.info("getOpgenomenVermogenHistory() from=" +from + " to=" + to + " subPeriodLength=" + subPeriodLength);
-
-        List<OpgenomenVermogen> result = new ArrayList<>();
-
-        List<Meterstand> list = meterstandenStore.getAll()
-                                            .stream()
-                                            .filter(ov -> ov.getDatumtijd() >= from && ov.getDatumtijd() < to)
-                                            .sorted((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
-                                            .collect(Collectors.toList());
-
-        long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
-
-        for (int i=0; i<=nrOfSubPeriodsInPeriod; i++) {
-            long subStart = from + (i * subPeriodLength);
-            long subEnd = subStart + subPeriodLength;
-
-            OpgenomenVermogen vermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
-            if (vermogenInPeriode != null) {
-                vermogenInPeriode.setDatumtijd(subStart);
-                result.add(vermogenInPeriode);
-            } else {
-                result.add(new OpgenomenVermogen(subStart, 0));
-            }
-        }
-        return result;
     }
 
     private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {

@@ -82,7 +82,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
         function setDataColor() {
             // Dirty fix to set opacity...
-            $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 0.8;');
+            $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 1;');
         }
 
         $scope.showGraph = function() {
@@ -118,21 +118,17 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 graphConfig.data.json = data;
                 graphConfig.data.types= {"watt": "area"};
                 graphConfig.data.empty = {label: {text: "Gegevens worden opgehaald..."}};
-
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Watt", position: "outer-middle"}};
-
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 1}};
                 graphConfig.point = {show: false};
                 graphConfig.transition = {duration: 0};
-
                 graphConfig.grid = {y: {show: true}};
                 if (average > 0) {
                     graphConfig.grid.y.lines = [{value: average, text: 'Gemiddelde', class: 'black'}];
                 }
-
                 graphConfig.tooltip = {show: false};
                 graphConfig.padding = {top: 0, right: 5, bottom: 40, left: 50};
 
