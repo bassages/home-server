@@ -1,12 +1,10 @@
 'use strict';
 
-
 // TODO: https://github.com/eternicode/bootstrap-datepicker/issues/615
-
 
 angular.module('appHomecontrol.dagGrafiekController', [])
 
-    .controller('DagGrafiekController', ['$scope', '$http', '$log', '$routeParams', function($scope, $http, $log, $routeParams) {
+    .controller('DagGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
@@ -62,27 +60,13 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return result;
         };
 
-        $scope.previousDay = function() {
-            var previousFrom = new Date($scope.from);
-            previousFrom.setDate($scope.from.getDate() - 1);
-            $scope.from = previousFrom;
-
-            var previousTo = new Date($scope.to);
-            previousTo.setDate($scope.to.getDate() - 1);
-            $scope.to = previousTo;
-
-            applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', $scope.to);
-            $scope.showGraph();
-        };
-
-        $scope.nextDay = function() {
+        $scope.navigateDay = function(numberOfDays) {
             var nextFrom = new Date($scope.from);
-            nextFrom.setDate($scope.from.getDate() + 1);
+            nextFrom.setDate($scope.from.getDate() + numberOfDays);
             $scope.from = nextFrom;
 
             var nextTo = new Date($scope.to);
-            nextTo.setDate($scope.to.getDate() + 1);
+            nextTo.setDate($scope.to.getDate() + numberOfDays);
             $scope.to = nextTo;
 
             applyDatePickerUpdatesInAngularScope = false;
@@ -100,9 +84,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             }
             return tickValues;
         }
-
-        // TODO: https://github.com/mbostock/d3/wiki/Localization#locale_timeFormat
-        // TODO: http://stackoverflow.com/questions/24385582/localization-of-d3-js-d3-locale-example-of-usage
 
         var myFormatters = d3.locale({
             "decimal": ",",

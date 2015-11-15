@@ -14,11 +14,11 @@
                 <div class="form-group">
                     <div class="input-group date-selector">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" ng-click="previousDay()"><i class="fa fa-angle-left"></i></button>
+                            <button class="btn btn-default" type="button" ng-click="navigateDay(-1)"><i class="fa fa-angle-left"></i></button>
                         </span>
                         <input class="form-control datepicker" style="text-align: center;" formatteddate ng-model="from" ng-readonly="true" data-provide="datepicker" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-disabled="isTodaySelected()" ng-class="{'disabled': isTodaySelected()}" ng-click="nextDay()"><i class="fa fa-angle-right"></i></button>
+                            <button type="button" class="btn btn-default" ng-disabled="isTodaySelected()" ng-class="{'disabled': isTodaySelected()}" ng-click="navigateDay(1)"><i class="fa fa-angle-right"></i></button>
                         </span>
                     </div>
                 </div>

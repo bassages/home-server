@@ -2,7 +2,7 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$http', '$log', '$routeParams', function($scope, $http, $log, $routeParams) {
+    .controller('UurGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
         $scope.chart = null;
         $scope.config= {};
 
@@ -47,19 +47,9 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return result;
         };
 
-        $scope.previousDay = function() {
-            var previous = new Date($scope.from);
-            previous.setDate($scope.from.getDate() - 1);
-            $scope.from = previous;
-
-            applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', $scope.from);
-            $scope.showGraph();
-        };
-
-        $scope.nextDay = function() {
+        $scope.navigateDay = function(numberOfDays) {
             var next = new Date($scope.from);
-            next.setDate($scope.from.getDate() + 1);
+            next.setDate($scope.from.getDate() + numberOfDays);
             $scope.from = next;
 
             applyDatePickerUpdatesInAngularScope = false;
@@ -76,6 +66,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             for (var i = 0; i <= numberOfHoursInDay; i++) {
                 var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
                 tickValues.push(tickValue);
+                $log.debug('Add tick for ' + new Date(tickValue));
             }
             return tickValues;
         }
