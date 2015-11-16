@@ -10,6 +10,9 @@ public class StroomVerbruikOpDag {
     @ApiModelProperty(required = true)
     private int kWh;
 
+    @ApiModelProperty(required = true)
+    private double euro;
+
     public long getDt() {
         return dt;
     }
@@ -24,5 +27,13 @@ public class StroomVerbruikOpDag {
 
     public void setkWh(int kWh) {
         this.kWh = kWh;
+    }
+
+    public double getEuro() {
+        return euro;
+    }
+
+    public void setEuro(double euro) {
+        this.euro = euro;
     }
 }

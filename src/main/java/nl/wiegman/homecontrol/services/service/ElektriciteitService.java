@@ -104,6 +104,7 @@ public class ElektriciteitService {
         StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
         stroomVerbruikOpDag.setDt(dag.getTime());
         stroomVerbruikOpDag.setkWh(verbruikInKwh);
+        stroomVerbruikOpDag.setEuro(verbruikInKwh * 0.2098);
 
         return stroomVerbruikOpDag;
     }

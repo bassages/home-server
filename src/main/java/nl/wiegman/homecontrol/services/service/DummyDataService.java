@@ -27,8 +27,8 @@ public class DummyDataService {
     private ScheduledFuture<?> scheduledFuture = null;
 
     private int lastGeneratedOpgenomenVermogen = 50;
-    private int lastGeneratedStroomTarief1 = 0;
-    private int lastGeneratedStroomTarief2 = 0;
+    private double lastGeneratedStroomTarief1 = 0.01d;
+    private double lastGeneratedStroomTarief2 = 0.01d;
 
     @Autowired
     private MeterstandService meterstandService;
@@ -79,12 +79,12 @@ public class DummyDataService {
     }
 
     private int getStroomTarief2() {
-        lastGeneratedStroomTarief2 += 1;
-        return lastGeneratedStroomTarief2;
+        lastGeneratedStroomTarief2 += 0.001d;
+        return (int)lastGeneratedStroomTarief2;
     }
 
     private int getStroomTarief1() {
-        lastGeneratedStroomTarief1 += 1;
-        return lastGeneratedStroomTarief1;
+        lastGeneratedStroomTarief1 += 0.001d;
+        return (int)lastGeneratedStroomTarief1;
     }
 }
