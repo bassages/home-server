@@ -13,10 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -81,7 +78,7 @@ public class ElektriciteitService {
         long van = dag.getTime();
         long totEnMet = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        List<Meterstand> meterstandenOpDag = meterstandenStore.getAll()
+        List<Meterstand> meterstandenOpDag = Collections.unmodifiableList(meterstandenStore.getAll())
                 .stream()
                 .filter(ov -> ov.getDatumtijd() >= van && ov.getDatumtijd() <= totEnMet)
                 .collect(Collectors.toList());

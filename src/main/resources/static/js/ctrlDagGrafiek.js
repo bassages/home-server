@@ -102,25 +102,10 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         d3.time.format = myFormatters.timeFormat;
         d3.format = myFormatters.numberFormat;
 
-        function generateDummyData(graphConfig) {
-            var dt = $scope.to.getTime();
-            for (var i = 0; i < numberOfDaysInPeriod; i++) {
-                var date = new Date(dt);
-                $log.debug('Add value for ' + date);
-                graphConfig.data.json.push({dt: dt, kWh: date.getDate()});
-                dt = dt - oneDay;
-            }
-            return dt;
-        }
-
         $scope.showGraph = function() {
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + $scope.from.getTime() + '/' + $scope.to.getTime();
             $log.info('URL: ' + graphDataUrl);
-
-
-            // TODO: http://jsfiddle.net/bt56r29q/440/
-            // https://github.com/masayuki0812/c3/issues/1306
 
             var total = 0;
             var average = 0;
@@ -162,7 +147,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 if (average > 0) {
                     graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
                 }
-
                 $scope.chart = c3.generate(graphConfig);
                 $scope.chart.hide(['euro']);
             });

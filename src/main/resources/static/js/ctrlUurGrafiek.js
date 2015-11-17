@@ -108,7 +108,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 graphConfig.data.types= {"watt": "area"};
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:10}};
-                graphConfig.axis.y = {label: {text: "Verbruik in watt", position: "outer-middle"}};
+                graphConfig.axis.y = {label: {text: "Opgenomen vermogen in watt", position: "outer-middle"}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 1}};
                 graphConfig.point = {show: false};

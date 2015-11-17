@@ -1,8 +1,16 @@
-<!-- See http://www.51north.nl/projects/proximity/enecoklik/ -->
+<nav class="navbar navbar-default navbar-fixed-top" ng-controller="UurGrafiekController" ng-init="showGraph()" ng-cloak>
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/">M.C. Escherweg 71</a>
+        </div>
 
-<nav class="navbar navbar-default" ng-controller="UurGrafiekController" ng-init="showGraph()" ng-cloak>
-    <div class="container-fluid">
-        <div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
                 <li><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
@@ -10,7 +18,7 @@
                 <li><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
                 <li><a href="/homecontrol/#/grafiek/stroom/jaar">Jaar</a></li>
             </ul>
-            <form class="navbar-form navbar-right" role="search">
+            <form class="navbar-form navbar-right">
                 <div class="form-group">
                     <div class="input-group date-selector">
                         <span class="input-group-btn">
@@ -27,4 +35,4 @@
     </div>
 </nav>
 
-<div id="chart" class="c3" style="max-height: 320px; position: relative;"></div>
+<div id="chart" class="c3"></div>
