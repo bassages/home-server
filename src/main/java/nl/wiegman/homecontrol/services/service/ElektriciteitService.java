@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
+import nl.wiegman.homecontrol.services.model.api.StroomVerbruikPerMaandInJaar;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @Api(value=ElektriciteitService.SERVICE_PATH, description="Onvangt en verspreid informatie over het elektriciteitsverbruik")
@@ -22,17 +24,64 @@ import java.util.stream.Collectors;
 public class ElektriciteitService {
 
     public static final String SERVICE_PATH = "elektriciteit";
+    public static final double STROOMKOSTEN_PER_KWH = 0.2098;
 
     private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
     @Inject
     private MeterstandenStore meterstandenStore;
 
+    @ApiOperation(value = "Geeft stroomverbruik per maand terug in het opgegeven jaar")
+    @GET
+    @Path("verbruikPerMaandInJaar/{jaar}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StroomVerbruikPerMaandInJaar> getVerbruikPerDag(@PathParam("jaar") int jaar) {
+        List<StroomVerbruikPerMaandInJaar> result = new ArrayList<>();
+
+        IntStream.rangeClosed(1, 12).forEach(
+            maand -> result.add(getStroomVerbruikInMaand(maand, jaar))
+        );
+        return result;
+    }
+
+    private StroomVerbruikPerMaandInJaar getStroomVerbruikInMaand(int maand, int jaar) {
+        Calendar start = Calendar.getInstance();
+        start.set(Calendar.MONTH, maand-1);
+        start.set(Calendar.YEAR, jaar);
+        start = DateUtils.truncate(start, Calendar.MONTH);
+        final long startMillis = start.getTimeInMillis();
+
+        Calendar end = (Calendar) start.clone();
+        end.add(Calendar.MONTH, 1);
+        end.add(Calendar.MILLISECOND, -1);
+        final long endMillis = end.getTimeInMillis();
+
+        Meterstand eersteMeterstandVanVanMaand = meterstandenStore.getAll()
+                .stream()
+                .filter(ov -> ov.getDatumtijd() >= startMillis && ov.getDatumtijd() <= endMillis)
+                .min((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
+                .orElse(null);
+
+        Meterstand laatsteMeterstandVanVanMaand = meterstandenStore.getAll()
+                .stream()
+                .filter(ov -> ov.getDatumtijd() >= startMillis && ov.getDatumtijd() <= endMillis)
+                .max((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
+                .orElse(null);
+
+        int verbruik = berekenVerbruik(eersteMeterstandVanVanMaand, laatsteMeterstandVanVanMaand);
+        StroomVerbruikPerMaandInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerMaandInJaar();
+        stroomVerbruikPerMaandInJaar.setEuro(verbruik * STROOMKOSTEN_PER_KWH);
+        stroomVerbruikPerMaandInJaar.setkWh(verbruik);
+        stroomVerbruikPerMaandInJaar.setMaand(maand);
+
+        return stroomVerbruikPerMaandInJaar;
+    }
+
     @ApiOperation(value = "Geeft stroomverbruik per dag terug in de opgegeven periode")
     @GET
     @Path("verbruikPerDag/{van}/{totEnMet}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StroomVerbruikOpDag> getOpgenomenVermogenHistory(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
+    public List<StroomVerbruikOpDag> getVerbruikPerDag(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
         List<StroomVerbruikOpDag> result = new ArrayList<>();
 
         List<Date> dagenInPeriode = getDagenInPeriode(van, totEnMet);
@@ -78,7 +127,7 @@ public class ElektriciteitService {
         long van = dag.getTime();
         long totEnMet = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        List<Meterstand> meterstandenOpDag = Collections.unmodifiableList(meterstandenStore.getAll())
+        List<Meterstand> meterstandenOpDag = meterstandenStore.getAll()
                 .stream()
                 .filter(ov -> ov.getDatumtijd() >= van && ov.getDatumtijd() <= totEnMet)
                 .collect(Collectors.toList());
@@ -93,17 +142,22 @@ public class ElektriciteitService {
                 .max((ov1, ov2) -> Long.compare(ov1.getDatumtijd(), ov2.getDatumtijd()))
                 .orElse(null);
 
-        int verbruikInKwh = 0;
-        if (meterstandOpStartVanDag != null && meterstandOpEindVanDag != null) {
-            verbruikInKwh = (meterstandOpEindVanDag.getStroomTarief1() - meterstandOpStartVanDag.getStroomTarief1())
-                    + (meterstandOpEindVanDag.getStroomTarief2() - meterstandOpStartVanDag.getStroomTarief2());
-        }
+        int verbruikInKwh = berekenVerbruik(meterstandOpStartVanDag, meterstandOpEindVanDag);
         StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
         stroomVerbruikOpDag.setDt(dag.getTime());
         stroomVerbruikOpDag.setkWh(verbruikInKwh);
-        stroomVerbruikOpDag.setEuro(verbruikInKwh * 0.2098);
+        stroomVerbruikOpDag.setEuro(verbruikInKwh * STROOMKOSTEN_PER_KWH);
 
         return stroomVerbruikOpDag;
+    }
+
+    private int berekenVerbruik(Meterstand meterstandStart, Meterstand meterstandEind) {
+        int verbruikInKwh = 0;
+        if (meterstandStart != null && meterstandEind != null) {
+            verbruikInKwh = (meterstandEind.getStroomTarief1() - meterstandStart.getStroomTarief1())
+                    + (meterstandEind.getStroomTarief2() - meterstandStart.getStroomTarief2());
+        }
+        return verbruikInKwh;
     }
 
     public List<Date> getDagenInPeriode(long van, long totEnMet) {

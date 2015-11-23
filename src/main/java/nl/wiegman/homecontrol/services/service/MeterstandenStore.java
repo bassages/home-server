@@ -3,6 +3,7 @@ package nl.wiegman.homecontrol.services.service;
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,6 @@ public class MeterstandenStore {
     }
 
     public List<Meterstand> getAll() {
-        return historie;
+        return Collections.unmodifiableList(historie);
     }
 }

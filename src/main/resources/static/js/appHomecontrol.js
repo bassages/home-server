@@ -7,6 +7,7 @@ var app = angular.module('appHomecontrol', [
     'appHomecontrol.opgenomenVermogenService',
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
+    'appHomecontrol.maandGrafiekController',
     'appHomecontrol.opgenomenVermogenController'
 ]).
 config(['$routeProvider', function($routeProvider) {
@@ -15,6 +16,9 @@ config(['$routeProvider', function($routeProvider) {
         });
         $routeProvider.when('/grafiek/:type/dag', {
             templateUrl : 'dagGrafiek.html'
+        });
+        $routeProvider.when('/grafiek/:type/maand', {
+            templateUrl : 'maandGrafiek.html'
         });
         $routeProvider.when('/', {
             templateUrl : 'dashboard.html'
