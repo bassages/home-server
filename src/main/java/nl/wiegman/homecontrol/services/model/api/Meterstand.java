@@ -1,6 +1,14 @@
 package nl.wiegman.homecontrol.services.model.api;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "meterstand")
 public class Meterstand {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     private long datumtijd;
 

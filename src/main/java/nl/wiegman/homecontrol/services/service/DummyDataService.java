@@ -1,10 +1,11 @@
 package nl.wiegman.homecontrol.services.service;
 
 import io.swagger.annotations.Api;
-import org.apache.commons.io.FileUtils;
+import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -27,8 +28,8 @@ public class DummyDataService {
     private ScheduledFuture<?> scheduledFuture = null;
 
     private int lastGeneratedOpgenomenVermogen = 50;
-    private double lastGeneratedStroomTarief1 = 0.01d;
-    private double lastGeneratedStroomTarief2 = 0.01d;
+    private double lastGeneratedStroomTarief1 = 100000d;
+    private double lastGeneratedStroomTarief2 = 100000d;
 
     @Autowired
     private MeterstandService meterstandService;
@@ -37,7 +38,6 @@ public class DummyDataService {
     @POST
     @Path("start")
     public void start() {
-        loadInitialData();
         if (scheduledFuture == null) {
             scheduledFuture = scheduler.scheduleAtFixedRate(this::storeDummyData, 0, INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
@@ -52,20 +52,24 @@ public class DummyDataService {
         }
     }
 
-    private void loadInitialData() {
-        long before = Runtime.getRuntime().totalMemory();
-        logger.info("Memory usage before generating dummy data: " + FileUtils.byteCountToDisplaySize(before));
+    @Async
+    public void generateHistoricData() {
 
-        long timestamp = System.currentTimeMillis() - (TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS) * MeterstandenStore.MAX_NR_OF_ITEMS);
-
-        for (int i=0; i< MeterstandenStore.MAX_NR_OF_ITEMS; i++) {
-            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), getStroomTarief1(), getStroomTarief2(), 0);
-            timestamp += TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
+        Meterstand mostRecent = null;
+        while(mostRecent == null) {
+            mostRecent = meterstandService.getMostRecent();
         }
 
-        long after = Runtime.getRuntime().totalMemory();
-        logger.info("Memory usage after generating dummy data: " + FileUtils.byteCountToDisplaySize(before));
-        logger.info("Memory usage difference: " + FileUtils.byteCountToDisplaySize(after-before));
+        int tarief1 = mostRecent.getStroomTarief1();
+        int tarief2 = mostRecent.getStroomTarief2();
+        long timestamp = mostRecent.getDatumtijd();
+
+        while (1==1) {
+            timestamp -= TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
+            tarief1 -= 0.02;
+            tarief2 -= 0.02;
+            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), tarief1, tarief2, 0);
+        }
     }
 
     private int getDummyVermogenInWatt() {
@@ -79,12 +83,12 @@ public class DummyDataService {
     }
 
     private int getStroomTarief2() {
-        lastGeneratedStroomTarief2 += 0.001d;
+        lastGeneratedStroomTarief2 += 0.02d;
         return (int)lastGeneratedStroomTarief2;
     }
 
     private int getStroomTarief1() {
-        lastGeneratedStroomTarief1 += 0.001d;
+        lastGeneratedStroomTarief1 += 0.02d;
         return (int)lastGeneratedStroomTarief1;
     }
 }

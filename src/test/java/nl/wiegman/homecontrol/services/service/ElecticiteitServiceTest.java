@@ -1,4 +1,4 @@
-package nl.wiegman.homecontrol.services.model.api;
+package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.service.ElektriciteitService;
 import org.junit.Test;

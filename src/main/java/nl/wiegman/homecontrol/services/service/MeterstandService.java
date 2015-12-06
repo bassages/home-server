@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
-import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Component
 @Api(value=MeterstandService.SERVICE_PATH, description="Onvangt en verspreid informatie over meterstanden")
@@ -26,7 +27,7 @@ public class MeterstandService {
     private final Logger logger = LoggerFactory.getLogger(MeterstandService.class);
 
     @Inject
-    private MeterstandenStore meterstandenStore;
+    private MeterstandenRepository meterstandRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -47,7 +48,8 @@ public class MeterstandService {
         meterstand.setStroomTarief1(stroomTarief1);
         meterstand.setStroomTarief2(stroomTarief2);
 
-        meterstandenStore.add(meterstand);
+        logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(datumtijd)));
+        meterstandRepository.save(meterstand);
 
         eventPublisher.publishEvent(new UpdateEvent(meterstand));
     };
@@ -56,12 +58,9 @@ public class MeterstandService {
     @GET
     @Path("laatste")
     @Produces(MediaType.APPLICATION_JSON)
-    public Meterstand getLaatste() {
-        logger.info("getLaatste()");
-
-        return meterstandenStore.getAll().stream()
-                .max((m1, m2) -> Long.compare(m1.getDatumtijd(), m2.getDatumtijd()))
-                .orElse(null);
+    public Meterstand getMostRecent() {
+        logger.info("getMostRecent()");
+        return meterstandRepository.getMostRecentMeterstand();
     }
 
 }
