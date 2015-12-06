@@ -64,12 +64,12 @@ public class DummyDataService {
         int tarief2 = mostRecent.getStroomTarief2();
         long timestamp = mostRecent.getDatumtijd();
 
-        while (1==1) {
-            timestamp -= TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
-            tarief1 -= 0.02;
-            tarief2 -= 0.02;
-            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), tarief1, tarief2, 0);
-        }
+//        while (1==1) {
+//            timestamp -= TimeUnit.SECONDS.toMillis(INTERVAL_IN_SECONDS);
+//            tarief1 -= 0.02;
+//            tarief2 -= 0.02;
+//            meterstandService.opslaanMeterstand(timestamp, getDummyVermogenInWatt(), tarief1, tarief2, 0);
+//        }
     }
 
     private int getDummyVermogenInWatt() {
