@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
-@EnableCaching
-@EnableAsync
+//@EnableCaching
+//@EnableAsync
 public class HomeControlApplication {
 
     public static void main(String[] args) {
