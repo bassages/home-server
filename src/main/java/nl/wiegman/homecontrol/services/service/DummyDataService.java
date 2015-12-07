@@ -58,6 +58,11 @@ public class DummyDataService {
         Meterstand mostRecent = null;
         while(mostRecent == null) {
             mostRecent = meterstandService.getMostRecent();
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         int tarief1 = mostRecent.getStroomTarief1();
