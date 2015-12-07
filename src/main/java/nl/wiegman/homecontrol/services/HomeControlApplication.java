@@ -15,17 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
-//@EnableCaching
 @EnableAsync
 public class HomeControlApplication {
 
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(HomeControlApplication.class, args);
-    }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager();
     }
 
     @Bean

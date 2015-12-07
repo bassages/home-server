@@ -15,9 +15,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Component
 @Api(value=ElektriciteitService.SERVICE_PATH, description="Onvangt en verspreid informatie over het elektriciteitsverbruik")
@@ -100,7 +98,7 @@ public class ElektriciteitService {
         end.add(Calendar.MILLISECOND, -1);
         final long endMillis = end.getTimeInMillis();
 
-        final Integer verbruik = getVerbruikInPeriode(startMillis, endMillis);
+        final Integer verbruik = meterstandenRepository.getVerbruikInPeriod(startMillis, endMillis);
 
         StroomVerbruikPerMaandInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerMaandInJaar();
         stroomVerbruikPerMaandInJaar.setMaand(maand);
@@ -117,7 +115,7 @@ public class ElektriciteitService {
         long startMillis = dag.getTime();
         long endMillis = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        final Integer verbruik = getVerbruikInPeriode(startMillis, endMillis);
+        final Integer verbruik = meterstandenRepository.getVerbruikInPeriod(startMillis, endMillis);
 
         StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
         stroomVerbruikOpDag.setDt(dag.getTime());
@@ -127,16 +125,6 @@ public class ElektriciteitService {
         }
 
         return stroomVerbruikOpDag;
-    }
-
-    private Integer getVerbruikInPeriode(long startMillis, long endMillis) {
-        final Integer verbruik;
-        if (endMillis > System.currentTimeMillis()) {
-            verbruik = meterstandenRepository.getVerbruikInPeriodNonCacheable(startMillis, endMillis);
-        } else {
-            verbruik = meterstandenRepository.getVerbruikInPeriodCachable(startMillis, endMillis);
-        }
-        return verbruik;
     }
 
     protected List<Date> getDagenInPeriode(long van, long totEnMet) {

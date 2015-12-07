@@ -20,7 +20,7 @@ http://dashboard.monitor.us/
 https://blog.openshift.com/sharing-database-across-applications/
 
 Database op OpenShift vanaf localhost aan kunnen roepen:
-rhc port-forward -a homecontroldb
+rhc port-forward -a database
 
 Common RHC (Command Line Tool) Commands:
 https://developers.openshift.com/en/managing-common-rhc-commands.html

@@ -16,12 +16,8 @@ public interface MeterstandenRepository extends JpaRepository<Meterstand, Long> 
 
     String MOST_RECENT_METERSTAND = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MAX(datumtijd) FROM meterstand)";
 
-    @Cacheable("verbuik_in_period")
     @Query(value = VERBRUIK_IN_PERIOD_QUERY, nativeQuery = true)
-    Integer getVerbruikInPeriodCachable(@Param("from") long from, @Param("to") long to);
-
-    @Query(value = VERBRUIK_IN_PERIOD_QUERY, nativeQuery = true)
-    Integer getVerbruikInPeriodNonCacheable(@Param("from") long from, @Param("to") long to);
+    Integer getVerbruikInPeriod(@Param("from") long from, @Param("to") long to);
 
     @Query(value = MOST_RECENT_METERSTAND, nativeQuery = true)
     Meterstand getMostRecentMeterstand();
