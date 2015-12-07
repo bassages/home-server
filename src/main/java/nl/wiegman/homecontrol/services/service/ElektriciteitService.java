@@ -25,7 +25,7 @@ public class ElektriciteitService {
     public static final String SERVICE_PATH = "elektriciteit";
     public static final double STROOMKOSTEN_PER_KWH = 0.2098;
 
-    private final Logger logger = LoggerFactory.getLogger(CacheLoader.class);
+    private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
     @Inject
     private MeterstandenRepository meterstandenRepository;
