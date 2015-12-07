@@ -27,7 +27,7 @@ public class MeterstandService {
     private final Logger logger = LoggerFactory.getLogger(MeterstandService.class);
 
     @Inject
-    private MeterstandenRepository meterstandRepository;
+    private MeterstandRepository meterstandRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -56,11 +56,19 @@ public class MeterstandService {
 
     @ApiOperation(value = "Geeft het meest recente opgenomen vermogen terug")
     @GET
-    @Path("laatste")
+    @Path("meestrecente")
     @Produces(MediaType.APPLICATION_JSON)
     public Meterstand getMostRecent() {
         logger.info("getMostRecent()");
         return meterstandRepository.getMostRecentMeterstand();
     }
 
+    @ApiOperation(value = "Geeft het meest recente opgenomen vermogen terug")
+    @GET
+    @Path("oudste")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Meterstand getOldest() {
+        logger.info("getOldest()");
+        return meterstandRepository.getOldestMeterstand();
+    }
 }

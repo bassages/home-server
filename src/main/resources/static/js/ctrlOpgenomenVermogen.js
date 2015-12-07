@@ -53,7 +53,7 @@ angular.module('appHomecontrol.opgenomenVermogenController', [])
 
         $scope.huidigOpgenomenVermogen = '0';
 
-        $http.get('rest/meterstanden/laatste')
+        $http.get('rest/meterstanden/meestrecente')
             .success(function(data) {
                 updateOpgenomenVermogen(data);
             }

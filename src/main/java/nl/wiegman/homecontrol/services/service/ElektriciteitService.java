@@ -28,7 +28,7 @@ public class ElektriciteitService {
     private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
     @Inject
-    private MeterstandenRepository meterstandenRepository;
+    private MeterstandRepository meterstandRepository;
 
     @ApiOperation(value = "Geeft stroomverbruik per maand terug in het opgegeven jaar")
     @GET
@@ -65,7 +65,7 @@ public class ElektriciteitService {
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
         List<OpgenomenVermogen> result = new ArrayList<>();
 
-        List<Meterstand> list = meterstandenRepository.getMeterstanden(from, to);
+        List<Meterstand> list = meterstandRepository.getMeterstanden(from, to);
 
         long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
 
@@ -98,7 +98,7 @@ public class ElektriciteitService {
         end.add(Calendar.MILLISECOND, -1);
         final long endMillis = end.getTimeInMillis();
 
-        final Integer verbruik = meterstandenRepository.getVerbruikInPeriod(startMillis, endMillis);
+        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
 
         StroomVerbruikPerMaandInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerMaandInJaar();
         stroomVerbruikPerMaandInJaar.setMaand(maand);
@@ -115,7 +115,7 @@ public class ElektriciteitService {
         long startMillis = dag.getTime();
         long endMillis = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        final Integer verbruik = meterstandenRepository.getVerbruikInPeriod(startMillis, endMillis);
+        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
 
         StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
         stroomVerbruikOpDag.setDt(dag.getTime());
