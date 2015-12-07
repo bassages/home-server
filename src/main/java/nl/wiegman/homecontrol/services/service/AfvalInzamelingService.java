@@ -69,17 +69,17 @@ public class AfvalInzamelingService {
 
         AfvalInzameling volgendeInzameling = null;
 
-        Calendar calendar = getCalendar();
-        if (calendar != null) {
-            volgendeInzameling = new AfvalInzameling();
-
-            List<VEvent> firstEventsFromNow = getNextEvents(calendar);
-            volgendeInzameling.setAfvalTypes(new ArrayList<>());
-            for (VEvent event : firstEventsFromNow) {
-                volgendeInzameling.setDatum(event.getStartDate().getDate().getTime());
-                volgendeInzameling.getAfvalTypes().add(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
-            }
-        }
+//        Calendar calendar = getCalendar();
+//        if (calendar != null) {
+//            volgendeInzameling = new AfvalInzameling();
+//
+//            List<VEvent> firstEventsFromNow = getNextEvents(calendar);
+//            volgendeInzameling.setAfvalTypes(new ArrayList<>());
+//            for (VEvent event : firstEventsFromNow) {
+//                volgendeInzameling.setDatum(event.getStartDate().getDate().getTime());
+//                volgendeInzameling.getAfvalTypes().add(CALENDAR_TO_SERVICE_TYPE_MAP.get(event.getDescription().getValue()));
+//            }
+//        }
 
         logger.info("end ophalenVolgendeAfvalInzameling() result=" + ReflectionToStringBuilder.toString(volgendeInzameling));
         return volgendeInzameling;
