@@ -3,6 +3,8 @@
 angular.module('appHomecontrol.uurGrafiekController', [])
 
     .controller('UurGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+        $scope.loading = false;
+
         $scope.chart = null;
         $scope.config= {};
 
@@ -77,6 +79,8 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         }
 
         $scope.showGraph = function() {
+            $scope.loading = true;
+
             var subPeriodLength = 6 * 60 * 1000;
 
             $scope.to = new Date($scope.from);
@@ -88,7 +92,11 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             var total = 0;
             var average = 0;
 
-            $http.get(graphDataUrl).success(function(data) {
+            $http({
+                method: 'GET',
+                url: graphDataUrl
+            }).then(function successCallback(response) {
+
                 var tickValues = getTicksForEveryHourInPeriod();
 
                 var length = data.length;
@@ -123,7 +131,14 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 $scope.chart = c3.generate(graphConfig);
 
                 setDataColor();
+
+                $scope.loading = false;
+
+            }, function errorCallback(response) {
+
+                $scope.loading = false;
             });
+
         }
     }]);
 

@@ -3,6 +3,8 @@
 angular.module('appHomecontrol.maandGrafiekController', [])
 
     .controller('MaandGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+        $scope.loading = false;
+
         $scope.chart = null;
         $scope.config = {};
 
@@ -46,6 +48,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
         d3.format = myFormatters.numberFormat;
 
         $scope.showGraph = function() {
+            $scope.loading = true;
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.year;
             $log.info('URL: ' + graphDataUrl);
@@ -53,7 +56,10 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             var total = 0;
             var average = 0;
 
-            $http.get(graphDataUrl).success(function(data) {
+            $http({
+                method: 'GET',
+                url: graphDataUrl
+            }).then(function successCallback(response) {
                 var tickValues = getTicksForEveryMonthInYear();
 
                 var length = data.length;
@@ -89,6 +95,12 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 }
                 $scope.chart = c3.generate(graphConfig);
                 $scope.chart.hide(['euro']);
+                $scope.loading = false;
+
+            }, function errorCallback(response) {
+
+                $scope.loading = false;
             });
+
         }
     }]);

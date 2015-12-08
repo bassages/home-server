@@ -5,6 +5,8 @@
 angular.module('appHomecontrol.dagGrafiekController', [])
 
     .controller('DagGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+        $scope.loading = false;
+
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
@@ -103,6 +105,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         d3.format = myFormatters.numberFormat;
 
         $scope.showGraph = function() {
+            $scope.loading = true;
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + $scope.from.getTime() + '/' + $scope.to.getTime();
             $log.info('URL: ' + graphDataUrl);
@@ -110,7 +113,11 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             var total = 0;
             var average = 0;
 
-            $http.get(graphDataUrl).success(function(data) {
+            $http({
+                method: 'GET',
+                url: graphDataUrl
+            }).then(function successCallback(response) {
+
                 var tickValues = getTicksForEveryDayInPeriod();
 
                 var length = data.length;
@@ -149,6 +156,12 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 }
                 $scope.chart = c3.generate(graphConfig);
                 $scope.chart.hide(['euro']);
+
+                $scope.loading = false;
+
+            }, function errorCallback(response) {
+
+                $scope.loading = false;
             });
         }
     }]);

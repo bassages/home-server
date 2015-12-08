@@ -1,6 +1,8 @@
-package nl.wiegman.homecontrol.services.service;
+package nl.wiegman.homecontrol.services.service.datagenerator;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
+import nl.wiegman.homecontrol.services.service.MeterstandRepository;
+import nl.wiegman.homecontrol.services.service.MeterstandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import java.util.concurrent.*;
 
 @Component
 @Path(HistoricDataGeneratorService.SERVICE_PATH)
-public class HistoricDataGeneratorService {
+public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     private final Logger logger = LoggerFactory.getLogger(HistoricDataGeneratorService.class);
 
@@ -23,12 +25,8 @@ public class HistoricDataGeneratorService {
 
     public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 2;
 
-    public static final double STROOM_VERBRUIK_PER_INTERVAL = 0.001d;
-
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> historischeDataGenerator = null;
-
-    private int lastGeneratedOpgenomenVermogen = 50;
 
     private Double lastGeneratedStroomTarief1 = null;
     private Double lastGeneratedStroomTarief2 = null;
@@ -41,11 +39,11 @@ public class HistoricDataGeneratorService {
     private MeterstandRepository meterstandRepository;
 
     @PostConstruct
-    public void autoStart() {
+    public void init() {
         Meterstand oldest = meterstandService.getOldest();
         if (oldest == null) {
-            lastGeneratedStroomTarief1 = 100000d;
-            lastGeneratedStroomTarief2 = 100000d;
+            lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
+            lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
             lastGeneratedTimestamp = System.currentTimeMillis();
         } else {
             lastGeneratedStroomTarief1 = (double)oldest.getStroomTarief1();
@@ -59,7 +57,8 @@ public class HistoricDataGeneratorService {
     @Path("startGeneratingHistoricData")
     public void startGeneratingHistoricData() {
         if (historischeDataGenerator == null) {
-            historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, 0, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
+            long initialDelay = TimeUnit.SECONDS.toMillis(30); // Give some time to the application to start up
+            historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelay, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
@@ -72,14 +71,8 @@ public class HistoricDataGeneratorService {
         }
     }
 
-    private int getDummyVermogenInWatt() {
-        int min = ThreadLocalRandom.current().nextInt(50, lastGeneratedOpgenomenVermogen + 1);
-        int max = ThreadLocalRandom.current().nextInt(lastGeneratedOpgenomenVermogen, 1200 + 1);
-        return ThreadLocalRandom.current().nextInt(min, max + 1);
-    }
-
     private void generateHistoricData() {
-        lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(10);
+        lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
         lastGeneratedStroomTarief1 += STROOM_VERBRUIK_PER_INTERVAL;
         lastGeneratedStroomTarief2 += STROOM_VERBRUIK_PER_INTERVAL;
 

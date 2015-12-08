@@ -3,21 +3,21 @@
 angular.module('appHomecontrol.afvalController', [])
 
     .controller('AfvalController', ['$scope', '$http', function($scope, $http) {
-        $http.get('rest/afvalinzameling/volgende/').success(function(data) {
-            if (data) {
-                var afvaltypes = [];
-                for (var i=0; i<data.afvalTypes.length; i++) {
-                    afvaltypes.push({
-                        'type': data.afvalTypes[i],
-                        'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
-                }
-                $scope.afvalinzamelingdatum = formatDateWithdayname(new Date(data.datum));
-                $scope.separator = ": ";
-                $scope.afvaltypes = afvaltypes;
-            } else {
-                $scope.separator = "Kon niet worden bepaald door een technische fout";
-            }
-        })
+        //$http.get('rest/afvalinzameling/volgende/').success(function(data) {
+        //    if (data) {
+        //        var afvaltypes = [];
+        //        for (var i=0; i<data.afvalTypes.length; i++) {
+        //            afvaltypes.push({
+        //                'type': data.afvalTypes[i],
+        //                'omschrijving': getAfvalIconTitel(data.afvalTypes[i])});
+        //        }
+        //        $scope.afvalinzamelingdatum = formatDateWithdayname(new Date(data.datum));
+        //        $scope.separator = ": ";
+        //        $scope.afvaltypes = afvaltypes;
+        //    } else {
+        //        $scope.separator = "Kon niet worden bepaald door een technische fout";
+        //    }
+        //})
     }]);
 
 function getAfvalIconTitel(afvalcode) {
