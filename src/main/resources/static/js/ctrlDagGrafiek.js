@@ -117,7 +117,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 method: 'GET',
                 url: graphDataUrl
             }).then(function successCallback(response) {
-
+                var data = response.data;
                 var tickValues = getTicksForEveryDayInPeriod();
 
                 var length = data.length;

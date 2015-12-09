@@ -60,6 +60,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 method: 'GET',
                 url: graphDataUrl
             }).then(function successCallback(response) {
+                var data = response.data;
                 var tickValues = getTicksForEveryMonthInYear();
 
                 var length = data.length;

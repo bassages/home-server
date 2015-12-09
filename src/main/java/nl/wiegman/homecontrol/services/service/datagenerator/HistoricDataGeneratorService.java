@@ -72,18 +72,23 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     }
 
     private void generateHistoricData() {
-        lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
-        lastGeneratedStroomTarief1 += STROOM_VERBRUIK_PER_INTERVAL;
-        lastGeneratedStroomTarief2 += STROOM_VERBRUIK_PER_INTERVAL;
+        try {
+            lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
+            lastGeneratedStroomTarief1 += STROOM_VERBRUIK_PER_INTERVAL;
+            lastGeneratedStroomTarief2 += STROOM_VERBRUIK_PER_INTERVAL;
 
-        Meterstand meterstand = new Meterstand();
-        meterstand.setDatumtijd(lastGeneratedTimestamp);
-        meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-        meterstand.setGas(0);
-        meterstand.setStroomTarief1((int)lastGeneratedStroomTarief2.doubleValue());
-        meterstand.setStroomTarief2((int)lastGeneratedStroomTarief1.doubleValue());
+            Meterstand meterstand = new Meterstand();
+            meterstand.setDatumtijd(lastGeneratedTimestamp);
+            meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
+            meterstand.setGas(0);
+            meterstand.setStroomTarief1((int)lastGeneratedStroomTarief2.doubleValue());
+            meterstand.setStroomTarief2((int)lastGeneratedStroomTarief1.doubleValue());
 
-        logger.info("Add historic data for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(lastGeneratedTimestamp)));
-        meterstandRepository.save(meterstand);
+            logger.info("Add historic data for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(lastGeneratedTimestamp)));
+            meterstandRepository.save(meterstand);
+
+        } catch ( Throwable t ) {  // Catch Throwable rather than Exception (a subclass).
+            logger.error("Caught exception in ScheduledExecutorService.", t);
+        }
     }
 }

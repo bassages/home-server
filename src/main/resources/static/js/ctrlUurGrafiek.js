@@ -96,7 +96,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 method: 'GET',
                 url: graphDataUrl
             }).then(function successCallback(response) {
-
+                var data = response.data;
                 var tickValues = getTicksForEveryHourInPeriod();
 
                 var length = data.length;
