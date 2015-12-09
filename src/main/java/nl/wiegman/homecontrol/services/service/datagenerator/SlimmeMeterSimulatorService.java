@@ -46,7 +46,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     @Path("startSlimmeMeterSimulator")
     public void startSlimmeMeterSimulator() {
         if (slimmeMeterSimulator == null) {
-            long initialDelay = TimeUnit.SECONDS.toMillis(30); // Give some time to the application to start up
+            long initialDelay = 30; // Give some time to the application to start up
             slimmeMeterSimulator = slimmeMeterSimulatorScheduler.scheduleAtFixedRate(this::simulateUpdateFromSlimmeMeter, initialDelay, SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }

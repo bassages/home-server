@@ -57,7 +57,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     @Path("startGeneratingHistoricData")
     public void startGeneratingHistoricData() {
         if (historischeDataGenerator == null) {
-            long initialDelay = TimeUnit.SECONDS.toMillis(30); // Give some time to the application to start up
+            long initialDelay = 30; // Give some time to the application to start up
             historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelay, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
