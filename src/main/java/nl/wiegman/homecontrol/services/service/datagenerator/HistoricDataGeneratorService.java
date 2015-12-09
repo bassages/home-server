@@ -74,8 +74,8 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     private void generateHistoricData() {
         try {
             lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
-            lastGeneratedStroomTarief1 += STROOM_VERBRUIK_PER_INTERVAL;
-            lastGeneratedStroomTarief2 += STROOM_VERBRUIK_PER_INTERVAL;
+            lastGeneratedStroomTarief1 += getStroomInterval(lastGeneratedTimestamp);
+            lastGeneratedStroomTarief2 += getStroomInterval(lastGeneratedTimestamp);
 
             Meterstand meterstand = new Meterstand();
             meterstand.setDatumtijd(lastGeneratedTimestamp);

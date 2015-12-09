@@ -62,19 +62,20 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
 
     private void simulateUpdateFromSlimmeMeter() {
         try {
-            meterstandService.opslaanMeterstand(System.currentTimeMillis(), getDummyVermogenInWatt(), getStroomTarief1(), getStroomTarief2(), 0);
+            long datumtijd = System.currentTimeMillis();
+            meterstandService.opslaanMeterstand(datumtijd, getDummyVermogenInWatt(), getStroomTarief1(datumtijd), getStroomTarief2(datumtijd), 0);
         } catch ( Throwable t ) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }
     }
 
-    private int getStroomTarief2() {
-        lastGeneratedStroomTarief2 += STROOM_VERBRUIK_PER_INTERVAL;
+    private int getStroomTarief2(long datumtijd) {
+        lastGeneratedStroomTarief2 += getStroomInterval(datumtijd);
         return (int)lastGeneratedStroomTarief2.doubleValue();
     }
 
-    private int getStroomTarief1() {
-        lastGeneratedStroomTarief1 += STROOM_VERBRUIK_PER_INTERVAL;
+    private int getStroomTarief1(long datumtijd) {
+        lastGeneratedStroomTarief1 += getStroomInterval(datumtijd);
         return (int)lastGeneratedStroomTarief1.doubleValue();
     }
 }
