@@ -1,7 +1,5 @@
 package nl.wiegman.homecontrol.services.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
@@ -38,7 +36,6 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.*;
 
-@Api(value=AfvalInzamelingService.SERVICE_PATH, description="Geeft informatie over de afval inzameling")
 @Component
 @Path(AfvalInzamelingService.SERVICE_PATH)
 public class AfvalInzamelingService {
@@ -60,7 +57,6 @@ public class AfvalInzamelingService {
         CALENDAR_TO_SERVICE_TYPE_MAP.put("Inzameling Sallcon wordt opgehaald", AfvalInzameling.AfvalType.SALLCON);
     }
 
-    @ApiOperation(value = "Geeft de eerstvolgende afval inzameling(en) terug. Als er op de huidige datum inzameling(en) gepland zijn, dan worden deze terug gegeven.")
     @GET
     @Path("volgende")
     @Produces(MediaType.APPLICATION_JSON)

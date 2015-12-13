@@ -2,21 +2,26 @@
 
 angular.module('appHomecontrol.maandGrafiekController', [])
 
-    .controller('MaandGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+    .controller('MaandGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
-
         $scope.chart = null;
-        $scope.config = {};
+        $scope.selection = new Date();
+        $scope.period = 'MONTH';
 
-        $scope.year = (new Date()).getFullYear();
+        D3LocalizationService.localize();
 
-        $scope.isCurrentYearSelected = function() {
-            return (new Date()).getFullYear() == $scope.year;
+        $scope.isMaxSelected = function() {
+            return (new Date()).getFullYear() == $scope.selection;
         };
 
-        $scope.navigateYear = function(numberOfYears) {
-            $scope.year = $scope.year + numberOfYears;
+        $scope.navigate = function(numberOfYears) {
+            $scope.selection = new Date($scope.selection);
+            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfYears);
             $scope.showGraph();
+        };
+
+        $scope.getDateFormat = function(text) {
+            return 'yyyy';
         };
 
         function getTicksForEveryMonthInYear() {
@@ -29,28 +34,10 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return tickValues;
         }
 
-        var shortMonths = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
-        var myFormatters = d3.locale({
-            "decimal": ",",
-            "thousands": ".",
-            "grouping": [3],
-            "currency": ["€", ""],
-            "dateTime": "%a %b %e %X %Y",
-            "date": "%d-%m-%Y",
-            "time": "%H:%M:%S",
-            "periods": ["AM", "PM"],
-            "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
-            "shortDays": ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
-            "months": ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
-            "shortMonths": shortMonths
-        });
-        d3.time.format = myFormatters.timeFormat;
-        d3.format = myFormatters.numberFormat;
-
         $scope.showGraph = function() {
             $scope.loading = true;
 
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.year;
+            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
             $log.info('URL: ' + graphDataUrl);
 
             var total = 0;
@@ -80,7 +67,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 graphConfig.data.types = {'euro': 'bar'};
 
                 graphConfig.axis = {};
-                graphConfig.axis.x = {tick: {format: function (d) { return shortMonths[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
+                graphConfig.axis.x = {tick: {format: function (d) { return D3LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
                 graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
                 graphConfig.legend = {show: false};
@@ -96,12 +83,12 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 }
                 $scope.chart = c3.generate(graphConfig);
                 $scope.chart.hide(['euro']);
+
+                GrafiekWindowSizeService.manage($scope);
                 $scope.loading = false;
 
             }, function errorCallback(response) {
-
                 $scope.loading = false;
             });
-
         }
     }]);

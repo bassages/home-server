@@ -8,17 +8,22 @@ var app = angular.module('appHomecontrol', [
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
     'appHomecontrol.maandGrafiekController',
-    'appHomecontrol.opgenomenVermogenController'
+    'appHomecontrol.opgenomenVermogenController',
+    'appHomecontrol.d3LocalizationService',
+    'appHomecontrol.grafiekWindowSizeService'
 ]).
 config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/grafiek/:type/uur', {
-            templateUrl : 'uurGrafiek.html'
+            templateUrl : 'grafiek.html',
+            controller: 'UurGrafiekController'
         });
         $routeProvider.when('/grafiek/:type/dag', {
-            templateUrl : 'dagGrafiek.html'
+            templateUrl : 'grafiek.html',
+            controller: 'DagGrafiekController'
         });
         $routeProvider.when('/grafiek/:type/maand', {
-            templateUrl : 'maandGrafiek.html'
+            templateUrl : 'grafiek.html',
+            controller: 'MaandGrafiekController'
         });
         $routeProvider.when('/', {
             templateUrl : 'dashboard.html'
@@ -28,22 +33,17 @@ config(['$routeProvider', function($routeProvider) {
 
 app.directive('formatteddate', function() {
     return {
-        restrict: 'A',
+        restrict: 'A', // only matches attribute
         require: 'ngModel',
         link: function(scope, element, attr, ngModel) {
             function fromUser(text) {
                 return Date.parse(text);
             }
             function toUser(date) {
-                return formatDate(date);
+                return date.toString(scope.getDateFormat());
             }
             ngModel.$parsers.push(fromUser);
             ngModel.$formatters.push(toUser);
         }
     };
 });
-
-// Returns a formatted date. Example: 21-10-2015
-function formatDate(dateToFormat) {
-    return pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
-}

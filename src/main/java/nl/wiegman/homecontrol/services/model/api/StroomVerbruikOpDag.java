@@ -1,16 +1,11 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class StroomVerbruikOpDag {
 
-    @ApiModelProperty(required = true, value = "Datum uitgedrukt in het aantal miliseconden sinds de zogenaamde 'Epoch (1 januari 1970, 0:00 uur)", example = "1318388699000")
     private long dt;
 
-    @ApiModelProperty(required = true)
     private int kWh;
 
-    @ApiModelProperty(required = true)
     private double euro;
 
     public long getDt() {

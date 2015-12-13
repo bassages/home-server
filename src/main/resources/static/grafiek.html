@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" ng-controller="UurGrafiekController" ng-init="showGraph()" ng-cloak>
+<nav class="navbar navbar-default navbar-fixed-top" ng-init="showGraph()" ng-cloak>
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -12,11 +12,9 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
-                <li><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
-                <!--<li><a href="/homecontrol/#/grafiek/stroom/week">Week</a></li>-->
-                <li><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
-                <!--<li><a href="/homecontrol/#/grafiek/stroom/jaar">Jaar</a></li>-->
+                <li ng-class="{'active': period=='HOUR'}"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
+                <li ng-class="{'active': period=='DAY'}"><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
+                <li ng-class="{'active': period=='MONTH'}"><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <img ng-show="loading" src="images/spinner.gif" class="spinner">
@@ -24,11 +22,11 @@
                 <div class="form-group">
                     <div class="input-group date-selector">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" ng-click="navigateDay(-1)"><i class="fa fa-angle-left"></i></button>
+                            <button class="btn btn-default" type="button" ng-click="navigate(-1)"><i class="fa fa-angle-left"></i></button>
                         </span>
-                        <input class="form-control datepicker" style="text-align: center;" formatteddate ng-model="from" ng-readonly="true" data-provide="datepicker" />
+                        <input class="form-control datepicker" formatteddate style="text-align: center;" ng-model="selection" ng-readonly="true" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-disabled="isTodaySelected()" ng-class="{'disabled': isTodaySelected()}" ng-click="navigateDay(1)"><i class="fa fa-angle-right"></i></button>
+                            <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(1)"><i class="fa fa-angle-right"></i></button>
                         </span>
                     </div>
                 </div>

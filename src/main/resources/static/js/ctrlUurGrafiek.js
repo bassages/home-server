@@ -2,18 +2,13 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+    .controller('UurGrafiekController', ['$scope', '$http', '$log', 'GrafiekWindowSizeService', function($scope, $http, $log, GrafiekWindowSizeService) {
         $scope.loading = false;
-
-        $scope.chart = null;
-        $scope.config= {};
+        $scope.period = 'HOUR';
 
         // By default, today is selected
-        $scope.from = new Date();
-        $scope.from.setHours(0,0,0,0);
-
-        $scope.to = new Date($scope.from);
-        $scope.to.setDate($scope.from.getDate() + 1);
+        $scope.selection = new Date();
+        $scope.selection.setHours(0,0,0,0);
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -29,53 +24,52 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         theDatepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
-                    $scope.from = new Date(e.date);
+                    $scope.selection = new Date(e.date);
                     $scope.showGraph();
                 });
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-        theDatepicker.datepicker('setDate', $scope.from);
+        theDatepicker.datepicker('setDate', $scope.selection);
 
-        $scope.isTodaySelected = function() {
+        $scope.getDateFormat = function(text) {
+            return 'dd-MM-yyyy';
+        };
+
+        $scope.isMaxSelected = function() {
             var result = false;
 
             var today = new Date();
             today.setHours(0,0,0,0);
 
-            if ($scope.from) {
-                result = today.getTime() == $scope.from.getTime();
+            if ($scope.selection) {
+                result = today.getTime() == $scope.selection.getTime();
             }
             return result;
         };
 
-        $scope.navigateDay = function(numberOfDays) {
-            var next = new Date($scope.from);
-            next.setDate($scope.from.getDate() + numberOfDays);
-            $scope.from = next;
+        $scope.navigate = function(numberOfDays) {
+            var next = new Date($scope.selection);
+            next.setDate($scope.selection.getDate() + numberOfDays);
+            $scope.selection = next;
 
             applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', $scope.from);
+            theDatepicker.datepicker('setDate', $scope.selection);
             $scope.showGraph();
         };
 
-        function getTicksForEveryHourInPeriod() {
-            var numberOfHoursInDay = (($scope.to - $scope.from) / 1000) / 60 / 60;
+        function getTicksForEveryHourInPeriod(from, to) {
+            var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
             $log.info('numberOfHoursInDay: ' + numberOfHoursInDay);
 
             // Add one tick for every hour
             var tickValues = [];
             for (var i = 0; i <= numberOfHoursInDay; i++) {
-                var tickValue = $scope.from.getTime() + (i * 60 * 60 * 1000);
+                var tickValue = from.getTime() + (i * 60 * 60 * 1000);
                 tickValues.push(tickValue);
                 $log.debug('Add tick for ' + new Date(tickValue));
             }
             return tickValues;
-        }
-
-        function setDataColor() {
-            // Dirty fix to set opacity...
-            $('.c3-area-watt').attr('style', 'fill: rgb(31, 119, 180); opacity: 1;');
         }
 
         $scope.showGraph = function() {
@@ -83,10 +77,10 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
             var subPeriodLength = 6 * 60 * 1000;
 
-            $scope.to = new Date($scope.from);
-            $scope.to.setDate($scope.from.getDate() + 1);
+            var to = new Date($scope.selection);
+            to.setDate($scope.selection.getDate() + 1);
 
-            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.from.getTime() + '/' + $scope.to.getTime() + '?subPeriodLength=' + subPeriodLength;
+            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + to.getTime() + '?subPeriodLength=' + subPeriodLength;
             $log.info('URL: ' + graphDataUrl);
 
             var total = 0;
@@ -97,7 +91,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 url: graphDataUrl
             }).then(function successCallback(response) {
                 var data = response.data;
-                var tickValues = getTicksForEveryHourInPeriod();
+                var tickValues = getTicksForEveryHourInPeriod($scope.selection ,to);
 
                 var length = data.length;
                 for (var i=0; i<length; i++) {
@@ -109,13 +103,12 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
-                graphConfig.onresized = setDataColor;
                 graphConfig.data = {};
                 graphConfig.data.keys = {x: "dt", value: ["watt"]};
                 graphConfig.data.json = data;
                 graphConfig.data.types= {"watt": "area"};
                 graphConfig.axis = {};
-                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.from, max: $scope.to, padding: {left: 0, right:10}};
+                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.selection, max: to, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Opgenomen vermogen in watt", position: "outer-middle"}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 1}};
@@ -130,15 +123,12 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
                 $scope.chart = c3.generate(graphConfig);
 
-                setDataColor();
-
+                GrafiekWindowSizeService.manage($scope);
                 $scope.loading = false;
 
             }, function errorCallback(response) {
-
                 $scope.loading = false;
             });
-
         }
     }]);
 

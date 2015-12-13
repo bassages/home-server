@@ -1,15 +1,11 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class StroomVerbruikPerMaandInJaar {
 
     private int maand;
 
-    @ApiModelProperty(required = true)
     private int kWh = 0;
 
-    @ApiModelProperty(required = true)
     private double euro = 0;
 
     public int getMaand() {

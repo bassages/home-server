@@ -37,10 +37,6 @@ function formatDateWithdayname(dateToFormat) {
     return weekday[dateToFormat.getDay()] + " " + pad2(dateToFormat.getDate()) + "-" + pad2(dateToFormat.getMonth()+1) + "-" + pad2(dateToFormat.getFullYear());
 }
 
-function pad2(number) {
-    return (number < 10 ? '0' : '') + number;
-}
-
 var weekday = new Array(7);
 weekday[0]=  "zondag";
 weekday[1] = "maandag";

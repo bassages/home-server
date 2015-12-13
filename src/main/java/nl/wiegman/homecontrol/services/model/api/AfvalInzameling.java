@@ -1,7 +1,5 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.List;
 
 public class AfvalInzameling {
@@ -10,10 +8,8 @@ public class AfvalInzameling {
         GFT, REST, SALLCON, PLASTIC;
     }
 
-    @ApiModelProperty(required = true, value = "Datum uitgedrukt in het aantal miliseconden sinds de zogenaamde 'Epoch (1 januari 1970, 0:00 uur)", example = "1318388699000")
     private Long datum;
 
-    @ApiModelProperty(required = true)
     private List<AfvalType> afvalTypes;
 
     public Long getDatum() {

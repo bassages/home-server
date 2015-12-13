@@ -1,7 +1,5 @@
 package nl.wiegman.homecontrol.services.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
@@ -18,7 +16,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @Component
-@Api(value=ElektriciteitService.SERVICE_PATH, description="Onvangt en verspreid informatie over het elektriciteitsverbruik")
 @Path(ElektriciteitService.SERVICE_PATH)
 public class ElektriciteitService {
 
@@ -30,7 +27,6 @@ public class ElektriciteitService {
     @Inject
     private MeterstandRepository meterstandRepository;
 
-    @ApiOperation(value = "Geeft stroomverbruik per maand terug in het opgegeven jaar")
     @GET
     @Path("verbruikPerMaandInJaar/{jaar}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -43,7 +39,6 @@ public class ElektriciteitService {
         return result;
     }
 
-    @ApiOperation(value = "Geeft stroomverbruik per dag terug in de opgegeven periode")
     @GET
     @Path("verbruikPerDag/{van}/{totEnMet}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +53,6 @@ public class ElektriciteitService {
         return result;
     }
 
-    @ApiOperation(value = "Geeft de historie van opgenomen vermogens terug")
     @GET
     @Path("opgenomenVermogenHistorie/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
