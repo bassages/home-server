@@ -39,7 +39,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             lastGeneratedStroomTarief1 = (double)mostRecent.getStroomTarief1();
             lastGeneratedStroomTarief2 = (double)mostRecent.getStroomTarief2();
         }
-        startSlimmeMeterSimulator();
+//        startSlimmeMeterSimulator();
     }
 
     @POST

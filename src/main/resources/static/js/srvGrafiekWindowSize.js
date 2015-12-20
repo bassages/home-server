@@ -3,20 +3,32 @@
 angular.module('appHomecontrol.grafiekWindowSizeService', [])
 
     .service('GrafiekWindowSizeService', function() {
+        var MINIMUM_HEIGHT = 220;
+        var MAXIMUM_HEIGHT = 475;
 
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {
-            chart.resize({height: (window.innerHeight - 70)});
+            var height = window.innerHeight - 70;
+
+            if (height < MINIMUM_HEIGHT) {
+                height = MINIMUM_HEIGHT;
+            } else if (height > MAXIMUM_HEIGHT) {
+                height = MAXIMUM_HEIGHT;
+            }
+            chart.resize({height: height});
         }
 
-        this.manage = function(theScope) {
+        this.setGraphHeightMatchingWithAvailableWindowHeight = function(chart) {
+            setGraphHeightMatchingWithAvailableWindowHeight(chart);
+        };
 
+        this.manage = function(theScope) {
             $(window).on("resize.doResize", function () {
-                setGraphHeightMatchingWithAvailableWindowHeight(theScope.chart);
+                if (typeof theScope.chart !== 'undefined') {
+                    setGraphHeightMatchingWithAvailableWindowHeight(theScope.chart);
+                }
             });
-            theScope.$on("$destroy",function () {
+            theScope.$on("$destroy", function () {
                 $(window).off("resize.doResize"); //remove the handler added earlier
             });
-            // Set initial size
-            setGraphHeightMatchingWithAvailableWindowHeight(theScope.chart);
         };
     });

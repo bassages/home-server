@@ -48,9 +48,13 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return result;
         };
 
+        $scope.showNumberOfPeriodsSelector = function() {
+            return false;
+        };
+
         $scope.navigate = function(numberOfDays) {
             var next = new Date($scope.selection);
-            next.setDate($scope.selection.getDate() + numberOfDays);
+            next.setDate($scope.selection.getDate() + numberOfPeriods);
             $scope.selection = next;
 
             applyDatePickerUpdatesInAngularScope = false;
@@ -122,8 +126,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 }
 
                 $scope.chart = c3.generate(graphConfig);
-
-                GrafiekWindowSizeService.manage($scope);
+                GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
                 $scope.loading = false;
 
             }, function errorCallback(response) {

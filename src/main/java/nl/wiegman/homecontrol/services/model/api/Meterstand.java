@@ -3,7 +3,6 @@ package nl.wiegman.homecontrol.services.model.api;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "meterstand")
 public class Meterstand {
 
     @Id

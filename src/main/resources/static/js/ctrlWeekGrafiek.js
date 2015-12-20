@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('appHomecontrol.maandGrafiekController', [])
+angular.module('appHomecontrol.weekGrafiekController', [])
 
-    .controller('MaandGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
+    .controller('WeekGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
         $scope.chart = null;
         $scope.selection = new Date();
-        $scope.period = 'MONTH';
+        $scope.period = 'WEEK';
 
         D3LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
@@ -15,13 +15,9 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return (new Date()).getFullYear() == $scope.selection;
         };
 
-        $scope.showNumberOfPeriodsSelector = function() {
-            return false;
-        };
-
-        $scope.navigate = function(numberOfYears) {
+        $scope.navigate = function(numberOfWeeks) {
             $scope.selection = new Date($scope.selection);
-            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfYears);
+            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfWeeks);
             $scope.showGraph();
         };
 
@@ -29,9 +25,11 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return 'yyyy';
         };
 
-        function getTicksForEveryMonthInYear() {
+        function getTicksForEveryWeekInYear() {
+            new Date($scope.selection).week();
+
             var tickValues = [];
-            for (var i = 1; i <= 12; i++) {
+            for (var i = 1; i <= 53; i++) {
                 tickValues.push(i);
                 $log.info('Tick: ' + i);
             }
@@ -41,7 +39,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
         $scope.showGraph = function() {
             $scope.loading = true;
 
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
+            var graphDataUrl = 'rest/elektriciteit/verbruikPerWeekInJaar/' + $scope.selection.getFullYear();
             $log.info('URL: ' + graphDataUrl);
 
             var total = 0;
@@ -52,7 +50,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 url: graphDataUrl
             }).then(function successCallback(response) {
                 var data = response.data;
-                var tickValues = getTicksForEveryMonthInYear();
+                var tickValues = getTicksForEveryWeekInYear();
 
                 var length = data.length;
                 for (var i=0; i<length; i++) {
@@ -63,7 +61,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
                 graphConfig.data = {};
-                graphConfig.data.keys = {x: 'maand', value: ['kWh', 'euro']};
+                graphConfig.data.keys = {x: 'week', value: ['kWh', 'euro']};
                 graphConfig.data.axes = {'euro': 'y2'};
 
                 graphConfig.data.json = data;
@@ -71,13 +69,13 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 graphConfig.data.types = {'euro': 'bar'};
 
                 graphConfig.axis = {};
-                graphConfig.axis.x = {tick: {format: function (d) { return D3LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
-                graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
-                graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
+                graphConfig.axis.x = {tick: {format: '%U', values: tickValues, xcentered: true}, min: 0.5, max: 43.7, padding: {left: 0, right: 10}};
+                graphConfig.axis.y = {label: {text: 'Verbruik', position: 'outer-middle'}, tick: {format: function (d) { return d + ' kWh'; }}};
+                graphConfig.axis.y2 = {label: {text: 'Kosten', position: 'outer-middle'}, show: true, tick: {format: d3.format('$.2f')}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 0.8}};
-                graphConfig.point = { show: false};
-                graphConfig.transition = { duration: 0};
+                graphConfig.point = {show: false};
+                graphConfig.transition = {duration: 0};
                 graphConfig.grid = {y: {show: true}};
                 graphConfig.tooltip = {show: false};
                 graphConfig.padding = {top: 0, right: 70, bottom: 40, left: 70};

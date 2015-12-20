@@ -1,9 +1,6 @@
 package nl.wiegman.homecontrol.services.service;
 
-import nl.wiegman.homecontrol.services.model.api.Meterstand;
-import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
-import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
-import nl.wiegman.homecontrol.services.model.api.StroomVerbruikPerMaandInJaar;
+import nl.wiegman.homecontrol.services.model.api.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +32,19 @@ public class ElektriciteitService {
 
         IntStream.rangeClosed(1, 12).forEach(
             maand -> result.add(getStroomVerbruikInMaand(maand, jaar))
+        );
+        return result;
+    }
+
+    @GET
+    @Path("verbruikPerWeekInJaar/{jaar}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StroomVerbruikPerWeekInJaar> getVerbruikPerWeekInJaar(@PathParam("jaar") int jaar) {
+        List<StroomVerbruikPerWeekInJaar> result = new ArrayList<>();
+
+        int totalWeeksInYear = getTotalWeeksInYear(jaar);
+        IntStream.rangeClosed(1, 53).forEach(
+                maand -> result.add(getStroomVerbruikInWeek(maand, jaar))
         );
         return result;
     }
@@ -105,6 +115,33 @@ public class ElektriciteitService {
         return stroomVerbruikPerMaandInJaar;
     }
 
+    private StroomVerbruikPerWeekInJaar getStroomVerbruikInWeek(int week, int jaar) {
+        logger.info("get verbruik in week: " + week + "/" + jaar);
+
+//        Calendar start = Calendar.getInstance();
+//        start.set(Calendar.MONTH, maand-1);
+//        start.set(Calendar.YEAR, jaar);
+//        start = DateUtils.truncate(start, Calendar.MONTH);
+//        final long startMillis = start.getTimeInMillis();
+//
+//        Calendar end = (Calendar) start.clone();
+//        end.add(Calendar.MONTH, 1);
+//        end.add(Calendar.MILLISECOND, -1);
+//        final long endMillis = end.getTimeInMillis();
+//
+//        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
+
+        StroomVerbruikPerWeekInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerWeekInJaar();
+        stroomVerbruikPerMaandInJaar.setWeek(week);
+
+//        if (verbruik != null) {
+            stroomVerbruikPerMaandInJaar.setEuro(week * STROOMKOSTEN_PER_KWH);
+            stroomVerbruikPerMaandInJaar.setkWh(week);
+//        }
+
+        return stroomVerbruikPerMaandInJaar;
+    }
+
     private StroomVerbruikOpDag getStroomVerbruikOpDag(Date dag) {
         long startMillis = dag.getTime();
         long endMillis = DateUtils.addDays(dag, 1).getTime() - 1;
@@ -148,5 +185,13 @@ public class ElektriciteitService {
                 .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt()))
                 .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
                 .orElse(null);
+    }
+
+    private int getTotalWeeksInYear(int year) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.set(Calendar.YEAR, year);
+        mCalendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        mCalendar.set(Calendar.DAY_OF_MONTH, 31);
+        return mCalendar.get(Calendar.WEEK_OF_YEAR);
     }
 }

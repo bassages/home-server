@@ -7,20 +7,18 @@ angular.module('appHomecontrol.dagGrafiekController', [])
     .controller('DagGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
+
         $scope.period = 'DAY';
         $scope.loading = false;
 
         // By default, today is the last day in the graph
         $scope.selection = new Date();
         $scope.selection.setHours(0,0,0,0);
-        $scope.from = new Date($scope.selection);
-        $scope.from.setDate($scope.from.getDate() - 6);
 
         D3LocalizationService.localize();
+        GrafiekWindowSizeService.manage($scope);
 
-        var numberOfDaysInPeriod = (($scope.selection.getTime() - $scope.from.getTime()) / oneDay) + 1;
-        $log.debug('Period: ' + $scope.from + ' - ' + $scope.selection);
-        $log.debug('numberOfDaysInPeriod: ' + numberOfDaysInPeriod);
+        $scope.numberOfPeriods = 7;
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -37,10 +35,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
-                    var from = new Date($scope.selection);
-                    from.setDate(from.getDate() - 6);
-                    $scope.from = from;
-                    $log.debug("changeDate() " + $scope.from + ' - ' + $scope.selection);
+                    $log.debug("changeDate() selection: " + $scope.selection);
                     $scope.showGraph();
                 });
             }
@@ -65,24 +60,30 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         };
 
         $scope.navigate = function(numberOfDays) {
-            var nextFrom = new Date($scope.from);
-            nextFrom.setDate($scope.from.getDate() + numberOfDays);
-            $scope.from = nextFrom;
-
-            var nextTo = new Date($scope.selection);
-            nextTo.setDate($scope.selection.getDate() + numberOfDays);
-            $scope.selection = nextTo;
+            var selection = new Date($scope.selection);
+            selection.setDate($scope.selection.getDate() + numberOfPeriods);
+            $scope.selection = selection;
 
             applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', $scope.from);
+            theDatepicker.datepicker('setDate', selection);
             $scope.showGraph();
         };
 
+        $scope.showNumberOfPeriodsSelector = function() {
+            return true;
+        };
+
+        $scope.setNumberOfPeriods = function(numberOfPeriods) {
+            if ($scope.numberOfPeriods > 0) {
+                $scope.numberOfPeriods = $scope.numberOfPeriods + numberOfPeriods;
+                $scope.showGraph();
+            }
+        };
+
         function getTicksForEveryDayInPeriod() {
-            // Add one tick for every day
             var tickValues = [];
-            for (var i = 0; i < numberOfDaysInPeriod; i++) {
-                var tickValue = $scope.from.getTime() + (i * oneDay);
+            for (var i = 0; i <= ($scope.numberOfPeriods-1); i++) {
+                var tickValue = $scope.selection.getTime() - (i * oneDay);
                 tickValues.push(tickValue);
                 $log.debug('Add tick for ' + new Date(tickValue));
             }
@@ -92,7 +93,10 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.showGraph = function() {
             $scope.loading = true;
 
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + $scope.from.getTime() + '/' + $scope.selection.getTime();
+            var from = new Date($scope.selection);
+            from.setDate(from.getDate() - ($scope.numberOfPeriods-1));
+
+            var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + from.getTime() + '/' + $scope.selection.getTime();
             $log.info('URL: ' + graphDataUrl);
 
             var total = 0;
@@ -111,7 +115,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 }
                 average = total/length;
 
-                var xMin = new Date($scope.from.getTime()) - halfDay;
+                var xMin = new Date(from.getTime()) - halfDay;
                 var xMax = new Date($scope.selection.getTime() + halfDay);
 
                 var graphConfig = {};
@@ -141,8 +145,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 }
                 $scope.chart = c3.generate(graphConfig);
                 $scope.chart.hide(['euro']);
-
-                GrafiekWindowSizeService.manage($scope);
+                GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
                 $scope.loading = false;
 
             }, function errorCallback(response) {
@@ -150,4 +153,3 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             });
         }
     }]);
-
