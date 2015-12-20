@@ -74,7 +74,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         };
 
         $scope.setNumberOfPeriods = function(numberOfPeriods) {
-            if ($scope.numberOfPeriods > 0) {
+            if (($scope.numberOfPeriods + numberOfPeriods) >= 1) {
                 $scope.numberOfPeriods = $scope.numberOfPeriods + numberOfPeriods;
                 $scope.showGraph();
             }
