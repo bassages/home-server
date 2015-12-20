@@ -59,7 +59,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return result;
         };
 
-        $scope.navigate = function(numberOfDays) {
+        $scope.navigate = function(numberOfPeriods) {
             var selection = new Date($scope.selection);
             selection.setDate($scope.selection.getDate() + numberOfPeriods);
             $scope.selection = selection;

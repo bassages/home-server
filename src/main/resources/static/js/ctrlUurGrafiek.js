@@ -52,7 +52,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return false;
         };
 
-        $scope.navigate = function(numberOfDays) {
+        $scope.navigate = function(numberOfPeriods) {
             var next = new Date($scope.selection);
             next.setDate($scope.selection.getDate() + numberOfPeriods);
             $scope.selection = next;

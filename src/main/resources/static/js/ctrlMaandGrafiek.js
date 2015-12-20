@@ -19,9 +19,9 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return false;
         };
 
-        $scope.navigate = function(numberOfYears) {
+        $scope.navigate = function(numberOfPeriods) {
             $scope.selection = new Date($scope.selection);
-            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfYears);
+            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
             $scope.showGraph();
         };
 
