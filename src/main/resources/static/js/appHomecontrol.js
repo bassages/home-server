@@ -10,7 +10,7 @@ var app = angular.module('appHomecontrol', [
     'appHomecontrol.weekGrafiekController',
     'appHomecontrol.maandGrafiekController',
     'appHomecontrol.opgenomenVermogenController',
-    'appHomecontrol.d3LocalizationService',
+    'appHomecontrol.localizationService',
     'appHomecontrol.grafiekWindowSizeService'
 ]).
 config(['$routeProvider', function($routeProvider) {

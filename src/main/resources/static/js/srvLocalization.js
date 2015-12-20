@@ -1,13 +1,18 @@
 'use strict';
 
-angular.module('appHomecontrol.d3LocalizationService', [])
+angular.module('appHomecontrol.localizationService', [])
 
-    .service('D3LocalizationService', function() {
+    .service('LocalizationService', function() {
 
         var shortMonths = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+        var shortDays = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
         this.getShortMonths = function() {
             return shortMonths;
+        };
+
+        this.getShortDays = function() {
+            return shortDays;
         };
 
         this.localize = function() {
@@ -21,7 +26,7 @@ angular.module('appHomecontrol.d3LocalizationService', [])
                 "time": "%H:%M:%S",
                 "periods": ["AM", "PM"],
                 "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
-                "shortDays": ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
+                "shortDays": shortDays,
                 "months": ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
                 "shortMonths": shortMonths
             });

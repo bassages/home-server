@@ -2,13 +2,13 @@
 
 angular.module('appHomecontrol.weekGrafiekController', [])
 
-    .controller('WeekGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
+    .controller('WeekGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
         $scope.chart = null;
         $scope.selection = new Date();
         $scope.period = 'WEEK';
 
-        D3LocalizationService.localize();
+        LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
 
         $scope.isMaxSelected = function() {

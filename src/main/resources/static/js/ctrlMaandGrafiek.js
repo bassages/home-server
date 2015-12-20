@@ -2,13 +2,13 @@
 
 angular.module('appHomecontrol.maandGrafiekController', [])
 
-    .controller('MaandGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
+    .controller('MaandGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
         $scope.chart = null;
         $scope.selection = new Date();
         $scope.period = 'MONTH';
 
-        D3LocalizationService.localize();
+        LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
 
         $scope.isMaxSelected = function() {
@@ -71,7 +71,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 graphConfig.data.types = {'euro': 'bar'};
 
                 graphConfig.axis = {};
-                graphConfig.axis.x = {tick: {format: function (d) { return D3LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
+                graphConfig.axis.x = {tick: {format: function (d) { return LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
                 graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
                 graphConfig.legend = {show: false};

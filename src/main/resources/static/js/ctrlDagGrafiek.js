@@ -4,7 +4,7 @@
 
 angular.module('appHomecontrol.dagGrafiekController', [])
 
-    .controller('DagGrafiekController', ['$scope', '$http', '$log', 'D3LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, D3LocalizationService, GrafiekWindowSizeService) {
+    .controller('DagGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
@@ -15,7 +15,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.selection = new Date();
         $scope.selection.setHours(0,0,0,0);
 
-        D3LocalizationService.localize();
+        LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
 
         $scope.numberOfPeriods = 7;
@@ -43,8 +43,10 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         });
         theDatepicker.datepicker('setDate', $scope.selection);
 
+        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
+
         $scope.getDateFormat = function(text) {
-            return 'dd-MM-yyyy';
+            return 'ddd dd-MM-yyyy';
         };
 
         $scope.isMaxSelected = function() {

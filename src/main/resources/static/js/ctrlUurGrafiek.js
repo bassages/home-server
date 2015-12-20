@@ -2,7 +2,7 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$http', '$log', 'GrafiekWindowSizeService', function($scope, $http, $log, GrafiekWindowSizeService) {
+    .controller('UurGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
         $scope.period = 'HOUR';
 
@@ -32,8 +32,10 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         });
         theDatepicker.datepicker('setDate', $scope.selection);
 
+        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
+
         $scope.getDateFormat = function(text) {
-            return 'dd-MM-yyyy';
+            return 'ddd dd-MM-yyyy';
         };
 
         $scope.isMaxSelected = function() {
