@@ -23,7 +23,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     public static final String SERVICE_PATH = "historicdatagenerator";
 
-    public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 2;
+    public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 1;
 
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> historischeDataGenerator = null;
