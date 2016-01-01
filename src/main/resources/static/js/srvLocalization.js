@@ -4,8 +4,8 @@ angular.module('appHomecontrol.localizationService', [])
 
     .service('LocalizationService', function() {
 
-        var shortMonths = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
-        var shortDays = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+        var shortMonths = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei.", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
+        var shortDays = ["Zo.", "Ma.", "Di.", "Wo.", "Do.", "Vr.", "Za."];
 
         this.getShortMonths = function() {
             return shortMonths;

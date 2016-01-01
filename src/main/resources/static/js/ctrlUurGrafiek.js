@@ -19,7 +19,18 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             todayHighlight: true,
             endDate: "0d",
             language:"nl",
-            format: "dd-mm-yyyy"
+            format: {
+                toDisplay: function (date, format, language) {
+                    var formatter = d3.time.format('%a %d-%m-%Y');
+                    return formatter(date);
+                },
+                toValue: function (date, format, language) {
+                    if (date == '0d') {
+                        return new Date();
+                    }
+                    return d3.time.format('%a %d-%m-%Y').parse(date);
+                }
+            }
         });
         theDatepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {

@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table
@@ -14,7 +13,7 @@ public class Kosten {
     private long id;
 
     private long van;
-    private long tot;
+    private long totEnMet;
 
     private BigDecimal stroomPerKwh;
     private BigDecimal gasPerKuub;
@@ -35,12 +34,12 @@ public class Kosten {
         this.van = van;
     }
 
-    public long getTot() {
-        return tot;
+    public long getTotEnMet() {
+        return totEnMet;
     }
 
-    public void setTot(long tot) {
-        this.tot = tot;
+    public void setTot(long totEnMet) {
+        this.totEnMet = totEnMet;
     }
 
     public BigDecimal getStroomPerKwh() {

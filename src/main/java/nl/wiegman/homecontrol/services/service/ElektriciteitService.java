@@ -1,6 +1,7 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -17,12 +19,14 @@ import java.util.stream.IntStream;
 public class ElektriciteitService {
 
     public static final String SERVICE_PATH = "elektriciteit";
-    public static final double STROOMKOSTEN_PER_KWH = 0.2098;
 
     private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
     @Inject
-    private MeterstandRepository meterstandRepository;
+    MeterstandRepository meterstandRepository;
+
+    @Inject
+    KostenRepository kostenRepository;
 
     @GET
     @Path("verbruikPerMaandInJaar/{jaar}")
@@ -31,20 +35,7 @@ public class ElektriciteitService {
         List<StroomVerbruikPerMaandInJaar> result = new ArrayList<>();
 
         IntStream.rangeClosed(1, 12).forEach(
-            maand -> result.add(getStroomVerbruikInMaand(maand, jaar))
-        );
-        return result;
-    }
-
-    @GET
-    @Path("verbruikPerWeekInJaar/{jaar}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<StroomVerbruikPerWeekInJaar> getVerbruikPerWeekInJaar(@PathParam("jaar") int jaar) {
-        List<StroomVerbruikPerWeekInJaar> result = new ArrayList<>();
-
-        int totalWeeksInYear = getTotalWeeksInYear(jaar);
-        IntStream.rangeClosed(1, 53).forEach(
-                maand -> result.add(getStroomVerbruikInWeek(maand, jaar))
+            maand -> result.add(getStroomverbruikInMaand(maand, jaar))
         );
         return result;
     }
@@ -88,73 +79,39 @@ public class ElektriciteitService {
         return result;
     }
 
-    private StroomVerbruikPerMaandInJaar getStroomVerbruikInMaand(int maand, int jaar) {
-        logger.info("get verbruik in maand: " + maand + "/" + jaar);
+    protected StroomVerbruikPerMaandInJaar getStroomverbruikInMaand(int maand, int jaar) {
+        logger.info("Get verbruik in maand: " + maand + "/" + jaar);
 
-        Calendar start = Calendar.getInstance();
-        start.set(Calendar.MONTH, maand-1);
-        start.set(Calendar.YEAR, jaar);
-        start = DateUtils.truncate(start, Calendar.MONTH);
-        final long startMillis = start.getTimeInMillis();
+        Calendar van = Calendar.getInstance();
+        van.set(Calendar.MONTH, maand - 1);
+        van.set(Calendar.YEAR, jaar);
+        van = DateUtils.truncate(van, Calendar.MONTH);
+        final long vanMillis = van.getTimeInMillis();
 
-        Calendar end = (Calendar) start.clone();
-        end.add(Calendar.MONTH, 1);
-        end.add(Calendar.MILLISECOND, -1);
-        final long endMillis = end.getTimeInMillis();
+        Calendar totEnMet = (Calendar) van.clone();
+        totEnMet.add(Calendar.MONTH, 1);
+        totEnMet.add(Calendar.MILLISECOND, -1);
+        final long totEnMetMillis = totEnMet.getTimeInMillis();
 
-        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
+        Stroomverbruik verbruikInPeriode = getVerbruikInPeriode(vanMillis, totEnMetMillis);
 
         StroomVerbruikPerMaandInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerMaandInJaar();
         stroomVerbruikPerMaandInJaar.setMaand(maand);
-
-        if (verbruik != null) {
-            stroomVerbruikPerMaandInJaar.setEuro(verbruik * STROOMKOSTEN_PER_KWH);
-            stroomVerbruikPerMaandInJaar.setkWh(verbruik);
-        }
-
-        return stroomVerbruikPerMaandInJaar;
-    }
-
-    private StroomVerbruikPerWeekInJaar getStroomVerbruikInWeek(int week, int jaar) {
-        logger.info("get verbruik in week: " + week + "/" + jaar);
-
-//        Calendar start = Calendar.getInstance();
-//        start.set(Calendar.MONTH, maand-1);
-//        start.set(Calendar.YEAR, jaar);
-//        start = DateUtils.truncate(start, Calendar.MONTH);
-//        final long startMillis = start.getTimeInMillis();
-//
-//        Calendar end = (Calendar) start.clone();
-//        end.add(Calendar.MONTH, 1);
-//        end.add(Calendar.MILLISECOND, -1);
-//        final long endMillis = end.getTimeInMillis();
-//
-//        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
-
-        StroomVerbruikPerWeekInJaar stroomVerbruikPerMaandInJaar = new StroomVerbruikPerWeekInJaar();
-        stroomVerbruikPerMaandInJaar.setWeek(week);
-
-//        if (verbruik != null) {
-            stroomVerbruikPerMaandInJaar.setEuro(week * STROOMKOSTEN_PER_KWH);
-            stroomVerbruikPerMaandInJaar.setkWh(week);
-//        }
-
+        stroomVerbruikPerMaandInJaar.setEuro(verbruikInPeriode.getEuro());
+        stroomVerbruikPerMaandInJaar.setkWh(verbruikInPeriode.getkWh());
         return stroomVerbruikPerMaandInJaar;
     }
 
     private StroomVerbruikOpDag getStroomVerbruikOpDag(Date dag) {
-        long startMillis = dag.getTime();
-        long endMillis = DateUtils.addDays(dag, 1).getTime() - 1;
+        long vanMillis = dag.getTime();
+        long totEnMetMillis = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        final Integer verbruik = meterstandRepository.getVerbruikInPeriod(startMillis, endMillis);
+        Stroomverbruik verbruikInPeriode = getVerbruikInPeriode(vanMillis, totEnMetMillis);
 
         StroomVerbruikOpDag stroomVerbruikOpDag = new StroomVerbruikOpDag();
         stroomVerbruikOpDag.setDt(dag.getTime());
-        if (verbruik != null) {
-            stroomVerbruikOpDag.setEuro(verbruik * STROOMKOSTEN_PER_KWH);
-            stroomVerbruikOpDag.setkWh(verbruik);
-        }
-
+        stroomVerbruikOpDag.setkWh(verbruikInPeriode.getkWh());
+        stroomVerbruikOpDag.setEuro(verbruikInPeriode.getEuro());
         return stroomVerbruikOpDag;
     }
 
@@ -179,19 +136,48 @@ public class ElektriciteitService {
         return dagenInPeriode;
     }
 
+    protected Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
+        BigDecimal totaalKosten = BigDecimal.ZERO;
+        int totaalVerbruikInKwh = 0;
+
+        List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet + 1);
+        if (CollectionUtils.isNotEmpty(kostenInPeriod)) {
+
+            for (Kosten kosten : kostenInPeriod) {
+                long subVanMillis = kosten.getVan();
+                if (subVanMillis < periodeVan) {
+                    subVanMillis = periodeVan;
+                }
+
+                long subTotEnMetMillis = kosten.getTotEnMet();
+                if (subTotEnMetMillis > periodeTotEnMet) {
+                    subTotEnMetMillis = periodeTotEnMet;
+                }
+
+                Integer verbruik = meterstandRepository.getVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
+                if (verbruik != null) {
+                    totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(new BigDecimal(verbruik)));
+                    totaalVerbruikInKwh += verbruik;
+                }
+            }
+        } else {
+            Integer verbruik = meterstandRepository.getVerbruikInPeriod(periodeVan, periodeTotEnMet);
+            if (verbruik != null) {
+                totaalVerbruikInKwh = verbruik.intValue();
+            }
+        }
+
+        Stroomverbruik stroomverbruik = new Stroomverbruik();
+        stroomverbruik.setkWh(totaalVerbruikInKwh);
+        stroomverbruik.setEuro(totaalKosten);
+        return stroomverbruik;
+    }
+
     private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {
         return list.stream()
                 .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
                 .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt()))
                 .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
                 .orElse(null);
-    }
-
-    private int getTotalWeeksInYear(int year) {
-        Calendar mCalendar = Calendar.getInstance();
-        mCalendar.set(Calendar.YEAR, year);
-        mCalendar.set(Calendar.MONTH, Calendar.DECEMBER);
-        mCalendar.set(Calendar.DAY_OF_MONTH, 31);
-        return mCalendar.get(Calendar.WEEK_OF_YEAR);
     }
 }

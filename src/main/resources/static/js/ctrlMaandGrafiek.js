@@ -63,17 +63,18 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
                 graphConfig.data = {};
-                graphConfig.data.keys = {x: 'maand', value: ['kWh', 'euro']};
-                graphConfig.data.axes = {'euro': 'y2'};
+                //graphConfig.data.keys = {x: 'maand', value: ['kWh', 'euro']};
+                graphConfig.data.keys = {x: 'maand', value: ['kWh']};
+                //graphConfig.data.axes = {'euro': 'y2'};
 
                 graphConfig.data.json = data;
                 graphConfig.data.type = 'bar';
-                graphConfig.data.types = {'euro': 'bar'};
+                //graphConfig.data.types = {'euro': 'bar'};
 
                 graphConfig.axis = {};
                 graphConfig.axis.x = {tick: {format: function (d) { return LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
-                graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
+                //graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 0.8}};
                 graphConfig.point = { show: false};

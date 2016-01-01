@@ -29,7 +29,18 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             todayHighlight: true,
             endDate: "0d",
             language:"nl",
-            format: "dd-mm-yyyy"
+            format: {
+                toDisplay: function (date, format, language) {
+                    var formatter = d3.time.format('%a %d-%m-%Y');
+                    return formatter(date);
+                },
+                toValue: function (date, format, language) {
+                    if (date == '0d') {
+                        return new Date();
+                    }
+                    return d3.time.format('%a %d-%m-%Y').parse(date);
+                }
+            }
         });
         theDatepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
@@ -123,21 +134,22 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
                 graphConfig.data = {};
-                graphConfig.data.keys = {x: 'dt', value: ['kWh', 'euro']};
-                graphConfig.data.axes = {'euro': 'y2'};
+                graphConfig.data.keys = {x: 'dt', value: ['kWh']};
+                //graphConfig.data.keys = {x: 'dt', value: ['kWh', 'euro']};
+                //graphConfig.data.axes = {'euro': 'y2'};
 
                 graphConfig.data.json = data;
                 graphConfig.data.type = 'bar';
-                graphConfig.data.types = {'euro': 'bar'};
+                //graphConfig.data.types = {'euro': 'bar'};
 
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%a %d-%m", values: tickValues, centered: true, multiline: true, width: 35}, min: xMin, max: xMax, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
-                graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
+                //graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 0.8}};
-                graphConfig.point = { show: false};
-                graphConfig.transition = { duration: 0};
+                graphConfig.point = {show: false};
+                graphConfig.transition = {duration: 0};
                 graphConfig.grid = {y: {show: true}};
                 graphConfig.tooltip = {show: false};
                 graphConfig.padding = {top: 0, right: 70, bottom: 40, left: 70};

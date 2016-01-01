@@ -7,7 +7,6 @@ var app = angular.module('appHomecontrol', [
     'appHomecontrol.opgenomenVermogenService',
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
-    'appHomecontrol.weekGrafiekController',
     'appHomecontrol.maandGrafiekController',
     'appHomecontrol.opgenomenVermogenController',
     'appHomecontrol.localizationService',
@@ -21,10 +20,6 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/grafiek/:type/dag', {
             templateUrl : 'grafiek.html',
             controller: 'DagGrafiekController'
-        });
-        $routeProvider.when('/grafiek/:type/week', {
-            templateUrl : 'grafiek.html',
-            controller: 'WeekGrafiekController'
         });
         $routeProvider.when('/grafiek/:type/maand', {
             templateUrl : 'grafiek.html',
