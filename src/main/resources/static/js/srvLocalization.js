@@ -6,6 +6,11 @@ angular.module('appHomecontrol.localizationService', [])
 
         var shortMonths = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei.", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
         var shortDays = ["Zo.", "Ma.", "Di.", "Wo.", "Do.", "Vr.", "Za."];
+        var fullMonths = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+
+        this.getFullMonths = function() {
+            return fullMonths;
+        };
 
         this.getShortMonths = function() {
             return shortMonths;
@@ -27,7 +32,7 @@ angular.module('appHomecontrol.localizationService', [])
                 "periods": ["AM", "PM"],
                 "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
                 "shortDays": shortDays,
-                "months": ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
+                "months": fullMonths,
                 "shortMonths": shortMonths
             });
             d3.time.format = myFormatters.timeFormat;

@@ -11,17 +11,16 @@ var app = angular.module('appHomecontrol', [
     'appHomecontrol.opgenomenVermogenController',
     'appHomecontrol.localizationService',
     'appHomecontrol.grafiekWindowSizeService'
-]).
-config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/grafiek/:type/uur', {
+]).config(['$routeProvider', function($routeProvider) {
+        $routeProvider.when('/grafiek/:energiesoort/uur/:soort', {
             templateUrl : 'grafiek.html',
             controller: 'UurGrafiekController'
         });
-        $routeProvider.when('/grafiek/:type/dag', {
+        $routeProvider.when('/grafiek/:energiesoort/dag/:soort', {
             templateUrl : 'grafiek.html',
             controller: 'DagGrafiekController'
         });
-        $routeProvider.when('/grafiek/:type/maand', {
+        $routeProvider.when('/grafiek/:energiesoort/maand/:soort', {
             templateUrl : 'grafiek.html',
             controller: 'MaandGrafiekController'
         });

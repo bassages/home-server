@@ -84,7 +84,7 @@ public class ElecticiteitServiceTest {
         StroomVerbruikPerMaandInJaar stroomverbruikInMaand = elektriciteitService.getStroomverbruikInMaand(1, 2016);
         assertThat(stroomverbruikInMaand, is(notNullValue()));
         assertThat(stroomverbruikInMaand.getkWh(), is(equalTo(3)));
-        assertThat(stroomverbruikInMaand.getEuro(), is(equalTo(new BigDecimal(5))));
+        assertThat(stroomverbruikInMaand.getEuro().doubleValue(), is(equalTo(5.00d)));
     }
 
 }

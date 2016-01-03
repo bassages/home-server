@@ -13,11 +13,6 @@ body {
   margin: 0;
 }
 
-.afval-icon {
-  height: 40px;
-  width: 40px;
-}
-
 .ledbar {
   overflow: auto;
   margin-right: 15px;
@@ -79,6 +74,15 @@ body {
   font-size: 26px;
 }
 
+.chart {
+  background-color: #f8f8f8;
+}
+
+.c3-zoom-rect {
+  fill: white;
+  opacity: 1 !important;
+}
+
 .c3-line-watt {
   stroke-width: 0px;
 }
@@ -94,15 +98,19 @@ body {
   font-weight: bold;
 }
 
-.spinner {
-  margin-right: 5px;
-}
-
 .c3-area-watt {
   opacity: 1;
 }
 
+.spinner {
+  margin-right: 5px;
+}
+
 .datepicker-selected-value {
+  text-align: center;
+}
+
+.numberOfPeriods {
   text-align: center;
 }
 
@@ -112,8 +120,9 @@ body {
   }
 }
 
-.numberOfPeriods {
-  text-align: center;
+.without-lr-padding {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 @media (min-width: 768px) {
@@ -121,3 +130,32 @@ body {
     max-width: 50px;
   }
 }
+
+a.left-pill {
+  text-align: center;
+  border-radius: initial !important;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  border: 0;
+}
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+  color: #555555;
+  background-color: #f8f8f8;
+}
+
+.nav-tabs {
+  border-bottom: 0;
+}
+
+.nav-tabs > li > a {
+  border: 0;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  background-color: #f8f8f8;
+}
+

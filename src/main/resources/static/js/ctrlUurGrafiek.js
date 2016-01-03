@@ -2,10 +2,13 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
+    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
-        $scope.period = 'HOUR';
-
+        $scope.period = 'uur';
+        $scope.energiesoort = $routeParams.energiesoort;
+        $scope.periode = $routeParams.periode;
+        $scope.soort = $routeParams.soort;
+        $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
         // By default, today is selected
         $scope.selection = new Date();
         $scope.selection.setHours(0,0,0,0);
@@ -120,10 +123,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
-                graphConfig.data = {};
-                graphConfig.data.keys = {x: "dt", value: ["watt"]};
-                graphConfig.data.json = data;
-                graphConfig.data.types= {"watt": "area"};
+                graphConfig.data = {json: data, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.selection, max: to, padding: {left: 0, right:10}};
                 graphConfig.axis.y = {label: {text: "Opgenomen vermogen in watt", position: "outer-middle"}};
@@ -133,7 +133,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 graphConfig.transition = {duration: 0};
                 graphConfig.grid = {y: {show: true}};
                 graphConfig.tooltip = {show: false};
-                graphConfig.padding = {top: 0, right: 5, bottom: 40, left: 50};
+                graphConfig.padding = {top: 10, bottom: 45, left: 65, right: 20};
                 if (average > 0) {
                     graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
                 }

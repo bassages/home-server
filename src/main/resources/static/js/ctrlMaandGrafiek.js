@@ -2,11 +2,14 @@
 
 angular.module('appHomecontrol.maandGrafiekController', [])
 
-    .controller('MaandGrafiekController', ['$scope', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $http, $log, LocalizationService, GrafiekWindowSizeService) {
+    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
-        $scope.chart = null;
         $scope.selection = new Date();
-        $scope.period = 'MONTH';
+        $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
+        $scope.period = 'maand';
+        $scope.energiesoort = $routeParams.energiesoort;
+        $scope.periode = $routeParams.periode;
+        $scope.soort = $routeParams.soort;
 
         LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
@@ -56,38 +59,63 @@ angular.module('appHomecontrol.maandGrafiekController', [])
 
                 var length = data.length;
                 for (var i=0; i<length; i++) {
-                    total += data[i].kWh;
+                    if ($scope.soort == 'verbruik') {
+                        total += data[i].kWh;
+                    } else if ($scope.soort == 'kosten') {
+                        total += data[i].euro;
+                    }
                 }
                 average = total/length;
 
                 var graphConfig = {};
                 graphConfig.bindto = '#chart';
-                graphConfig.data = {};
-                //graphConfig.data.keys = {x: 'maand', value: ['kWh', 'euro']};
-                graphConfig.data.keys = {x: 'maand', value: ['kWh']};
-                //graphConfig.data.axes = {'euro': 'y2'};
 
+                graphConfig.data = {};
                 graphConfig.data.json = data;
                 graphConfig.data.type = 'bar';
-                //graphConfig.data.types = {'euro': 'bar'};
+
+                if ($scope.soort == 'verbruik') {
+                    graphConfig.data.keys = {x: 'maand', value: ['kWh']};
+                } else if ($scope.soort == 'kosten') {
+                    graphConfig.data.keys = {x: 'maand', value: ['euro']};
+                }
 
                 graphConfig.axis = {};
                 graphConfig.axis.x = {tick: {format: function (d) { return LocalizationService.getShortMonths()[d-1]; }, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right:10}};
-                graphConfig.axis.y = {label: {text: "Verbruik", position: "outer-middle"}, tick: {format: function (d) { return d + ' kWh'; }}};
-                //graphConfig.axis.y2 = {label: {text: 'Kosten', position: "outer-middle"}, show: true, tick: {format: d3.format("$.2f")}};
+
+                if ($scope.soort == 'kosten') {
+                    graphConfig.axis.y = {tick: {format: d3.format(".2f")}};
+                }
+
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 0.8}};
-                graphConfig.point = { show: false};
-                graphConfig.transition = { duration: 0};
+                graphConfig.point = {show: false};
+                graphConfig.transition = {duration: 0};
                 graphConfig.grid = {y: {show: true}};
-                graphConfig.tooltip = {show: false};
-                graphConfig.padding = {top: 0, right: 70, bottom: 40, left: 70};
-                graphConfig.interaction= {enabled: false};
+
+                var soortOmschrijving;
+                if ($scope.soort == 'verbruik') {
+                    soortOmschrijving = 'kWh';
+                } else if ($scope.soort == 'kosten') {
+                    soortOmschrijving = '\u20AC';
+                }
+                graphConfig.tooltip = {format: {
+                                                title: function (d) { return LocalizationService.getFullMonths()[d-1]; },
+                                                name:  function (name, ratio, id, index)  { return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1); },
+                                                value: function (value, ratio, id) {
+                                                    if ($scope.soort == 'verbruik') {
+                                                        return value + ' kWh';
+                                                    } else if ($scope.soort == 'kosten') {
+                                                        return '\u20AC ' + value;
+                                                    }
+                                                 }
+                                               }
+                                      };
+                graphConfig.padding = {top: 10, bottom: 10, left: 65, right: 20};
                 if (average > 0) {
                     graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
                 }
                 $scope.chart = c3.generate(graphConfig);
-                $scope.chart.hide(['euro']);
 
                 GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
                 $scope.loading = false;

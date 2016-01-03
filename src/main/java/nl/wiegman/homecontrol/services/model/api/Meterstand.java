@@ -9,14 +9,19 @@ public class Meterstand {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(nullable = false)
     private long datumtijd;
 
+    @Column(nullable = false)
     private int stroomOpgenomenVermogenInWatt;
 
+    @Column(nullable = false)
     private int stroomTarief1;
 
+    @Column(nullable = false)
     private int stroomTarief2;
 
+    @Column(nullable = false)
     private int gas;
 
     public long getDatumtijd() {

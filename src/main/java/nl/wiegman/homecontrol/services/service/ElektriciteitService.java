@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -169,7 +170,7 @@ public class ElektriciteitService {
 
         Stroomverbruik stroomverbruik = new Stroomverbruik();
         stroomverbruik.setkWh(totaalVerbruikInKwh);
-        stroomverbruik.setEuro(totaalKosten);
+        stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
         return stroomverbruik;
     }
 

@@ -1,8 +1,6 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -10,12 +8,19 @@ import java.math.BigDecimal;
 public class Kosten {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(nullable = false)
     private long van;
+
+    @Column(nullable = false)
     private long totEnMet;
 
+    @Column(precision = 7, scale = 6)
     private BigDecimal stroomPerKwh;
+
+    @Column(precision = 7, scale = 6)
     private BigDecimal gasPerKuub;
 
     public long getId() {
