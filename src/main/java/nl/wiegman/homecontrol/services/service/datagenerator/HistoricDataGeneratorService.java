@@ -50,7 +50,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
             lastGeneratedStroomTarief2 = (double)oldest.getStroomTarief2();
             lastGeneratedTimestamp = oldest.getDatumtijd();
         }
-//        startGeneratingHistoricData();
+        startGeneratingHistoricData();
     }
 
     @POST
