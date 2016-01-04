@@ -17,6 +17,8 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         GrafiekWindowSizeService.manage($scope);
         Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
+        loadDataIntoGraph([]);
+
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
         theDatepicker.datepicker({
@@ -94,55 +96,71 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return tickValues;
         }
 
+        function getAverage(data) {
+            var total = 0;
+            var length = data.length;
+            for (var i = 0; i < length; i++) {
+                var subPeriodEnd = data[i].dt + (getSubPeriodLength() - 1);
+                data.push({dt: subPeriodEnd, watt: data[i].watt});
+                total += data[i].watt;
+            }
+            var average = total / length;
+            return average;
+        }
+
+        function getSubPeriodLength() {
+            return 6 * 60 * 1000;
+        }
+
+        function loadDataIntoGraph(graphData) {
+            $scope.graphData = graphData;
+
+            var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
+            var average = getAverage(graphData);
+
+            var graphConfig = {};
+            graphConfig.bindto = '#chart';
+            graphConfig.data = {json: graphData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
+            graphConfig.axis = {};
+            graphConfig.axis.x = {
+                type: "timeseries",
+                tick: {format: "%H:%M", values: tickValues, rotate: -90},
+                min: $scope.selection,
+                max: getTo(),
+                padding: {left: 0, right: 10}
+            };
+            graphConfig.legend = {show: false};
+            graphConfig.bar = {width: {ratio: 1}};
+            graphConfig.point = {show: false};
+            graphConfig.transition = {duration: 0};
+            graphConfig.grid = {y: {show: true}};
+            graphConfig.tooltip = {show: false};
+            graphConfig.padding = {top: 10, bottom: 45, left: 45, right: 20};
+            if (average > 0) {
+                graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
+            }
+
+            $scope.chart = c3.generate(graphConfig);
+            GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+        }
+
+        function getTo() {
+            var to = new Date($scope.selection);
+            to.setDate($scope.selection.getDate() + 1);
+            return to;
+        }
+
         $scope.getDataFromServer = function() {
             $scope.loading = true;
 
-            var subPeriodLength = 6 * 60 * 1000;
-
-            var to = new Date($scope.selection);
-            to.setDate($scope.selection.getDate() + 1);
-
-            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + to.getTime() + '?subPeriodLength=' + subPeriodLength;
+            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + getSubPeriodLength();
             $log.info('URL: ' + graphDataUrl);
 
-            var total = 0;
-            var average = 0;
-
             $http({
-                method: 'GET',
-                url: graphDataUrl
+                method: 'GET', url: graphDataUrl
             }).then(function successCallback(response) {
-                var data = response.data;
-                var tickValues = getTicksForEveryHourInPeriod($scope.selection ,to);
-
-                var length = data.length;
-                for (var i=0; i<length; i++) {
-                    var subPeriodEnd = data[i].dt + (subPeriodLength - 1);
-                    data.push({dt: subPeriodEnd, watt: data[i].watt});
-                    total += data[i].watt;
-                }
-                average = total/length;
-
-                var graphConfig = {};
-                graphConfig.bindto = '#chart';
-                graphConfig.data = {json: data, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
-                graphConfig.axis = {};
-                graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.selection, max: to, padding: {left: 0, right:10}};
-                graphConfig.legend = {show: false};
-                graphConfig.bar = {width: {ratio: 1}};
-                graphConfig.point = {show: false};
-                graphConfig.transition = {duration: 0};
-                graphConfig.grid = {y: {show: true}};
-                graphConfig.tooltip = {show: false};
-                graphConfig.padding = {top: 10, bottom: 45, left: 45, right: 20};
-                if (average > 0) {
-                    graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
-                }
-
-                $scope.chart = c3.generate(graphConfig);
-                GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+                loadDataIntoGraph(response.data);
                 $scope.loading = false;
-
             }, function errorCallback(response) {
                 $scope.loading = false;
             });

@@ -20,8 +20,11 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.selection.setHours(0,0,0,0);
         $scope.numberOfPeriods = 7;
 
+        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
         LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
+
+        loadDataIntoGraph([]);
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -55,8 +58,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             applyDatePickerUpdatesInAngularScope = true;
         });
         theDatepicker.datepicker('setDate', $scope.selection);
-
-        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
         $scope.getDateFormat = function(text) {
             return 'ddd dd-MM-yyyy';

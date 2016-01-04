@@ -14,6 +14,8 @@ angular.module('appHomecontrol.maandGrafiekController', [])
         LocalizationService.localize();
         GrafiekWindowSizeService.manage($scope);
 
+        loadDataIntoGraph([]);
+
         $scope.isMaxSelected = function() {
             return (new Date()).getFullYear() == $scope.selection;
         };
