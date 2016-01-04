@@ -7,7 +7,7 @@ angular.module('appHomecontrol.grafiekWindowSizeService', [])
         var MAXIMUM_HEIGHT = 475;
 
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {
-            var height = window.innerHeight - 70;
+            var height = window.innerHeight - 115;
 
             if (height < MINIMUM_HEIGHT) {
                 height = MINIMUM_HEIGHT;

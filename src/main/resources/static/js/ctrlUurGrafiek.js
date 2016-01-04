@@ -14,6 +14,9 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         $scope.selection = new Date();
         $scope.selection.setHours(0,0,0,0);
 
+        GrafiekWindowSizeService.manage($scope);
+        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
+
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
         theDatepicker.datepicker({
@@ -46,8 +49,6 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             applyDatePickerUpdatesInAngularScope = true;
         });
         theDatepicker.datepicker('setDate', $scope.selection);
-
-        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
         $scope.getDateFormat = function(text) {
             return 'ddd dd-MM-yyyy';
@@ -127,14 +128,13 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 graphConfig.data = {json: data, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
                 graphConfig.axis = {};
                 graphConfig.axis.x = {type: "timeseries", tick: {format: "%H:%M", values: tickValues, rotate: -90}, min: $scope.selection, max: to, padding: {left: 0, right:10}};
-                graphConfig.axis.y = {label: {text: "Opgenomen vermogen in watt", position: "outer-middle"}};
                 graphConfig.legend = {show: false};
                 graphConfig.bar = {width: {ratio: 1}};
                 graphConfig.point = {show: false};
                 graphConfig.transition = {duration: 0};
                 graphConfig.grid = {y: {show: true}};
                 graphConfig.tooltip = {show: false};
-                graphConfig.padding = {top: 10, bottom: 45, left: 65, right: 20};
+                graphConfig.padding = {top: 10, bottom: 45, left: 45, right: 20};
                 if (average > 0) {
                     graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
                 }
