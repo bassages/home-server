@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" ng-init="showGraph()" ng-cloak>
+<nav class="navbar navbar-default navbar-fixed-top" ng-init="getDataFromServer()" ng-cloak>
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -56,9 +56,9 @@
     </div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
-            <li ng-class="{'active': period=='uur'}"><a href="/homecontrol/#/grafiek/stroom/uur/verbruik">Uur</a></li>
-            <li ng-class="{'active': period=='dag'}"><a href="/homecontrol/#/grafiek/stroom/dag/{{soort}}">Dag</a></li>
-            <li ng-class="{'active': period=='maand'}"><a href="/homecontrol/#/grafiek/stroom/maand/{{soort}}">Maand</a></li>
+            <li ng-class="{'active': period=='uur'}"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
+            <li ng-class="{'active': period=='dag'}"><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
+            <li ng-class="{'active': period=='maand'}"><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
         </ul>
     </div>
 </div>
@@ -67,7 +67,7 @@
     <div class="col-md-1 without-lr-padding">
         <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a class="left-pill" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/{{period}}/{{supportedsoort.code}}">{{supportedsoort.omschrijving}}</a>
+                <a class="left-pill" ng-click="switchSoort(supportedsoort.code)">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>

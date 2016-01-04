@@ -2,12 +2,13 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LocalizationService, GrafiekWindowSizeService) {
+    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         $scope.loading = false;
         $scope.period = 'uur';
         $scope.energiesoort = $routeParams.energiesoort;
         $scope.periode = $routeParams.periode;
-        $scope.soort = $routeParams.soort;
+        $scope.soort = 'verbruik'; // This controller only supports verbruik
+        SharedDataService.setSoortData('verbruik');
         $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
         // By default, today is selected
         $scope.selection = new Date();
@@ -39,7 +40,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
-                    $scope.showGraph();
+                    $scope.getDataFromServer();
                 });
             }
             applyDatePickerUpdatesInAngularScope = true;
@@ -75,7 +76,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
 
             applyDatePickerUpdatesInAngularScope = false;
             theDatepicker.datepicker('setDate', $scope.selection);
-            $scope.showGraph();
+            $scope.getDataFromServer();
         };
 
         function getTicksForEveryHourInPeriod(from, to) {
@@ -92,7 +93,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return tickValues;
         }
 
-        $scope.showGraph = function() {
+        $scope.getDataFromServer = function() {
             $scope.loading = true;
 
             var subPeriodLength = 6 * 60 * 1000;
