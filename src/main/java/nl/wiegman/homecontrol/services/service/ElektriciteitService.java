@@ -16,10 +16,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @Component
-@Path(ElektriciteitService.SERVICE_PATH)
 public class ElektriciteitService {
-
-    public static final String SERVICE_PATH = "elektriciteit";
 
     private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
 
@@ -29,9 +26,6 @@ public class ElektriciteitService {
     @Inject
     KostenRepository kostenRepository;
 
-    @GET
-    @Path("verbruikPerMaandInJaar/{jaar}")
-    @Produces(MediaType.APPLICATION_JSON)
     public List<StroomVerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathParam("jaar") int jaar) {
         List<StroomVerbruikPerMaandInJaar> result = new ArrayList<>();
 
@@ -41,9 +35,6 @@ public class ElektriciteitService {
         return result;
     }
 
-    @GET
-    @Path("verbruikPerDag/{van}/{totEnMet}")
-    @Produces(MediaType.APPLICATION_JSON)
     public List<StroomVerbruikOpDag> getVerbruikPerDag(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
         List<StroomVerbruikOpDag> result = new ArrayList<>();
 
@@ -55,9 +46,6 @@ public class ElektriciteitService {
         return result;
     }
 
-    @GET
-    @Path("opgenomenVermogenHistorie/{from}/{to}")
-    @Produces(MediaType.APPLICATION_JSON)
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
         List<OpgenomenVermogen> result = new ArrayList<>();
 
@@ -137,7 +125,7 @@ public class ElektriciteitService {
         return dagenInPeriode;
     }
 
-    protected Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
+    public Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
         int totaalVerbruikInKwh = 0;
 

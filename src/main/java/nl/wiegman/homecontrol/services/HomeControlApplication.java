@@ -16,6 +16,7 @@ import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableAsync
+@EnableCaching
 public class HomeControlApplication {
 
     public static void main(String[] args) {

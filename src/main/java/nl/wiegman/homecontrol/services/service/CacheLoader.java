@@ -19,13 +19,13 @@ public class CacheLoader {
 
     @Async
     public void loadCacheAsync() {
-        logger.info("Start pre loading caches verbruik per maand in jaar");
-        elektriciteitService.getVerbruikPerMaandInJaar(LocalDate.now().getYear());
-        elektriciteitService.getVerbruikPerMaandInJaar(LocalDate.now().getYear() - 1);
-        logger.info("Finished pre loading caches verbruik per maand per jaar");
-
-        logger.info("Start pre loading caches verbruik per dag");
-        elektriciteitService.getVerbruikPerDag(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(356), System.currentTimeMillis());
-        logger.info("Finished pre loading caches verbruik per dag");
+//        logger.info("Start pre loading caches verbruik per maand in jaar");
+//        elektriciteitService.getVerbruikPerMaandInJaar(LocalDate.now().getYear());
+//        elektriciteitService.getVerbruikPerMaandInJaar(LocalDate.now().getYear() - 1);
+//        logger.info("Finished pre loading caches verbruik per maand per jaar");
+//
+//        logger.info("Start pre loading caches verbruik per dag");
+//        elektriciteitService.getVerbruikPerDag(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(356), System.currentTimeMillis());
+//        logger.info("Finished pre loading caches verbruik per dag");
     }
 }
