@@ -125,27 +125,35 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return total / length;
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function getEmptyGraphConfig() {
+            return {
+                data: {json: {}},
+                legend: {show: false},
+                axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
+                padding: {top: 10, bottom: 20, left: 50, right: 20}
+            }
+        }
+
+        function getGraphConfig(graphData) {
+            var graphConfig = {};
 
             var tickValues = getTicksForEveryDayInPeriod();
-            var average = getAverage(graphData);
 
             var xMin = new Date(getFrom().getTime()) - halfDay;
             var xMax = new Date($scope.selection.getTime() + halfDay);
 
-            var graphConfig = {};
             graphConfig.bindto = '#chart';
 
+            var value;
+            if ($scope.soort == 'verbruik') {
+                value = 'kWh';
+            } else if ($scope.soort == 'kosten') {
+                value = 'euro';
+            }
             graphConfig.data = {};
             graphConfig.data.json = graphData;
             graphConfig.data.type = 'bar';
-
-            if ($scope.soort == 'verbruik') {
-                graphConfig.data.keys = {x: 'dt', value: ['kWh']};
-            } else if ($scope.soort == 'kosten') {
-                graphConfig.data.keys = {x: 'dt', value: ['euro']};
-            }
+            graphConfig.data.keys = {x: 'dt', value: [value]};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
@@ -162,9 +170,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
 
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
-            graphConfig.point = {show: false};
             graphConfig.transition = {duration: 0};
-            graphConfig.grid = {y: {show: true}};
 
             graphConfig.tooltip = {
                 format: {
@@ -182,9 +188,24 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 }
             };
 
-            graphConfig.padding = {top: 10, bottom: 20, left: 45, right: 20};
+            graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
+            graphConfig.grid = {y: {show: true}};
+
+            var average = getAverage(graphData);
             if (average > 0) {
                 graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
+            }
+            return graphConfig;
+        }
+
+        function loadDataIntoGraph(graphData) {
+            $scope.graphData = graphData;
+
+            var graphConfig;
+            if (graphData.length == 0) {
+                graphConfig = getEmptyGraphConfig();
+            } else {
+                graphConfig = getGraphConfig(graphData);
             }
             $scope.chart = c3.generate(graphConfig);
             GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);

@@ -78,27 +78,41 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return total / length;
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function getEmptyGraphConfig() {
+            return {
+                data: {json: {}},
+                legend: {show: false},
+                axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
+                padding: {top: 10, bottom: 10, left: 50, right: 20}
+            }
+        }
+
+        function getGraphConfig(graphData) {
+            var graphConfig = {};
 
             var tickValues = getTicksForEveryMonthInYear();
-            var average = getAverage(graphData);
-            var graphConfig = {};
+
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
             graphConfig.data.json = graphData;
             graphConfig.data.type = 'bar';
 
+            var value;
             if ($scope.soort == 'verbruik') {
-                graphConfig.data.keys = {x: 'maand', value: ['kWh']};
+                value = 'kWh';
             } else if ($scope.soort == 'kosten') {
-                graphConfig.data.keys = {x: 'maand', value: ['euro']};
+                value = 'euro';
             }
+            graphConfig.data.keys = {x: 'maand', value: [value]};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
-                tick: {format: function (d) {return LocalizationService.getShortMonths()[d - 1];}, values: tickValues, xcentered: true}, min: 0.5, max: 2.5, padding: {left: 0, right: 10}
+                tick: {
+                    format: function (d) {
+                        return LocalizationService.getShortMonths()[d - 1];
+                    }, values: tickValues, xcentered: true
+                }, min: 0.5, max: 2.5, padding: {left: 0, right: 10}
             };
 
             if ($scope.soort == 'kosten') {
@@ -107,9 +121,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
 
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
-            graphConfig.point = {show: false};
             graphConfig.transition = {duration: 0};
-            graphConfig.grid = {y: {show: true}};
 
             var soortOmschrijving;
             if ($scope.soort == 'verbruik') {
@@ -135,12 +147,27 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                     }
                 }
             };
-            graphConfig.padding = {top: 10, bottom: 10, left: 65, right: 20};
+            graphConfig.padding = {top: 10, bottom: 10, left: 50, right: 20};
+
+            graphConfig.grid = {y: {show: true}};
+
+            var average = getAverage(graphData);
             if (average > 0) {
                 graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
             }
-            $scope.chart = c3.generate(graphConfig);
+            return graphConfig;
+        }
 
+        function loadDataIntoGraph(graphData) {
+            $scope.graphData = graphData;
+
+            var graphConfig;
+            if (graphData.length == 0) {
+                graphConfig = getEmptyGraphConfig();
+            } else {
+                graphConfig = getGraphConfig(graphData);
+            }
+            $scope.chart = c3.generate(graphConfig);
             GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
     }]);
