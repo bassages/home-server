@@ -1,7 +1,6 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -25,6 +21,9 @@ public class ElektriciteitService {
 
     @Inject
     KostenRepository kostenRepository;
+
+    @Inject
+    StroomVerbruikService stroomVerbruikService;
 
     public List<StroomVerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathParam("jaar") int jaar) {
         List<StroomVerbruikPerMaandInJaar> result = new ArrayList<>();
@@ -91,6 +90,14 @@ public class ElektriciteitService {
         return stroomVerbruikPerMaandInJaar;
     }
 
+    private Stroomverbruik getVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
+        if (totEnMetMillis < System.currentTimeMillis()) {
+            return stroomVerbruikService.getPotentiallyCachedVerbruikInPeriode(vanMillis, totEnMetMillis);
+        } else {
+            return stroomVerbruikService.getVerbruikInPeriode(vanMillis, totEnMetMillis);
+        }
+    }
+
     private StroomVerbruikOpDag getStroomVerbruikOpDag(Date dag) {
         long vanMillis = dag.getTime();
         long totEnMetMillis = DateUtils.addDays(dag, 1).getTime() - 1;
@@ -125,42 +132,7 @@ public class ElektriciteitService {
         return dagenInPeriode;
     }
 
-    public Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
-        BigDecimal totaalKosten = BigDecimal.ZERO;
-        int totaalVerbruikInKwh = 0;
 
-        List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet + 1);
-        if (CollectionUtils.isNotEmpty(kostenInPeriod)) {
-
-            for (Kosten kosten : kostenInPeriod) {
-                long subVanMillis = kosten.getVan();
-                if (subVanMillis < periodeVan) {
-                    subVanMillis = periodeVan;
-                }
-
-                long subTotEnMetMillis = kosten.getTotEnMet();
-                if (subTotEnMetMillis > periodeTotEnMet) {
-                    subTotEnMetMillis = periodeTotEnMet;
-                }
-
-                Integer verbruik = meterstandRepository.getVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
-                if (verbruik != null) {
-                    totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(new BigDecimal(verbruik)));
-                    totaalVerbruikInKwh += verbruik;
-                }
-            }
-        } else {
-            Integer verbruik = meterstandRepository.getVerbruikInPeriod(periodeVan, periodeTotEnMet);
-            if (verbruik != null) {
-                totaalVerbruikInKwh = verbruik.intValue();
-            }
-        }
-
-        Stroomverbruik stroomverbruik = new Stroomverbruik();
-        stroomverbruik.setkWh(totaalVerbruikInKwh);
-        stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
-        return stroomverbruik;
-    }
 
     private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {
         return list.stream()
