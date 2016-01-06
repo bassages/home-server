@@ -12,7 +12,9 @@ import java.util.List;
 @Transactional
 public interface KostenRepository extends JpaRepository<Kosten, Long> {
 
-    @Cacheable(cacheNames = "kostenInPeriod")
+    String CACHE_KOSTEN_IN_PERIOD = "kostenInPeriod";
+
+    @Cacheable(cacheNames = CACHE_KOSTEN_IN_PERIOD)
     @Query(value = "SELECT k FROM Kosten k WHERE (:from BETWEEN k.van AND k.totEnMet) OR (:to BETWEEN k.van AND k.totEnMet)")
     List<Kosten> getKostenInPeriod(@Param("from") long from, @Param("to") long to);
 

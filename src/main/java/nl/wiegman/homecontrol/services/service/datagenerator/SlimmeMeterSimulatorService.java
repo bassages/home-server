@@ -5,12 +5,16 @@ import nl.wiegman.homecontrol.services.service.MeterstandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Path(SlimmeMeterSimulatorService.SERVICE_PATH)
@@ -26,20 +30,25 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private Double lastGeneratedStroomTarief1 = null;
     private Double lastGeneratedStroomTarief2 = null;
 
+    @Value("${slimmeMeterSimulator.autostart}")
+    boolean autoStart = false;
+
     @Autowired
     private MeterstandService meterstandService;
 
     @PostConstruct
     public void init() {
-        Meterstand mostRecent = meterstandService.getMostRecent();
-        if (mostRecent == null) {
-            lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
-            lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
-        } else {
-            lastGeneratedStroomTarief1 = (double)mostRecent.getStroomTarief1();
-            lastGeneratedStroomTarief2 = (double)mostRecent.getStroomTarief2();
+        if (autoStart) {
+            Meterstand mostRecent = meterstandService.getMostRecent();
+            if (mostRecent == null) {
+                lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
+                lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
+            } else {
+                lastGeneratedStroomTarief1 = (double) mostRecent.getStroomTarief1();
+                lastGeneratedStroomTarief2 = (double) mostRecent.getStroomTarief2();
+            }
+            startSlimmeMeterSimulator();
         }
-        startSlimmeMeterSimulator();
     }
 
     @POST
@@ -64,18 +73,18 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         try {
             long datumtijd = System.currentTimeMillis();
             meterstandService.opslaanMeterstand(datumtijd, getDummyVermogenInWatt(), getStroomTarief1(datumtijd), getStroomTarief2(datumtijd), 0);
-        } catch ( Throwable t ) {  // Catch Throwable rather than Exception (a subclass).
+        } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }
     }
 
     private int getStroomTarief2(long datumtijd) {
         lastGeneratedStroomTarief2 += getStroomInterval(datumtijd);
-        return (int)lastGeneratedStroomTarief2.doubleValue();
+        return (int) lastGeneratedStroomTarief2.doubleValue();
     }
 
     private int getStroomTarief1(long datumtijd) {
         lastGeneratedStroomTarief1 += getStroomInterval(datumtijd);
-        return (int)lastGeneratedStroomTarief1.doubleValue();
+        return (int) lastGeneratedStroomTarief1.doubleValue();
     }
 }

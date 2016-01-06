@@ -14,6 +14,8 @@ import java.util.List;
 @Component
 public class StroomVerbruikService {
 
+    public static final String CACHE_STROOMVERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
+
     @Inject
     MeterstandRepository meterstandRepository;
 
@@ -22,7 +24,7 @@ public class StroomVerbruikService {
 
     public Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
-        int totaalVerbruikInKwh = 0;
+        Integer totaalVerbruikInKwh = null;
 
         if (periodeVan < System.currentTimeMillis()) {
             List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet + 1);
@@ -41,6 +43,9 @@ public class StroomVerbruikService {
 
                     Integer verbruik = meterstandRepository.getVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
                     if (verbruik != null) {
+                        if (totaalVerbruikInKwh == null) {
+                            totaalVerbruikInKwh = 0;
+                        }
                         totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(new BigDecimal(verbruik)));
                         totaalVerbruikInKwh += verbruik;
                     }
@@ -55,11 +60,15 @@ public class StroomVerbruikService {
 
         Stroomverbruik stroomverbruik = new Stroomverbruik();
         stroomverbruik.setkWh(totaalVerbruikInKwh);
-        stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
+        if (totaalVerbruikInKwh == null) {
+            stroomverbruik.setEuro(null);
+        } else {
+            stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
+        }
         return stroomverbruik;
     }
 
-    @Cacheable(cacheNames = "verbruikInPeriode")
+    @Cacheable(cacheNames = CACHE_STROOMVERBRUIK_IN_PERIODE)
     public Stroomverbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
         return getVerbruikInPeriode(vanMillis, totEnMetMillis);
     }

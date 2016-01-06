@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 
 public class Stroomverbruik {
 
-    private int kWh;
+    private Integer kWh;
 
     private BigDecimal euro;
 
-    public int getkWh() {
+    public Integer getkWh() {
         return kWh;
     }
 
-    public void setkWh(int kWh) {
+    public void setkWh(Integer kWh) {
         this.kWh = kWh;
     }
 

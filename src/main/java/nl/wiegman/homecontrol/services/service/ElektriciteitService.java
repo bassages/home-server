@@ -7,7 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import java.util.*;
 import java.util.stream.IntStream;
 

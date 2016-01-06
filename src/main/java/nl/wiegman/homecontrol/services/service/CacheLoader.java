@@ -6,8 +6,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class CacheLoader {

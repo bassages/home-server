@@ -6,6 +6,7 @@ import nl.wiegman.homecontrol.services.service.MeterstandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +14,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Path(HistoricDataGeneratorService.SERVICE_PATH)
@@ -32,6 +36,9 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     private Double lastGeneratedStroomTarief2 = null;
     private Long lastGeneratedTimestamp = null;
 
+    @Value("${historicDataGenerator.autostart}")
+    boolean autoStart = false;
+
     @Autowired
     private MeterstandService meterstandService;
 
@@ -40,17 +47,19 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     @PostConstruct
     public void init() {
-        Meterstand oldest = meterstandService.getOldest();
-        if (oldest == null) {
-            lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
-            lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
-            lastGeneratedTimestamp = System.currentTimeMillis();
-        } else {
-            lastGeneratedStroomTarief1 = (double)oldest.getStroomTarief1();
-            lastGeneratedStroomTarief2 = (double)oldest.getStroomTarief2();
-            lastGeneratedTimestamp = oldest.getDatumtijd();
+        if (autoStart) {
+            Meterstand oldest = meterstandService.getOldest();
+            if (oldest == null) {
+                lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
+                lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
+                lastGeneratedTimestamp = System.currentTimeMillis();
+            } else {
+                lastGeneratedStroomTarief1 = (double)oldest.getStroomTarief1();
+                lastGeneratedStroomTarief2 = (double)oldest.getStroomTarief2();
+                lastGeneratedTimestamp = oldest.getDatumtijd();
+            }
+            startGeneratingHistoricData();
         }
-        startGeneratingHistoricData();
     }
 
     @POST
