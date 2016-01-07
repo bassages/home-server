@@ -53,38 +53,38 @@ public class ElecticiteitServiceTest {
         assertThat(dagenInPeriode.size(), is(10));
     }
 
-    @Test
-    public void stroomverbruikPerMaandWithOneKosten() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("31-01-2016 23:59:59.999").getTime())).thenReturn(100);
-
-        StroomVerbruikPerMaandInJaar stroomverbruikInMaand = elektriciteitService.getStroomverbruikInMaand(1, 2016);
-        assertThat(stroomverbruikInMaand, is(notNullValue()));
-        assertThat(stroomverbruikInMaand.getkWh(), is(equalTo(100)));
-    }
-
-    @Test
-    public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("01-01-2016 23:59:59.999").getTime())).thenReturn(1);
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("02-01-2016 00:00:00.000").getTime(), sdf.parse("31-01-2016 23:59:59.999").getTime())).thenReturn(2);
-
-        Kosten kosten1 = new Kosten();
-        kosten1.setStroomPerKwh(BigDecimal.valueOf(1));
-        kosten1.setVan(sdf.parse("01-01-2015 00:00:00.000").getTime());
-        kosten1.setTot(sdf.parse("01-01-2016 23:59:59.999").getTime());
-
-        Kosten kosten2 = new Kosten();
-        kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
-        kosten2.setVan(sdf.parse("02-01-2016 00:00:00.000").getTime());
-        kosten2.setTot(sdf.parse("01-01-2017 00:00:00.000").getTime());
-
-        Mockito.when(kostenRepository.getKostenInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("01-02-2016 00:00:00.000").getTime())).thenReturn(Arrays.asList(new Kosten[] {kosten1, kosten2}));
-
-        StroomVerbruikPerMaandInJaar stroomverbruikInMaand = elektriciteitService.getStroomverbruikInMaand(1, 2016);
-        assertThat(stroomverbruikInMaand, is(notNullValue()));
-        assertThat(stroomverbruikInMaand.getkWh(), is(equalTo(3)));
-        assertThat(stroomverbruikInMaand.getEuro().doubleValue(), is(equalTo(5.00d)));
-    }
+//    @Test
+//    public void stroomverbruikPerMaandWithOneKosten() throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+//        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("31-01-2016 23:59:59.999").getTime())).thenReturn(100);
+//
+//        StroomVerbruikPerMaandInJaar stroomverbruikInMaand = elektriciteitService.getStroomverbruikInMaand(1, 2016);
+//        assertThat(stroomverbruikInMaand, is(notNullValue()));
+//        assertThat(stroomverbruikInMaand.getkWh(), is(equalTo(100)));
+//    }
+//
+//    @Test
+//    public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
+//        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("01-01-2016 23:59:59.999").getTime())).thenReturn(1);
+//        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(sdf.parse("02-01-2016 00:00:00.000").getTime(), sdf.parse("31-01-2016 23:59:59.999").getTime())).thenReturn(2);
+//
+//        Kosten kosten1 = new Kosten();
+//        kosten1.setStroomPerKwh(BigDecimal.valueOf(1));
+//        kosten1.setVan(sdf.parse("01-01-2015 00:00:00.000").getTime());
+//        kosten1.setTot(sdf.parse("01-01-2016 23:59:59.999").getTime());
+//
+//        Kosten kosten2 = new Kosten();
+//        kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
+//        kosten2.setVan(sdf.parse("02-01-2016 00:00:00.000").getTime());
+//        kosten2.setTot(sdf.parse("01-01-2017 00:00:00.000").getTime());
+//
+//        Mockito.when(kostenRepository.getKostenInPeriod(sdf.parse("01-01-2016 00:00:00.000").getTime(), sdf.parse("01-02-2016 00:00:00.000").getTime())).thenReturn(Arrays.asList(new Kosten[] {kosten1, kosten2}));
+//
+//        StroomVerbruikPerMaandInJaar stroomverbruikInMaand = elektriciteitService.getStroomverbruikInMaand(1, 2016);
+//        assertThat(stroomverbruikInMaand, is(notNullValue()));
+//        assertThat(stroomverbruikInMaand.getkWh(), is(equalTo(3)));
+//        assertThat(stroomverbruikInMaand.getEuro().doubleValue(), is(equalTo(5.00d)));
+//    }
 
 }

@@ -14,13 +14,16 @@ import java.util.List;
 @Component
 public class StroomVerbruikService {
 
-    public static final String CACHE_STROOMVERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
-
     @Inject
     MeterstandRepository meterstandRepository;
 
     @Inject
     KostenRepository kostenRepository;
+
+    @Cacheable(cacheNames = "stroomVerbruikInPeriode")
+    public Stroomverbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
+        return getVerbruikInPeriode(vanMillis, totEnMetMillis);
+    }
 
     public Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
@@ -66,10 +69,5 @@ public class StroomVerbruikService {
             stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
         }
         return stroomverbruik;
-    }
-
-    @Cacheable(cacheNames = CACHE_STROOMVERBRUIK_IN_PERIODE)
-    public Stroomverbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
-        return getVerbruikInPeriode(vanMillis, totEnMetMillis);
     }
 }
