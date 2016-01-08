@@ -24,3 +24,18 @@ rhc port-forward -a database
 
 Common RHC (Command Line Tool) Commands:
 https://developers.openshift.com/en/managing-common-rhc-commands.html
+
+----
+
+Clean up:
+
+// various
+rhc app stop -a homecontrol
+rhc app-tidy -a homecontrol
+rhc app start -a homecontrol
+
+// Maven repo
+rhc ssh -a homecontrol
+cd $OPENSHIFT_DEPENDENCIES_DIR
+rm -rf *
+exit

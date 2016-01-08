@@ -23,6 +23,8 @@ public class Kosten {
     @Column(precision = 7, scale = 6)
     private BigDecimal gasPerKuub;
 
+    private String omschrijving;
+
     public long getId() {
         return id;
     }
@@ -43,7 +45,7 @@ public class Kosten {
         return totEnMet;
     }
 
-    public void setTot(long totEnMet) {
+    public void setTotEnMet(long totEnMet) {
         this.totEnMet = totEnMet;
     }
 
@@ -61,5 +63,13 @@ public class Kosten {
 
     public void setGasPerKuub(BigDecimal gasPerKuub) {
         this.gasPerKuub = gasPerKuub;
+    }
+
+    public String getOmschrijving() {
+        return omschrijving;
+    }
+
+    public void setOmschrijving(String omschrijving) {
+        this.omschrijving = omschrijving;
     }
 }

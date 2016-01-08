@@ -13,7 +13,7 @@ import java.util.List;
 public interface KostenRepository extends JpaRepository<Kosten, Long> {
 
     @Cacheable(cacheNames = "kostenInPeriod")
-    @Query(value = "SELECT k FROM Kosten k WHERE (:from BETWEEN k.van AND k.totEnMet) OR (:to BETWEEN k.van AND k.totEnMet)")
-    List<Kosten> getKostenInPeriod(@Param("from") long from, @Param("to") long to);
+    @Query(value = "SELECT k FROM Kosten k WHERE (:van BETWEEN k.van AND k.totEnMet) OR (:tot BETWEEN k.van AND k.totEnMet)")
+    List<Kosten> getKostenInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
 }
