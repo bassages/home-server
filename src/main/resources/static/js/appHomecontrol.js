@@ -3,7 +3,6 @@
 // Declare app level module which depends on views, and components
 var app = angular.module('appHomecontrol', [
     'ngRoute',
-    'appHomecontrol.afvalController',
     'appHomecontrol.opgenomenVermogenService',
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
