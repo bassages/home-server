@@ -3,11 +3,11 @@
 // Declare app level module which depends on views, and components
 var app = angular.module('appHomecontrol', [
     'ngRoute',
-    'appHomecontrol.opgenomenVermogenService',
+    'appHomecontrol.meterstandService',
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
     'appHomecontrol.maandGrafiekController',
-    'appHomecontrol.opgenomenVermogenController',
+    'appHomecontrol.stroomMeterstandController',
     'appHomecontrol.localizationService',
     'appHomecontrol.grafiekWindowSizeService',
     'appHomecontrol.sharedDataService'
@@ -25,7 +25,8 @@ var app = angular.module('appHomecontrol', [
             controller: 'MaandGrafiekController'
         });
         $routeProvider.when('/', {
-            templateUrl : 'dashboard.html'
+            templateUrl : 'dashboard.html',
+            controller: 'StroomMeterstandController'
         });
         $routeProvider.otherwise({redirectTo: 'dashboard.html'});
 }]);

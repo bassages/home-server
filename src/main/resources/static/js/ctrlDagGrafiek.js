@@ -107,7 +107,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             for (var i = 0; i <= ($scope.numberOfPeriods-1); i++) {
                 var tickValue = $scope.selection.getTime() - (i * oneDay);
                 tickValues.push(tickValue);
-                $log.debug('Add tick for ' + new Date(tickValue));
             }
             return tickValues;
         }
