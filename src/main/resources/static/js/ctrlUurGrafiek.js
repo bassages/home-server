@@ -15,6 +15,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         $scope.selection.setHours(0,0,0,0);
 
         GrafiekWindowSizeService.manage($scope);
+        LocalizationService.localize();
         Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
         loadDataIntoGraph([]);
