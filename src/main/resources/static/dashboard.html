@@ -19,34 +19,42 @@
 </nav>
 
 <div class="row">
-    <!-- huidig verbruik stroom -->
+    <!-- stroom -->
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title"><i class="fa fa-bolt"></i> Stroom <a href="#grafiek/stroom/uur"><span class="pull-right"><i class="fa fa-ellipsis-h" title="Details"></i></span></a></h1>
             </div>
-            <div class="panel-body" ng-controller="OpgenomenVermogenController" ng-cloak>
+            <div class="panel-body" ng-cloak>
 
-                <div id="ledbar-stroom" class="ledbar pull-left">
-                    <div ng-class="led9 ? 'led9' : 'leduit'"></div>
-                    <div ng-class="led8 ? 'led8' : 'leduit'"></div>
-                    <div ng-class="led7 ? 'led7' : 'leduit'"></div>
-                    <div ng-class="led6 ? 'led6' : 'leduit'"></div>
-                    <div ng-class="led5 ? 'led5' : 'leduit'"></div>
-                    <div ng-class="led4 ? 'led4' : 'leduit'"></div>
-                    <div ng-class="led3 ? 'led3' : 'leduit'"></div>
-                    <div ng-class="led2 ? 'led2' : 'leduit'"></div>
-                    <div ng-class="led1 ? 'led1' : 'leduit'"></div>
-                    <div ng-class="led0 ? 'led0' : 'leduit'"></div>
+                <div>
+                    <div id="ledbar-stroom" class="ledbar pull-left">
+                        <div ng-class="led9 ? 'led9' : 'leduit'"></div>
+                        <div ng-class="led8 ? 'led8' : 'leduit'"></div>
+                        <div ng-class="led7 ? 'led7' : 'leduit'"></div>
+                        <div ng-class="led6 ? 'led6' : 'leduit'"></div>
+                        <div ng-class="led5 ? 'led5' : 'leduit'"></div>
+                        <div ng-class="led4 ? 'led4' : 'leduit'"></div>
+                        <div ng-class="led3 ? 'led3' : 'leduit'"></div>
+                        <div ng-class="led2 ? 'led2' : 'leduit'"></div>
+                        <div ng-class="led1 ? 'led1' : 'leduit'"></div>
+                        <div ng-class="led0 ? 'led0' : 'leduit'"></div>
+                    </div>
+
+                    <p>Op dit moment</p>
+                    <p>{{huidigOpgenomenVermogen}} <small>Watt</small></p>
                 </div>
 
-                <p>Op dit moment</p>
-                <p>{{huidigOpgenomenVermogen}} <small>Watt</small></p>
+                <hr/>
+
+                <div>
+                    <p style="font-family: D7CM">T1: {{t1}} - T2: {{t2}}<p>
+                </div>
             </div>
         </div>
-    </div><!-- End huidig verbruik stroom -->
+    </div><!-- End stroom -->
 
-    <!-- huidig verbruik gas -->
+    <!-- gas -->
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -69,7 +77,14 @@
 
                 <p>Op dit moment</p>
                 <p>0 <small>liter/uur</small></p>
+
+                <hr/>
+
+                <div>
+                    <p style="font-family: D7CM">000000,000<p>
+                </div>
             </div>
+
         </div>
-    </div><!-- End huidig verbruik gas -->
+    </div><!-- End gas -->
 </div>

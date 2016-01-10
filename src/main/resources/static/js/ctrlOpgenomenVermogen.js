@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('appHomecontrol.opgenomenVermogenService', [])
+angular.module('appHomecontrol.meterstandService', [])
 
-    .service("RealTimeOpgenomenVermogenService", ['$q', '$timeout', '$log', function($q, $timeout, $log) {
+    .service("RealTimeMeterstandService", ['$q', '$timeout', '$log', function($q, $timeout, $log) {
         var service = {};
         var listener = $q.defer();
         var socket = {
@@ -11,8 +11,8 @@ angular.module('appHomecontrol.opgenomenVermogenService', [])
         };
 
         service.RECONNECT_TIMEOUT = 10000;
-        service.SOCKET_URL = "/homecontrol/ws/elektra";
-        service.UPDATE_TOPIC = "/topic/elektriciteit/opgenomenVermogen";
+        service.SOCKET_URL = "/homecontrol/ws/meterstand";
+        service.UPDATE_TOPIC = "/topic/meterstand";
 
         service.receive = function() {
             return listener.promise;
@@ -43,9 +43,9 @@ angular.module('appHomecontrol.opgenomenVermogenService', [])
         return service;
     }]);
 
-angular.module('appHomecontrol.opgenomenVermogenController', [])
+angular.module('appHomecontrol.stroomMeterstandController', [])
 
-    .controller('OpgenomenVermogenController', ['$scope', '$http', 'RealTimeOpgenomenVermogenService', function($scope, $http, RealTimeOpgenomenVermogenService) {
+    .controller('StroomMeterstandController', ['$scope', '$http', 'RealTimeMeterstandService', function($scope, $http, RealTimeMeterstandService) {
         // Turn off all leds
         for (var i = 0; i < 10; i++) {
             $scope['led'+i] = false;
@@ -55,29 +55,30 @@ angular.module('appHomecontrol.opgenomenVermogenController', [])
 
         $http.get('rest/meterstanden/meestrecente')
             .success(function(data) {
-                updateOpgenomenVermogen(data);
+                update(data);
             }
         );
 
-        RealTimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
-            updateOpgenomenVermogen(jsonData);
+        RealTimeMeterstandService.receive().then(null, null, function(jsonData) {
+            update(jsonData);
         });
 
-        function updateOpgenomenVermogen(data) {
-            var huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
-            $scope.huidigOpgenomenVermogen = huidigOpgenomenVermogen;
+        function update(data) {
+            $scope.t1 = data.stroomTarief1;
+            $scope.t2 = data.stroomTarief2;
+            $scope.huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
 
             var step = 150;
-            $scope.led0 = huidigOpgenomenVermogen > 0;
-            $scope.led1 = huidigOpgenomenVermogen >= (1 * step);
-            $scope.led2 = huidigOpgenomenVermogen >= (2 * step);
-            $scope.led3 = huidigOpgenomenVermogen >= (3 * step);
-            $scope.led4 = huidigOpgenomenVermogen >= (4 * step);
-            $scope.led5 = huidigOpgenomenVermogen >= (5 * step);
-            $scope.led6 = huidigOpgenomenVermogen >= (6 * step);
-            $scope.led7 = huidigOpgenomenVermogen >= (7 * step);
-            $scope.led8 = huidigOpgenomenVermogen >= (8 * step);
-            $scope.led9 = huidigOpgenomenVermogen >= (9 * step);
+            $scope.led0 = data.stroomOpgenomenVermogenInWatt > 0;
+            $scope.led1 = data.stroomOpgenomenVermogenInWatt >= (1 * step);
+            $scope.led2 = data.stroomOpgenomenVermogenInWatt >= (2 * step);
+            $scope.led3 = data.stroomOpgenomenVermogenInWatt >= (3 * step);
+            $scope.led4 = data.stroomOpgenomenVermogenInWatt >= (4 * step);
+            $scope.led5 = data.stroomOpgenomenVermogenInWatt >= (5 * step);
+            $scope.led6 = data.stroomOpgenomenVermogenInWatt >= (6 * step);
+            $scope.led7 = data.stroomOpgenomenVermogenInWatt >= (7 * step);
+            $scope.led8 = data.stroomOpgenomenVermogenInWatt >= (8 * step);
+            $scope.led9 = data.stroomOpgenomenVermogenInWatt >= (9 * step);
         }
     }]);
 

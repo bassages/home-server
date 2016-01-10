@@ -18,7 +18,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/elektra").withSockJS();
+        registry.addEndpoint("/ws/meterstand").withSockJS();
     }
 
 }
