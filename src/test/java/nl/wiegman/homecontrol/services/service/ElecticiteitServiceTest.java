@@ -1,5 +1,7 @@
 package nl.wiegman.homecontrol.services.service;
 
+import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

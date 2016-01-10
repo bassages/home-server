@@ -2,6 +2,7 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 

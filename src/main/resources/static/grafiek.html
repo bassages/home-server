@@ -11,41 +11,7 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form class="navbar-form navbar-right">
-                <img ng-show="loading" src="images/spinner.gif" class="spinner">
 
-                <div class="form-group" ng-show="showNumberOfPeriodsSelector()">
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" ng-click="setNumberOfPeriods(-7)">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </span>
-                        <input class="form-control numberOfPeriods" ng-model="numberOfPeriods" ng-readonly="true"/>
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" ng-click="setNumberOfPeriods(+7)">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="input-group date-selector">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" ng-click="navigate(-1)">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                        </span>
-                        <input class="form-control datepicker datepicker-selected-value" formatteddate style="text-align: center;" ng-model="selection" ng-readonly="true"/>
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 </nav>
@@ -59,6 +25,43 @@
             <li ng-class="{'active': period=='uur'}"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
             <li ng-class="{'active': period=='dag'}"><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
             <li ng-class="{'active': period=='maand'}"><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
+            <li class="pull-right">
+                <form class="navbar-form navbar-tabs navbar-right">
+                    <img ng-show="loading" src="images/spinner.gif" class="spinner">
+
+                    <div class="form-group" ng-show="showNumberOfPeriodsSelector()">
+                        <div class="input-group">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="setNumberOfPeriods(-7)">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </span>
+                        <input class="form-control numberOfPeriods" ng-model="numberOfPeriods" ng-readonly="true"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="setNumberOfPeriods(+7)">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group date-selector">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="navigate(-1)">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                        </span>
+                        <input class="form-control datepicker datepicker-selected-value" formatteddate style="text-align: center;" ng-model="selection" ng-readonly="true"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                        </span>
+                        </div>
+                    </div>
+                </form>
+            </li>
         </ul>
     </div>
 </div>

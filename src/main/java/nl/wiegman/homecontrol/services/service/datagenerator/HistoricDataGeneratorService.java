@@ -1,7 +1,7 @@
 package nl.wiegman.homecontrol.services.service.datagenerator;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
-import nl.wiegman.homecontrol.services.service.MeterstandRepository;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import nl.wiegman.homecontrol.services.service.MeterstandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

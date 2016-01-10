@@ -2,6 +2,8 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
 import nl.wiegman.homecontrol.services.model.api.Stroomverbruik;
+import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;

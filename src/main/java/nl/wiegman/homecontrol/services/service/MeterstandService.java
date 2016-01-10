@@ -2,6 +2,7 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

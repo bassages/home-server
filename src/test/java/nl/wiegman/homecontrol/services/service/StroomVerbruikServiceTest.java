@@ -2,13 +2,14 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
 import nl.wiegman.homecontrol.services.model.api.Stroomverbruik;
+import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.verification.VerificationMode;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

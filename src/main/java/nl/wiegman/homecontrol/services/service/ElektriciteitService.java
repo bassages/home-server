@@ -4,6 +4,8 @@ import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikPerMaandInJaar;
 import nl.wiegman.homecontrol.services.model.api.Stroomverbruik;
+import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

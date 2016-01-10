@@ -1,4 +1,21 @@
-API doc:
-http://localhost:8080/homecontrol/webjars/swagger-ui/2.1.1/index.html?url=http://localhost:8080/homecontrol/rest/swagger.json
+TODO:
 
-http://localhost:8080/homecontrol/rest/swagger.json
+Angular and Spring data rest:
+https://guylabs.ch/project/angular-spring-data-rest/
+
+CRUD kosten
+
+---------------
+
+Laatste meterstanden per dag
+
+----------------
+
+Angular bootstrap
+
+Hmmm....
+- Datepicker kan niet alleen de clear button verwijderen.
+
+----------------
+
+
