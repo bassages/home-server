@@ -9,10 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Component
-@Path(CacheServiceRest.SERVICE_PATH)
+@Path("cache")
 public class CacheServiceRest {
-
-    public static final String SERVICE_PATH = "cache";
 
     @Inject
     CacheService cacheService;

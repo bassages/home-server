@@ -8,23 +8,29 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
-        $scope.loading = false;
-        $scope.period = 'dag';
-        $scope.energiesoort = $routeParams.energiesoort;
-        $scope.periode = $routeParams.periode;
-        $scope.soort = SharedDataService.getSoortData();
-        $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
+        initialize();
 
-        // By default, today is the last day in the graph
-        $scope.selection = new Date();
-        $scope.selection.setHours(0,0,0,0);
-        $scope.numberOfPeriods = 7;
+        function initialize() {
+            $scope.loading = false;
+            $scope.period = 'dag';
+            $scope.energiesoort = $routeParams.energiesoort;
+            $scope.periode = $routeParams.periode;
+            $scope.soort = SharedDataService.getSoortData();
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
+                'code': 'kosten',
+                'omschrijving': '\u20AC'
+            }];
+            // By default, today is the last day in the graph
+            $scope.selection = new Date();
+            $scope.selection.setHours(0, 0, 0, 0);
+            $scope.numberOfPeriods = 7;
+            Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
+            LocalizationService.localize();
+            GrafiekWindowSizeService.manage($scope);
 
-        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
-        LocalizationService.localize();
-        GrafiekWindowSizeService.manage($scope);
-
-        loadDataIntoGraph([]);
+            clearGraph();
+            getDataFromServer();
+        }
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -52,7 +58,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
-                    $scope.getDataFromServer();
+                    getDataFromServer();
                 });
             }
             applyDatePickerUpdatesInAngularScope = true;
@@ -78,11 +84,12 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.navigate = function(numberOfPeriods) {
             var selection = new Date($scope.selection);
             selection.setDate($scope.selection.getDate() + numberOfPeriods);
-            $scope.selection = selection;
 
             applyDatePickerUpdatesInAngularScope = false;
             theDatepicker.datepicker('setDate', selection);
-            $scope.getDataFromServer();
+
+            $scope.selection = selection;
+            getDataFromServer();
         };
 
         $scope.switchSoort = function(destinationSoortCode) {
@@ -98,7 +105,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         $scope.setNumberOfPeriods = function(numberOfPeriods) {
             if (($scope.numberOfPeriods + numberOfPeriods) >= 1) {
                 $scope.numberOfPeriods = $scope.numberOfPeriods + numberOfPeriods;
-                $scope.getDataFromServer();
+                getDataFromServer();
             }
         };
 
@@ -197,6 +204,10 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return graphConfig;
         }
 
+        function clearGraph() {
+            loadDataIntoGraph([]);
+        }
+
         function loadDataIntoGraph(graphData) {
             $scope.graphData = graphData;
 
@@ -216,7 +227,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             return from;
         }
 
-        $scope.getDataFromServer = function() {
+        function getDataFromServer() {
             $scope.loading = true;
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();

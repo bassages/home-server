@@ -3,22 +3,26 @@
 angular.module('appHomecontrol.uurGrafiekController', [])
 
     .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-        $scope.loading = false;
-        $scope.period = 'uur';
-        $scope.energiesoort = $routeParams.energiesoort;
-        $scope.periode = $routeParams.periode;
-        $scope.soort = 'verbruik'; // This controller only supports verbruik
-        SharedDataService.setSoortData('verbruik');
-        $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
-        // By default, today is selected
-        $scope.selection = new Date();
-        $scope.selection.setHours(0,0,0,0);
+        initialize();
 
-        GrafiekWindowSizeService.manage($scope);
-        LocalizationService.localize();
-        Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
+        function initialize() {
+            $scope.loading = false;
+            $scope.period = 'uur';
+            $scope.energiesoort = $routeParams.energiesoort;
+            $scope.periode = $routeParams.periode;
+            $scope.soort = 'verbruik'; // This controller only supports verbruik
+            SharedDataService.setSoortData('verbruik');
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
+            // By default, today is selected
+            $scope.selection = new Date();
+            $scope.selection.setHours(0, 0, 0, 0);
+            GrafiekWindowSizeService.manage($scope);
+            LocalizationService.localize();
+            Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
-        loadDataIntoGraph([]);
+            clearGraph();
+            getDataFromServer();
+        }
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -46,7 +50,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
-                    $scope.getDataFromServer();
+                    getDataFromServer();
                 });
             }
             applyDatePickerUpdatesInAngularScope = true;
@@ -76,11 +80,13 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         $scope.navigate = function(numberOfPeriods) {
             var next = new Date($scope.selection);
             next.setDate($scope.selection.getDate() + numberOfPeriods);
-            $scope.selection = next;
 
             applyDatePickerUpdatesInAngularScope = false;
             theDatepicker.datepicker('setDate', $scope.selection);
-            $scope.getDataFromServer();
+
+            $scope.selection = next;
+
+            getDataFromServer();
         };
 
         function getTicksForEveryHourInPeriod(from, to) {
@@ -150,6 +156,10 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return graphConfig;
         }
 
+        function clearGraph() {
+            loadDataIntoGraph([]);
+        }
+
         function loadDataIntoGraph(graphData) {
             $scope.graphData = graphData;
 
@@ -169,7 +179,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
             return to;
         }
 
-        $scope.getDataFromServer = function() {
+        function getDataFromServer() {
             $scope.loading = true;
 
             var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + getSubPeriodLength();

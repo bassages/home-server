@@ -3,18 +3,25 @@
 angular.module('appHomecontrol.maandGrafiekController', [])
 
     .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-        $scope.loading = false;
-        $scope.selection = new Date();
-        $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
-        $scope.period = 'maand';
-        $scope.energiesoort = $routeParams.energiesoort;
-        $scope.periode = $routeParams.periode;
-        $scope.soort = SharedDataService.getSoortData();
+        function initialize() {
+            $scope.loading = false;
+            $scope.selection = new Date();
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
+                'code': 'kosten',
+                'omschrijving': '\u20AC'
+            }];
+            $scope.period = 'maand';
+            $scope.energiesoort = $routeParams.energiesoort;
+            $scope.periode = $routeParams.periode;
+            $scope.soort = SharedDataService.getSoortData();
+            LocalizationService.localize();
+            GrafiekWindowSizeService.manage($scope);
 
-        LocalizationService.localize();
-        GrafiekWindowSizeService.manage($scope);
+            clearGraph();
+            getDataFromServer();
+        }
 
-        loadDataIntoGraph([]);
+        initialize();
 
         $scope.isMaxSelected = function() {
             return (new Date()).getFullYear() == $scope.selection;
@@ -27,7 +34,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection = new Date($scope.selection);
             $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
-            $scope.getDataFromServer();
+            getDataFromServer();
         };
 
         $scope.switchSoort = function(destinationSoortCode) {
@@ -48,22 +55,6 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             }
             return tickValues;
         }
-
-        $scope.getDataFromServer = function() {
-            $scope.loading = true;
-
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
-            $log.info('URL: ' + graphDataUrl);
-
-            $http({
-                method: 'GET', url: graphDataUrl
-            }).then(function successCallback(response) {
-                loadDataIntoGraph(response.data);
-                $scope.loading = false;
-            }, function errorCallback(response) {
-                $scope.loading = false;
-            });
-        };
 
         function getAverage(graphData) {
             var total = 0;
@@ -158,6 +149,10 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             return graphConfig;
         }
 
+        function clearGraph() {
+            loadDataIntoGraph([]);
+        }
+
         function loadDataIntoGraph(graphData) {
             $scope.graphData = graphData;
 
@@ -169,5 +164,21 @@ angular.module('appHomecontrol.maandGrafiekController', [])
             }
             $scope.chart = c3.generate(graphConfig);
             GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+        }
+
+        function getDataFromServer() {
+            $scope.loading = true;
+
+            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
+            $log.info('URL: ' + graphDataUrl);
+
+            $http({
+                method: 'GET', url: graphDataUrl
+            }).then(function successCallback(response) {
+                loadDataIntoGraph(response.data);
+                $scope.loading = false;
+            }, function errorCallback(response) {
+                $scope.loading = false;
+            });
         }
     }]);

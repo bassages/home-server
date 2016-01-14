@@ -10,8 +10,8 @@
 	<name>HomeControl</name>
 
     <!--
-    BUGS TO WATCH:
-    https://github.com/spring-projects/spring-boot/issues/4853
+        BUGS TO WATCH:
+        https://github.com/spring-projects/spring-boot/issues/4853
     -->
 
 	<parent>
@@ -25,7 +25,8 @@
 		<start-class>nl.wiegman.homecontrol.services.HomeControlApplication</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-	</properties>
+        <angularjs.version>1.4.8</angularjs.version>
+    </properties>
 
 	<dependencies>
         <dependency>
@@ -73,11 +74,6 @@
         </dependency>
 
 		<dependency>
-			<groupId>org.mnode.ical4j</groupId>
-			<artifactId>ical4j</artifactId>
-			<version>2.0-beta1</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
@@ -86,6 +82,11 @@
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
@@ -102,11 +103,10 @@
             <artifactId>stomp-websocket</artifactId>
             <version>2.3.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.webjars</groupId>
-            <artifactId>font-awesome</artifactId>
-            <version>4.4.0</version>
+            <artifactId>angularjs</artifactId>
+            <version>${angularjs.version}</version>
         </dependency>
 
         <dependency>
@@ -159,7 +159,7 @@
             <plugin>
                 <groupId>ro.isdc.wro4j</groupId>
                 <artifactId>wro4j-maven-plugin</artifactId>
-                <version>1.7.8</version>
+                <version>1.7.9</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -184,18 +184,8 @@
                     </dependency>
                     <dependency>
                         <groupId>org.webjars</groupId>
-                        <artifactId>jquery</artifactId>
-                        <version>2.1.4</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.webjars</groupId>
                         <artifactId>angularjs</artifactId>
-                        <version>1.4.4</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.webjars</groupId>
-                        <artifactId>bootstrap</artifactId>
-                        <version>3.3.4</version>
+                        <version>${angularjs.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

@@ -1,0 +1,40 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/"><i class="fa fa-home"></i></a>
+        </div>
+    </div>
+</nav>
+
+<h1><small>Beheer</small> Kosten</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Van</th>
+                <th>Tot</th>
+                <th>Stroom per kWh</th>
+                <th>Gas per m<sup>2</sup></th>
+                <th>Omschrijving</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in kosten">
+                <td>{{item.van | dateWithoutDayName}}</td>
+                <td>{{item.totEnMet+1 | dateWithoutDayName}}</td>
+                <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
+                <td>{{item.gasPerKuub | currency:undefined:4}}</td>
+                <td>{{item.omschrijving}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
