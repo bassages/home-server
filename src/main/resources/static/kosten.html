@@ -67,7 +67,7 @@
             <div class="col-sm-10">
                 <div class="input-group">
                     <span class="input-group-addon">&euro; </span>
-                    <input type="text" energieprijs class="form-control" id="stroom" name="stroom" placeholder="0,0000" step="0,0001" min="0" max="9" required ng-model="item.stroomPerKwh">
+                    <input type="text" energieprijs class="form-control" id="stroom" name="stroom" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}(\,[0-9]{4})?$/" required ng-model="item.stroomPerKwh">
                 </div>
             </div>
         </div>
@@ -77,13 +77,13 @@
             <div class="col-sm-10">
                 <div class="input-group">
                     <span class="input-group-addon">&euro; </span>
-                    <input type="text" energieprijs class="form-control" id="gas" name="gas" placeholder="0,0000" step="0,0001" min="0" max="9" required ng-model="item.gasPerKuub">
+                    <input type="text" energieprijs class="form-control" id="gas" name="gas" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}(\,[0-9]{4})?$/" required ng-model="item.gasPerKuub">
                 </div>
             </div>
         </div>
 
         <div class="pull-right">
-            <input type="submit" class="btn btn-primary" ng-click="save()" value="OK"/>
+            <input type="submit" class="btn btn-primary" ng-click="save()" value="OK" ng-disabled="!editform.omschrijving.$valid || !editform.van.$valid || !editform.stroom.$valid || !editform.gas.$valid"/>
             <input type="button" class="btn btn-primary" ng-click="cancelEdit()" value="Annuleren"/>
         </div>
     </form>

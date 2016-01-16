@@ -1,7 +1,6 @@
-TODO:
+Backlog
 
-Angular and Spring data rest:
-https://guylabs.ch/project/angular-spring-data-rest/
+---------------
 
 CRUD kosten
 
@@ -17,5 +16,3 @@ Hmmm....
 - Datepicker kan niet alleen de clear button verwijderen.
 
 ----------------
-
-http://www.keshikan.net/fonts-e.html

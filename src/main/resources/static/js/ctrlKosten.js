@@ -31,7 +31,7 @@ angular.module('appHomecontrol.kostenController', [])
         };
 
         $scope.cancelEdit = function() {
-            console.log('cancelEdit');
+            $scope.selectedItem = null;
             $scope.showDetails = false;
         }
     }]);
