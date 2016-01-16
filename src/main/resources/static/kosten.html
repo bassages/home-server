@@ -14,27 +14,77 @@
     </div>
 </nav>
 
-<h1><small>Beheer</small> Kosten</h1>
+<div>
+    <h1>
+        <span><small>Beheer</small> Kosten</span>
+        <button class='btn btn-primary pull-right' ng-click="startAdd()"><i class="fa fa-plus-circle"></i> Toevoegen</button>
+    </h1>
+</div>
 
 <div class="table-responsive">
-    <table class="table table-bordered table-striped table-hover">
+    <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Van</th>
+                <th>Omschrijving</th>
+                <th>Vanaf</th>
                 <th>Tot</th>
                 <th>Stroom per kWh</th>
                 <th>Gas per m<sup>2</sup></th>
-                <th>Omschrijving</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in kosten">
+            <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item.id === selectedItem.id}" >
+                <td>{{item.omschrijving}}</td>
                 <td>{{item.van | dateWithoutDayName}}</td>
                 <td>{{item.totEnMet+1 | dateWithoutDayName}}</td>
                 <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
                 <td>{{item.gasPerKuub | currency:undefined:4}}</td>
-                <td>{{item.omschrijving}}</td>
             </tr>
         </tbody>
     </table>
+
+    <br/>
+
+    <form name="editform" class="form-horizontal" ng-show="showDetails">
+        <hr/>
+
+        <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.omschrijving.$valid}">
+            <label for="omschrijving" class="col-sm-2 control-label">Omschrijving</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="omschrijving" name="omschrijving" placeholder="Omschrijving" ng-model="item.omschrijving" required>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.van.$valid}">
+            <label for="van" class="col-sm-2 control-label">Vanaf</label>
+            <div class="col-sm-10">
+                <input type="text" formattedepochtimestamp class="form-control" id="van" name="van" placeholder="dd-MM-jjjj" ng-model="item.van" required>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.stroom.$valid}">
+            <label for="stroom" class="col-sm-2 control-label">Stroom per kWh</label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                    <span class="input-group-addon">&euro; </span>
+                    <input type="text" energieprijs class="form-control" id="stroom" name="stroom" placeholder="0,0000" step="0,0001" min="0" max="9" required ng-model="item.stroomPerKwh">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.gas.$valid}">
+            <label for="gas" class="col-sm-2 control-label">Gas per Gas per m<sup>2</sup></label>
+            <div class="col-sm-10">
+                <div class="input-group">
+                    <span class="input-group-addon">&euro; </span>
+                    <input type="text" energieprijs class="form-control" id="gas" name="gas" placeholder="0,0000" step="0,0001" min="0" max="9" required ng-model="item.gasPerKuub">
+                </div>
+            </div>
+        </div>
+
+        <div class="pull-right">
+            <input type="submit" class="btn btn-primary" ng-click="save()" value="OK"/>
+            <input type="button" class="btn btn-primary" ng-click="cancelEdit()" value="Annuleren"/>
+        </div>
+    </form>
 </div>

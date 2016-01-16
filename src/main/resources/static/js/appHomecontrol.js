@@ -59,7 +59,53 @@ app.directive('formatteddate', function() {
                 return Date.parse(text);
             }
             function toUser(date) {
-                return date.toString(scope.getDateFormat());
+                if(date) {
+                    return date.toString(scope.getDateFormat());
+                } else {
+                    return '';
+                }
+            }
+            ngModel.$parsers.push(fromUser);
+            ngModel.$formatters.push(toUser);
+        }
+    };
+});
+
+app.directive('formattedepochtimestamp', function() {
+    return {
+        restrict: 'A', // only matches attribute
+        require: 'ngModel',
+        link: function(scope, element, attr, ngModel) {
+            function fromUser(text) {
+                return Date.parse(text).getTime();
+            }
+            function toUser(epochDate) {
+                if(epochDate) {
+                    return (new Date(epochDate)).toString('dd-MM-yyyy');
+                } else {
+                    return null;
+                }
+            }
+            ngModel.$parsers.push(fromUser);
+            ngModel.$formatters.push(toUser);
+        }
+    };
+});
+
+app.directive('energieprijs', function() {
+    return {
+        restrict: 'A', // only matches attribute
+        require: 'ngModel',
+        link: function(scope, element, attr, ngModel) {
+            function fromUser(text) {
+                return parseFloat(text.replace(',','.'));
+            }
+            function toUser(prijs) {
+                if(prijs != null) {
+                    return prijs.toFixed(4).replace('.',',');
+                } else {
+                    return null;
+                }
             }
             ngModel.$parsers.push(fromUser);
             ngModel.$formatters.push(toUser);

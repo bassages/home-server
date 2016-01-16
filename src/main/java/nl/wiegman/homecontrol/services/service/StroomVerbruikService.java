@@ -32,6 +32,7 @@ public class StroomVerbruikService {
         Integer totaalVerbruikInKwh = null;
 
         if (periodeVan < System.currentTimeMillis()) {
+
             List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet + 1);
             if (CollectionUtils.isNotEmpty(kostenInPeriod)) {
 
@@ -40,7 +41,6 @@ public class StroomVerbruikService {
                     if (subVanMillis < periodeVan) {
                         subVanMillis = periodeVan;
                     }
-
                     long subTotEnMetMillis = kosten.getTotEnMet();
                     if (subTotEnMetMillis > periodeTotEnMet) {
                         subTotEnMetMillis = periodeTotEnMet;
