@@ -41,6 +41,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
             todayHighlight: true,
             endDate: "0d",
             language:"nl",
+            daysOfWeekHighlighted: "0,6",
             format: {
                 toDisplay: function (date, format, language) {
                     var formatter = d3.time.format('%a %d-%m-%Y');

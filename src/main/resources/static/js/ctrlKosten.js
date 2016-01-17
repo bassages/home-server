@@ -8,7 +8,7 @@ angular.module('appHomecontrol.kostenService', [])
 
 angular.module('appHomecontrol.kostenController', [])
 
-    .controller('KostenController', ['$scope', '$resource', 'Kosten', function($scope, $resource, Kosten) {
+    .controller('KostenController', ['$scope', '$resource', '$log', 'Kosten', function($scope, $resource, $log, Kosten) {
         $scope.kosten = Kosten.query(function() {});
 
         $scope.startEdit = function(kosten) {
@@ -21,17 +21,36 @@ angular.module('appHomecontrol.kostenController', [])
         $scope.startAdd = function() {
             $scope.selectedItem = null;
             $scope.item = {van: (new Date()).getTime(), totEnMet: null, gasPerKuub: null, stroomPerkWh: null, omschrijving: ''};
-            $scope.showDetails = true;
             $scope.detailsmode = 'add';
+            $scope.showDetails = true;
         };
 
         $scope.save = function() {
-            angular.copy($scope.item, $scope.selectedItem);
+            if ($scope.detailsmode == 'add') {
+
+            } else {
+                angular.copy($scope.item, $scope.selectedItem);
+            }
+            $log.info($scope.item);
+
+            $scope.selectedItem = null;
             $scope.showDetails = false;
         };
 
         $scope.cancelEdit = function() {
             $scope.selectedItem = null;
             $scope.showDetails = false;
+        };
+
+        $scope.delete = function() {
+            for (var i = 0; i < $scope.kosten.length; i++) {
+                if ($scope.kosten[i].id == $scope.selectedItem.id) {
+                    $scope.kosten.splice(i, 1);
+                    break;
+                }
+            }
+            $scope.selectedItem = null;
+            $scope.showDetails = false;
         }
+
     }]);
