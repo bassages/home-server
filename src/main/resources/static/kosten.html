@@ -34,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item.id === selectedItem.id}" >
+            <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item == selectedItem}" >
                 <td>{{item.omschrijving}}</td>
                 <td>{{item.van | dateWithoutDayName}}</td>
                 <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
@@ -46,7 +46,7 @@
 
 <br/>
 
-<form name="editform" class="form-horizontal" ng-show="showDetails">
+<form name="editform" class="form-horizontal" ng-show="showDetails" autocomplete="off">
     <hr/>
 
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.omschrijving.$valid}">

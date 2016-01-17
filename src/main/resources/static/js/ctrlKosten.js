@@ -27,14 +27,11 @@ angular.module('appHomecontrol.kostenController', [])
 
         $scope.save = function() {
             if ($scope.detailsmode == 'add') {
-
+                $scope.kosten.push($scope.item);
             } else {
                 angular.copy($scope.item, $scope.selectedItem);
             }
-            $log.info($scope.item);
-
-            $scope.selectedItem = null;
-            $scope.showDetails = false;
+            $scope.cancelEdit();
         };
 
         $scope.cancelEdit = function() {
@@ -49,8 +46,7 @@ angular.module('appHomecontrol.kostenController', [])
                     break;
                 }
             }
-            $scope.selectedItem = null;
-            $scope.showDetails = false;
+            $scope.cancelEdit();
         }
 
     }]);
