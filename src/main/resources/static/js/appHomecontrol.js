@@ -4,6 +4,7 @@
 var app = angular.module('appHomecontrol', [
     'ngRoute',
     'ngResource',
+    'ui.bootstrap',
     'appHomecontrol.kostenService',
     'appHomecontrol.kostenController',
     'appHomecontrol.meterstandService',

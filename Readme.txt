@@ -2,7 +2,14 @@ Backlog
 
 ---------------
 
+Kosten:
+- hernoem 'van' naar 'vanaf'
+- Verwijder totEnMet
+
+---------------
+
 CRUD kosten
+- Confirm delete (https://github.com/m-e-conroy/angular-dialog-service)
 
 ---------------
 
@@ -17,6 +24,7 @@ Hmmm....
 
 ----------------
 
+Gebruik en kosten per leverancier
 
 var chart = c3.generate({
     data: {
