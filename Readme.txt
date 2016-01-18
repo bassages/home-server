@@ -9,7 +9,7 @@ Kosten:
 ---------------
 
 CRUD kosten
-- Confirm delete (https://github.com/m-e-conroy/angular-dialog-service)
+- Communicate with backend
 
 ---------------
 
@@ -21,6 +21,10 @@ Angular bootstrap
 
 Hmmm....
 - Datepicker kan niet alleen de clear button verwijderen.
+
+----------------
+
+Directive voor datepicker op grafiek pagina
 
 ----------------
 
