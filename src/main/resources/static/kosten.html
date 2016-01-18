@@ -91,7 +91,7 @@
             &nbsp;
         </div>
         <div class="col-sm-10">
-            <button ng-show="detailsmode=='edit'" class='btn btn-primary' data-toggle="modal" data-target="#myModal"><i class="fa fa-minus-circle"></i></i> Verwijderen</button>
+            <button ng-show="detailsmode=='edit'" class='btn btn-primary' data-toggle="modal" data-target="#confirmDelete"><i class="fa fa-trash"></i></i> Verwijderen</button>
             <div class="pull-right">
                 <button class='btn btn-primary' ng-click="save()" ng-disabled="!editform.omschrijving.$valid || !editform.vanaf.$valid || !editform.stroom.$valid || !editform.gas.$valid"><i class="fa fa-check"></i> Opslaan</button>
                 <button class='btn btn-primary' ng-click="cancelEdit()"><i class="fa fa-ban"></i> Annuleren</button>
@@ -100,11 +100,11 @@
     </div>
 </form>
 
-<div id="myModal" class="modal fade" role="dialog" tabindex="-1">
+<div id="confirmDelete" class="modal fade" role="dialog" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header modal-header-primary">
-                <h4 class="modal-title"><i class="fa fa-question-circle"></i> Bevestig...</h4>
+                <h4 class="modal-title"><i class="fa fa-question-circle"></i> Bevestigen a.u.b.</h4>
             </div>
             <div class="modal-body">
                 <p>Weet u zeker dat u de geselecteerde rij wilt verwijderen?</p>
