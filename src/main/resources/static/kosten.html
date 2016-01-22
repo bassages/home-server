@@ -50,15 +50,15 @@
     <hr/>
 
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.leverancier.$valid}">
-        <label for="leverancier" class="col-sm-2 control-label">Leverancier</label>
-        <div class="col-sm-10">
+        <label for="leverancier" class="col-sm-3 control-label">Leverancier</label>
+        <div class="col-sm-6">
             <input type="text" class="form-control" id="leverancier" name="leverancier" placeholder="Leverancier" ng-maxlength="255" ng-model="item.leverancier" required>
         </div>
     </div>
 
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.vanaf.$valid}">
-        <label for="vanaf" class="col-sm-2 control-label">Vanaf</label>
-        <div class="col-sm-10">
+        <label for="vanaf" class="col-sm-3 control-label">Vanaf</label>
+        <div class="col-sm-6">
             <div class="input-group">
                 <input type="text" epochmodeldatepicker ng-readonly="true" class="form-control" id="vanaf" name="vanaf" placeholder="dd-MM-jjjj" ng-model="item.van" required>
                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -67,30 +67,30 @@
     </div>
 
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.stroom.$valid}">
-        <label for="stroom" class="col-sm-2 control-label">Stroom per kWh</label>
-        <div class="col-sm-10">
+        <label for="stroom" class="col-sm-3 control-label">Stroom per kWh</label>
+        <div class="col-sm-6">
             <div class="input-group">
                 <span class="input-group-addon">&euro; </span>
-                <input type="text" energieprijs class="form-control" id="stroom" name="stroom" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}(\,[0-9]{4})?$/" required ng-model="item.stroomPerKwh">
+                <input type="text" energieprijs class="form-control" id="stroom" name="stroom" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}\,[0-9]{4}?$/" required ng-model="item.stroomPerKwh">
             </div>
         </div>
     </div>
 
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.gas.$valid}">
-        <label for="gas" class="col-sm-2 control-label">Gas per Gas per m<sup>2</sup></label>
-        <div class="col-sm-10">
+        <label for="gas" class="col-sm-3 control-label">Gas per Gas per m<sup>2</sup></label>
+        <div class="col-sm-6">
             <div class="input-group">
                 <span class="input-group-addon">&euro; </span>
-                <input type="text" energieprijs class="form-control" id="gas" name="gas" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}(\,[0-9]{4})?$/" required ng-model="item.gasPerKuub">
+                <input type="text" energieprijs class="form-control" id="gas" name="gas" placeholder="0,0000" step="0,0001" ng-pattern="/^[0-9]{1}\,[0-9]{4}?$/" required ng-model="item.gasPerKuub">
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             &nbsp;
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-6">
             <button ng-show="detailsmode=='edit'" class='btn btn-primary' data-toggle="modal" data-target="#confirmDelete"><i class="fa fa-trash"></i></i> Verwijderen</button>
             <div class="pull-right">
                 <button class='btn btn-primary' ng-click="save()" ng-disabled="!editform.leverancier.$valid || !editform.vanaf.$valid || !editform.stroom.$valid || !editform.gas.$valid"><i class="fa fa-check"></i> Opslaan</button>
