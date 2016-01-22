@@ -18,6 +18,8 @@ import java.util.Arrays;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
+import static org.mockito.Mockito.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class StroomVerbruikServiceTest {
 
@@ -45,21 +47,21 @@ public class StroomVerbruikServiceTest {
     @Test
     public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
         Kosten kosten1 = new Kosten();
-        kosten1.setVan(0);
-        kosten1.setTotEnMet(4);
+        kosten1.setVan(10);
+        kosten1.setTotEnMet(14);
         kosten1.setStroomPerKwh(BigDecimal.valueOf(1));
 
         Kosten kosten2 = new Kosten();
-        kosten2.setVan(5);
-        kosten2.setTotEnMet(20);
+        kosten2.setVan(15);
+        kosten2.setTotEnMet(100);
         kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
 
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(1, 4)).thenReturn(1);
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(5, 10)).thenReturn(2);
+        when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(new Kosten[]{kosten1, kosten2}));
 
-        Mockito.when(kostenRepositoryMock.getKostenInPeriod(1, 11)).thenReturn(Arrays.asList(new Kosten[]{kosten1, kosten2}));
+        when(meterstandRepositoryMock.getVerbruikInPeriod(10, 14)).thenReturn(1);
+        when(meterstandRepositoryMock.getVerbruikInPeriod(15, 20)).thenReturn(2);
 
-        Stroomverbruik stroomverbruik = stroomVerbruikService.getVerbruikInPeriode(1, 10);
+        Stroomverbruik stroomverbruik = stroomVerbruikService.getVerbruikInPeriode(10, 20);
         assertThat(stroomverbruik, is(notNullValue()));
         assertThat(stroomverbruik.getkWh(), is(equalTo(3)));
         assertThat(stroomverbruik.getEuro().doubleValue(), is(equalTo(5.00d)));

@@ -35,7 +35,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item == selectedItem}" >
-                <td>{{item.omschrijving}}</td>
+                <td>{{item.leverancier}}</td>
                 <td>{{item.van | dateWithoutDayName}}</td>
                 <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
                 <td>{{item.gasPerKuub | currency:undefined:4}}</td>
@@ -49,10 +49,10 @@
 <form name="editform" class="form-horizontal" ng-show="showDetails" autocomplete="off">
     <hr/>
 
-    <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.omschrijving.$valid}">
-        <label for="omschrijving" class="col-sm-2 control-label">Omschrijving</label>
+    <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.leverancier.$valid}">
+        <label for="leverancier" class="col-sm-2 control-label">Leverancier</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="omschrijving" name="omschrijving" placeholder="Omschrijving" ng-maxlength="255" ng-model="item.omschrijving" required>
+            <input type="text" class="form-control" id="leverancier" name="leverancier" placeholder="Leverancier" ng-maxlength="255" ng-model="item.leverancier" required>
         </div>
     </div>
 
@@ -93,7 +93,7 @@
         <div class="col-sm-10">
             <button ng-show="detailsmode=='edit'" class='btn btn-primary' data-toggle="modal" data-target="#confirmDelete"><i class="fa fa-trash"></i></i> Verwijderen</button>
             <div class="pull-right">
-                <button class='btn btn-primary' ng-click="save()" ng-disabled="!editform.omschrijving.$valid || !editform.vanaf.$valid || !editform.stroom.$valid || !editform.gas.$valid"><i class="fa fa-check"></i> Opslaan</button>
+                <button class='btn btn-primary' ng-click="save()" ng-disabled="!editform.leverancier.$valid || !editform.vanaf.$valid || !editform.stroom.$valid || !editform.gas.$valid"><i class="fa fa-check"></i> Opslaan</button>
                 <button class='btn btn-primary' ng-click="cancelEdit()"><i class="fa fa-ban"></i> Annuleren</button>
             </div>
         </div>

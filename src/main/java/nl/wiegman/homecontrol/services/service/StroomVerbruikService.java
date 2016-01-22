@@ -33,7 +33,8 @@ public class StroomVerbruikService {
 
         if (periodeVan < System.currentTimeMillis()) {
 
-            List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet + 1);
+            List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet);
+
             if (CollectionUtils.isNotEmpty(kostenInPeriod)) {
 
                 for (Kosten kosten : kostenInPeriod) {
