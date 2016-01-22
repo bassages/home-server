@@ -2,6 +2,7 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
 import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ import java.util.List;
 @Path("kosten")
 @Produces(MediaType.APPLICATION_JSON)
 public class KostenRest {
+
+    public static final long SINT_JUTTEMUS = 7258114800000l;
 
     @Inject
     KostenRepository kostenRepository;
@@ -28,6 +31,9 @@ public class KostenRest {
 
     @POST
     public Kosten save(Kosten kosten) {
+        if (kosten.getTotEnMet() == null) {
+            kosten.setTotEnMet(0l);
+        }
         Kosten result = kostenRepository.save(kosten);
         recalculateTotEnMet();
         cacheService.clearAll();
@@ -50,15 +56,15 @@ public class KostenRest {
             Kosten currentKosten = kostenList.get(i);
             if (previousKosten != null) {
                 long totEnMet = currentKosten.getVan() - 1;
-                if (previousKosten.getTotEnMet() != totEnMet) {
+                if (ObjectUtils.notEqual(previousKosten.getTotEnMet(), totEnMet)) {
                     previousKosten.setTotEnMet(totEnMet);
                     kostenRepository.save(previousKosten);
                 }
             }
 
             if (i == (kostenList.size()-1)) {
-                if (currentKosten.getTotEnMet() != Long.MAX_VALUE) {
-                    currentKosten.setTotEnMet(Long.MAX_VALUE);
+                if (ObjectUtils.notEqual(currentKosten.getTotEnMet(), SINT_JUTTEMUS)) {
+                    currentKosten.setTotEnMet(SINT_JUTTEMUS);
                     kostenRepository.save(currentKosten);
                 }
             }

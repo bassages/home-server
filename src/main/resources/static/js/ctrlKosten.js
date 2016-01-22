@@ -6,22 +6,20 @@ angular.module('appHomecontrol.kostenController', [])
         $scope.kosten = Kosten.query(function() {});
 
         $scope.startEdit = function(kosten) {
-            $scope.selectedItem = kosten;
             $scope.item = angular.copy(kosten);
             $scope.detailsmode = 'edit';
             $scope.showDetails = true;
-            // TODO: set focus of leverancier field
         };
 
         $scope.startAdd = function() {
-            $scope.selectedItem = null;
-            $scope.item = new Kosten({van: (new Date()).getTime(), totEnMet: 0, gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            $scope.item = new Kosten({van: (new Date()).getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
-            // TODO: set focus of leverancier field
         };
 
         $scope.save = function() {
+            $log.info('Save kosten: ' + JSON.stringify($scope.item));
+
             if ($scope.detailsmode == 'add') {
                 $scope.item.$save(
                     function(successResult) {
@@ -35,7 +33,8 @@ angular.module('appHomecontrol.kostenController', [])
             } else if ($scope.detailsmode == 'edit') {
                 $scope.item.$save(
                     function(successResult) {
-                        angular.copy($scope.item, $scope.selectedItem);
+                        var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
+                        angular.copy($scope.item, $scope.kosten[index]);
                     },
                     function(errorResult) {
                         handleServiceError('Opslaan is niet gelukt.', errorResult);
@@ -53,25 +52,33 @@ angular.module('appHomecontrol.kostenController', [])
         };
 
         $scope.delete = function() {
-            for (var i = 0; i < $scope.kosten.length; i++) {
-                if ($scope.kosten[i].id == $scope.selectedItem.id) {
-                    Kosten.delete({id: $scope.selectedItem.id},
-                        function(successResult) {
-                            $scope.kosten.splice(i, 1);
-                        },
-                        function(errorResult) {
-                            handleServiceError('Verwijderen is niet gelukt.', errorResult);
-                        }
-                    );
-                    break;
+            $log.info('Delete kosten: ' + JSON.stringify($scope.item));
+
+            var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
+
+            Kosten.delete({id: $scope.item.id},
+                function(successResult) {
+                    $scope.kosten.splice(index, 1);
+                },
+                function(errorResult) {
+                    handleServiceError('Verwijderen is niet gelukt.', errorResult);
                 }
-            }
+            );
             $scope.cancelEdit();
         };
 
+        function getIndexOfItemWithId(id, items) {
+            var result = null;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].id == id) {
+                    result = i;
+                }
+            }
+            return result;
+        }
+
         function handleServiceError(message, errorResult) {
-            // TODO add when defined + ' (' + errorResult.data.message + ')' + ' Path=' + errorResult.data.path
-            $log.error(message + ' Cause=' + errorResult.status);
+            $log.error(message + ' Cause=' + JSON.stringify(errorResult));
             alert(message);
         };
 

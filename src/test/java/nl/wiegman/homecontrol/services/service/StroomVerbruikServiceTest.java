@@ -47,13 +47,13 @@ public class StroomVerbruikServiceTest {
     @Test
     public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
         Kosten kosten1 = new Kosten();
-        kosten1.setVan(10);
-        kosten1.setTotEnMet(14);
+        kosten1.setVan(10l);
+        kosten1.setTotEnMet(14l);
         kosten1.setStroomPerKwh(BigDecimal.valueOf(1));
 
         Kosten kosten2 = new Kosten();
-        kosten2.setVan(15);
-        kosten2.setTotEnMet(100);
+        kosten2.setVan(15l);
+        kosten2.setTotEnMet(100l);
         kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
 
         when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(new Kosten[]{kosten1, kosten2}));

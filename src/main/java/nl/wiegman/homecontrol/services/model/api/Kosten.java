@@ -1,5 +1,7 @@
 package nl.wiegman.homecontrol.services.model.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -12,10 +14,11 @@ public class Kosten {
     private long id;
 
     @Column(nullable = false)
-    private long van;
+    private Long van;
 
+    @JsonIgnore
     @Column(nullable = false)
-    private long totEnMet;
+    private Long totEnMet;
 
     @Column(precision = 7, scale = 6)
     private BigDecimal stroomPerKwh;
@@ -33,11 +36,11 @@ public class Kosten {
         this.id = id;
     }
 
-    public long getVan() {
+    public Long getVan() {
         return van;
     }
 
-    public void setVan(long van) {
+    public void setVan(Long van) {
         this.van = van;
     }
 
@@ -65,11 +68,11 @@ public class Kosten {
         this.leverancier = leverancier;
     }
 
-    public long getTotEnMet() {
+    public Long getTotEnMet() {
         return totEnMet;
     }
 
-    public void setTotEnMet(long totEnMet) {
+    public void setTotEnMet(Long totEnMet) {
         this.totEnMet = totEnMet;
     }
 }
