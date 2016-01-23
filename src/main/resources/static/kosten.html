@@ -22,7 +22,7 @@
         <tbody>
             <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item == selectedItem}" >
                 <td>{{item.leverancier}}</td>
-                <td>{{item.van | dateWithoutDayName}}</td>
+                <td>{{item.van | datewithoutdayname}}</td>
                 <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
                 <td>{{item.gasPerKuub | currency:undefined:4}}</td>
             </tr>
