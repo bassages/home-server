@@ -38,6 +38,10 @@
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection = new Date($scope.selection);
             $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
+
+            applyDatePickerUpdatesInAngularScope = false;
+            theDatepicker.datepicker('setDate', d3.time.format('%d-%m-%Y').parse('01-01-'+$scope.selection.getFullYear()));
+
             getDataFromServer();
         };
 
@@ -78,7 +82,7 @@
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-        theDatepicker.datepicker('setDate', $scope.selection);
+        theDatepicker.datepicker('setDate', d3.time.format('%d-%m-%Y').parse('01-01-'+$scope.selection.getFullYear()));
 
         $scope.getDateFormat = function(text) {
             return 'yyyy';
