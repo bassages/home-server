@@ -4,13 +4,11 @@
 
 angular.module('appHomecontrol.dagGrafiekController', [])
 
-    .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
-        initialize();
-
-        function initialize() {
+        $scope.initialize = function() {
             $scope.loading = false;
             $scope.period = 'dag';
             $scope.energiesoort = $routeParams.energiesoort;
@@ -30,7 +28,9 @@ angular.module('appHomecontrol.dagGrafiekController', [])
 
             clearGraph();
             getDataFromServer();
-        }
+        };
+
+        $scope.initialize();
 
         var applyDatePickerUpdatesInAngularScope = false;
         var theDatepicker = $('.datepicker');
@@ -229,7 +229,7 @@ angular.module('appHomecontrol.dagGrafiekController', [])
         }
 
         function getDataFromServer() {
-            $scope.loading = true;
+            LoadingIndicatorService.startLoading();
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
             $log.info('URL: ' + graphDataUrl);
@@ -238,9 +238,9 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 method: 'GET', url: graphDataUrl
             }).then(function successCallback(response) {
                 loadDataIntoGraph(response.data);
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             }, function errorCallback(response) {
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             });
         }
     }]);

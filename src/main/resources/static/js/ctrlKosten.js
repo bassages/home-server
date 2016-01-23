@@ -2,8 +2,16 @@
 
 angular.module('appHomecontrol.kostenController', [])
 
-    .controller('KostenController', ['$scope', '$resource', '$log', 'Kosten', function($scope, $resource, $log, Kosten) {
-        $scope.kosten = Kosten.query(function() {});
+    .controller('KostenController', ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService', function($scope, $resource, $log, LoadingIndicatorService, KostenService) {
+
+        LoadingIndicatorService.startLoading();
+        KostenService.query(function(data){
+            $scope.kosten = data;
+            LoadingIndicatorService.stopLoading();
+        }, function(errorResponse){
+            LoadingIndicatorService.stopLoading();
+            handleServiceError('Ophalen van gegevens is niet gelukt.', errorResult);
+        });
 
         $scope.startEdit = function(kosten) {
             $scope.item = angular.copy(kosten);
@@ -12,12 +20,14 @@ angular.module('appHomecontrol.kostenController', [])
         };
 
         $scope.startAdd = function() {
-            $scope.item = new Kosten({van: (new Date()).getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            $scope.item = new KostenService({van: (new Date()).getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
         };
 
         $scope.save = function() {
+            LoadingIndicatorService.startLoading();
+
             $log.info('Save kosten: ' + JSON.stringify($scope.item));
 
             if ($scope.detailsmode == 'add') {
@@ -25,8 +35,12 @@ angular.module('appHomecontrol.kostenController', [])
                     function(successResult) {
                         $scope.item.id = successResult.id;
                         $scope.kosten.push($scope.item);
+                        $scope.cancelEdit();
+                        LoadingIndicatorService.stopLoading();
                     },
                     function(errorResult) {
+                        LoadingIndicatorService.stopLoading();
+                        $scope.cancelEdit();
                         handleServiceError('Opslaan is niet gelukt.', errorResult);
                     }
                 );
@@ -35,15 +49,18 @@ angular.module('appHomecontrol.kostenController', [])
                     function(successResult) {
                         var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
                         angular.copy($scope.item, $scope.kosten[index]);
+                        $scope.cancelEdit();
+                        LoadingIndicatorService.stopLoading();
                     },
                     function(errorResult) {
+                        LoadingIndicatorService.stopLoading();
+                        $scope.cancelEdit();
                         handleServiceError('Opslaan is niet gelukt.', errorResult);
                     }
                 );
             } else {
                 handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + $scope.detailsmode);
             }
-            $scope.cancelEdit();
         };
 
         $scope.cancelEdit = function() {
@@ -52,15 +69,19 @@ angular.module('appHomecontrol.kostenController', [])
         };
 
         $scope.delete = function() {
+            LoadingIndicatorService.startLoading();
+
             $log.info('Delete kosten: ' + JSON.stringify($scope.item));
 
             var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
 
-            Kosten.delete({id: $scope.item.id},
+            KostenService.delete({id: $scope.item.id},
                 function(successResult) {
                     $scope.kosten.splice(index, 1);
+                    LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {
+                    LoadingIndicatorService.stopLoading();
                     handleServiceError('Verwijderen is niet gelukt.', errorResult);
                 }
             );
@@ -80,7 +101,7 @@ angular.module('appHomecontrol.kostenController', [])
         function handleServiceError(message, errorResult) {
             $log.error(message + ' Cause=' + JSON.stringify(errorResult));
             alert(message);
-        };
+        }
 
         function handleTechnicalError(details) {
             var message = 'Er is een onverwachte fout opgetreden.';

@@ -46,7 +46,7 @@ public class KostenRestTest {
         assertThat(k1.getTotEnMet(), is(equalTo(6l)));
         assertThat(k2.getTotEnMet(), is(equalTo(29l)));
         assertThat(k3.getTotEnMet(), is(equalTo(344l)));
-        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMUS)));
+        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMIS)));
 
         verify(kostenRepositoryMock, times(4)).save(any(Kosten.class));
     }
@@ -67,7 +67,7 @@ public class KostenRestTest {
 
         Kosten k4 = new Kosten();
         k4.setVan(345l);
-        k4.setTotEnMet(KostenRest.SINT_JUTTEMUS);
+        k4.setTotEnMet(KostenRest.SINT_JUTTEMIS);
 
         when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(new Kosten[] {k1, k2, k3, k4}));
 
@@ -76,7 +76,7 @@ public class KostenRestTest {
         assertThat(k1.getTotEnMet(), is(equalTo(6l)));
         assertThat(k2.getTotEnMet(), is(equalTo(29l)));
         assertThat(k3.getTotEnMet(), is(equalTo(344l)));
-        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMUS)));
+        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMIS)));
 
         verify(kostenRepositoryMock, never()).save(any(Kosten.class));
     }

@@ -2,11 +2,10 @@
 
 angular.module('appHomecontrol.uurGrafiekController', [])
 
-    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         initialize();
 
         function initialize() {
-            $scope.loading = false;
             $scope.period = 'uur';
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.periode = $routeParams.periode;
@@ -181,7 +180,7 @@ angular.module('appHomecontrol.uurGrafiekController', [])
         }
 
         function getDataFromServer() {
-            $scope.loading = true;
+            LoadingIndicatorService.startLoading();
 
             var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + getSubPeriodLength();
             $log.info('URL: ' + graphDataUrl);
@@ -190,9 +189,9 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 method: 'GET', url: graphDataUrl
             }).then(function successCallback(response) {
                 loadDataIntoGraph(response.data);
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             }, function errorCallback(response) {
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             });
         }
     }]);

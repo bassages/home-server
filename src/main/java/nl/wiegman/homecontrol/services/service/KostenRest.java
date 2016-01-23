@@ -16,7 +16,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class KostenRest {
 
-    public static final long SINT_JUTTEMUS = 7258114800000l;
+    public static final long SINT_JUTTEMIS = 7258114800000l;
 
     @Inject
     KostenRepository kostenRepository;
@@ -63,8 +63,8 @@ public class KostenRest {
             }
 
             if (i == (kostenList.size()-1)) {
-                if (ObjectUtils.notEqual(currentKosten.getTotEnMet(), SINT_JUTTEMUS)) {
-                    currentKosten.setTotEnMet(SINT_JUTTEMUS);
+                if (ObjectUtils.notEqual(currentKosten.getTotEnMet(), SINT_JUTTEMIS)) {
+                    currentKosten.setTotEnMet(SINT_JUTTEMIS);
                     kostenRepository.save(currentKosten);
                 }
             }

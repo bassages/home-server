@@ -2,9 +2,9 @@
 
 angular.module('appHomecontrol.maandGrafiekController', [])
 
-    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-        function initialize() {
-            $scope.loading = false;
+    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+
+        $scope.initialize = function() {
             $scope.selection = new Date();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
                 'code': 'kosten',
@@ -19,9 +19,9 @@ angular.module('appHomecontrol.maandGrafiekController', [])
 
             clearGraph();
             getDataFromServer();
-        }
+        };
 
-        initialize();
+        $scope.initialize();
 
         $scope.isMaxSelected = function() {
             return (new Date()).getFullYear() == $scope.selection;
@@ -167,7 +167,7 @@ angular.module('appHomecontrol.maandGrafiekController', [])
         }
 
         function getDataFromServer() {
-            $scope.loading = true;
+            LoadingIndicatorService.startLoading();
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
             $log.info('URL: ' + graphDataUrl);
@@ -176,9 +176,9 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 method: 'GET', url: graphDataUrl
             }).then(function successCallback(response) {
                 loadDataIntoGraph(response.data);
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             }, function errorCallback(response) {
-                $scope.loading = false;
+                LoadingIndicatorService.stopLoading();
             });
         }
     }]);
