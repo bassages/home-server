@@ -47,6 +47,39 @@
             loadDataIntoGraph($scope.graphData);
         };
 
+        var applyDatePickerUpdatesInAngularScope = false;
+        var theDatepicker = $('.datepicker');
+        theDatepicker.datepicker({
+            viewMode: 'years',
+            minViewMode: 'years',
+            autoclose: true,
+            todayHighlight: true,
+            endDate: "0d",
+            language:"nl",
+            format: {
+                toDisplay: function (date, format, language) {
+                    var formatter = d3.time.format('%Y');
+                    return formatter(date);
+                },
+                toValue: function (date, format, language) {
+                    if (date == '0d') {
+                        return new Date();
+                    }
+                    return d3.time.format('%Y').parse(date);
+                }
+            }
+        });
+        theDatepicker.on('changeDate', function(e) {
+            if (applyDatePickerUpdatesInAngularScope) {
+                $scope.$apply(function() {
+                    $scope.selection = new Date(e.date);
+                    getDataFromServer();
+                });
+            }
+            applyDatePickerUpdatesInAngularScope = true;
+        });
+        theDatepicker.datepicker('setDate', $scope.selection);
+
         $scope.getDateFormat = function(text) {
             return 'yyyy';
         };
