@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .service('RealtimeMeterstandenService', ['$q', '$timeout', '$log', RealtimeMeterstandenService]);
+        .service('RealtimeMeterstandenService', RealtimeMeterstandenService);
+
+    RealtimeMeterstandenService.$inject = ['$q', '$timeout', '$log'];
 
     function RealtimeMeterstandenService($q, $timeout, $log) {
         var service = {};

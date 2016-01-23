@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', MaandGrafiekController]);
+        .controller('MaandGrafiekController', MaandGrafiekController);
+
+    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService'];
 
     function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         $scope.initialize = function() {

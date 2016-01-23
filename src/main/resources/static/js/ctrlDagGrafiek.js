@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', DagGrafiekController]);
+        .controller('DagGrafiekController', DagGrafiekController);
+
+    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService'];
 
     function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         var oneDay = 24 * 60 * 60 * 1000;

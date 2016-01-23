@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .service('LoadingIndicatorService', ['$uibModal', LoadingIndicatorService]);
+        .service('LoadingIndicatorService', LoadingIndicatorService);
+
+    LoadingIndicatorService.$inject = ['$uibModal'];
 
     function LoadingIndicatorService($uibModal) {
         var loadingModalInstance = null;

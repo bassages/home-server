@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .controller('StroomMeterstandController', ['$scope', '$http', 'RealtimeMeterstandenService', StroomMeterstandController]);
+        .controller('StroomMeterstandController', StroomMeterstandController);
+
+    StroomMeterstandController.$inject = ['$scope', '$http', 'RealtimeMeterstandenService'];
 
     function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {
         // Turn off all leds

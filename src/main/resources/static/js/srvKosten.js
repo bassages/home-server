@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .factory('KostenService', ['$resource', KostenService]);
+        .factory('KostenService', KostenService);
+
+    KostenService.$inject = ['$resource'];
 
     function KostenService($resource) {
         return $resource('/homecontrol/rest/kosten/:id');

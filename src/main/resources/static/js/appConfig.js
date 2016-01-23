@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .config(['$routeProvider', Config]);
+        .config(Config);
+
+    Config.$inject = ['$routeProvider'];
 
     function Config($routeProvider) {
         $routeProvider

@@ -3,7 +3,9 @@
 
     angular
         .module('app')
-        .controller('KostenController', ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService', KostenController]);
+        .controller('KostenController', KostenController);
+
+    KostenController.$inject = ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService'];
 
     function KostenController($scope, $resource, $log, LoadingIndicatorService, KostenService) {
         LoadingIndicatorService.startLoading();
