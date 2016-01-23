@@ -1,9 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.maandGrafiekController', [])
+    angular
+        .module('app')
+        .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', MaandGrafiekController]);
 
-    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-
+    function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         $scope.initialize = function() {
             $scope.selection = new Date();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
@@ -181,4 +183,6 @@ angular.module('appHomecontrol.maandGrafiekController', [])
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }]);
+    }
+
+})();

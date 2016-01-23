@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .service('SharedDataService', SharedDataService);
 
     function SharedDataService() {

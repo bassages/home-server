@@ -1,10 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-// TODO: https://github.com/eternicode/bootstrap-datepicker/issues/615
+    angular
+        .module('app')
+        .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', DagGrafiekController]);
 
-angular.module('appHomecontrol.dagGrafiekController', [])
-
-    .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         var oneDay = 24 * 60 * 60 * 1000;
         var halfDay = 12 * 60 * 60 * 1000;
 
@@ -243,4 +244,6 @@ angular.module('appHomecontrol.dagGrafiekController', [])
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }]);
+    }
+
+})();

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .service('RealtimeMeterstandenService', ['$q', '$timeout', '$log', RealtimeMeterstandenService]);
 
     function RealtimeMeterstandenService($q, $timeout, $log) {

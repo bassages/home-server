@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .service('GrafiekWindowSizeService', GrafiekWindowSizeService);
 
     function GrafiekWindowSizeService() {

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .factory('KostenService', ['$resource', KostenService]);
 
     function KostenService($resource) {

@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .controller('KostenController', ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService', KostenController]);
 
     function KostenController($scope, $resource, $log, LoadingIndicatorService, KostenService) {

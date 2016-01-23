@@ -1,40 +1,10 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-var app = angular.module('appHomecontrol', [
+var app = angular.module('app', [
     'ngRoute',
     'ngResource',
-    'ui.bootstrap',
-
-    'appHomecontrol.uurGrafiekController',
-    'appHomecontrol.dagGrafiekController',
-    'appHomecontrol.maandGrafiekController'
-
-]).config(['$routeProvider', function($routeProvider) {
-
-        $routeProvider
-            .when('/grafiek/:energiesoort/uur', {
-                templateUrl : 'grafiek.html',
-                controller: 'UurGrafiekController'
-            })
-            .when('/grafiek/:energiesoort/dag', {
-                templateUrl : 'grafiek.html',
-                controller: 'DagGrafiekController'
-            })
-            .when('/grafiek/:energiesoort/maand', {
-                templateUrl : 'grafiek.html',
-                controller: 'MaandGrafiekController'
-            })
-            .when('/kosten', {
-                templateUrl : 'kosten.html',
-                controller: 'KostenController'
-            })
-            .when('/', {
-                templateUrl : 'dashboard.html',
-                controller: 'StroomMeterstandController'
-            })
-            .otherwise({redirectTo: 'dashboard.html'});
-}]);
+    'ui.bootstrap'
+]);
 
 app.filter('dateWithoutDayName', function($filter) {
     return function(input) {

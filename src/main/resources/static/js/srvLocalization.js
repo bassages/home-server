@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .service('LocalizationService', LocalizationService);
 
     function LocalizationService() {

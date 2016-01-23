@@ -1,8 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.uurGrafiekController', [])
+    angular
+        .module('app')
+        .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', UurGrafiekController]);
 
-    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         initialize();
 
         function initialize() {
@@ -194,5 +197,6 @@ angular.module('appHomecontrol.uurGrafiekController', [])
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }]);
+    }
 
+})();

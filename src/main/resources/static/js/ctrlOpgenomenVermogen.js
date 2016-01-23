@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('appHomecontrol')
+        .module('app')
         .controller('StroomMeterstandController', ['$scope', '$http', 'RealtimeMeterstandenService', StroomMeterstandController]);
 
     function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {

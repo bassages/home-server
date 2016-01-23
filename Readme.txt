@@ -2,14 +2,12 @@ Backlog
 
 ---------------
 
-Kosten:
-- hernoem 'van' naar 'vanaf'
-- Verwijder totEnMet
+Weekpicker: https://github.com/eternicode/bootstrap-datepicker/issues/615
 
 ---------------
 
 CRUD kosten
-- Communicate with backend
+- Maak vanaf uniek + validatie
 
 ---------------
 
