@@ -1,8 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.loadingIndicatorService', [])
+    angular
+        .module('appHomecontrol')
+        .service('LoadingIndicatorService', ['$uibModal', LoadingIndicatorService]);
 
-    .service('LoadingIndicatorService', ['$uibModal', function($uibModal) {
+    function LoadingIndicatorService($uibModal) {
         var loadingModalInstance = null;
 
         this.startLoading = function() {
@@ -19,4 +22,5 @@ angular.module('appHomecontrol.loadingIndicatorService', [])
             this.loadingModalInstance.close();
             this.loadingModalInstance = null;
         };
-    }]);
+    }
+})();

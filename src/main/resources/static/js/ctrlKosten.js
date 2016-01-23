@@ -1,9 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.kostenController', [])
+    angular
+        .module('appHomecontrol')
+        .controller('KostenController', ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService', KostenController]);
 
-    .controller('KostenController', ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService', function($scope, $resource, $log, LoadingIndicatorService, KostenService) {
-
+    function KostenController($scope, $resource, $log, LoadingIndicatorService, KostenService) {
         LoadingIndicatorService.startLoading();
         KostenService.query(function(data){
             $scope.kosten = data;
@@ -108,5 +110,5 @@ angular.module('appHomecontrol.kostenController', [])
             $log.error(message + ' ' + details);
             alert(message);
         }
-
-    }]);
+    }
+})();

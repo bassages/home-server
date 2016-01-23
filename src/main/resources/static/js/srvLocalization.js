@@ -1,9 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.localizationService', [])
+    angular
+        .module('appHomecontrol')
+        .service('LocalizationService', LocalizationService);
 
-    .service('LocalizationService', function() {
-
+    function LocalizationService() {
         var shortMonths = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei.", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
         var shortDays = ["Zo.", "Ma.", "Di.", "Wo.", "Do.", "Vr.", "Za."];
         var fullMonths = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
@@ -38,4 +40,5 @@ angular.module('appHomecontrol.localizationService', [])
             d3.time.format = myFormatters.timeFormat;
             d3.format = myFormatters.numberFormat;
         };
-    });
+    }
+})();

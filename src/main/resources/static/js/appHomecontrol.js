@@ -4,24 +4,11 @@
 var app = angular.module('appHomecontrol', [
     'ngRoute',
     'ngResource',
-
     'ui.bootstrap',
 
-    'appHomecontrol.loadingIndicatorService',
-
-    'appHomecontrol.kostenService',
-    'appHomecontrol.kostenController',
-
-    'appHomecontrol.meterstandService',
-    'appHomecontrol.grafiekWindowSizeService',
     'appHomecontrol.uurGrafiekController',
     'appHomecontrol.dagGrafiekController',
-    'appHomecontrol.maandGrafiekController',
-
-    'appHomecontrol.stroomMeterstandController',
-
-    'appHomecontrol.localizationService',
-    'appHomecontrol.sharedDataService'
+    'appHomecontrol.maandGrafiekController'
 
 ]).config(['$routeProvider', function($routeProvider) {
 

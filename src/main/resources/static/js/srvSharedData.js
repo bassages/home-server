@@ -1,8 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.sharedDataService', [])
+    angular
+        .module('appHomecontrol')
+        .service('SharedDataService', SharedDataService);
 
-    .service('SharedDataService', function() {
+    function SharedDataService() {
         var soortData = 'verbruik'; // Default value
 
         this.getSoortData = function() {
@@ -12,4 +15,5 @@ angular.module('appHomecontrol.sharedDataService', [])
         this.setSoortData = function(aSoortData) {
             soortData = aSoortData;
         };
-    });
+    }
+})();

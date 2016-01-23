@@ -1,51 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.meterstandService', [])
+    angular
+        .module('appHomecontrol')
+        .controller('StroomMeterstandController', ['$scope', '$http', 'RealtimeMeterstandenService', StroomMeterstandController]);
 
-    .service("RealTimeMeterstandService", ['$q', '$timeout', '$log', function($q, $timeout, $log) {
-        var service = {};
-        var listener = $q.defer();
-        var socket = {
-            client: null,
-            stomp: null
-        };
-
-        service.RECONNECT_TIMEOUT = 10000;
-        service.SOCKET_URL = "/homecontrol/ws/meterstand";
-        service.UPDATE_TOPIC = "/topic/meterstand";
-
-        service.receive = function() {
-            return listener.promise;
-        };
-
-        var reconnect = function() {
-            $log.info("Trying to reconnect in " + service.RECONNECT_TIMEOUT + " ms.");
-            $timeout(connect, service.RECONNECT_TIMEOUT);
-        };
-
-        var startListener = function() {
-            socket.stomp.subscribe(service.UPDATE_TOPIC, function(data) {
-                listener.notify(JSON.parse(data.body));
-            });
-        };
-
-        var connect = function() {
-            socket.client = new SockJS(service.SOCKET_URL);
-            socket.stomp = Stomp.over(socket.client);
-            socket.stomp.connect({}, startListener);
-
-            socket.client.onclose = function() {
-                reconnect();
-            };
-        };
-
-        connect();
-        return service;
-    }]);
-
-angular.module('appHomecontrol.stroomMeterstandController', [])
-
-    .controller('StroomMeterstandController', ['$scope', '$http', 'RealTimeMeterstandService', function($scope, $http, RealTimeMeterstandService) {
+    function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {
         // Turn off all leds
         for (var i = 0; i < 10; i++) {
             $scope['led'+i] = false;
@@ -59,7 +19,7 @@ angular.module('appHomecontrol.stroomMeterstandController', [])
             }
         );
 
-        RealTimeMeterstandService.receive().then(null, null, function(jsonData) {
+        RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             update(jsonData);
         });
 
@@ -80,5 +40,6 @@ angular.module('appHomecontrol.stroomMeterstandController', [])
             $scope.led8 = data.stroomOpgenomenVermogenInWatt >= (8 * step);
             $scope.led9 = data.stroomOpgenomenVermogenInWatt >= (9 * step);
         }
-    }]);
+    }
+})();
 

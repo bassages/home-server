@@ -1,7 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.kostenService', [])
+    angular
+        .module('appHomecontrol')
+        .factory('KostenService', ['$resource', KostenService]);
 
-    .factory('KostenService', function($resource) {
+    function KostenService($resource) {
         return $resource('/homecontrol/rest/kosten/:id');
-    });
+    }
+})();

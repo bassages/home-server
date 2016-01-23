@@ -1,8 +1,11 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('appHomecontrol.grafiekWindowSizeService', [])
+    angular
+        .module('appHomecontrol')
+        .service('GrafiekWindowSizeService', GrafiekWindowSizeService);
 
-    .service('GrafiekWindowSizeService', function() {
+    function GrafiekWindowSizeService() {
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 
@@ -31,4 +34,5 @@ angular.module('appHomecontrol.grafiekWindowSizeService', [])
                 $(window).off("resize.doResize"); //remove the handler added earlier
             });
         };
-    });
+    }
+})();
