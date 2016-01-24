@@ -13,7 +13,7 @@ public class Kosten {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique=true)
     private Long van;
 
     @JsonIgnore

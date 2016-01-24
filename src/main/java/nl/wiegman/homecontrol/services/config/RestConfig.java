@@ -10,6 +10,6 @@ import javax.ws.rs.ApplicationPath;
 public class RestConfig extends ResourceConfig {
 
     public RestConfig() {
-        packages("nl.wiegman.homecontrol.services.service", "nl.wiegman.homecontrol.services.config.converters");
+        packages("nl.wiegman.homecontrol.services.service");
     }
 }

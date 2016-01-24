@@ -6,17 +6,11 @@ Weekpicker: https://github.com/eternicode/bootstrap-datepicker/issues/615
 
 ---------------
 
-CRUD kosten
-- Maak vanaf uniek + validatie
-
----------------
-
 Laatste meterstanden per dag
 
 ----------------
 
 Grafiek datum selectie in URL
-
 
 ----------------
 
@@ -30,7 +24,6 @@ Hmmm....
 Legenda bij grafiek (gemiddelde, min/max toevoegen?)
 
 ----------------
-
 
 Directive voor datepicker op grafiek pagina
 

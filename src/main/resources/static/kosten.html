@@ -20,11 +20,11 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in kosten | orderBy:'van'" ng-click="startEdit(item)" ng-class="{info: item == selectedItem}" >
-                <td>{{item.leverancier}}</td>
-                <td>{{item.van | datewithoutdayname}}</td>
-                <td>{{item.stroomPerKwh | currency:undefined:4}}</td>
-                <td>{{item.gasPerKuub | currency:undefined:4}}</td>
+            <tr ng-repeat="kostenItem in kosten | orderBy:'van'" ng-click="startEdit(kostenItem)" ng-class="{info: kostenItem.id == item.id}" >
+                <td>{{kostenItem.leverancier}}</td>
+                <td>{{kostenItem.van | datewithoutdayname}}</td>
+                <td>{{kostenItem.stroomPerKwh | currency:undefined:4}}</td>
+                <td>{{kostenItem.gasPerKuub | currency:undefined:4}}</td>
             </tr>
         </tbody>
     </table>

@@ -5,9 +5,9 @@
         .module('app')
         .controller('KostenController', KostenController);
 
-    KostenController.$inject = ['$scope', '$resource', '$log', 'LoadingIndicatorService', 'KostenService'];
+    KostenController.$inject = ['$scope', '$resource', '$log', 'KostenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function KostenController($scope, $resource, $log, LoadingIndicatorService, KostenService) {
+    function KostenController($scope, $resource, $log, KostenService, LoadingIndicatorService, ErrorMessageService) {
         LoadingIndicatorService.startLoading();
         KostenService.query(function(data){
             $scope.kosten = data;
@@ -24,7 +24,9 @@
         };
 
         $scope.startAdd = function() {
-            $scope.item = new KostenService({van: (new Date()).getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            $scope.item = new KostenService({van: today.getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
         };
@@ -44,7 +46,6 @@
                     },
                     function(errorResult) {
                         LoadingIndicatorService.stopLoading();
-                        $scope.cancelEdit();
                         handleServiceError('Opslaan is niet gelukt.', errorResult);
                     }
                 );
@@ -58,7 +59,6 @@
                     },
                     function(errorResult) {
                         LoadingIndicatorService.stopLoading();
-                        $scope.cancelEdit();
                         handleServiceError('Opslaan is niet gelukt.', errorResult);
                     }
                 );
@@ -68,7 +68,7 @@
         };
 
         $scope.cancelEdit = function() {
-            $scope.selectedItem = null;
+            $scope.item = null;
             $scope.showDetails = false;
         };
 
@@ -82,6 +82,7 @@
             KostenService.delete({id: $scope.item.id},
                 function(successResult) {
                     $scope.kosten.splice(index, 1);
+                    $scope.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {
@@ -89,7 +90,6 @@
                     handleServiceError('Verwijderen is niet gelukt.', errorResult);
                 }
             );
-            $scope.cancelEdit();
         };
 
         function getIndexOfItemWithId(id, items) {
@@ -103,14 +103,19 @@
         }
 
         function handleServiceError(message, errorResult) {
-            $log.error(message + ' Cause=' + JSON.stringify(errorResult));
-            alert(message);
+            if (errorResult.data && errorResult.data.code == 'UNIQUE_KEY_CONSTRAINT_VIOLATION') {
+                var userMessage = 'Er bestaat al een rij met dezelfde vanaf datum. Kies een andere datum a.u.b.';
+                ErrorMessageService.showMessage(userMessage);
+            } else {
+                $log.error(message + ' Cause=' + JSON.stringify(errorResult));
+                ErrorMessageService.showMessage(message);
+            }
         }
 
         function handleTechnicalError(details) {
             var message = 'Er is een onverwachte fout opgetreden.';
             $log.error(message + ' ' + details);
-            alert(message);
+            ErrorMessageService.showMessage(message);
         }
     }
 })();
