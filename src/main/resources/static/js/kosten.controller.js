@@ -19,6 +19,7 @@
 
         $scope.startEdit = function(kosten) {
             $scope.item = angular.copy(kosten);
+            $scope.selectedId = $scope.item.id;
             $scope.detailsmode = 'edit';
             $scope.showDetails = true;
         };
@@ -68,7 +69,7 @@
         };
 
         $scope.cancelEdit = function() {
-            $scope.item = null;
+            $scope.selectedId = null;
             $scope.showDetails = false;
         };
 
