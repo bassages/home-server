@@ -93,7 +93,7 @@
             next.setDate($scope.selection.getDate() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            datepicker.datepicker('setDate', $scope.selection);
+            datepicker.datepicker('setDate', next);
 
             $scope.selection = next;
 
