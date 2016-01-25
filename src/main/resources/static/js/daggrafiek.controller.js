@@ -1,43 +1,39 @@
-(function() {
-    'use strict';
+'use strict';
 
-    angular
-        .module('app')
-        .controller('DagGrafiekController', DagGrafiekController);
+angular.module('app')
 
-    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService'];
+    .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+        var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
+        var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
-    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-        var oneDay = 24 * 60 * 60 * 1000;
-        var halfDay = 12 * 60 * 60 * 1000;
+        initialize();
 
-        $scope.initialize = function() {
-            $scope.loading = false;
-            $scope.period = 'dag';
+        function initialize() {
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            $scope.selection = today;
+
+            $scope.numberOfPeriods = 7;
+
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.period = 'dag'; // TODO: duplicate?
             $scope.periode = $routeParams.periode;
             $scope.soort = SharedDataService.getSoortData();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
                 'code': 'kosten',
                 'omschrijving': '\u20AC'
             }];
-            // By default, today is the last day in the graph
-            $scope.selection = new Date();
-            $scope.selection.setHours(0, 0, 0, 0);
-            $scope.numberOfPeriods = 7;
+
             Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
             LocalizationService.localize();
             GrafiekWindowSizeService.manage($scope);
 
             clearGraph();
             getDataFromServer();
-        };
+        }
 
-        $scope.initialize();
-
-        var applyDatePickerUpdatesInAngularScope = false;
-        var theDatepicker = $('.datepicker');
-        theDatepicker.datepicker({
+        var datepicker = $('.datepicker');
+        datepicker.datepicker({
             autoclose: true,
             todayBtn: "linked",
             calendarWeeks: true,
@@ -58,8 +54,14 @@
                 }
             }
         });
-        theDatepicker.on('changeDate', function(e) {
+
+        datepicker.datepicker('setDate', $scope.selection);
+        var applyDatePickerUpdatesInAngularScope = true;
+
+        datepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
+                $log.info("datepicker.changeDate to: " + e.date);
+
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
                     getDataFromServer();
@@ -67,7 +69,6 @@
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-        theDatepicker.datepicker('setDate', $scope.selection);
 
         $scope.getDateFormat = function(text) {
             return 'ddd dd-MM-yyyy';
@@ -90,7 +91,7 @@
             selection.setDate($scope.selection.getDate() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', selection);
+            datepicker.datepicker('setDate', selection);
 
             $scope.selection = selection;
             getDataFromServer();
@@ -116,7 +117,7 @@
         function getTicksForEveryDayInPeriod() {
             var tickValues = [];
             for (var i = 0; i <= ($scope.numberOfPeriods-1); i++) {
-                var tickValue = $scope.selection.getTime() - (i * oneDay);
+                var tickValue = $scope.selection.getTime() - (i * ONE_DAY_IN_MILLISECONDS);
                 tickValues.push(tickValue);
             }
             return tickValues;
@@ -149,8 +150,8 @@
 
             var tickValues = getTicksForEveryDayInPeriod();
 
-            var xMin = new Date(getFrom().getTime()) - halfDay;
-            var xMax = new Date($scope.selection.getTime() + halfDay);
+            var xMin = new Date(getFrom().getTime()) - HALF_DAY_IN_MILLISECONDS;
+            var xMax = new Date($scope.selection.getTime() + HALF_DAY_IN_MILLISECONDS);
 
             graphConfig.bindto = '#chart';
 
@@ -246,6 +247,4 @@
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }
-
-})();
+    }]);

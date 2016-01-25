@@ -1,36 +1,35 @@
-(function() {
-    'use strict';
+'use strict';
 
-    angular
-        .module('app')
-        .controller('UurGrafiekController', UurGrafiekController);
+angular.module('app')
 
-    UurGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService'];
+    .controller('UurGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+        var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
-    function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
         initialize();
 
         function initialize() {
-            $scope.period = 'uur';
+            var today = new Date();
+            today.setHours(0,0,0,0);
+            $scope.selection = today;
+
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.period = 'uur';// TODO: duplicate?
             $scope.periode = $routeParams.periode;
             $scope.soort = 'verbruik'; // This controller only supports verbruik
             SharedDataService.setSoortData('verbruik');
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
-            // By default, today is selected
-            $scope.selection = new Date();
-            $scope.selection.setHours(0, 0, 0, 0);
+
             GrafiekWindowSizeService.manage($scope);
             LocalizationService.localize();
+
             Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
 
             clearGraph();
             getDataFromServer();
         }
 
-        var applyDatePickerUpdatesInAngularScope = false;
-        var theDatepicker = $('.datepicker');
-        theDatepicker.datepicker({
+        var datepicker = $('.datepicker');
+        datepicker.datepicker({
             autoclose: true,
             todayBtn: "linked",
             calendarWeeks: true,
@@ -51,8 +50,14 @@
                 }
             }
         });
-        theDatepicker.on('changeDate', function(e) {
+
+        datepicker.datepicker('setDate', $scope.selection);
+        var applyDatePickerUpdatesInAngularScope = true;
+
+        datepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
+                $log.info("datepicker.changeDate to: " + e.date);
+
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
                     getDataFromServer();
@@ -60,7 +65,6 @@
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-        theDatepicker.datepicker('setDate', $scope.selection);
 
         $scope.getDateFormat = function(text) {
             return 'ddd dd-MM-yyyy';
@@ -87,7 +91,7 @@
             next.setDate($scope.selection.getDate() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', $scope.selection);
+            datepicker.datepicker('setDate', $scope.selection);
 
             $scope.selection = next;
 
@@ -112,15 +116,11 @@
             var total = 0;
             var length = data.length;
             for (var i = 0; i < length; i++) {
-                var subPeriodEnd = data[i].dt + (getSubPeriodLength() - 1);
+                var subPeriodEnd = data[i].dt + (SIX_MINUTES_IN_MILLISECONDS - 1);
                 data.push({dt: subPeriodEnd, watt: data[i].watt});
                 total += data[i].watt;
             }
             return total / length;
-        }
-
-        function getSubPeriodLength() {
-            return 6 * 60 * 1000;
         }
 
         function getEmptyGraphConfig() {
@@ -187,7 +187,7 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + getSubPeriodLength();
+            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('URL: ' + graphDataUrl);
 
             $http({
@@ -199,6 +199,5 @@
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }
+    }]);
 
-})();

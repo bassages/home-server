@@ -1,34 +1,32 @@
-(function() {
-    'use strict';
+'use strict';
 
-    angular
-        .module('app')
-        .controller('MaandGrafiekController', MaandGrafiekController);
+angular.module('app')
 
-    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService'];
+    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
 
-    function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
-        $scope.initialize = function() {
-            $scope.selection = new Date();
+        initialize();
+
+        function initialize() {
+            $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(new Date()).getFullYear());
+
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {
                 'code': 'kosten',
                 'omschrijving': '\u20AC'
             }];
-            $scope.period = 'maand';
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.period = 'maand'; // TODO: duplicate??
             $scope.periode = $routeParams.periode;
             $scope.soort = SharedDataService.getSoortData();
+
             LocalizationService.localize();
             GrafiekWindowSizeService.manage($scope);
 
             clearGraph();
             getDataFromServer();
-        };
-
-        $scope.initialize();
+        }
 
         $scope.isMaxSelected = function() {
-            return (new Date()).getFullYear() == $scope.selection;
+            return (new Date()).getFullYear() == $scope.selection.getFullYear();
         };
 
         $scope.showNumberOfPeriodsSelector = function() {
@@ -40,7 +38,7 @@
             $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            theDatepicker.datepicker('setDate', d3.time.format('%d-%m-%Y').parse('01-01-'+$scope.selection.getFullYear()));
+            datepicker.datepicker('setDate', $scope.selection);
 
             getDataFromServer();
         };
@@ -51,9 +49,8 @@
             loadDataIntoGraph($scope.graphData);
         };
 
-        var applyDatePickerUpdatesInAngularScope = false;
-        var theDatepicker = $('.datepicker');
-        theDatepicker.datepicker({
+        var datepicker = $('.datepicker');
+        datepicker.datepicker({
             viewMode: 'years',
             minViewMode: 'years',
             autoclose: true,
@@ -73,7 +70,13 @@
                 }
             }
         });
-        theDatepicker.on('changeDate', function(e) {
+
+        datepicker.datepicker('setDate', $scope.selection);
+        var applyDatePickerUpdatesInAngularScope = true;
+
+        datepicker.on('changeDate', function(e) {
+            $log.info("datepicker.changeDate to: " + e.date);
+
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
@@ -82,7 +85,6 @@
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-        theDatepicker.datepicker('setDate', d3.time.format('%d-%m-%Y').parse('01-01-'+$scope.selection.getFullYear()));
 
         $scope.getDateFormat = function(text) {
             return 'yyyy';
@@ -222,6 +224,4 @@
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }
-
-})();
+    }]);
