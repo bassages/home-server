@@ -13,8 +13,7 @@ angular.module('app')
             $scope.selection = today;
 
             $scope.energiesoort = $routeParams.energiesoort;
-            $scope.period = 'uur';// TODO: duplicate?
-            $scope.periode = $routeParams.periode;
+            $scope.period = 'uur';
             $scope.soort = 'verbruik'; // This controller only supports verbruik
             SharedDataService.setSoortData('verbruik');
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
