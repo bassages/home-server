@@ -1,9 +1,13 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('app')
+    angular
+        .module('app')
+        .controller('MaandGrafiekController', MaandGrafiekController);
 
-    .controller('MaandGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekService'];
 
+    function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekService) {
         initialize();
 
         function initialize() {
@@ -15,7 +19,7 @@ angular.module('app')
             $scope.soort = SharedDataService.getSoortData();
 
             LocalizationService.localize();
-            GrafiekWindowSizeService.manage($scope);
+            GrafiekService.manageGraphSize($scope);
 
             clearGraph();
             getDataFromServer();
@@ -45,6 +49,10 @@ angular.module('app')
             loadDataIntoGraph($scope.graphData);
         };
 
+        $scope.getD3DateFormat = function() {
+            return '%Y';
+        };
+
         var datepicker = $('.datepicker');
         datepicker.datepicker({
             viewMode: 'years',
@@ -55,14 +63,14 @@ angular.module('app')
             language:"nl",
             format: {
                 toDisplay: function (date, format, language) {
-                    var formatter = d3.time.format('%Y');
+                    var formatter = d3.time.format($scope.getD3DateFormat());
                     return formatter(date);
                 },
                 toValue: function (date, format, language) {
                     if (date == '0d') {
                         return new Date();
                     }
-                    return d3.time.format('%Y').parse(date);
+                    return d3.time.format($scope.getD3DateFormat()).parse(date);
                 }
             }
         });
@@ -71,7 +79,7 @@ angular.module('app')
         var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
-            $log.info("datepicker.changeDate to: " + e.date);
+            $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
             if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
@@ -82,15 +90,10 @@ angular.module('app')
             applyDatePickerUpdatesInAngularScope = true;
         });
 
-        $scope.getDateFormat = function(text) {
-            return 'yyyy';
-        };
-
         function getTicksForEveryMonthInYear() {
             var tickValues = [];
             for (var i = 1; i <= 12; i++) {
                 tickValues.push(i);
-                $log.info('Tick: ' + i);
             }
             return tickValues;
         }
@@ -202,14 +205,14 @@ angular.module('app')
                 graphConfig = getGraphConfig(graphData);
             }
             $scope.chart = c3.generate(graphConfig);
-            GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
-            $log.info('URL: ' + graphDataUrl);
+            $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({
                 method: 'GET', url: graphDataUrl
@@ -220,4 +223,7 @@ angular.module('app')
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }]);
+    }
+
+})();
+

@@ -10,18 +10,19 @@
             restrict: 'A', // only matches attribute
             require: 'ngModel',
             link: function(scope, element, attr, ngModel) {
-                function fromUser(text) {
-                    return Date.parse(text);
+                function toValue(text) {
+                    return d3.time.format(scope.getD3DateFormat()).parse(text);
                 }
-                function toUser(date) {
+                function toDisplay(date) {
                     if(date) {
-                        return date.toString(scope.getDateFormat());
+                        var formatter = d3.time.format(scope.getD3DateFormat());
+                        return formatter(date);
                     } else {
                         return '';
                     }
                 }
-                ngModel.$parsers.push(fromUser);
-                ngModel.$formatters.push(toUser);
+                ngModel.$parsers.push(toValue);
+                ngModel.$formatters.push(toDisplay);
             }
         };
     }

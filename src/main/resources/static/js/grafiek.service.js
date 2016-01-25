@@ -3,9 +3,9 @@
 
     angular
         .module('app')
-        .service('GrafiekWindowSizeService', GrafiekWindowSizeService);
+        .service('GrafiekService', GrafiekService);
 
-    function GrafiekWindowSizeService() {
+    function GrafiekService() {
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 
@@ -24,7 +24,7 @@
             setGraphHeightMatchingWithAvailableWindowHeight(chart);
         };
 
-        this.manage = function(theScope) {
+        this.manageGraphSize = function(theScope) {
             $(window).on("resize.doResize", function () {
                 if (typeof theScope.chart !== 'undefined') {
                     setGraphHeightMatchingWithAvailableWindowHeight(theScope.chart);

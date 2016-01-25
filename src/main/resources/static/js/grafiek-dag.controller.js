@@ -1,8 +1,13 @@
-'use strict';
+(function() {
+    'use strict';
 
-angular.module('app')
+    angular
+        .module('app')
+        .controller('DagGrafiekController', DagGrafiekController);
 
-    .controller('DagGrafiekController', ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekWindowSizeService', function($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekWindowSizeService) {
+    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekService'];
+
+    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -20,13 +25,16 @@ angular.module('app')
             $scope.soort = SharedDataService.getSoortData();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
 
-            Date.CultureInfo.abbreviatedDayNames = LocalizationService.getShortDays();
             LocalizationService.localize();
-            GrafiekWindowSizeService.manage($scope);
+            GrafiekService.manageGraphSize($scope);
 
             clearGraph();
             getDataFromServer();
         }
+
+        $scope.getD3DateFormat = function() {
+            return '%a %d-%m-%Y';
+        };
 
         var datepicker = $('.datepicker');
         datepicker.datepicker({
@@ -39,14 +47,14 @@ angular.module('app')
             daysOfWeekHighlighted: "0,6",
             format: {
                 toDisplay: function (date, format, language) {
-                    var formatter = d3.time.format('%a %d-%m-%Y');
+                    var formatter = d3.time.format($scope.getD3DateFormat());
                     return formatter(date);
                 },
                 toValue: function (date, format, language) {
                     if (date == '0d') {
                         return new Date();
                     }
-                    return d3.time.format('%a %d-%m-%Y').parse(date);
+                    return d3.time.format($scope.getD3DateFormat()).parse(date);
                 }
             }
         });
@@ -56,7 +64,7 @@ angular.module('app')
 
         datepicker.on('changeDate', function(e) {
             if (applyDatePickerUpdatesInAngularScope) {
-                $log.info("datepicker.changeDate to: " + e.date);
+                $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
@@ -65,10 +73,6 @@ angular.module('app')
             }
             applyDatePickerUpdatesInAngularScope = true;
         });
-
-        $scope.getDateFormat = function(text) {
-            return 'ddd dd-MM-yyyy';
-        };
 
         $scope.isMaxSelected = function() {
             var result = false;
@@ -219,7 +223,7 @@ angular.module('app')
                 graphConfig = getGraphConfig(graphData);
             }
             $scope.chart = c3.generate(graphConfig);
-            GrafiekWindowSizeService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getFrom() {
@@ -232,7 +236,7 @@ angular.module('app')
             LoadingIndicatorService.startLoading();
 
             var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
-            $log.info('URL: ' + graphDataUrl);
+            $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({
                 method: 'GET', url: graphDataUrl
@@ -243,4 +247,6 @@ angular.module('app')
                 LoadingIndicatorService.stopLoading();
             });
         }
-    }]);
+    }
+
+})();
