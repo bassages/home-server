@@ -59,7 +59,7 @@ public class StroomVerbruikService {
             } else {
                 Integer verbruik = meterstandRepository.getVerbruikInPeriod(periodeVan, periodeTotEnMet);
                 if (verbruik != null) {
-                    totaalVerbruikInKwh = verbruik.intValue();
+                    totaalVerbruikInKwh = verbruik;
                 }
             }
         }

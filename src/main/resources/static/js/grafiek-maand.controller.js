@@ -5,9 +5,9 @@
         .module('app')
         .controller('MaandGrafiekController', MaandGrafiekController);
 
-    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekService'];
+    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
-    function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekService) {
+    function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         initialize();
 
         function initialize() {
@@ -16,13 +16,13 @@
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'maand';
-            $scope.soort = SharedDataService.getSoortData();
+            $scope.soort = GrafiekService.getSoortData();
 
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
 
             clearGraph();
-            getDataFromServer();
+            //getDataFromServer();
         }
 
         $scope.isMaxSelected = function() {
@@ -45,7 +45,7 @@
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
-            SharedDataService.setSoortData(destinationSoortCode);
+            GrafiekService.setSoortData(destinationSoortCode);
             loadDataIntoGraph($scope.graphData);
         };
 

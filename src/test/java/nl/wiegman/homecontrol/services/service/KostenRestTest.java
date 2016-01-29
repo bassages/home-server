@@ -39,7 +39,7 @@ public class KostenRestTest {
         Kosten k4 = new Kosten();
         k4.setVan(345l);
 
-        when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(new Kosten[] {k1, k2, k3, k4}));
+        when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(k1, k2, k3, k4));
 
         kostenRest.recalculateTotEnMet();
 
@@ -69,7 +69,7 @@ public class KostenRestTest {
         k4.setVan(345l);
         k4.setTotEnMet(KostenRest.SINT_JUTTEMIS);
 
-        when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(new Kosten[] {k1, k2, k3, k4}));
+        when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(k1, k2, k3, k4));
 
         kostenRest.recalculateTotEnMet();
 

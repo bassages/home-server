@@ -48,7 +48,7 @@ public class MeterstandService {
         meterstandRepository.save(meterstand);
 
         eventPublisher.publishEvent(new UpdateEvent(meterstand));
-    };
+    }
 
     @GET
     @Path("meestrecente")

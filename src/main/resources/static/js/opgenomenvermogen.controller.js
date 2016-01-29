@@ -7,11 +7,14 @@
 
     StroomMeterstandController.$inject = ['$scope', '$http', 'RealtimeMeterstandenService'];
 
-    function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {
-        // Turn off all leds
+    function turnOffAllLeds($scope) {
         for (var i = 0; i < 10; i++) {
-            $scope['led'+i] = false;
+            $scope['led' + i] = false;
         }
+    }
+
+    function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {
+        turnOffAllLeds($scope);
 
         $scope.huidigOpgenomenVermogen = '0';
 
@@ -32,7 +35,7 @@
 
             var step = 150;
             $scope.led0 = data.stroomOpgenomenVermogenInWatt > 0;
-            $scope.led1 = data.stroomOpgenomenVermogenInWatt >= (1 * step);
+            $scope.led1 = data.stroomOpgenomenVermogenInWatt >= (step);
             $scope.led2 = data.stroomOpgenomenVermogenInWatt >= (2 * step);
             $scope.led3 = data.stroomOpgenomenVermogenInWatt >= (3 * step);
             $scope.led4 = data.stroomOpgenomenVermogenInWatt >= (4 * step);

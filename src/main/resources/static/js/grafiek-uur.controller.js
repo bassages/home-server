@@ -5,9 +5,9 @@
         .module('app')
         .controller('UurGrafiekController', UurGrafiekController);
 
-    UurGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekService'];
+    UurGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
-    function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekService) {
+    function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
         initialize();
@@ -19,18 +19,19 @@
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'uur';
-            $scope.soort = 'verbruik'; // This controller only supports verbruik
-            SharedDataService.setSoortData('verbruik');
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
+            $scope.soort = 'verbruik'; // This controller only supports verbruik
 
+            GrafiekService.setSoortData($scope.soort);
             GrafiekService.manageGraphSize($scope);
+
             LocalizationService.localize();
 
             clearGraph();
-            getDataFromServer();
+            //getDataFromServer();
         }
 
-        $scope.getD3DateFormat = function(text) {
+        $scope.getD3DateFormat = function() {
             return '%a %d-%m-%Y';
         };
 

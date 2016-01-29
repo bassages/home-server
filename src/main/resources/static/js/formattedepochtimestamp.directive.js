@@ -10,16 +10,19 @@
             restrict: 'A', // only matches attribute
             require: 'ngModel',
             link: function(scope, element, attr, ngModel) {
+
                 function fromUser(text) {
                     return Date.parse(text).getTime();
                 }
+
                 function toUser(epochDate) {
+                    var result = null;
                     if(epochDate) {
-                        return (new Date(epochDate)).toString('dd-MM-yyyy');
-                    } else {
-                        return null;
+                        result = (new Date(epochDate)).toString('dd-MM-yyyy');
                     }
+                    return result;
                 }
+
                 ngModel.$parsers.push(fromUser);
                 ngModel.$formatters.push(toUser);
             }

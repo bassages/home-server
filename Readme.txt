@@ -14,6 +14,14 @@ Grafiek datum selectie in URL
 
 ----------------
 
+Date range:
+
+http://eternicode.github.io/bootstrap-datepicker/?markup=range&format=dd-mm-yyyy&weekStart=&startDate=&endDate=0d&startView=0&minViewMode=0&maxViewMode=2&todayBtn=linked&clearBtn=false&language=nl&orientation=bottom+left&multidate=&multidateSeparator=&daysOfWeekHighlighted=0&daysOfWeekHighlighted=6&calendarWeeks=on&autoclose=on&todayHighlight=on&keyboardNavigation=on#sandbox
+http://stackoverflow.com/questions/30481941/bootstrap-datepicker-disable-past-date-after-first-is-set
+
+----------------
+
+
 Angular bootstrap
 
 Hmmm....

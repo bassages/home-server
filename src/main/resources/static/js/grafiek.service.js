@@ -9,6 +9,16 @@
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 
+        var soortData = 'verbruik'; // Default value
+
+        this.getSoortData = function() {
+            return soortData;
+        };
+
+        this.setSoortData = function(aSoortData) {
+            soortData = aSoortData;
+        };
+
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {
             var height = window.innerHeight - 115;
 

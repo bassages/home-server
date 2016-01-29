@@ -5,9 +5,9 @@
         .module('app')
         .controller('DagGrafiekController', DagGrafiekController);
 
-    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'SharedDataService', 'LocalizationService', 'GrafiekService'];
+    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
-    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, SharedDataService, LocalizationService, GrafiekService) {
+    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -22,14 +22,14 @@
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'dag';
-            $scope.soort = SharedDataService.getSoortData();
+            $scope.soort = GrafiekService.getSoortData();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
 
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
 
             clearGraph();
-            getDataFromServer();
+            //getDataFromServer();
         }
 
         $scope.getD3DateFormat = function() {
@@ -99,7 +99,7 @@
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
-            SharedDataService.setSoortData(destinationSoortCode);
+            GrafiekService.setSoortData(destinationSoortCode);
             loadDataIntoGraph($scope.graphData);
         };
 
