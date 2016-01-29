@@ -28,7 +28,7 @@
             LocalizationService.localize();
 
             clearGraph();
-            //getDataFromServer();
+            getDataFromServer();
         }
 
         $scope.getD3DateFormat = function() {

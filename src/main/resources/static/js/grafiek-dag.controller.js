@@ -29,7 +29,7 @@
             GrafiekService.manageGraphSize($scope);
 
             clearGraph();
-            //getDataFromServer();
+            getDataFromServer();
         }
 
         $scope.getD3DateFormat = function() {

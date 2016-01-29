@@ -22,7 +22,7 @@
             GrafiekService.manageGraphSize($scope);
 
             clearGraph();
-            //getDataFromServer();
+            getDataFromServer();
         }
 
         $scope.isMaxSelected = function() {
