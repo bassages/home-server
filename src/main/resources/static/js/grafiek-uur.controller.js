@@ -185,13 +185,13 @@
 
             var lines = [];
             if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + Math.round(statistics.avg), class: 'avg', position: 'middle'});
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + Math.round(statistics.avg) + ' watt', class: 'avg', position: 'middle'});
             }
             if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + statistics.min, class: 'min', position: 'start'});
+                lines.push({value: statistics.min, text: 'Laagste: ' + statistics.min + ' watt', class: 'min', position: 'start'});
             }
             if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max, class: 'max'});
+                lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max + ' watt', class: 'max'});
             }
             graphConfig.grid.y.lines = lines;
 

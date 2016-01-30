@@ -1,8 +1,10 @@
 <div ng-include="'top-menu.html'"></div>
 
 <div class="row">
+    <div class="col-md-2"></div>
+
     <!-- stroom -->
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title"><i class="fa fa-bolt"></i> Stroom <a href="#grafiek/stroom/uur"><span class="pull-right"><i class="fa fa-ellipsis-h" title="Details"></i></span></a></h1>
@@ -30,14 +32,14 @@
                 <hr/>
 
                 <div>
-                    <p>T1: {{t1}} - T2: {{t2}}<p>
+                    <p><small>Meterstand = {{t2}}</small></p>
                 </div>
             </div>
         </div>
     </div><!-- End stroom -->
 
     <!-- gas -->
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h1 class="panel-title"><i class="fa fa-fire"></i> Gas</h1>
@@ -63,7 +65,7 @@
                 <hr/>
 
                 <div>
-                    <p>000000,000<p>
+                    <p><small>Meterstand = 13762,000</small></p>
                 </div>
             </div>
 
