@@ -10,9 +10,9 @@
     function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
-        initialize();
+        activate();
 
-        function initialize() {
+        function activate() {
             var today = new Date();
             today.setHours(0,0,0,0);
             $scope.selection = today;
@@ -113,15 +113,41 @@
             return tickValues;
         }
 
-        function getAverage(data) {
-            var total = 0;
+        function addSubPeriodEnd(data) {
             var length = data.length;
             for (var i = 0; i < length; i++) {
                 var subPeriodEnd = data[i].dt + (SIX_MINUTES_IN_MILLISECONDS - 1);
                 data.push({dt: subPeriodEnd, watt: data[i].watt});
-                total += data[i].watt;
             }
-            return total / length;
+        }
+
+        function getStatistics(graphData) {
+            var min;
+            var max;
+            var avg;
+
+            var total = 0;
+            var nrofdata = 0;
+
+            for (var i = 0; i < graphData.length; i++) {
+                var data = graphData[i].watt;
+
+                if (data != null && (typeof max=='undefined' || data > max)) {
+                    max = data;
+                }
+                if (data != null && data > 0 && (typeof min=='undefined' || data < min)) {
+                    min = data;
+                }
+                if (data != null) {
+                    total += data;
+                    nrofdata += 1;
+                }
+            }
+
+            if (nrofdata > 0) {
+                avg = total / nrofdata;
+            }
+            return {avg: avg, min: min, max: max};
         }
 
         function getEmptyGraphConfig() {
@@ -155,10 +181,22 @@
             graphConfig.padding = {top: 10, bottom: 45, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
 
-            var average = getAverage(graphData);
-            if (average > 0) {
-                graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
+            var statistics = getStatistics(graphData);
+
+            var lines = [];
+            if (statistics.avg) {
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + Math.round(statistics.avg), class: 'avg', position: 'middle'});
             }
+            if (statistics.min) {
+                lines.push({value: statistics.min, text: 'Laagste: ' + statistics.min, class: 'min', position: 'start'});
+            }
+            if (statistics.max) {
+                lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max, class: 'max'});
+            }
+            graphConfig.grid.y.lines = lines;
+
+            addSubPeriodEnd(graphData);
+
             return graphConfig;
         }
 

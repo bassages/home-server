@@ -11,9 +11,9 @@
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
-        initialize();
+        activate();
 
-        function initialize() {
+        function activate() {
             var today = new Date();
             today.setHours(0,0,0,0);
             $scope.selection = today;
@@ -123,17 +123,39 @@
             return tickValues;
         }
 
-        function getAverage(graphData) {
+        function getStatistics(graphData) {
+            var min;
+            var max;
+            var avg;
+
             var total = 0;
-            var length = graphData.length;
-            for (var i = 0; i < length; i++) {
+            var nrofdata = 0;
+
+            for (var i = 0; i < graphData.length; i++) {
+                var data;
+
                 if ($scope.soort == 'verbruik') {
-                    total += graphData[i].kWh;
+                    data = graphData[i].kWh;
                 } else if ($scope.soort == 'kosten') {
-                    total += graphData[i].euro;
+                    data = graphData[i].euro;
+                }
+
+                if (data != null && (typeof max=='undefined' || data > max)) {
+                    max = data;
+                }
+                if (data != null && (typeof min=='undefined' || data < min)) {
+                    min = data;
+                }
+                if (data != null) {
+                    total += data;
+                    nrofdata += 1;
                 }
             }
-            return total / length;
+
+            if (nrofdata > 0) {
+                avg = total / nrofdata;
+            }
+            return {avg: avg, min: min, max: max};
         }
 
         function getEmptyGraphConfig() {
@@ -142,6 +164,15 @@
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
                 padding: {top: 10, bottom: 20, left: 50, right: 20}
+            }
+        }
+
+        function formatBasedOnSoort(value) {
+            if ($scope.soort == 'verbruik') {
+                return Math.round(value) + ' kWh';
+            } else if ($scope.soort == 'kosten') {
+                var format = d3.format(".2f");
+                return '\u20AC ' + format(value);
             }
         }
 
@@ -189,12 +220,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        if ($scope.soort == 'verbruik') {
-                            return value + ' kWh';
-                        } else if ($scope.soort == 'kosten') {
-                            var format = d3.format(".2f");
-                            return '\u20AC ' + format(value);
-                        }
+                        return formatBasedOnSoort(value);
                     }
                 }
             };
@@ -202,10 +228,20 @@
             graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
 
-            var average = getAverage(graphData);
-            if (average > 0) {
-                graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
+            var statistics = getStatistics(graphData);
+
+            var lines = [];
+            if (statistics.avg) {
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + formatBasedOnSoort(statistics.avg), class: 'avg', position: 'middle'});
             }
+            if (statistics.min) {
+                lines.push({value: statistics.min, text: 'Laagste: ' + formatBasedOnSoort(statistics.min), class: 'min', position: 'start'});
+            }
+            if (statistics.max) {
+                lines.push({value: statistics.max, text: 'Hoogste: ' + formatBasedOnSoort(statistics.max), class: 'max'});
+            }
+            graphConfig.grid.y.lines = lines;
+
             return graphConfig;
         }
 

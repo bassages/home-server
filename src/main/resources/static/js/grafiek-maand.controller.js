@@ -8,9 +8,9 @@
     MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
     function MaandGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
-        initialize();
+        activate();
 
-        function initialize() {
+        function activate() {
             $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(new Date()).getFullYear());
 
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
@@ -98,17 +98,39 @@
             return tickValues;
         }
 
-        function getAverage(graphData) {
+        function getStatistics(graphData) {
+            var min;
+            var max;
+            var avg;
+
             var total = 0;
-            var length = graphData.length;
-            for (var i = 0; i < length; i++) {
+            var nrofdata = 0;
+
+            for (var i = 0; i < graphData.length; i++) {
+                var data;
+
                 if ($scope.soort == 'verbruik') {
-                    total += graphData[i].kWh;
+                    data = graphData[i].kWh;
                 } else if ($scope.soort == 'kosten') {
-                    total += graphData[i].euro;
+                    data = graphData[i].euro;
+                }
+
+                if (data != null && (typeof max=='undefined' || data > max)) {
+                    max = data;
+                }
+                if (data != null && (typeof min=='undefined' || data < min)) {
+                    min = data;
+                }
+                if (data != null) {
+                    total += data;
+                    nrofdata += 1;
                 }
             }
-            return total / length;
+
+            if (nrofdata > 0) {
+                avg = total / nrofdata;
+            }
+            return {avg: avg, min: min, max: max};
         }
 
         function getEmptyGraphConfig() {
@@ -120,6 +142,14 @@
             }
         }
 
+        function formatBasedOnSoort(value) {
+            if ($scope.soort == 'verbruik') {
+                return Math.round(value) + ' kWh';
+            } else if ($scope.soort == 'kosten') {
+                var format = d3.format(".2f");
+                return '\u20AC ' + format(value);
+            }
+        }
         function getGraphConfig(graphData) {
             var graphConfig = {};
 
@@ -171,12 +201,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        if ($scope.soort == 'verbruik') {
-                            return value + ' kWh';
-                        } else if ($scope.soort == 'kosten') {
-                            var format = d3.format(".2f");
-                            return '\u20AC ' + format(value);
-                        }
+                        return formatBasedOnSoort(value);
                     }
                 }
             };
@@ -184,10 +209,20 @@
 
             graphConfig.grid = {y: {show: true}};
 
-            var average = getAverage(graphData);
-            if (average > 0) {
-                graphConfig.grid.y.lines = [{value: average, text: '', class: 'gemiddelde'}];
+            var statistics = getStatistics(graphData);
+
+            var lines = [];
+            if (statistics.avg) {
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + formatBasedOnSoort(statistics.avg), class: 'avg', position: 'middle'});
             }
+            if (statistics.min) {
+                lines.push({value: statistics.min, text: 'Laagste: ' + formatBasedOnSoort(statistics.min), class: 'min', position: 'start'});
+            }
+            if (statistics.max) {
+                lines.push({value: statistics.max, text: 'Hoogste: ' + formatBasedOnSoort(statistics.max), class: 'max'});
+            }
+            graphConfig.grid.y.lines = lines;
+
             return graphConfig;
         }
 
