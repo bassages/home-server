@@ -6,9 +6,9 @@
     </div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
-            <li ng-class="{'active': period=='uur'}"><a href="/homecontrol/#/grafiek/stroom/uur">Uur</a></li>
-            <li ng-class="{'active': period=='dag'}"><a href="/homecontrol/#/grafiek/stroom/dag">Dag</a></li>
-            <li ng-class="{'active': period=='maand'}"><a href="/homecontrol/#/grafiek/stroom/maand">Maand</a></li>
+            <li ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
+            <li ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
+            <li ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
             <li class="pull-right">
                 <form class="navbar-form navbar-tabs navbar-right">
                     <div class="form-group" ng-show="showNumberOfPeriodsSelector()">
@@ -34,7 +34,7 @@
                                 <i class="fa fa-chevron-left"></i>
                             </button>
                         </span>
-                        <input class="form-control datepicker datepicker-selected-value" formatteddate style="text-align: center;" ng-model="selection" ng-readonly="true"/>
+                        <input class="form-control datepicker datepicker-selected-value text-center" formatteddate ng-model="selection" ng-readonly="true"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
                                 <i class="fa fa-chevron-right"></i>

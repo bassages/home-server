@@ -11,11 +11,11 @@ public class CacheService {
     @Inject
     CacheManager cacheManager;
 
-    void clearAll() {
+    public void clearAll() {
         cacheManager.getCacheNames().forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
-    void clear(String cacheName) {
+    public void clear(String cacheName) {
         cacheManager.getCache(cacheName).clear();
     }
 }

@@ -12,9 +12,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @Component
-@Path("kosten")
-@Produces(MediaType.APPLICATION_JSON)
-public class KostenRest {
+public class KostenService {
 
     public static final long SINT_JUTTEMIS = 7258114800000l;
 
@@ -24,12 +22,10 @@ public class KostenRest {
     @Inject
     CacheService cacheService;
 
-    @GET
     public List<Kosten> getAll() {
         return kostenRepository.findAll();
     }
 
-    @POST
     public Kosten save(Kosten kosten) {
         if (kosten.getTotEnMet() == null) {
             kosten.setTotEnMet(0l);
@@ -40,9 +36,7 @@ public class KostenRest {
         return result;
     }
 
-    @DELETE
-    @Path("{id}")
-    public void delete(@PathParam("id") long id) {
+    public void delete(long id) {
         kostenRepository.delete(id);
         recalculateTotEnMet();
         cacheService.clearAll();

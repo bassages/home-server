@@ -229,14 +229,16 @@
             var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
-            $http({
-                method: 'GET', url: graphDataUrl
-            }).then(function successCallback(response) {
-                loadDataIntoGraph(response.data);
-                LoadingIndicatorService.stopLoading();
-            }, function errorCallback(response) {
-                LoadingIndicatorService.stopLoading();
-            });
+            $http({method: 'GET', url: graphDataUrl})
+                .then(
+                    function successCallback(response) {
+                        loadDataIntoGraph(response.data);
+                        LoadingIndicatorService.stopLoading();
+                    },
+                    function errorCallback(response) {
+                        LoadingIndicatorService.stopLoading();
+                    }
+                );
         }
     }
 })();

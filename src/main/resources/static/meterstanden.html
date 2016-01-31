@@ -1,0 +1,28 @@
+<div ng-include="'top-menu.html'"></div>
+
+<div>
+    <h1>
+        <span>Meterstanden</span>
+    </h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Stroom T1</th>
+                <th>Stroom T2</th>
+                <th>Gas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="meterstandOpDag in meterstandenPerDag | orderBy:'-datumtijd'">
+                <td>{{meterstandOpDag.datumtijd | datewithoutdayname}}</td>
+                <td>{{meterstandOpDag.meterstand.stroomTarief1}}</td>
+                <td>{{meterstandOpDag.meterstand.stroomTarief2}}</td>
+                <td>{{meterstandOpDag.meterstand.gas}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

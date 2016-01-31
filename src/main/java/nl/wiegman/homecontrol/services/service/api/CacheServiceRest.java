@@ -1,5 +1,6 @@
-package nl.wiegman.homecontrol.services.service;
+package nl.wiegman.homecontrol.services.service.api;
 
+import nl.wiegman.homecontrol.services.service.CacheService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

@@ -21,6 +21,10 @@
                 templateUrl : 'grafiek.html',
                 controller: 'MaandGrafiekController'
             })
+            .when('/meterstanden', {
+                templateUrl : 'meterstanden.html',
+                controller: 'MeterstandenController'
+            })
             .when('/kosten', {
                 templateUrl : 'kosten.html',
                 controller: 'KostenController'

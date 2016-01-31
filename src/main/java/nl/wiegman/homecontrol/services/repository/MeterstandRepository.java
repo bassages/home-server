@@ -13,19 +13,27 @@ import java.util.List;
 @Transactional
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
-    String VERBRUIK_IN_PERIOD_QUERY = "SELECT (MAX(stroom_tarief1)-min(stroom_tarief1)) + (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
-    String MOST_RECENT_METERSTAND = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MAX(datumtijd) FROM meterstand)";
-    String OLDEST_METERSTAND = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MIN(datumtijd) FROM meterstand)";
+    // JPQL queries
+    String ALL_IN_PERIOD_SORTED = "SELECT m FROM Meterstand m WHERE m.datumtijd >= :van AND m.datumtijd < :tot ORDER BY m.datumtijd";
+    String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
 
-    @Query(value = VERBRUIK_IN_PERIOD_QUERY, nativeQuery = true)
-    Integer getVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+    // Native queries
+    String STROOMVERBRUIK_IN_PERIOD = "SELECT (MAX(stroom_tarief1)-min(stroom_tarief1)) + (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
+    String MOST_RECENT = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MAX(datumtijd) FROM meterstand)";
+    String OLDEST = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MIN(datumtijd) FROM meterstand)";
 
-    @Query(value = MOST_RECENT_METERSTAND, nativeQuery = true)
-    Meterstand getMostRecentMeterstand();
-
-    @Query(value = "SELECT m FROM Meterstand m WHERE m.datumtijd >= :van AND m.datumtijd < :tot ORDER BY m.datumtijd")
+    @Query(value = ALL_IN_PERIOD_SORTED)
     List<Meterstand> getMeterstanden(@Param("van") long van, @Param("tot") long tot);
 
-    @Query(value = OLDEST_METERSTAND, nativeQuery = true)
-    Meterstand getOldestMeterstand();
+    @Query(value = STROOMVERBRUIK_IN_PERIOD, nativeQuery = true)
+    Integer getVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+
+    @Query(value = MOST_RECENT, nativeQuery = true)
+    Meterstand getMeestRecente();
+
+    @Query(value = OLDEST, nativeQuery = true)
+    Meterstand getOudste();
+
+    @Query(value = MOST_RECENT_IN_PERIOD)
+    Meterstand getMeestRecenteInPeriode(@Param("van") long van, @Param("totEnMet") long totEnMet);
 }

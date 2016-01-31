@@ -44,7 +44,7 @@ public class ElektriciteitService {
     public List<StroomVerbruikOpDag> getVerbruikPerDag(long van, long totEnMet) {
         List<StroomVerbruikOpDag> result = new ArrayList<>();
 
-        List<Date> dagenInPeriode = getDagenInPeriode(van, totEnMet);
+        List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
         for (Date dag : dagenInPeriode) {
             logger.info("get verbruik op dag: " + dag);
             result.add(getStroomVerbruikOpDag(dag));
@@ -86,27 +86,6 @@ public class ElektriciteitService {
         stroomVerbruikOpDag.setkWh(verbruikInPeriode.getkWh());
         stroomVerbruikOpDag.setEuro(verbruikInPeriode.getEuro());
         return stroomVerbruikOpDag;
-    }
-
-    protected List<Date> getDagenInPeriode(long van, long totEnMet) {
-        List<Date> dagenInPeriode = new ArrayList<>();
-
-        Date datumVan = DateUtils.truncate(new Date(van), Calendar.DATE);
-        Date datumTotEnMet = DateUtils.truncate(new Date(totEnMet), Calendar.DATE);
-
-        Date datum = datumVan;
-
-        while (true) {
-            dagenInPeriode.add(datum);
-
-            if (DateUtils.isSameDay(datum, datumTotEnMet)) {
-                break;
-            } else {
-                datum = DateUtils.addDays(datum, 1);
-            }
-        }
-        Collections.reverse(dagenInPeriode);
-        return dagenInPeriode;
     }
 
     private Stroomverbruik getVerbruikInPeriode(long vanMillis, long totEnMetMillis) {

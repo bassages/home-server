@@ -1,8 +1,9 @@
-package nl.wiegman.homecontrol.services.service;
+package nl.wiegman.homecontrol.services.service.api;
 
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
 import nl.wiegman.homecontrol.services.model.api.StroomVerbruikPerMaandInJaar;
+import nl.wiegman.homecontrol.services.service.ElektriciteitService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

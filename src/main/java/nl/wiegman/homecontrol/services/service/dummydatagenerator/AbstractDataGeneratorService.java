@@ -1,4 +1,4 @@
-package nl.wiegman.homecontrol.services.service.datagenerator;
+package nl.wiegman.homecontrol.services.service.dummydatagenerator;
 
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;

@@ -1,4 +1,4 @@
-package nl.wiegman.homecontrol.services.service.datagenerator;
+package nl.wiegman.homecontrol.services.service.dummydatagenerator;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.service.MeterstandService;
@@ -39,7 +39,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     @PostConstruct
     public void init() {
         if (autoStart) {
-            Meterstand mostRecent = meterstandService.getMostRecent();
+            Meterstand mostRecent = meterstandService.getMeestRecente();
             if (mostRecent == null) {
                 lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
@@ -72,7 +72,15 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private void simulateUpdateFromSlimmeMeter() {
         try {
             long datumtijd = System.currentTimeMillis();
-            meterstandService.opslaanMeterstand(datumtijd, getDummyVermogenInWatt(), getStroomTarief1(datumtijd), getStroomTarief2(datumtijd), 0);
+
+            Meterstand meterstand = new Meterstand();
+            meterstand.setDatumtijd(datumtijd);
+            meterstand.setStroomTarief1(getStroomTarief1(datumtijd));
+            meterstand.setStroomTarief2(getStroomTarief2(datumtijd));
+            meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
+            meterstand.setGas(0);
+
+            meterstandService.opslaanMeterstand(meterstand);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }

@@ -13,16 +13,16 @@
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>Omschrijving</th>
                 <th>Vanaf</th>
+                <th>Leverancier</th>
                 <th>Stroom per kWh</th>
                 <th>Gas per m<sup>2</sup></th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="kostenItem in kosten | orderBy:'van'" ng-click="startEdit(kostenItem)" ng-class="{info: kostenItem.id == selectedId}">
-                <td>{{kostenItem.leverancier}}</td>
                 <td>{{kostenItem.van | datewithoutdayname}}</td>
+                <td>{{kostenItem.leverancier}}</td>
                 <td>{{kostenItem.stroomPerKwh | currency:undefined:4}}</td>
                 <td>{{kostenItem.gasPerKuub | currency:undefined:4}}</td>
             </tr>
@@ -33,13 +33,6 @@
 <form name="editform" class="form-horizontal fade" ng-show="showDetails" autocomplete="off" novalidate>
     <hr/>
 
-    <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.leverancier.$valid}">
-        <label for="leverancier" class="col-sm-3 control-label">Leverancier</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" id="leverancier" name="leverancier" placeholder="Leverancier" ng-maxlength="255" ng-model="item.leverancier" required>
-        </div>
-    </div>
-
     <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.vanaf.$valid}">
         <label for="vanaf" class="col-sm-3 control-label">Vanaf</label>
         <div class="col-sm-6">
@@ -47,6 +40,13 @@
                 <input type="text" epochmodeldatepicker ng-readonly="true" class="form-control" id="vanaf" name="vanaf" placeholder="dd-MM-jjjj" ng-model="item.van" required>
                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
             </div>
+        </div>
+    </div>
+
+    <div class="form-group has-feedback required" ng-class="{'has-error' : !editform.leverancier.$valid}">
+        <label for="leverancier" class="col-sm-3 control-label">Leverancier</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" id="leverancier" name="leverancier" placeholder="Leverancier" ng-maxlength="255" ng-model="item.leverancier" required>
         </div>
     </div>
 

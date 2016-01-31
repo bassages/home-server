@@ -8,14 +8,19 @@
     KostenController.$inject = ['$scope', '$resource', '$log', 'KostenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
     function KostenController($scope, $resource, $log, KostenService, LoadingIndicatorService, ErrorMessageService) {
-        LoadingIndicatorService.startLoading();
-        KostenService.query(function(data){
-            $scope.kosten = data;
-            LoadingIndicatorService.stopLoading();
-        }, function(errorResponse){
-            LoadingIndicatorService.stopLoading();
-            handleServiceError('Ophalen van gegevens is niet gelukt.', errorResult);
-        });
+
+        function activate() {
+            LoadingIndicatorService.startLoading();
+            KostenService.query(function(data){
+                $scope.kosten = data;
+                LoadingIndicatorService.stopLoading();
+            }, function(errorResponse){
+                LoadingIndicatorService.stopLoading();
+                handleServiceError('Ophalen van gegevens is niet gelukt.', errorResult);
+            });
+        }
+
+        activate();
 
         $scope.startEdit = function(kosten) {
             $scope.item = angular.copy(kosten);
@@ -32,37 +37,45 @@
             $scope.showDetails = true;
         };
 
+        function saveAdd() {
+            $scope.item.$save(
+                function (successResult) {
+                    $scope.item.id = successResult.id;
+                    $scope.kosten.push($scope.item);
+                    $scope.cancelEdit();
+                    LoadingIndicatorService.stopLoading();
+                },
+                function (errorResult) {
+                    LoadingIndicatorService.stopLoading();
+                    handleServiceError('Opslaan is niet gelukt.', errorResult);
+                }
+            );
+        }
+
+        function saveEdit() {
+            $scope.item.$save(
+                function (successResult) {
+                    var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
+                    angular.copy($scope.item, $scope.kosten[index]);
+                    $scope.cancelEdit();
+                    LoadingIndicatorService.stopLoading();
+                },
+                function (errorResult) {
+                    LoadingIndicatorService.stopLoading();
+                    handleServiceError('Opslaan is niet gelukt.', errorResult);
+                }
+            );
+        }
+
         $scope.save = function() {
             LoadingIndicatorService.startLoading();
 
             $log.info('Save kosten: ' + JSON.stringify($scope.item));
 
             if ($scope.detailsmode == 'add') {
-                $scope.item.$save(
-                    function(successResult) {
-                        $scope.item.id = successResult.id;
-                        $scope.kosten.push($scope.item);
-                        $scope.cancelEdit();
-                        LoadingIndicatorService.stopLoading();
-                    },
-                    function(errorResult) {
-                        LoadingIndicatorService.stopLoading();
-                        handleServiceError('Opslaan is niet gelukt.', errorResult);
-                    }
-                );
+                saveAdd();
             } else if ($scope.detailsmode == 'edit') {
-                $scope.item.$save(
-                    function(successResult) {
-                        var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
-                        angular.copy($scope.item, $scope.kosten[index]);
-                        $scope.cancelEdit();
-                        LoadingIndicatorService.stopLoading();
-                    },
-                    function(errorResult) {
-                        LoadingIndicatorService.stopLoading();
-                        handleServiceError('Opslaan is niet gelukt.', errorResult);
-                    }
-                );
+                saveEdit();
             } else {
                 handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + $scope.detailsmode);
             }

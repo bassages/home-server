@@ -1,4 +1,4 @@
-package nl.wiegman.homecontrol.services.service.datagenerator;
+package nl.wiegman.homecontrol.services.service.dummydatagenerator;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
@@ -48,7 +48,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     @PostConstruct
     public void init() {
         if (autoStart) {
-            Meterstand oldest = meterstandService.getOldest();
+            Meterstand oldest = meterstandService.getOudste();
             if (oldest == null) {
                 lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;

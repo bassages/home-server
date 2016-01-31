@@ -2,6 +2,8 @@ package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
 import nl.wiegman.homecontrol.services.repository.KostenRepository;
+import nl.wiegman.homecontrol.services.service.KostenService;
+import nl.wiegman.homecontrol.services.service.api.KostenServiceRest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,13 +19,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class KostenRestTest {
+public class KostenServiceTest {
 
     @Mock
     KostenRepository kostenRepositoryMock;
 
     @InjectMocks
-    KostenRest kostenRest;
+    KostenService kostenService;
 
     @Test
     public void recalculateTotEnMetWithChanges() {
@@ -41,12 +43,12 @@ public class KostenRestTest {
 
         when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(k1, k2, k3, k4));
 
-        kostenRest.recalculateTotEnMet();
+        kostenService.recalculateTotEnMet();
 
         assertThat(k1.getTotEnMet(), is(equalTo(6l)));
         assertThat(k2.getTotEnMet(), is(equalTo(29l)));
         assertThat(k3.getTotEnMet(), is(equalTo(344l)));
-        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMIS)));
+        assertThat(k4.getTotEnMet(), is(equalTo(KostenService.SINT_JUTTEMIS)));
 
         verify(kostenRepositoryMock, times(4)).save(any(Kosten.class));
     }
@@ -67,16 +69,16 @@ public class KostenRestTest {
 
         Kosten k4 = new Kosten();
         k4.setVan(345l);
-        k4.setTotEnMet(KostenRest.SINT_JUTTEMIS);
+        k4.setTotEnMet(KostenService.SINT_JUTTEMIS);
 
         when(kostenRepositoryMock.findAll(any(Sort.class))).thenReturn(Arrays.asList(k1, k2, k3, k4));
 
-        kostenRest.recalculateTotEnMet();
+        kostenService.recalculateTotEnMet();
 
         assertThat(k1.getTotEnMet(), is(equalTo(6l)));
         assertThat(k2.getTotEnMet(), is(equalTo(29l)));
         assertThat(k3.getTotEnMet(), is(equalTo(344l)));
-        assertThat(k4.getTotEnMet(), is(equalTo(KostenRest.SINT_JUTTEMIS)));
+        assertThat(k4.getTotEnMet(), is(equalTo(KostenService.SINT_JUTTEMIS)));
 
         verify(kostenRepositoryMock, never()).save(any(Kosten.class));
     }

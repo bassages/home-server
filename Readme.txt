@@ -6,7 +6,19 @@ Weekpicker: https://github.com/eternicode/bootstrap-datepicker/issues/615
 
 ---------------
 
+Gasverbruik grafieken
+
+---------------
+
 Laatste meterstanden per dag
+
+----------------
+
+Klik op dag in grafiek -> ga naar dag overzicht
+
+----------------
+
+Vergelijken met andere jaren (in maand overview)
 
 ----------------
 

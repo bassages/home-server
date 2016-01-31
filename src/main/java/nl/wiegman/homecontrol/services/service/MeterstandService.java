@@ -1,6 +1,7 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Meterstand;
+import nl.wiegman.homecontrol.services.model.api.MeterstandOpDag;
 import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.slf4j.Logger;
@@ -10,16 +11,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 @Component
-@Path(MeterstandService.SERVICE_PATH)
 public class MeterstandService {
-
-    public static final String SERVICE_PATH = "meterstanden";
 
     private final Logger logger = LoggerFactory.getLogger(MeterstandService.class);
 
@@ -29,40 +25,38 @@ public class MeterstandService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @POST
-    @Path("opgenomenMeterstand")
-    public void opslaanMeterstand(@FormParam("datumtijd") long datumtijd,
-                                  @FormParam("stroomOpgenomenVermogenInWatt") int stroomOpgenomenVermogenInWatt,
-                                  @FormParam("stroomTarief1") int stroomTarief1,
-                                  @FormParam("stroomTarief2") int stroomTarief2,
-                                  @FormParam("gas") int gas) {
-
-        Meterstand meterstand = new Meterstand();
-        meterstand.setDatumtijd(datumtijd);
-        meterstand.setStroomOpgenomenVermogenInWatt(stroomOpgenomenVermogenInWatt);
-        meterstand.setGas(gas);
-        meterstand.setStroomTarief1(stroomTarief1);
-        meterstand.setStroomTarief2(stroomTarief2);
-
-        logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(datumtijd)));
+    public void opslaanMeterstand(Meterstand meterstand) {
+        logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
         meterstandRepository.save(meterstand);
 
         eventPublisher.publishEvent(new UpdateEvent(meterstand));
     }
 
-    @GET
-    @Path("meestrecente")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Meterstand getMostRecent() {
-        logger.info("getMostRecent()");
-        return meterstandRepository.getMostRecentMeterstand();
+    public Meterstand getMeestRecente() {
+        logger.info("getMeestRecente()");
+        return meterstandRepository.getMeestRecente();
     }
 
-    @GET
-    @Path("oudste")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Meterstand getOldest() {
-        logger.info("getOldest()");
-        return meterstandRepository.getOldestMeterstand();
+    public Meterstand getOudste() {
+        logger.info("getOudste()");
+        return meterstandRepository.getOudste();
+    }
+
+    public List<MeterstandOpDag> perDag(long van, long totEnMet) {
+        List<MeterstandOpDag> result = new ArrayList<>();
+
+        List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
+        dagenInPeriode.forEach(dag -> {
+            logger.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
+
+            Meterstand meterstandOpDag = getMeterstandOpDag(DateTimeUtil.getStartOfDay(dag), DateTimeUtil.getEndOfDay(dag));
+            result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));
+        });
+
+        return result;
+    }
+
+    private Meterstand getMeterstandOpDag(long van, long totEnMet) {
+        return meterstandRepository.getMeestRecenteInPeriode(van, totEnMet);
     }
 }
