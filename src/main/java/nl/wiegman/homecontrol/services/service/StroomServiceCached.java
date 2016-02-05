@@ -14,7 +14,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Component
-public class StroomVerbruikService {
+public class StroomServiceCached {
 
     @Inject
     MeterstandRepository meterstandRepository;

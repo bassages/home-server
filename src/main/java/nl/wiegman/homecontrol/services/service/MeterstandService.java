@@ -4,6 +4,7 @@ import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import nl.wiegman.homecontrol.services.model.api.MeterstandOpDag;
 import nl.wiegman.homecontrol.services.model.event.UpdateEvent;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class MeterstandService {
 
     @Inject
     private MeterstandRepository meterstandRepository;
+
+    @Inject
+    private MeterstandServiceCached meterstandServiceCached;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -49,14 +53,19 @@ public class MeterstandService {
         dagenInPeriode.forEach(dag -> {
             logger.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
 
-            Meterstand meterstandOpDag = getMeterstandOpDag(DateTimeUtil.getStartOfDay(dag), DateTimeUtil.getEndOfDay(dag));
+            Meterstand meterstandOpDag = getMeterstandOpDag(dag);
             result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));
         });
-
         return result;
     }
 
-    private Meterstand getMeterstandOpDag(long van, long totEnMet) {
-        return meterstandRepository.getMeestRecenteInPeriode(van, totEnMet);
+    private Meterstand getMeterstandOpDag(Date dag) {
+        if (DateTimeUtil.isAfterToday(dag)) {
+            return null;
+        } else if (DateUtils.isSameDay(new Date(), dag)) {
+            return meterstandServiceCached.getMeterstandOpDag(dag);
+        } else {
+            return meterstandServiceCached.getPotentiallyCachedMeterstandOpDag(dag);
+        }
     }
 }

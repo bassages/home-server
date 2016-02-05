@@ -271,7 +271,7 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
+            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({

@@ -33,6 +33,12 @@
             return false;
         };
 
+        $scope.switchSoort = function(destinationSoortCode) {
+            $scope.soort = destinationSoortCode;
+            GrafiekService.setSoortData(destinationSoortCode);
+            loadDataIntoGraph($scope.graphData);
+        };
+
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection = new Date($scope.selection);
             $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
@@ -41,12 +47,6 @@
             datepicker.datepicker('setDate', $scope.selection);
 
             getDataFromServer();
-        };
-
-        $scope.switchSoort = function(destinationSoortCode) {
-            $scope.soort = destinationSoortCode;
-            GrafiekService.setSoortData(destinationSoortCode);
-            loadDataIntoGraph($scope.graphData);
         };
 
         $scope.getD3DateFormat = function() {
@@ -246,7 +246,7 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/elektriciteit/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
+            var graphDataUrl = 'rest/' +  $scope.energiesoort + '/verbruikPerMaandInJaar/' + $scope.selection.getFullYear();
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({

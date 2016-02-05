@@ -16,9 +16,9 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @Component
-public class ElektriciteitService {
+public class StroomService {
 
-    private final Logger logger = LoggerFactory.getLogger(ElektriciteitService.class);
+    private final Logger logger = LoggerFactory.getLogger(StroomService.class);
 
     @Inject
     MeterstandRepository meterstandRepository;
@@ -27,7 +27,7 @@ public class ElektriciteitService {
     KostenRepository kostenRepository;
 
     @Inject
-    StroomVerbruikService stroomVerbruikService;
+    StroomServiceCached stroomServiceCached;
 
     @Inject
     OpgenomenVermogenService opgenomenVermogenService;
@@ -90,9 +90,9 @@ public class ElektriciteitService {
 
     private Stroomverbruik getVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
         if (totEnMetMillis < System.currentTimeMillis()) {
-            return stroomVerbruikService.getPotentiallyCachedVerbruikInPeriode(vanMillis, totEnMetMillis);
+            return stroomServiceCached.getPotentiallyCachedVerbruikInPeriode(vanMillis, totEnMetMillis);
         } else {
-            return stroomVerbruikService.getVerbruikInPeriode(vanMillis, totEnMetMillis);
+            return stroomServiceCached.getVerbruikInPeriode(vanMillis, totEnMetMillis);
         }
     }
 

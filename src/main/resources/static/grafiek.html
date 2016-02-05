@@ -9,8 +9,9 @@
             <li ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
             <li ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
             <li ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
+
             <li class="pull-right">
-                <form class="navbar-form navbar-tabs navbar-right">
+                <form class="navbar-form navbar-right without-margin-padding">
                     <div class="form-group" ng-show="showNumberOfPeriodsSelector()">
                         <div class="input-group">
                         <span class="input-group-btn">

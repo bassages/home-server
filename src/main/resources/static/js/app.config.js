@@ -10,27 +10,27 @@
     function Config($routeProvider) {
         $routeProvider
             .when('/grafiek/:energiesoort/uur', {
-                templateUrl : 'grafiek.html',
+                templateUrl: 'grafiek.html',
                 controller: 'UurGrafiekController'
             })
             .when('/grafiek/:energiesoort/dag', {
-                templateUrl : 'grafiek.html',
+                templateUrl: 'grafiek.html',
                 controller: 'DagGrafiekController'
             })
             .when('/grafiek/:energiesoort/maand', {
-                templateUrl : 'grafiek.html',
+                templateUrl: 'grafiek.html',
                 controller: 'MaandGrafiekController'
             })
             .when('/meterstanden', {
-                templateUrl : 'meterstanden.html',
+                templateUrl: 'meterstanden.html',
                 controller: 'MeterstandenController'
             })
             .when('/kosten', {
-                templateUrl : 'kosten.html',
+                templateUrl: 'kosten.html',
                 controller: 'KostenController'
             })
             .when('/', {
-                templateUrl : 'dashboard.html',
+                templateUrl: 'dashboard.html',
                 controller: 'StroomMeterstandController'
             })
             .otherwise({redirectTo: 'dashboard.html'});

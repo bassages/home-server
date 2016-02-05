@@ -226,7 +226,7 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/elektriciteit/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
+            var graphDataUrl = 'rest/' + $scope.energiesoort + '/opgenomenVermogenHistorie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({method: 'GET', url: graphDataUrl})

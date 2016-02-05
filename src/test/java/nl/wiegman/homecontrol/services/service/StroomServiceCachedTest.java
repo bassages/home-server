@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StroomVerbruikServiceTest {
+public class StroomServiceCachedTest {
 
     @Mock
     MeterstandRepository meterstandRepositoryMock;
@@ -30,7 +30,7 @@ public class StroomVerbruikServiceTest {
     KostenRepository kostenRepositoryMock;
 
     @InjectMocks
-    StroomVerbruikService stroomVerbruikService;
+    StroomServiceCached stroomServiceCached;
 
     @Test
     public void stroomverbruikPerMaandWithOneKosten() throws ParseException {
@@ -39,7 +39,7 @@ public class StroomVerbruikServiceTest {
 
         Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(from, to)).thenReturn(100);
 
-        Stroomverbruik stroomverbruik = stroomVerbruikService.getVerbruikInPeriode(from, to);
+        Stroomverbruik stroomverbruik = stroomServiceCached.getVerbruikInPeriode(from, to);
         assertThat(stroomverbruik, is(notNullValue()));
         assertThat(stroomverbruik.getkWh(), is(equalTo(100)));
     }
@@ -61,7 +61,7 @@ public class StroomVerbruikServiceTest {
         when(meterstandRepositoryMock.getVerbruikInPeriod(10, 14)).thenReturn(1);
         when(meterstandRepositoryMock.getVerbruikInPeriod(15, 20)).thenReturn(2);
 
-        Stroomverbruik stroomverbruik = stroomVerbruikService.getVerbruikInPeriode(10, 20);
+        Stroomverbruik stroomverbruik = stroomServiceCached.getVerbruikInPeriode(10, 20);
         assertThat(stroomverbruik, is(notNullValue()));
         assertThat(stroomverbruik.getkWh(), is(equalTo(3)));
         assertThat(stroomverbruik.getEuro().doubleValue(), is(equalTo(5.00d)));

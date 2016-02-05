@@ -3,6 +3,25 @@
 <div>
     <h1>
         <span>Meterstanden</span>
+        <div class="pull-right">
+            <form class="navbar-form without-margin-padding">
+                <div class="pull-right">
+                    <div class="input-group date-selector">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="navigate(-1)">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                        </span>
+                        <input class="form-control datepicker datepicker-selected-value text-center" formatteddate ng-model="selection" ng-readonly="true"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
     </h1>
 </div>
 
@@ -17,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="meterstandOpDag in meterstandenPerDag | orderBy:'-datumtijd'">
+            <tr ng-repeat="meterstandOpDag in meterstandenPerDag | orderBy:'datumtijd'">
                 <td>{{meterstandOpDag.datumtijd | datewithoutdayname}}</td>
                 <td>{{meterstandOpDag.meterstand.stroomTarief1}}</td>
                 <td>{{meterstandOpDag.meterstand.stroomTarief2}}</td>

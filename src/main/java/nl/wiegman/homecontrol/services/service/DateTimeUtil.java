@@ -50,4 +50,8 @@ public class DateTimeUtil {
 
         return endOfDay.getTimeInMillis();
     }
+
+    public static boolean isAfterToday(Date dag) {
+        return getEndOfDay(dag) > new Date().getTime();
+    }
 }

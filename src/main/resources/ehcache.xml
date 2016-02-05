@@ -8,4 +8,5 @@
     <cache name="kostenInPeriod" />
     <cache name="stroomVerbruikInPeriode" />
     <cache name="opgenomenVermogenHistory" />
+    <cache name="meterstandOpDag" />
 </ehcache>
