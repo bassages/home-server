@@ -8,25 +8,7 @@
     MeterstandenController.$inject = ['$scope', '$log', 'MeterstandenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
     function MeterstandenController($scope, $log, MeterstandenService, LoadingIndicatorService, ErrorMessageService) {
-
-        function getDataFromServer() {
-            LoadingIndicatorService.startLoading();
-
-            var van = $scope.selection.getTime();
-            var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
-
-            MeterstandenService.getMeterstandenPerDagInPeriod(van, totEnMet)
-                .then(
-                    function successCallback(response) {
-                        $scope.meterstandenPerDag = response.data;
-                        LoadingIndicatorService.stopLoading();
-                    },
-                    function errorCallback(response) {
-                        LoadingIndicatorService.stopLoading();
-                        ErrorMessageService.showMessage("Kon meterstanden niet ophalen");
-                    }
-                );
-        }
+        activate();
 
         function activate() {
             $scope.selection = (new Date()).clearTime().moveToFirstDayOfMonth();
@@ -88,6 +70,23 @@
             applyDatePickerUpdatesInAngularScope = true;
         });
 
-        activate();
+        function getDataFromServer() {
+            LoadingIndicatorService.startLoading();
+
+            var van = $scope.selection.getTime();
+            var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+
+            MeterstandenService.getMeterstandenPerDagInPeriod(van, totEnMet)
+                .then(
+                function successCallback(response) {
+                    $scope.meterstandenPerDag = response.data;
+                    LoadingIndicatorService.stopLoading();
+                },
+                function errorCallback(response) {
+                    LoadingIndicatorService.stopLoading();
+                    ErrorMessageService.showMessage("Kon meterstanden niet ophalen");
+                }
+            );
+        }
     }
 })();

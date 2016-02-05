@@ -11,7 +11,7 @@
             <li ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
 
             <li class="pull-right">
-                <form class="navbar-form navbar-right without-margin-padding">
+                <form class="form-inline without-margin-padding">
                     <div class="form-group" ng-show="showNumberOfPeriodsSelector()">
                         <div class="input-group">
                         <span class="input-group-btn">
@@ -19,7 +19,7 @@
                                 <i class="fa fa-minus"></i>
                             </button>
                         </span>
-                        <input class="form-control numberOfPeriods" ng-model="numberOfPeriods" ng-readonly="true"/>
+                        <input class="form-control text-center" ng-model="numberOfPeriods" ng-readonly="true"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="setNumberOfPeriods(+7)">
                                 <i class="fa fa-plus"></i>
@@ -35,7 +35,7 @@
                                 <i class="fa fa-chevron-left"></i>
                             </button>
                         </span>
-                        <input class="form-control datepicker datepicker-selected-value text-center" formatteddate ng-model="selection" ng-readonly="true"/>
+                        <input class="form-control datepicker text-center" formatteddate ng-model="selection" ng-readonly="true"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
                                 <i class="fa fa-chevron-right"></i>
