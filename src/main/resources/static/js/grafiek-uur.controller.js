@@ -138,7 +138,7 @@
                 if (data != null && data > 0 && (typeof min=='undefined' || data < min)) {
                     min = data;
                 }
-                if (data != null) {
+                if (data != null && data > 0) {
                     total += data;
                     nrofdata += 1;
                 }
