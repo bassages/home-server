@@ -5,12 +5,13 @@
         .module('app')
         .controller('MeterstandenController', MeterstandenController);
 
-    MeterstandenController.$inject = ['$scope', '$log', 'MeterstandenService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    MeterstandenController.$inject = ['$scope', '$log', 'MeterstandenService', 'LocalizationService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function MeterstandenController($scope, $log, MeterstandenService, LoadingIndicatorService, ErrorMessageService) {
+    function MeterstandenController($scope, $log, MeterstandenService, LocalizationService, LoadingIndicatorService, ErrorMessageService) {
         activate();
 
         function activate() {
+            LocalizationService.localize();
             $scope.selection = (new Date()).clearTime().moveToFirstDayOfMonth();
             getDataFromServer();
         }
@@ -30,7 +31,7 @@
         };
 
         $scope.getD3DateFormat = function() {
-            return '%b. %Y';
+            return '%b %Y';
         };
 
         var datepicker = $('.datepicker');

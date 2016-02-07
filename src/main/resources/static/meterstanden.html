@@ -27,7 +27,7 @@
     <table class="table table-bordered table-striped table-condensed">
         <thead>
             <tr>
-                <th>Datum</th>
+                <th colspan="2">Datum</th>
                 <th>Stroom T1</th>
                 <th>Stroom T2</th>
                 <th>Gas</th>
@@ -35,10 +35,11 @@
         </thead>
         <tbody>
             <tr ng-repeat="meterstandOpDag in meterstandenPerDag | orderBy:'datumtijd'">
-                <td>{{meterstandOpDag.datumtijd | datewithoutdayname}}</td>
-                <td>{{meterstandOpDag.meterstand.stroomTarief1}}</td>
-                <td>{{meterstandOpDag.meterstand.stroomTarief2}}</td>
-                <td>{{meterstandOpDag.meterstand.gas}}</td>
+                <td style="width: 50px;">{{meterstandOpDag.datumtijd | abbreviatedDatename}}</td>
+                <td style="width: 25%">{{meterstandOpDag.datumtijd | dateWithoutDayname}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief1}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief2}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.gas}}</td>
             </tr>
         </tbody>
     </table>
