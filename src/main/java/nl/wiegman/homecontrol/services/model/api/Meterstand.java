@@ -1,6 +1,7 @@
 package nl.wiegman.homecontrol.services.model.api;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 public class Meterstand {
@@ -21,8 +22,8 @@ public class Meterstand {
     @Column(nullable = false)
     private int stroomTarief2;
 
-    @Column(nullable = false)
-    private int gas;
+    @Column(nullable = false, precision = 8, scale = 3)
+    private BigDecimal gas;
 
     public long getDatumtijd() {
         return datumtijd;
@@ -56,11 +57,11 @@ public class Meterstand {
         this.stroomTarief2 = stroomTarief2;
     }
 
-    public int getGas() {
+    public BigDecimal getGas() {
         return gas;
     }
 
-    public void setGas(int gas) {
+    public void setGas(BigDecimal gas) {
         this.gas = gas;
     }
 }

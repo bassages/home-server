@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -89,7 +90,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
             Meterstand meterstand = new Meterstand();
             meterstand.setDatumtijd(lastGeneratedTimestamp);
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-            meterstand.setGas(0);
+            meterstand.setGas(new BigDecimal(0.0d));
             meterstand.setStroomTarief1((int)lastGeneratedStroomTarief2.doubleValue());
             meterstand.setStroomTarief2((int)lastGeneratedStroomTarief1.doubleValue());
 

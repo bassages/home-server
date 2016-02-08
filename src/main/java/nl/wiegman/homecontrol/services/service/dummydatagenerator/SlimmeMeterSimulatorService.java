@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.math.BigDecimal;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -78,7 +79,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             meterstand.setStroomTarief1(getStroomTarief1(datumtijd));
             meterstand.setStroomTarief2(getStroomTarief2(datumtijd));
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-            meterstand.setGas(0);
+            meterstand.setGas(new BigDecimal(0.0d));
 
             meterstandService.opslaanMeterstand(meterstand);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
