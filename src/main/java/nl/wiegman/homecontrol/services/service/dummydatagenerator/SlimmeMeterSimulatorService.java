@@ -83,7 +83,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             meterstand.setStroomTarief2(getStroomTarief2(datumtijd));
             meterstand.setGas(getGas(datumtijd));
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-            meterstand.setGas(new BigDecimal(0.0d));
+            meterstand.setGas(getGas(datumtijd));
 
             meterstandService.opslaanMeterstand(meterstand);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
