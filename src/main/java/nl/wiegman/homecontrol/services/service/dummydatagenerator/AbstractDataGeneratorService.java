@@ -48,10 +48,10 @@ public abstract class AbstractDataGeneratorService {
             case Calendar.AUGUST:
                 result = new BigDecimal(0.0001d);
             case Calendar.SEPTEMBER:
-                result = new BigDecimal(0.005d);
+                result = new BigDecimal(0.0005d);
             case Calendar.OCTOBER:
             case Calendar.NOVEMBER:
-                result = new BigDecimal(0.015d);
+                result = new BigDecimal(0.0015d);
         }
         return result;
     }
