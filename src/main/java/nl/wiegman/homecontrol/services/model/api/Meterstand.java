@@ -16,11 +16,11 @@ public class Meterstand {
     @Column(nullable = false)
     private int stroomOpgenomenVermogenInWatt;
 
-    @Column(nullable = false)
-    private int stroomTarief1;
+    @Column(nullable = false, precision = 8, scale = 3)
+    private BigDecimal stroomTarief1;
 
-    @Column(nullable = false)
-    private int stroomTarief2;
+    @Column(nullable = false, precision = 8, scale = 3)
+    private BigDecimal stroomTarief2;
 
     @Column(nullable = false, precision = 8, scale = 3)
     private BigDecimal gas;
@@ -41,19 +41,19 @@ public class Meterstand {
         this.stroomOpgenomenVermogenInWatt = stroomOpgenomenVermogenInWatt;
     }
 
-    public int getStroomTarief1() {
+    public BigDecimal getStroomTarief1() {
         return stroomTarief1;
     }
 
-    public void setStroomTarief1(int stroomTarief1) {
+    public void setStroomTarief1(BigDecimal stroomTarief1) {
         this.stroomTarief1 = stroomTarief1;
     }
 
-    public int getStroomTarief2() {
+    public BigDecimal getStroomTarief2() {
         return stroomTarief2;
     }
 
-    public void setStroomTarief2(int stroomTarief2) {
+    public void setStroomTarief2(BigDecimal stroomTarief2) {
         this.stroomTarief2 = stroomTarief2;
     }
 

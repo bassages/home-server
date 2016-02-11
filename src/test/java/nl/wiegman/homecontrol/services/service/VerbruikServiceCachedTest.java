@@ -1,7 +1,7 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
-import nl.wiegman.homecontrol.services.model.api.Stroomverbruik;
+import nl.wiegman.homecontrol.services.model.api.Verbruik;
 import nl.wiegman.homecontrol.services.repository.KostenRepository;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StroomServiceCachedTest {
+public class VerbruikServiceCachedTest {
 
     @Mock
     MeterstandRepository meterstandRepositoryMock;
@@ -30,18 +30,18 @@ public class StroomServiceCachedTest {
     KostenRepository kostenRepositoryMock;
 
     @InjectMocks
-    StroomServiceCached stroomServiceCached;
+    VerbruikServiceCached verbruikServiceCached;
 
     @Test
     public void stroomverbruikPerMaandWithOneKosten() throws ParseException {
         int from = 10;
         int to = 20;
 
-        Mockito.when(meterstandRepositoryMock.getVerbruikInPeriod(from, to)).thenReturn(100);
+        Mockito.when(meterstandRepositoryMock.getStroomVerbruikInPeriod(from, to)).thenReturn(new BigDecimal(100));
 
-        Stroomverbruik stroomverbruik = stroomServiceCached.getVerbruikInPeriode(from, to);
-        assertThat(stroomverbruik, is(notNullValue()));
-        assertThat(stroomverbruik.getkWh(), is(equalTo(100)));
+        Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(from, to);
+        assertThat(verbruik, is(notNullValue()));
+        assertThat(verbruik.getVerbruik(), is(equalTo(new BigDecimal(100d))));
     }
 
     @Test
@@ -58,13 +58,13 @@ public class StroomServiceCachedTest {
 
         when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(new Kosten[]{kosten1, kosten2}));
 
-        when(meterstandRepositoryMock.getVerbruikInPeriod(10, 14)).thenReturn(1);
-        when(meterstandRepositoryMock.getVerbruikInPeriod(15, 20)).thenReturn(2);
+        when(meterstandRepositoryMock.getStroomVerbruikInPeriod(10, 14)).thenReturn(new BigDecimal(1));
+        when(meterstandRepositoryMock.getStroomVerbruikInPeriod(15, 20)).thenReturn(new BigDecimal(2));
 
-        Stroomverbruik stroomverbruik = stroomServiceCached.getVerbruikInPeriode(10, 20);
-        assertThat(stroomverbruik, is(notNullValue()));
-        assertThat(stroomverbruik.getkWh(), is(equalTo(3)));
-        assertThat(stroomverbruik.getEuro().doubleValue(), is(equalTo(5.00d)));
+        Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(10, 20);
+        assertThat(verbruik, is(notNullValue()));
+        assertThat(verbruik.getVerbruik(), is(equalTo(new BigDecimal(3d))));
+        assertThat(verbruik.getEuro().doubleValue(), is(equalTo(5.00d)));
     }
 
 }

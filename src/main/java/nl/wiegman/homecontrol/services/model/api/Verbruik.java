@@ -2,18 +2,18 @@ package nl.wiegman.homecontrol.services.model.api;
 
 import java.math.BigDecimal;
 
-public class Stroomverbruik {
+public class Verbruik {
 
-    private Integer kWh;
+    private BigDecimal verbruik;
 
     private BigDecimal euro;
 
-    public Integer getkWh() {
-        return kWh;
+    public BigDecimal getVerbruik() {
+        return verbruik;
     }
 
-    public void setkWh(Integer kWh) {
-        this.kWh = kWh;
+    public void setVerbruik(BigDecimal kWh) {
+        this.verbruik = kWh;
     }
 
     public BigDecimal getEuro() {

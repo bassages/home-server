@@ -33,8 +33,8 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> historischeDataGenerator = null;
 
-    private Double lastGeneratedStroomTarief1 = null;
-    private Double lastGeneratedStroomTarief2 = null;
+    private BigDecimal lastGeneratedStroomTarief1 = null;
+    private BigDecimal lastGeneratedStroomTarief2 = null;
     private Long lastGeneratedTimestamp = null;
 
     @Value("${historicDataGenerator.autostart}")
@@ -55,8 +55,8 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedTimestamp = System.currentTimeMillis();
             } else {
-                lastGeneratedStroomTarief1 = (double)oldest.getStroomTarief1();
-                lastGeneratedStroomTarief2 = (double)oldest.getStroomTarief2();
+                lastGeneratedStroomTarief1 = oldest.getStroomTarief1();
+                lastGeneratedStroomTarief2 = oldest.getStroomTarief2();
                 lastGeneratedTimestamp = oldest.getDatumtijd();
             }
             startGeneratingHistoricData();
@@ -84,15 +84,15 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     private void generateHistoricData() {
         try {
             lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
-            lastGeneratedStroomTarief1 += getStroomInterval(lastGeneratedTimestamp);
-            lastGeneratedStroomTarief2 += getStroomInterval(lastGeneratedTimestamp);
+            lastGeneratedStroomTarief1 = lastGeneratedStroomTarief1.add(getStroomInterval(lastGeneratedTimestamp));
+            lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomInterval(lastGeneratedTimestamp));
 
             Meterstand meterstand = new Meterstand();
             meterstand.setDatumtijd(lastGeneratedTimestamp);
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
             meterstand.setGas(new BigDecimal(0.0d));
-            meterstand.setStroomTarief1((int)lastGeneratedStroomTarief2.doubleValue());
-            meterstand.setStroomTarief2((int)lastGeneratedStroomTarief1.doubleValue());
+            meterstand.setStroomTarief1(lastGeneratedStroomTarief2);
+            meterstand.setStroomTarief2(lastGeneratedStroomTarief1);
 
             logger.info("Add historic data for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(lastGeneratedTimestamp)));
             meterstandRepository.save(meterstand);

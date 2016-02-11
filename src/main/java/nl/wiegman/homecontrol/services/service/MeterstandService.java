@@ -12,6 +12,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,6 +33,11 @@ public class MeterstandService {
 
     public void opslaanMeterstand(Meterstand meterstand) {
         logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
+
+        meterstand.setGas(meterstand.getGas().setScale(3, RoundingMode.CEILING));
+        meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(3, RoundingMode.CEILING));
+        meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(3, RoundingMode.CEILING));
+
         meterstandRepository.save(meterstand);
 
         eventPublisher.publishEvent(new UpdateEvent(meterstand));

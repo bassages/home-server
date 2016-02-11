@@ -1,6 +1,6 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-public class StroomVerbruikOpDag extends Stroomverbruik {
+public class VerbruikOpDag extends Verbruik {
 
     private long dt;
 

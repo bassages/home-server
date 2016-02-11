@@ -18,7 +18,7 @@
             today.setHours(0,0,0,0);
             $scope.selection = today;
 
-            $scope.numberOfPeriods = 7;
+            $scope.numberOfPeriods = 14;
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'dag';
@@ -135,7 +135,7 @@
                 var data;
 
                 if ($scope.soort == 'verbruik') {
-                    data = graphData[i].kWh;
+                    data = graphData[i].verbruik;
                 } else if ($scope.soort == 'kosten') {
                     data = graphData[i].euro;
                 }
@@ -188,7 +188,7 @@
 
             var value;
             if ($scope.soort == 'verbruik') {
-                value = 'kWh';
+                value = 'verbruik';
             } else if ($scope.soort == 'kosten') {
                 value = 'euro';
             }

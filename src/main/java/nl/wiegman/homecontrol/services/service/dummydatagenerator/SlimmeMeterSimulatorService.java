@@ -28,8 +28,8 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private final ScheduledExecutorService slimmeMeterSimulatorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> slimmeMeterSimulator = null;
 
-    private Double lastGeneratedStroomTarief1 = null;
-    private Double lastGeneratedStroomTarief2 = null;
+    private BigDecimal lastGeneratedStroomTarief1 = null;
+    private BigDecimal lastGeneratedStroomTarief2 = null;
 
     @Value("${slimmeMeterSimulator.autostart}")
     boolean autoStart = false;
@@ -45,8 +45,8 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
                 lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
             } else {
-                lastGeneratedStroomTarief1 = (double) mostRecent.getStroomTarief1();
-                lastGeneratedStroomTarief2 = (double) mostRecent.getStroomTarief2();
+                lastGeneratedStroomTarief1 = mostRecent.getStroomTarief1();
+                lastGeneratedStroomTarief2 = mostRecent.getStroomTarief2();
             }
             startSlimmeMeterSimulator();
         }
@@ -87,13 +87,13 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         }
     }
 
-    private int getStroomTarief2(long datumtijd) {
-        lastGeneratedStroomTarief2 += getStroomInterval(datumtijd);
-        return (int) lastGeneratedStroomTarief2.doubleValue();
+    private BigDecimal getStroomTarief2(long datumtijd) {
+        lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomInterval(datumtijd));
+        return lastGeneratedStroomTarief2;
     }
 
-    private int getStroomTarief1(long datumtijd) {
-        lastGeneratedStroomTarief1 += getStroomInterval(datumtijd);
-        return (int) lastGeneratedStroomTarief1.doubleValue();
+    private BigDecimal getStroomTarief1(long datumtijd) {
+        lastGeneratedStroomTarief1 = lastGeneratedStroomTarief2.add(getStroomInterval(datumtijd));
+        return lastGeneratedStroomTarief1;
     }
 }

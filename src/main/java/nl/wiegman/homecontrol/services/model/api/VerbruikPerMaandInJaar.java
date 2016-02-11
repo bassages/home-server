@@ -1,6 +1,6 @@
 package nl.wiegman.homecontrol.services.model.api;
 
-public class StroomVerbruikPerMaandInJaar extends Stroomverbruik {
+public class VerbruikPerMaandInJaar extends Verbruik {
 
     private int maand;
 

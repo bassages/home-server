@@ -1,7 +1,7 @@
 package nl.wiegman.homecontrol.services.service;
 
 import nl.wiegman.homecontrol.services.model.api.Kosten;
-import nl.wiegman.homecontrol.services.model.api.Stroomverbruik;
+import nl.wiegman.homecontrol.services.model.api.Verbruik;
 import nl.wiegman.homecontrol.services.repository.KostenRepository;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
@@ -14,7 +14,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Component
-public class StroomServiceCached {
+public class VerbruikServiceCached {
 
     @Inject
     MeterstandRepository meterstandRepository;
@@ -23,13 +23,13 @@ public class StroomServiceCached {
     KostenRepository kostenRepository;
 
     @Cacheable(cacheNames = "stroomVerbruikInPeriode")
-    public Stroomverbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
+    public Verbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
         return getVerbruikInPeriode(vanMillis, totEnMetMillis);
     }
 
-    public Stroomverbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
+    public Verbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
-        Integer totaalVerbruikInKwh = null;
+        BigDecimal totaalVerbruik = null;
 
         if (periodeVan < System.currentTimeMillis()) {
 
@@ -47,30 +47,30 @@ public class StroomServiceCached {
                         subTotEnMetMillis = periodeTotEnMet;
                     }
 
-                    Integer verbruik = meterstandRepository.getVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
+                    BigDecimal verbruik = meterstandRepository.getStroomVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
                     if (verbruik != null) {
-                        if (totaalVerbruikInKwh == null) {
-                            totaalVerbruikInKwh = 0;
+                        if (totaalVerbruik == null) {
+                            totaalVerbruik = BigDecimal.ZERO;
                         }
-                        totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(new BigDecimal(verbruik)));
-                        totaalVerbruikInKwh += verbruik;
+                        totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(verbruik));
+                        totaalVerbruik = totaalVerbruik.add(verbruik);
                     }
                 }
             } else {
-                Integer verbruik = meterstandRepository.getVerbruikInPeriod(periodeVan, periodeTotEnMet);
+                BigDecimal verbruik = meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);
                 if (verbruik != null) {
-                    totaalVerbruikInKwh = verbruik;
+                    totaalVerbruik = verbruik;
                 }
             }
         }
 
-        Stroomverbruik stroomverbruik = new Stroomverbruik();
-        stroomverbruik.setkWh(totaalVerbruikInKwh);
-        if (totaalVerbruikInKwh == null) {
-            stroomverbruik.setEuro(null);
+        Verbruik verbruik = new Verbruik();
+        verbruik.setVerbruik(totaalVerbruik);
+        if (totaalVerbruik == null) {
+            verbruik.setEuro(null);
         } else {
-            stroomverbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
+            verbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
         }
-        return stroomverbruik;
+        return verbruik;
     }
 }

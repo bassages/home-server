@@ -110,7 +110,7 @@
                 var data;
 
                 if ($scope.soort == 'verbruik') {
-                    data = graphData[i].kWh;
+                    data = graphData[i].verbruik;
                 } else if ($scope.soort == 'kosten') {
                     data = graphData[i].euro;
                 }
@@ -163,7 +163,7 @@
 
             var value;
             if ($scope.soort == 'verbruik') {
-                value = 'kWh';
+                value = 'verbruik';
             } else if ($scope.soort == 'kosten') {
                 value = 'euro';
             }

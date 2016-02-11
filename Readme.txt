@@ -2,17 +2,13 @@ Backlog
 
 ---------------
 
-Weekpicker: https://github.com/eternicode/bootstrap-datepicker/issues/615
-
----------------
-
 Gasverbruik grafieken
 
 ---------------
 
-Laatste meterstanden per dag
+Data generator/upload module
 
-----------------
+---------------
 
 Klik op dag in grafiek -> ga naar dag overzicht
 
@@ -33,15 +29,10 @@ http://stackoverflow.com/questions/30481941/bootstrap-datepicker-disable-past-da
 
 ----------------
 
-
 Angular bootstrap
 
 Hmmm....
 - Datepicker kan niet alleen de clear button verwijderen.
-
-----------------
-
-Legenda bij grafiek (gemiddelde, min/max toevoegen?)
 
 ----------------
 

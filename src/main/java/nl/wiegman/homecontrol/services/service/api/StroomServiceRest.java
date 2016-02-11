@@ -1,9 +1,9 @@
 package nl.wiegman.homecontrol.services.service.api;
 
 import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
-import nl.wiegman.homecontrol.services.model.api.StroomVerbruikOpDag;
-import nl.wiegman.homecontrol.services.model.api.StroomVerbruikPerMaandInJaar;
-import nl.wiegman.homecontrol.services.service.StroomService;
+import nl.wiegman.homecontrol.services.model.api.VerbruikOpDag;
+import nl.wiegman.homecontrol.services.model.api.VerbruikPerMaandInJaar;
+import nl.wiegman.homecontrol.services.service.VerbruikService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -18,19 +18,19 @@ public class StroomServiceRest {
     public static final String SERVICE_PATH = "stroom";
 
     @Inject
-    StroomService stroomService;
+    VerbruikService stroomService;
 
     @GET
     @Path("verbruikPerMaandInJaar/{jaar}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StroomVerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathParam("jaar") int jaar) {
+    public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathParam("jaar") int jaar) {
         return stroomService.getVerbruikPerMaandInJaar(jaar);
     }
 
     @GET
     @Path("verbruikPerDag/{van}/{totEnMet}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<StroomVerbruikOpDag> getVerbruikPerDag(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
+    public List<VerbruikOpDag> getVerbruikPerDag(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
         return stroomService.getVerbruikPerDag(van, totEnMet);
     }
 
