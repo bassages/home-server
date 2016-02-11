@@ -15,7 +15,7 @@ public abstract class AbstractDataGeneratorService {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
-    protected BigDecimal getStroomInterval(long timestamp) {
+    protected BigDecimal getStroomIncreasePerInterval(long timestamp) {
         BigDecimal result;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp);
@@ -24,6 +24,18 @@ public abstract class AbstractDataGeneratorService {
             result = new BigDecimal(0.0015d);
         } else {
             result = new BigDecimal(0.001d);
+        }
+        return result;
+    }
+
+    protected BigDecimal getGasIncreasePerInterval(long timestamp) {
+        BigDecimal result = BigDecimal.ZERO;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+
+        switch (calendar.get(Calendar.MONTH)) {
+            case Calendar.JANUARY:
+                result = new BigDecimal(0.002d);
         }
         return result;
     }

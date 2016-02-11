@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -84,15 +85,15 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     private void generateHistoricData() {
         try {
             lastGeneratedTimestamp -= TimeUnit.SECONDS.toMillis(SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS);
-            lastGeneratedStroomTarief1 = lastGeneratedStroomTarief1.add(getStroomInterval(lastGeneratedTimestamp));
-            lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomInterval(lastGeneratedTimestamp));
+            lastGeneratedStroomTarief1 = lastGeneratedStroomTarief1.add(getStroomIncreasePerInterval(lastGeneratedTimestamp));
+            lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomIncreasePerInterval(lastGeneratedTimestamp));
 
             Meterstand meterstand = new Meterstand();
             meterstand.setDatumtijd(lastGeneratedTimestamp);
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-            meterstand.setGas(new BigDecimal(0.0d));
-            meterstand.setStroomTarief1(lastGeneratedStroomTarief2);
-            meterstand.setStroomTarief2(lastGeneratedStroomTarief1);
+            meterstand.setGas(new BigDecimal(0.0d).setScale(3, RoundingMode.CEILING));
+            meterstand.setStroomTarief1(lastGeneratedStroomTarief2.setScale(3, RoundingMode.CEILING));
+            meterstand.setStroomTarief2(lastGeneratedStroomTarief1.setScale(3, RoundingMode.CEILING));
 
             logger.info("Add historic data for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(lastGeneratedTimestamp)));
             meterstandRepository.save(meterstand);

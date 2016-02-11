@@ -88,12 +88,12 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     }
 
     private BigDecimal getStroomTarief2(long datumtijd) {
-        lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomInterval(datumtijd));
+        lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomIncreasePerInterval(datumtijd));
         return lastGeneratedStroomTarief2;
     }
 
     private BigDecimal getStroomTarief1(long datumtijd) {
-        lastGeneratedStroomTarief1 = lastGeneratedStroomTarief2.add(getStroomInterval(datumtijd));
+        lastGeneratedStroomTarief1 = lastGeneratedStroomTarief2.add(getStroomIncreasePerInterval(datumtijd));
         return lastGeneratedStroomTarief1;
     }
 }
