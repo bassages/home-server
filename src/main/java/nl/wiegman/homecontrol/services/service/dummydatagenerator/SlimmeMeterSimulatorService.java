@@ -30,6 +30,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
 
     private BigDecimal lastGeneratedStroomTarief1 = null;
     private BigDecimal lastGeneratedStroomTarief2 = null;
+    private BigDecimal lastGeneratedGas = null;
 
     @Value("${slimmeMeterSimulator.autostart}")
     boolean autoStart = false;
@@ -44,9 +45,11 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             if (mostRecent == null) {
                 lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
+                lastGeneratedGas = INITIAL_GENERATOR_VALUE_GAS;
             } else {
                 lastGeneratedStroomTarief1 = mostRecent.getStroomTarief1();
                 lastGeneratedStroomTarief2 = mostRecent.getStroomTarief2();
+                lastGeneratedGas = mostRecent.getGas();
             }
             startSlimmeMeterSimulator();
         }
@@ -78,6 +81,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             meterstand.setDatumtijd(datumtijd);
             meterstand.setStroomTarief1(getStroomTarief1(datumtijd));
             meterstand.setStroomTarief2(getStroomTarief2(datumtijd));
+            meterstand.setGas(getGas(datumtijd));
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
             meterstand.setGas(new BigDecimal(0.0d));
 
@@ -85,6 +89,11 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }
+    }
+
+    private BigDecimal getGas(long datumtijd) {
+        lastGeneratedGas = lastGeneratedGas.add(getGasIncreasePerInterval(datumtijd));
+        return lastGeneratedGas;
     }
 
     private BigDecimal getStroomTarief2(long datumtijd) {
