@@ -3,9 +3,9 @@
 
     angular
         .module('app')
-        .controller('StroomMeterstandController', StroomMeterstandController);
+        .controller('DashboardController', DashboardController);
 
-    StroomMeterstandController.$inject = ['$scope', '$http', 'RealtimeMeterstandenService'];
+    DashboardController.$inject = ['$scope', '$http', 'RealtimeMeterstandenService'];
 
     function turnOffAllLeds($scope) {
         for (var i = 0; i < 10; i++) {
@@ -13,7 +13,7 @@
         }
     }
 
-    function StroomMeterstandController($scope, $http, RealtimeMeterstandenService) {
+    function DashboardController($scope, $http, RealtimeMeterstandenService) {
         turnOffAllLeds($scope);
 
         $scope.huidigOpgenomenVermogen = '0';
@@ -31,6 +31,7 @@
         function update(data) {
             $scope.t1 = data.stroomTarief1;
             $scope.t2 = data.stroomTarief2;
+            $scope.meterstandGas = data.gas;
             $scope.huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
 
             var step = 150;

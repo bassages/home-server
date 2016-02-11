@@ -31,7 +31,7 @@
             })
             .when('/', {
                 templateUrl: 'dashboard.html',
-                controller: 'StroomMeterstandController'
+                controller: 'DashboardController'
             })
             .otherwise({redirectTo: 'dashboard.html'});
     }

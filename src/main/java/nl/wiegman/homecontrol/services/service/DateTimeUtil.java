@@ -52,6 +52,6 @@ public class DateTimeUtil {
     }
 
     public static boolean isAfterToday(Date dag) {
-        return getEndOfDay(dag) > new Date().getTime();
+        return getStartOfDay(dag) > getEndOfDay(new Date());
     }
 }
