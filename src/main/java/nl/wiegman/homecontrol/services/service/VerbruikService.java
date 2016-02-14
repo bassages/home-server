@@ -90,7 +90,7 @@ public class VerbruikService {
         verbruikOpDag.setDt(dag.getTime());
 
         if (verbruikInPeriode.getVerbruik() != null) {
-            verbruikOpDag.setVerbruik(verbruikInPeriode.getVerbruik().setScale(0, RoundingMode.HALF_UP));
+            verbruikOpDag.setVerbruik(verbruikInPeriode.getVerbruik());
         }
 
         verbruikOpDag.setEuro(verbruikInPeriode.getEuro());

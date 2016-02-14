@@ -35,11 +35,11 @@
         </thead>
         <tbody>
             <tr ng-repeat="meterstandOpDag in meterstandenPerDag | orderBy:'datumtijd'">
-                <td style="width: 50px;">{{meterstandOpDag.datumtijd | abbreviatedDatename}}</td>
-                <td style="width: 25%">{{meterstandOpDag.datumtijd | dateWithoutDayname}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief1}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief2}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.gas}}</td>
+                <td style="width: 50px;">{{meterstandOpDag.datumtijd | date : 'EEE.'}}</td>
+                <td style="width: 25%">{{meterstandOpDag.datumtijd | date : 'dd-MM-yyyy'}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief1 | meterstand}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief2 | meterstand}}</td>
+                <td style="width: 25%">{{meterstandOpDag.meterstand.gas | meterstand}}</td>
             </tr>
         </tbody>
     </table>

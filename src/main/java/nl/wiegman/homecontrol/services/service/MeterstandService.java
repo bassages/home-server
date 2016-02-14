@@ -34,6 +34,7 @@ public class MeterstandService {
     public void opslaanMeterstand(Meterstand meterstand) {
         logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
 
+        // Make sure to save BigDecimals with 3 decimals.
         meterstand.setGas(meterstand.getGas().setScale(3, RoundingMode.CEILING));
         meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(3, RoundingMode.CEILING));
         meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(3, RoundingMode.CEILING));
