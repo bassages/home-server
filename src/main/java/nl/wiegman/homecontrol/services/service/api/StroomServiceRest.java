@@ -18,26 +18,26 @@ public class StroomServiceRest {
     public static final String SERVICE_PATH = "stroom";
 
     @Inject
-    VerbruikService stroomService;
+    VerbruikService verbruikService;
 
     @GET
     @Path("verbruikPerMaandInJaar/{jaar}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathParam("jaar") int jaar) {
-        return stroomService.getVerbruikPerMaandInJaar(jaar);
+        return verbruikService.getVerbruikPerMaandInJaar(jaar);
     }
 
     @GET
     @Path("verbruikPerDag/{van}/{totEnMet}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<VerbruikOpDag> getVerbruikPerDag(@PathParam("van") long van, @PathParam("totEnMet") long totEnMet) {
-        return stroomService.getVerbruikPerDag(van, totEnMet);
+        return verbruikService.getVerbruikPerDag(van, totEnMet);
     }
 
     @GET
     @Path("opgenomenVermogenHistorie/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to, @QueryParam("subPeriodLength") long subPeriodLength) {
-        return stroomService.getOpgenomenVermogenHistory(from, to, subPeriodLength);
+        return verbruikService.getOpgenomenVermogenHistory(from, to, subPeriodLength);
     }
 }
