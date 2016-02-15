@@ -23,11 +23,11 @@ public class VerbruikServiceCached {
     KostenRepository kostenRepository;
 
     @Cacheable(cacheNames = "stroomVerbruikInPeriode")
-    public Verbruik getPotentiallyCachedVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
-        return getVerbruikInPeriode(vanMillis, totEnMetMillis);
+    public Verbruik getPotentiallyCachedVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {
+        return getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
     }
 
-    public Verbruik getVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
+    public Verbruik getVerbruikInPeriode(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
         BigDecimal totaalVerbruik = null;
 
@@ -47,7 +47,8 @@ public class VerbruikServiceCached {
                         subTotEnMetMillis = periodeTotEnMet;
                     }
 
-                    BigDecimal verbruik = meterstandRepository.getStroomVerbruikInPeriod(subVanMillis, subTotEnMetMillis);
+                    BigDecimal verbruik = getVerbruik(energiesoort, subVanMillis, subTotEnMetMillis);
+
                     if (verbruik != null) {
                         if (totaalVerbruik == null) {
                             totaalVerbruik = BigDecimal.ZERO;
@@ -57,7 +58,7 @@ public class VerbruikServiceCached {
                     }
                 }
             } else {
-                BigDecimal verbruik = meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);
+                BigDecimal verbruik = getVerbruik(energiesoort, periodeVan, periodeTotEnMet);
                 if (verbruik != null) {
                     totaalVerbruik = verbruik;
                 }
@@ -72,5 +73,17 @@ public class VerbruikServiceCached {
             verbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
         }
         return verbruik;
+    }
+
+    private BigDecimal getVerbruik(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
+        switch (energiesoort) {
+            case GAS:
+                return meterstandRepository.getGasVerbruikInPeriod(periodeVan, periodeTotEnMet);
+            case STROOM:
+                return meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);
+            default:
+                throw new UnsupportedOperationException("Unexpected energiesoort: " + energiesoort.name());
+        }
+
     }
 }

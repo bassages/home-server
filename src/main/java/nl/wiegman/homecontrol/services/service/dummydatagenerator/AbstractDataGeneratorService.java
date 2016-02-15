@@ -39,19 +39,24 @@ public abstract class AbstractDataGeneratorService {
             case Calendar.JANUARY:
             case Calendar.FEBRUARY:
                 result = new BigDecimal(0.0015d);
+                break;
             case Calendar.MARCH:
             case Calendar.APRIL:
                 result = new BigDecimal(0.0005d);
+                break;
             case Calendar.MAY:
             case Calendar.JUNE:
             case Calendar.JULY:
             case Calendar.AUGUST:
                 result = new BigDecimal(0.0001d);
+                break;
             case Calendar.SEPTEMBER:
                 result = new BigDecimal(0.0005d);
+                break;
             case Calendar.OCTOBER:
             case Calendar.NOVEMBER:
                 result = new BigDecimal(0.001d);
+                break;
         }
         return result;
     }

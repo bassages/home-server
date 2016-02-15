@@ -17,11 +17,11 @@ public class OpgenomenVermogenService {
     MeterstandRepository meterstandRepository;
 
     @Cacheable(cacheNames = "opgenomenVermogenHistory")
-    public List<OpgenomenVermogen> getPotentiallyCachedOpgenomenVermogenHistory(long from, long to, long subPeriodLength) {
-        return getOpgenomenVermogenHistory(from, to, subPeriodLength);
+    public List<OpgenomenVermogen> getPotentiallyCachedOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
+        return getOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
     }
 
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(long from, long to, long subPeriodLength) {
+    public List<OpgenomenVermogen> getOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
         List<OpgenomenVermogen> result = new ArrayList<>();
 
         List<Meterstand> list = meterstandRepository.getMeterstanden(from, to);

@@ -33,28 +33,29 @@ public class VerbruikService {
     @Inject
     OpgenomenVermogenService opgenomenVermogenService;
 
-    public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(int jaar) {
+    public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(Energiesoort energiesoort, int jaar) {
         List<VerbruikPerMaandInJaar> result = new ArrayList<>();
 
         IntStream.rangeClosed(1, 12).forEach(
-            maand -> result.add(getVerbruikInMaand(maand, jaar))
+            maand -> result.add(getVerbruikInMaand(energiesoort, maand, jaar))
         );
         return result;
     }
 
-    public List<VerbruikOpDag> getVerbruikPerDag(long van, long totEnMet) {
+    public List<VerbruikOpDag> getVerbruikPerDag(Energiesoort energiesoort, long van, long totEnMet) {
         List<VerbruikOpDag> result = new ArrayList<>();
 
         List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
         for (Date dag : dagenInPeriode) {
-            logger.info("get verbruik op dag: " + dag);
-            result.add(getStroomVerbruikOpDag(dag));
+            logger.info("Get " + energiesoort.name() + " verbruik op dag: " + dag);
+
+            result.add(getVerbruikOpDag(energiesoort, dag));
         }
         return result;
     }
 
-    protected VerbruikPerMaandInJaar getVerbruikInMaand(int maand, int jaar) {
-        logger.info("Get verbruik in maand: " + maand + "/" + jaar);
+    protected VerbruikPerMaandInJaar getVerbruikInMaand(Energiesoort energiesoort, int maand, int jaar) {
+        logger.info("Get " + energiesoort.name() + " verbruik in maand: " + maand + "/" + jaar);
 
         Calendar van = Calendar.getInstance();
         van.set(Calendar.MONTH, maand - 1);
@@ -67,7 +68,7 @@ public class VerbruikService {
         totEnMet.add(Calendar.MILLISECOND, -1);
         final long totEnMetMillis = totEnMet.getTimeInMillis();
 
-        Verbruik verbruikInPeriode = getVerbruikInPeriode(vanMillis, totEnMetMillis);
+        Verbruik verbruikInPeriode = getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
 
         VerbruikPerMaandInJaar verbruikPerMaandInJaar = new VerbruikPerMaandInJaar();
         verbruikPerMaandInJaar.setMaand(maand);
@@ -80,11 +81,11 @@ public class VerbruikService {
         return verbruikPerMaandInJaar;
     }
 
-    private VerbruikOpDag getStroomVerbruikOpDag(Date dag) {
+    private VerbruikOpDag getVerbruikOpDag(Energiesoort energiesoort, Date dag) {
         long vanMillis = dag.getTime();
         long totEnMetMillis = DateUtils.addDays(dag, 1).getTime() - 1;
 
-        Verbruik verbruikInPeriode = getVerbruikInPeriode(vanMillis, totEnMetMillis);
+        Verbruik verbruikInPeriode = getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
 
         VerbruikOpDag verbruikOpDag = new VerbruikOpDag();
         verbruikOpDag.setDt(dag.getTime());
@@ -97,19 +98,19 @@ public class VerbruikService {
         return verbruikOpDag;
     }
 
-    private Verbruik getVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
+    private Verbruik getVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {
         if (totEnMetMillis < System.currentTimeMillis()) {
-            return verbruikServiceCached.getPotentiallyCachedVerbruikInPeriode(vanMillis, totEnMetMillis);
+            return verbruikServiceCached.getPotentiallyCachedVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
         } else {
-            return verbruikServiceCached.getVerbruikInPeriode(vanMillis, totEnMetMillis);
+            return verbruikServiceCached.getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
         }
     }
 
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(long from, long to, long subPeriodLength) {
+    public List<OpgenomenVermogen> getOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
         if (to < System.currentTimeMillis()) {
-            return opgenomenVermogenService.getPotentiallyCachedOpgenomenVermogenHistory(from, to, subPeriodLength);
+            return opgenomenVermogenService.getPotentiallyCachedOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
         } else {
-            return opgenomenVermogenService.getOpgenomenVermogenHistory(from, to, subPeriodLength);
+            return opgenomenVermogenService.getOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
         }
     }
 }
