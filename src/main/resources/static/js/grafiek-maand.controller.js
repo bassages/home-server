@@ -13,8 +13,8 @@
         function activate() {
             $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(new Date()).getFullYear());
 
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'kWh'}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.period = 'maand';
             $scope.soort = GrafiekService.getSoortData();
 
@@ -142,14 +142,6 @@
             }
         }
 
-        function formatBasedOnSoort(value) {
-            if ($scope.soort == 'verbruik') {
-                return Math.round(value) + ' kWh';
-            } else if ($scope.soort == 'kosten') {
-                var format = d3.format(".2f");
-                return '\u20AC ' + format(value);
-            }
-        }
         function getGraphConfig(graphData) {
             var graphConfig = {};
 
@@ -186,12 +178,6 @@
             graphConfig.bar = {width: {ratio: 0.8}};
             graphConfig.transition = {duration: 0};
 
-            var soortOmschrijving;
-            if ($scope.soort == 'verbruik') {
-                soortOmschrijving = 'kWh';
-            } else if ($scope.soort == 'kosten') {
-                soortOmschrijving = '\u20AC';
-            }
             graphConfig.tooltip = {
                 format: {
                     title: function (d) {
@@ -201,7 +187,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        return formatBasedOnSoort(value);
+                        return GrafiekService.getTooltipValue($scope.energiesoort, value);
                     }
                 }
             };
@@ -213,13 +199,13 @@
 
             var lines = [];
             if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + formatBasedOnSoort(statistics.avg), class: 'avg', position: 'middle'});
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.avg), class: 'avg', position: 'middle'});
             }
             if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + formatBasedOnSoort(statistics.min), class: 'min', position: 'start'});
+                lines.push({value: statistics.min, text: 'Laagste: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.min), class: 'min', position: 'start'});
             }
             if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + formatBasedOnSoort(statistics.max), class: 'max'});
+                lines.push({value: statistics.max, text: 'Hoogste: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.max), class: 'max'});
             }
             graphConfig.grid.y.lines = lines;
 

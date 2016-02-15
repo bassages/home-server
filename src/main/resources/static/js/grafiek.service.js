@@ -11,6 +11,26 @@
 
         var soortData = 'verbruik'; // Default value
 
+        this.getVerbruikLabel = function(energiesoort) {
+            if (energiesoort == 'stroom') {
+                return 'kWh'
+            } else if (energiesoort == 'gas') {
+                return 'M3';
+            } else {
+                return '???';
+            }
+        };
+
+        this.getTooltipValue = function(energiesoort, value) {
+            if (soortData == 'verbruik') {
+                numbro.culture('nl-NL');
+                return numbro(value).format('0.000') + ' ' + this.getVerbruikLabel(energiesoort);
+            } else if (soortData == 'kosten') {
+                var format = d3.format(".2f");
+                return '\u20AC ' + format(value);
+            }
+        };
+
         this.getSoortData = function() {
             return soortData;
         };
