@@ -211,7 +211,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        return GrafiekService.getTooltipValue($scope.energiesoort, value);
+                        return GrafiekService.formatWithUnitLabel($scope.energiesoort, value);
                     }
                 }
             };
@@ -223,13 +223,13 @@
 
             var lines = [];
             if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.avg), class: 'avg', position: 'middle'});
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.avg), class: 'avg', position: 'middle'});
             }
             if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.min), class: 'min', position: 'start'});
+                lines.push({value: statistics.min, text: 'Laagste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.min), class: 'min', position: 'start'});
             }
             if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + GrafiekService.getTooltipValue($scope.energiesoort, statistics.max), class: 'max'});
+                lines.push({value: statistics.max, text: 'Hoogste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.max), class: 'max'});
             }
             graphConfig.grid.y.lines = lines;
 
@@ -262,7 +262,7 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruikPerDag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
+            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({

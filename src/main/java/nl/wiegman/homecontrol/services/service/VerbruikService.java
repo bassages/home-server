@@ -1,9 +1,6 @@
 package nl.wiegman.homecontrol.services.service;
 
-import nl.wiegman.homecontrol.services.model.api.OpgenomenVermogen;
-import nl.wiegman.homecontrol.services.model.api.VerbruikOpDag;
-import nl.wiegman.homecontrol.services.model.api.VerbruikPerMaandInJaar;
-import nl.wiegman.homecontrol.services.model.api.Verbruik;
+import nl.wiegman.homecontrol.services.model.api.*;
 import nl.wiegman.homecontrol.services.repository.KostenRepository;
 import nl.wiegman.homecontrol.services.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
@@ -13,7 +10,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.math.RoundingMode;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Component
@@ -32,6 +34,16 @@ public class VerbruikService {
 
     @Inject
     OpgenomenVermogenService opgenomenVermogenService;
+
+    public List<VerbruikPerUurOpDag> getVerbruikPerUurOpDag(Energiesoort energiesoort, long dag) {
+        List<VerbruikPerUurOpDag> result = new ArrayList<>();
+
+        // TODO: Daylight saving....
+        IntStream.rangeClosed(0, 23).forEach(
+                uur -> result.add(getVerbruikInUur(energiesoort, new Date(dag), uur))
+        );
+        return result;
+    }
 
     public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(Energiesoort energiesoort, int jaar) {
         List<VerbruikPerMaandInJaar> result = new ArrayList<>();
@@ -53,6 +65,22 @@ public class VerbruikService {
         }
         return result;
     }
+    private VerbruikPerUurOpDag getVerbruikInUur(Energiesoort energiesoort, Date dag, int uur) {
+        logger.info("Get " + energiesoort.name() + " verbruik in uur " + uur + " op dag: " + new SimpleDateFormat("dd-MM-yyyy").format(dag));
+
+        VerbruikPerUurOpDag verbruikPerUurOpDag = new VerbruikPerUurOpDag();
+        verbruikPerUurOpDag.setUur(uur);
+
+        long vanMillis = DateTimeUtil.getStartOfDay(dag) + TimeUnit.HOURS.toMillis(uur);
+        long totEnMetMillis = vanMillis + TimeUnit.HOURS.toMillis(1);
+        Verbruik verbruikInPeriode = getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
+
+        if (verbruikInPeriode != null) {
+            verbruikPerUurOpDag.setEuro(verbruikInPeriode.getEuro());
+            verbruikPerUurOpDag.setVerbruik(verbruikInPeriode.getVerbruik());
+        }
+        return verbruikPerUurOpDag;
+    }
 
     protected VerbruikPerMaandInJaar getVerbruikInMaand(Energiesoort energiesoort, int maand, int jaar) {
         logger.info("Get " + energiesoort.name() + " verbruik in maand: " + maand + "/" + jaar);
@@ -72,12 +100,11 @@ public class VerbruikService {
 
         VerbruikPerMaandInJaar verbruikPerMaandInJaar = new VerbruikPerMaandInJaar();
         verbruikPerMaandInJaar.setMaand(maand);
-        verbruikPerMaandInJaar.setEuro(verbruikInPeriode.getEuro());
 
         if (verbruikInPeriode.getVerbruik() != null) {
             verbruikPerMaandInJaar.setVerbruik(verbruikInPeriode.getVerbruik().setScale(0, RoundingMode.HALF_UP));
+            verbruikPerMaandInJaar.setEuro(verbruikInPeriode.getEuro());
         }
-
         return verbruikPerMaandInJaar;
     }
 

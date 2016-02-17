@@ -9,6 +9,10 @@
 
     function Config($routeProvider) {
         $routeProvider
+            .when('/grafiek/:energiesoort/opgenomen-vermogen', {
+                templateUrl: 'grafiek.html',
+                controller: 'OpgenomenVermogenGrafiekController'
+            })
             .when('/grafiek/:energiesoort/uur', {
                 templateUrl: 'grafiek.html',
                 controller: 'UurGrafiekController'

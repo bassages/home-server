@@ -3,11 +3,11 @@
 
     angular
         .module('app')
-        .controller('UurGrafiekController', UurGrafiekController);
+        .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    UurGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
-    function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
+    function OpgenomenVermogenGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
         activate();
@@ -19,8 +19,8 @@
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'uur';
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
-            $scope.soort = GrafiekService.getSoortData();
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
+            $scope.soort = 'verbruik'; // This controller only supports verbruik
 
             GrafiekService.setSoortData($scope.soort);
             GrafiekService.manageGraphSize($scope);
@@ -33,6 +33,22 @@
 
         $scope.getD3DateFormat = function() {
             return '%a %d-%m-%Y';
+        };
+
+        $scope.showOpgenomenVermogen = function() {
+            return true;
+        };
+
+        $scope.hideUur = function() {
+            return true;
+        };
+
+        $scope.hideDag = function() {
+            return true;
+        };
+
+        $scope.hideMaand = function() {
+            return true;
         };
 
         var datepicker = $('.datepicker');
@@ -101,11 +117,25 @@
             getDataFromServer();
         };
 
-        $scope.switchSoort = function(destinationSoortCode) {
-            $scope.soort = destinationSoortCode;
-            GrafiekService.setSoortData(destinationSoortCode);
-            loadDataIntoGraph($scope.graphData);
-        };
+        function getTicksForEveryHourInPeriod(from, to) {
+            var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
+
+            // Add one tick for every hour
+            var tickValues = [];
+            for (var i = 0; i <= numberOfHoursInDay; i++) {
+                var tickValue = from.getTime() + (i * 60 * 60 * 1000);
+                tickValues.push(tickValue);
+            }
+            return tickValues;
+        }
+
+        function addSubPeriodEnd(data) {
+            var length = data.length;
+            for (var i = 0; i < length; i++) {
+                var subPeriodEnd = data[i].dt + (SIX_MINUTES_IN_MILLISECONDS - 1);
+                data.push({dt: subPeriodEnd, watt: data[i].watt});
+            }
+        }
 
         function getStatistics(graphData) {
             var min;
@@ -147,47 +177,23 @@
 
         function getGraphConfig(graphData) {
             var graphConfig = {};
+            var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
 
             graphConfig.bindto = '#chart';
-
-            var value;
-            if ($scope.soort == 'verbruik') {
-                value = 'verbruik';
-            } else if ($scope.soort == 'kosten') {
-                value = 'euro';
-            }
-            graphConfig.data = {};
-            graphConfig.data.json = graphData;
-            graphConfig.data.type = 'bar';
-            graphConfig.data.keys = {x: 'uur', value: [value]};
-
+            graphConfig.data = {json: graphData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
             graphConfig.axis = {};
             graphConfig.axis.x = {
-                type: 'category',
-                tick: {
-                    format: function (x) { return x + ':00 - ' + (x+1) + ':00'; },
-                }
+                type: "timeseries",
+                tick: {format: "%H:%M", values: tickValues, rotate: -90},
+                min: $scope.selection,
+                max: getTo(),
+                padding: {left: 0, right: 10}
             };
-
-            if ($scope.soort == 'kosten') {
-                graphConfig.axis.y = {tick: {format: d3.format(".2f")}};
-            }
-
             graphConfig.legend = {show: false};
-            graphConfig.bar = {width: {ratio: 0.8}};
+            graphConfig.bar = {width: {ratio: 1}};
+            graphConfig.point = {show: false};
             graphConfig.transition = {duration: 0};
-
-            graphConfig.tooltip = {
-                format: {
-                    name: function (name, ratio, id, index) {
-                        return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
-                    },
-                    value: function (value, ratio, id) {
-                        return GrafiekService.formatWithUnitLabel($scope.energiesoort, value);
-                    }
-                }
-            };
-
+            graphConfig.tooltip = {show: false};
             graphConfig.padding = {top: 10, bottom: 45, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
 
@@ -204,6 +210,8 @@
                 lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max + ' watt', class: 'max'});
             }
             graphConfig.grid.y.lines = lines;
+
+            addSubPeriodEnd(graphData);
 
             return graphConfig;
         }
@@ -225,10 +233,16 @@
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
+        function getTo() {
+            var to = new Date($scope.selection);
+            to.setDate($scope.selection.getDate() + 1);
+            return to;
+        }
+
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
+            var graphDataUrl = 'rest/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data for graph from URL: ' + graphDataUrl);
 
             $http({method: 'GET', url: graphDataUrl})

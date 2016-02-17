@@ -6,9 +6,10 @@
     </div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
-            <li ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
-            <li ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
-            <li ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
+            <li ng-show="showOpgenomenVermogen()" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+            <li ng-hide="hideUur()" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
+            <li ng-hide="hideDag()" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
+            <li ng-hide="hideMaand()" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
 
             <li class="pull-right">
                 <form class="form-inline without-margin-padding">

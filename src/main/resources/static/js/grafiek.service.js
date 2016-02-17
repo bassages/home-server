@@ -21,7 +21,7 @@
             }
         };
 
-        this.getTooltipValue = function(energiesoort, value) {
+        this.formatWithUnitLabel = function(energiesoort, value) {
             if (soortData == 'verbruik') {
                 numbro.culture('nl-NL');
                 return numbro(value).format('0.000') + ' ' + this.getVerbruikLabel(energiesoort);
