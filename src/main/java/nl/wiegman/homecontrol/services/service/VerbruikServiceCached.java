@@ -53,7 +53,7 @@ public class VerbruikServiceCached {
                         if (totaalVerbruik == null) {
                             totaalVerbruik = BigDecimal.ZERO;
                         }
-                        totaalKosten = totaalKosten.add(kosten.getStroomPerKwh().multiply(verbruik));
+                        totaalKosten = totaalKosten.add(kosten.getKosten(energiesoort).multiply(verbruik));
                         totaalVerbruik = totaalVerbruik.add(verbruik);
                     }
                 }

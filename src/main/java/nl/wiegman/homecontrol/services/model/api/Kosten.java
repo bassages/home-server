@@ -1,6 +1,7 @@
 package nl.wiegman.homecontrol.services.model.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import nl.wiegman.homecontrol.services.service.Energiesoort;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -42,6 +43,17 @@ public class Kosten {
 
     public void setVan(Long van) {
         this.van = van;
+    }
+
+    public BigDecimal getKosten(Energiesoort energiesoort) {
+        switch (energiesoort) {
+            case GAS:
+                return gasPerKuub;
+            case STROOM:
+                return stroomPerKwh;
+            default:
+                return BigDecimal.ZERO;
+        }
     }
 
     public BigDecimal getStroomPerKwh() {
