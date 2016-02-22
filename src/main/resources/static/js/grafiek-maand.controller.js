@@ -107,13 +107,7 @@
             var nrofdata = 0;
 
             for (var i = 0; i < data.length; i++) {
-                var value;
-
-                if ($scope.soort == 'verbruik') {
-                    value = data[i].verbruik;
-                } else if ($scope.soort == 'kosten') {
-                    value = data[i].euro;
-                }
+                var value = data[i][$scope.soort];
 
                 if (value != null && (typeof max=='undefined' || value > max)) {
                     max = value;

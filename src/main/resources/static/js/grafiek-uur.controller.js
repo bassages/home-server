@@ -116,7 +116,7 @@
             var nrofdata = 0;
 
             for (var i = 0; i < data.length; i++) {
-                var value = data[i].watt;
+                var value = data[i][$scope.soort];
 
                 if (value != null && (typeof max=='undefined' || value > max)) {
                     max = value;
@@ -187,13 +187,13 @@
 
             var lines = [];
             if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + Math.round(statistics.avg) + ' watt', class: 'avg', position: 'middle'});
+                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.avg), class: 'avg', position: 'middle'});
             }
             if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + statistics.min + ' watt', class: 'min', position: 'start'});
+                lines.push({value: statistics.min, text: 'Laagste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.min), class: 'min', position: 'start'});
             }
             if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max + ' watt', class: 'max'});
+                lines.push({value: statistics.max, text: 'Hoogste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.max), class: 'max'});
             }
             graphConfig.grid.y.lines = lines;
 
