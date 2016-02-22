@@ -243,7 +243,7 @@
             LoadingIndicatorService.startLoading();
 
             var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
-            $log.info('Getting data for graph from URL: ' + dataUrl);
+            $log.info('Getting data from URL: ' + dataUrl);
 
             $http({method: 'GET', url: dataUrl})
                 .then(
