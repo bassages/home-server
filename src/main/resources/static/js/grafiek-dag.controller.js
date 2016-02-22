@@ -163,7 +163,7 @@
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: {top: 10, bottom: 20, left: 50, right: 20}
+                padding: {top: 10, bottom: 20, left: 55, right: 20}
             }
         }
 
@@ -177,16 +177,10 @@
 
             graphConfig.bindto = '#chart';
 
-            var value;
-            if ($scope.soort == 'verbruik') {
-                value = 'verbruik';
-            } else if ($scope.soort == 'kosten') {
-                value = 'euro';
-            }
             graphConfig.data = {};
             graphConfig.data.json = graphData;
             graphConfig.data.type = 'bar';
-            graphConfig.data.keys = {x: 'dt', value: [value]};
+            graphConfig.data.keys = {x: 'dt', value: [$scope.soort]};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
@@ -197,10 +191,8 @@
                 padding: {left: 0, right: 10}
             };
 
-            if ($scope.soort == 'kosten') {
-                graphConfig.axis.y = {tick: {format: d3.format(".2f")}};
-            }
-
+            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.energiesoort, value); };
+            graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
             graphConfig.transition = {duration: 0};

@@ -6,7 +6,7 @@ public class Verbruik {
 
     private BigDecimal verbruik;
 
-    private BigDecimal euro;
+    private BigDecimal kosten;
 
     public BigDecimal getVerbruik() {
         return verbruik;
@@ -16,11 +16,11 @@ public class Verbruik {
         this.verbruik = kWh;
     }
 
-    public BigDecimal getEuro() {
-        return euro;
+    public BigDecimal getKosten() {
+        return kosten;
     }
 
-    public void setEuro(BigDecimal euro) {
-        this.euro = euro;
+    public void setKosten(BigDecimal kosten) {
+        this.kosten = kosten;
     }
 }

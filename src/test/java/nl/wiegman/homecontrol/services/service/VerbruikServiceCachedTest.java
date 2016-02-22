@@ -64,7 +64,7 @@ public class VerbruikServiceCachedTest {
         Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(Energiesoort.STROOM, 10, 20);
         assertThat(verbruik, is(notNullValue()));
         assertThat(verbruik.getVerbruik(), is(equalTo(new BigDecimal(3d))));
-        assertThat(verbruik.getEuro().doubleValue(), is(equalTo(5.00d)));
+        assertThat(verbruik.getKosten().doubleValue(), is(equalTo(5.00d)));
     }
 
 }

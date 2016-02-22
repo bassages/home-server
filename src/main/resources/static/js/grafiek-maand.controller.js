@@ -153,13 +153,7 @@
             graphConfig.data.json = graphData;
             graphConfig.data.type = 'bar';
 
-            var value;
-            if ($scope.soort == 'verbruik') {
-                value = 'verbruik';
-            } else if ($scope.soort == 'kosten') {
-                value = 'euro';
-            }
-            graphConfig.data.keys = {x: 'maand', value: [value]};
+            graphConfig.data.keys = {x: 'maand', value: [$scope.soort]};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
@@ -170,10 +164,8 @@
                 }, min: 0.5, max: 2.5, padding: {left: 0, right: 10}
             };
 
-            if ($scope.soort == 'kosten') {
-                graphConfig.axis.y = {tick: {format: d3.format(".2f")}};
-            }
-
+            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.energiesoort, value); };
+            graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
             graphConfig.transition = {duration: 0};
@@ -191,7 +183,7 @@
                     }
                 }
             };
-            graphConfig.padding = {top: 10, bottom: 10, left: 50, right: 20};
+            graphConfig.padding = {top: 10, bottom: 10, left: 55, right: 20};
 
             graphConfig.grid = {y: {show: true}};
 

@@ -68,9 +68,9 @@ public class VerbruikServiceCached {
         Verbruik verbruik = new Verbruik();
         verbruik.setVerbruik(totaalVerbruik);
         if (totaalVerbruik == null) {
-            verbruik.setEuro(null);
+            verbruik.setKosten(null);
         } else {
-            verbruik.setEuro(totaalKosten.setScale(2, RoundingMode.CEILING));
+            verbruik.setKosten(totaalKosten.setScale(2, RoundingMode.CEILING));
         }
         return verbruik;
     }

@@ -11,6 +11,8 @@
 
         var soortData = 'verbruik'; // Default value
 
+        numbro.culture('nl-NL');
+
         this.getVerbruikLabel = function(energiesoort) {
             if (energiesoort == 'stroom') {
                 return 'kWh'
@@ -23,11 +25,19 @@
 
         this.formatWithUnitLabel = function(energiesoort, value) {
             if (soortData == 'verbruik') {
-                numbro.culture('nl-NL');
                 return numbro(value).format('0.000') + ' ' + this.getVerbruikLabel(energiesoort);
             } else if (soortData == 'kosten') {
                 var format = d3.format(".2f");
                 return '\u20AC ' + format(value);
+            }
+        };
+
+        this.formatWithoutUnitLabel = function(energiesoort, value) {
+            if (soortData == 'verbruik') {
+                return numbro(value).format('0.000');
+            } else if (soortData == 'kosten') {
+                var format = d3.format(".2f");
+                return format(value);
             }
         };
 

@@ -76,7 +76,7 @@ public class VerbruikService {
         Verbruik verbruikInPeriode = getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
 
         if (verbruikInPeriode != null) {
-            verbruikPerUurOpDag.setEuro(verbruikInPeriode.getEuro());
+            verbruikPerUurOpDag.setKosten(verbruikInPeriode.getKosten());
             verbruikPerUurOpDag.setVerbruik(verbruikInPeriode.getVerbruik());
         }
         return verbruikPerUurOpDag;
@@ -103,7 +103,7 @@ public class VerbruikService {
 
         if (verbruikInPeriode.getVerbruik() != null) {
             verbruikPerMaandInJaar.setVerbruik(verbruikInPeriode.getVerbruik().setScale(0, RoundingMode.HALF_UP));
-            verbruikPerMaandInJaar.setEuro(verbruikInPeriode.getEuro());
+            verbruikPerMaandInJaar.setKosten(verbruikInPeriode.getKosten());
         }
         return verbruikPerMaandInJaar;
     }
@@ -121,7 +121,7 @@ public class VerbruikService {
             verbruikOpDag.setVerbruik(verbruikInPeriode.getVerbruik());
         }
 
-        verbruikOpDag.setEuro(verbruikInPeriode.getEuro());
+        verbruikOpDag.setKosten(verbruikInPeriode.getKosten());
         return verbruikOpDag;
     }
 
