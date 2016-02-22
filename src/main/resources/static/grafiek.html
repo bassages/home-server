@@ -51,14 +51,34 @@
 </div>
 
 <div class="row">
-    <div class="col-md-1 without-lr-padding">
+    <div class="hidden-xs col-md-1 without-lr-padding">
         <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
                 <a class="left-pill" ng-click="switchSoort(supportedsoort.code)">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>
-    <div class="col-md-11 without-lr-padding">
+    <div class="hidden-xs col-md-11 without-lr-padding">
         <div id="chart" class="c3 chart"></div>
     </div>
+    <div class="hidden-sm hidden-md hidden-lg table-responsive">
+        <table class="table table-bordered table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Verbruik</th>
+                    <th>Kosten</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr ng-repeat="tableDataItem in tableData">
+                    <td>{{tableDataItem.label}}</td>
+                    <td>{{tableDataItem.verbruik}}</td>
+                    <td>{{tableDataItem.kosten}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </div>

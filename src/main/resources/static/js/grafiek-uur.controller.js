@@ -27,7 +27,7 @@
 
             LocalizationService.localize();
 
-            clearGraph();
+            loadDataIntoGraph([]);
             getDataFromServer();
         }
 
@@ -104,10 +104,10 @@
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
             GrafiekService.setSoortData(destinationSoortCode);
-            loadDataIntoGraph($scope.graphData);
+            loadData($scope.data);
         };
 
-        function getStatistics(graphData) {
+        function getStatistics(data) {
             var min;
             var max;
             var avg;
@@ -115,17 +115,17 @@
             var total = 0;
             var nrofdata = 0;
 
-            for (var i = 0; i < graphData.length; i++) {
-                var data = graphData[i].watt;
+            for (var i = 0; i < data.length; i++) {
+                var value = data[i].watt;
 
-                if (data != null && (typeof max=='undefined' || data > max)) {
-                    max = data;
+                if (value != null && (typeof max=='undefined' || value > max)) {
+                    max = value;
                 }
-                if (data != null && data > 0 && (typeof min=='undefined' || data < min)) {
-                    min = data;
+                if (value != null && value > 0 && (typeof min=='undefined' || value < min)) {
+                    min = value;
                 }
-                if (data != null && data > 0) {
-                    total += data;
+                if (value != null && value > 0) {
+                    total += value;
                     nrofdata += 1;
                 }
             }
@@ -145,13 +145,13 @@
             }
         }
 
-        function getGraphConfig(graphData) {
+        function getGraphConfig(data) {
             var graphConfig = {};
 
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
-            graphConfig.data.json = graphData;
+            graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.keys = {x: 'uur', value: [$scope.soort]};
 
@@ -183,7 +183,7 @@
             graphConfig.padding = {top: 10, bottom: 45, left: 55, right: 20};
             graphConfig.grid = {y: {show: true}};
 
-            var statistics = getStatistics(graphData);
+            var statistics = getStatistics(data);
 
             var lines = [];
             if (statistics.avg) {
@@ -200,18 +200,40 @@
             return graphConfig;
         }
 
-        function clearGraph() {
-            loadDataIntoGraph([]);
+        function loadData(data) {
+            $scope.data = data;
+
+            loadDataIntoGraph(data);
+            loadDataIntoTable(data);
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function loadDataIntoTable(data) {
+            $scope.tableData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                var label = data[i].uur + ':00 - ' + (data[i].uur + 1) + ':00';
+
+                var verbruik = '';
+                var kosten = '';
+
+                if (data[i].verbruik != null) {
+                    verbruik = GrafiekService.formatWithoutUnitLabel('kosten', data[i].verbruik);
+                }
+                if (data[i].kosten != null) {
+                    kosten = GrafiekService.formatWithoutUnitLabel('verbruik', data[i].kosten);
+                }
+                $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
+            }
+        }
+
+        function loadDataIntoGraph(data) {
+            $scope.data = data;
 
             var graphConfig;
-            if (graphData.length == 0) {
+            if (data.length == 0) {
                 graphConfig = getEmptyGraphConfig();
             } else {
-                graphConfig = getGraphConfig(graphData);
+                graphConfig = getGraphConfig(data);
             }
             $scope.chart = c3.generate(graphConfig);
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
@@ -220,13 +242,13 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
-            $log.info('Getting data for graph from URL: ' + graphDataUrl);
+            var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
+            $log.info('Getting data for graph from URL: ' + dataUrl);
 
-            $http({method: 'GET', url: graphDataUrl})
+            $http({method: 'GET', url: dataUrl})
                 .then(
                     function successCallback(response) {
-                        loadDataIntoGraph(response.data);
+                        loadData(response.data);
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

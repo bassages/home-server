@@ -65,6 +65,7 @@ public class VerbruikService {
         }
         return result;
     }
+
     private VerbruikPerUurOpDag getVerbruikInUur(Energiesoort energiesoort, Date dag, int uur) {
         logger.info("Get " + energiesoort.name() + " verbruik in uur " + uur + " op dag: " + new SimpleDateFormat("dd-MM-yyyy").format(dag));
 

@@ -28,7 +28,7 @@
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
 
-            clearGraph();
+            loadData([]);
             getDataFromServer();
         }
 
@@ -100,7 +100,7 @@
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
             GrafiekService.setSoortData(destinationSoortCode);
-            loadDataIntoGraph($scope.graphData);
+            loadData($scope.data);
         };
 
         $scope.showNumberOfPeriodsSelector = function() {
@@ -123,7 +123,7 @@
             return tickValues;
         }
 
-        function getStatistics(graphData) {
+        function getStatistics(data) {
             var min;
             var max;
             var avg;
@@ -131,23 +131,23 @@
             var total = 0;
             var nrofdata = 0;
 
-            for (var i = 0; i < graphData.length; i++) {
-                var data;
+            for (var i = 0; i < data.length; i++) {
+                var value;
 
                 if ($scope.soort == 'verbruik') {
-                    data = graphData[i].verbruik;
+                    value = data[i].verbruik;
                 } else if ($scope.soort == 'kosten') {
-                    data = graphData[i].euro;
+                    value = data[i].euro;
                 }
 
-                if (data != null && (typeof max=='undefined' || data > max)) {
-                    max = data;
+                if (value != null && (typeof max=='undefined' || value > max)) {
+                    max = value;
                 }
-                if (data != null && (typeof min=='undefined' || data < min)) {
-                    min = data;
+                if (value != null && (typeof min=='undefined' || value < min)) {
+                    min = value;
                 }
-                if (data != null) {
-                    total += data;
+                if (value != null) {
+                    total += value;
                     nrofdata += 1;
                 }
             }
@@ -167,7 +167,7 @@
             }
         }
 
-        function getGraphConfig(graphData) {
+        function getGraphConfig(data) {
             var graphConfig = {};
 
             var tickValues = getTicksForEveryDayInPeriod();
@@ -178,14 +178,14 @@
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
-            graphConfig.data.json = graphData;
+            graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.keys = {x: 'dt', value: [$scope.soort]};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: 'timeseries',
-                tick: {format: "%a %d-%m", values: tickValues, centered: true, multiline: true, width: 35},
+                tick: {format: '%a %d-%m', values: tickValues, centered: true, multiline: true, width: 35},
                 min: xMin,
                 max: xMax,
                 padding: {left: 0, right: 10}
@@ -211,7 +211,7 @@
             graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
 
-            var statistics = getStatistics(graphData);
+            var statistics = getStatistics(data);
 
             var lines = [];
             if (statistics.avg) {
@@ -228,18 +228,39 @@
             return graphConfig;
         }
 
-        function clearGraph() {
-            loadDataIntoGraph([]);
+        function loadData(data) {
+            $scope.data = data;
+
+            loadDataIntoGraph(data);
+            loadDataIntoTable(data);
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function loadDataIntoTable(data) {
+            $scope.tableData = [];
 
+            for (var i = 0; i < data.length; i++) {
+                var formatter = d3.time.format('%d-%m (%a)');
+                var label = formatter(new Date(data[i].dt));
+
+                var verbruik = '';
+                var kosten = '';
+
+                if (data[i].verbruik != null) {
+                    verbruik = GrafiekService.formatWithoutUnitLabel('kosten', data[i].verbruik);
+                }
+                if (data[i].kosten != null) {
+                    kosten = GrafiekService.formatWithoutUnitLabel('verbruik', data[i].kosten);
+                }
+                $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
+            }
+        }
+
+        function loadDataIntoGraph(data) {
             var graphConfig;
-            if (graphData.length == 0) {
+            if (data.length == 0) {
                 graphConfig = getEmptyGraphConfig();
             } else {
-                graphConfig = getGraphConfig(graphData);
+                graphConfig = getGraphConfig(data);
             }
             $scope.chart = c3.generate(graphConfig);
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
@@ -254,13 +275,13 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var graphDataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
-            $log.info('Getting data for graph from URL: ' + graphDataUrl);
+            var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
+            $log.info('Getting data for graph from URL: ' + dataUrl);
 
             $http({
-                method: 'GET', url: graphDataUrl
+                method: 'GET', url: dataUrl
             }).then(function successCallback(response) {
-                loadDataIntoGraph(response.data);
+                loadData(response.data);
                 LoadingIndicatorService.stopLoading();
             }, function errorCallback(response) {
                 LoadingIndicatorService.stopLoading();
