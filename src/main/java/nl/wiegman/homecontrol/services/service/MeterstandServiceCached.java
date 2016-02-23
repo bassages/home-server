@@ -14,12 +14,17 @@ public class MeterstandServiceCached {
     @Inject
     private MeterstandRepository meterstandRepository;
 
-    @Cacheable(cacheNames = "meterstandOpDag")
-    public Meterstand getPotentiallyCachedMeterstandOpDag(Date dag) {
-        return getMeterstandOpDag(dag);
+    @Cacheable(cacheNames = "meestRecenteMeterstandOpDag")
+    public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(Date dag) {
+        return getMeestRecenteMeterstandOpDag(dag);
     }
 
-    public Meterstand getMeterstandOpDag(Date dag) {
+    public Meterstand getMeestRecenteMeterstandOpDag(Date dag) {
         return meterstandRepository.getMeestRecenteInPeriode(DateTimeUtil.getStartOfDay(dag), DateTimeUtil.getEndOfDay(dag));
     }
+
+    public Meterstand getOudsteMeterstandOpDag(Date dag) {
+        return meterstandRepository.getOudsteInPeriode(DateTimeUtil.getStartOfDay(dag), DateTimeUtil.getEndOfDay(dag));
+    }
+
 }

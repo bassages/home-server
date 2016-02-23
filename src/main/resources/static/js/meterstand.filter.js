@@ -9,9 +9,10 @@
 
     function meterstand($filter) {
 
+        numbro.culture('nl-NL');
+
         return function(input) {
             if(input == null){ return ""; }
-            numbro.culture('nl-NL');
             return numbro(input).format('0.000');
         };
     }

@@ -17,6 +17,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     // JPQL queries
     String ALL_IN_PERIOD_SORTED = "SELECT m FROM Meterstand m WHERE m.datumtijd >= :van AND m.datumtijd < :tot ORDER BY m.datumtijd";
     String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
+    String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
 
     // Native queries
     String STROOMVERBRUIK_IN_PERIOD = "SELECT (MAX(stroom_tarief1)-MIN(stroom_tarief1)) + (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
@@ -41,4 +42,9 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
     @Query(value = MOST_RECENT_IN_PERIOD)
     Meterstand getMeestRecenteInPeriode(@Param("van") long van, @Param("totEnMet") long totEnMet);
+
+    @Query(value = OLDEST_IN_PERIOD)
+    Meterstand getOudsteInPeriode(@Param("van") long van, @Param("totEnMet") long totEnMet);
+
+    Meterstand findByDatumtijd(long datumtijd);
 }

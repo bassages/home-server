@@ -13,16 +13,16 @@
 
                 <div>
                     <div id="ledbar-stroom" class="ledbar pull-left">
-                        <div ng-class="led9 ? 'led9' : 'leduit'"></div>
-                        <div ng-class="led8 ? 'led8' : 'leduit'"></div>
-                        <div ng-class="led7 ? 'led7' : 'leduit'"></div>
-                        <div ng-class="led6 ? 'led6' : 'leduit'"></div>
-                        <div ng-class="led5 ? 'led5' : 'leduit'"></div>
-                        <div ng-class="led4 ? 'led4' : 'leduit'"></div>
-                        <div ng-class="led3 ? 'led3' : 'leduit'"></div>
-                        <div ng-class="led2 ? 'led2' : 'leduit'"></div>
-                        <div ng-class="led1 ? 'led1' : 'leduit'"></div>
-                        <div ng-class="led0 ? 'led0' : 'leduit'"></div>
+                        <div ng-class="stroomLed9 ? 'led9' : 'leduit'"></div>
+                        <div ng-class="stroomLed8 ? 'led8' : 'leduit'"></div>
+                        <div ng-class="stroomLed7 ? 'led7' : 'leduit'"></div>
+                        <div ng-class="stroomLed6 ? 'led6' : 'leduit'"></div>
+                        <div ng-class="stroomLed5 ? 'led5' : 'leduit'"></div>
+                        <div ng-class="stroomLed4 ? 'led4' : 'leduit'"></div>
+                        <div ng-class="stroomLed3 ? 'led3' : 'leduit'"></div>
+                        <div ng-class="stroomLed2 ? 'led2' : 'leduit'"></div>
+                        <div ng-class="stroomLed1 ? 'led1' : 'leduit'"></div>
+                        <div ng-class="stroomLed0 ? 'led0' : 'leduit'"></div>
                     </div>
 
                     <p>Op dit moment</p>
@@ -59,8 +59,8 @@
                     <div class="led leduit"></div>
                 </div>
 
-                <p>Op dit moment</p>
-                <p>0 <small>liter/uur</small></p>
+                <p>Vandaag</p>
+                <p>{{gasVerbruikVandaag | meterstand}} <small>M<sup>3</sup></small></p>
 
                 <hr/>
 

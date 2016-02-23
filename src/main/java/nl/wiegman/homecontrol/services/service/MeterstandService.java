@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -61,19 +60,31 @@ public class MeterstandService {
         dagenInPeriode.forEach(dag -> {
             logger.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
 
-            Meterstand meterstandOpDag = getMeterstandOpDag(dag);
+            Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
             result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));
         });
         return result;
     }
 
-    private Meterstand getMeterstandOpDag(Date dag) {
+    public Meterstand getOudsteMeterstandOpDag(Date dag) {
+        if (DateTimeUtil.isAfterToday(dag)) {
+            return null;
+        } else {
+            return meterstandServiceCached.getOudsteMeterstandOpDag(dag);
+        }
+    }
+
+    private Meterstand getMeesteRecenteMeterstandOpDag(Date dag) {
         if (DateTimeUtil.isAfterToday(dag)) {
             return null;
         } else if (DateUtils.isSameDay(new Date(), dag)) {
-            return meterstandServiceCached.getMeterstandOpDag(dag);
+            return meterstandServiceCached.getMeestRecenteMeterstandOpDag(dag);
         } else {
-            return meterstandServiceCached.getPotentiallyCachedMeterstandOpDag(dag);
+            return meterstandServiceCached.getPotentiallyCachedMeestRecenteMeterstandOpDag(dag);
         }
+    }
+
+    public boolean bestaatOpDatumTijd(long datumtijd) {
+        return meterstandRepository.findByDatumtijd(datumtijd) != null;
     }
 }

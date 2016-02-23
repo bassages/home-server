@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -26,7 +27,7 @@ public class MeterstandServiceRest {
     }
 
     @GET
-    @Path("meestrecente")
+    @Path("meest-recente")
     public Meterstand getMeestRecente() {
         return meterstandService.getMeestRecente();
     }
@@ -38,8 +39,21 @@ public class MeterstandServiceRest {
     }
 
     @GET
+    @Path("oudste-vandaag")
+    public Meterstand getOudsteVandaag() {
+        return meterstandService.getOudsteMeterstandOpDag(new Date());
+    }
+
+    @GET
     @Path("per-dag/{vanaf}/{totEnMet}")
     public List<MeterstandOpDag> perDag(@PathParam("vanaf") long vanaf, @PathParam("totEnMet") long totEnMet) {
         return meterstandService.perDag(vanaf, totEnMet);
     }
+
+    @GET
+    @Path("bestaat-op-datumtijd/{datumtijd}")
+    public boolean bestaatOpDatumTijd(@PathParam("datumtijd") long datumtijd) {
+        return meterstandService.bestaatOpDatumTijd(datumtijd);
+    }
+
 }

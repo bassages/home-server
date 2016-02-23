@@ -5,20 +5,28 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', '$http', 'RealtimeMeterstandenService'];
+    DashboardController.$inject = ['$scope', '$http', '$log', 'RealtimeMeterstandenService'];
 
-    function turnOffAllLeds($scope) {
+    function turnOffAllStroomLeds($scope) {
         for (var i = 0; i < 10; i++) {
             $scope['led' + i] = false;
         }
     }
 
-    function DashboardController($scope, $http, RealtimeMeterstandenService) {
-        turnOffAllLeds($scope);
+    function DashboardController($scope, $http, $log, RealtimeMeterstandenService) {
+        turnOffAllStroomLeds($scope);
 
-        $scope.huidigOpgenomenVermogen = '0';
+        $scope.huidigOpgenomenVermogen = 0;
+        $scope.gasVerbruikVandaag = 0;
+        $scope.oudsteVanVandaag = null;
 
-        $http.get('rest/meterstanden/meestrecente')
+        $http.get('rest/meterstanden/oudste-vandaag')
+            .success(function(data) {
+                $scope.oudsteVanVandaag = data;
+            }
+        );
+
+        $http.get('rest/meterstanden/meest-recente')
             .success(function(data) {
                 update(data);
             }
@@ -29,22 +37,31 @@
         });
 
         function update(data) {
-            $scope.t1 = data.stroomTarief1;
-            $scope.t2 = data.stroomTarief2;
-            $scope.meterstandGas = data.gas;
-            $scope.huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
+            var now = (new Date()).getTime();
+            if (data.datumtijd > now - 600000) {
+                $scope.t1 = data.stroomTarief1;
+                $scope.t2 = data.stroomTarief2;
+                $scope.meterstandGas = data.gas;
+                $scope.huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
 
-            var step = 150;
-            $scope.led0 = data.stroomOpgenomenVermogenInWatt > 0;
-            $scope.led1 = data.stroomOpgenomenVermogenInWatt >= (step);
-            $scope.led2 = data.stroomOpgenomenVermogenInWatt >= (2 * step);
-            $scope.led3 = data.stroomOpgenomenVermogenInWatt >= (3 * step);
-            $scope.led4 = data.stroomOpgenomenVermogenInWatt >= (4 * step);
-            $scope.led5 = data.stroomOpgenomenVermogenInWatt >= (5 * step);
-            $scope.led6 = data.stroomOpgenomenVermogenInWatt >= (6 * step);
-            $scope.led7 = data.stroomOpgenomenVermogenInWatt >= (7 * step);
-            $scope.led8 = data.stroomOpgenomenVermogenInWatt >= (8 * step);
-            $scope.led9 = data.stroomOpgenomenVermogenInWatt >= (9 * step);
+                var step = 150;
+                $scope.stroomLed0 = data.stroomOpgenomenVermogenInWatt > 0;
+                $scope.stroomLed1 = data.stroomOpgenomenVermogenInWatt >= (step);
+                $scope.stroomLed2 = data.stroomOpgenomenVermogenInWatt >= (2 * step);
+                $scope.stroomLed3 = data.stroomOpgenomenVermogenInWatt >= (3 * step);
+                $scope.stroomLed4 = data.stroomOpgenomenVermogenInWatt >= (4 * step);
+                $scope.stroomLed5 = data.stroomOpgenomenVermogenInWatt >= (5 * step);
+                $scope.stroomLed6 = data.stroomOpgenomenVermogenInWatt >= (6 * step);
+                $scope.stroomLed7 = data.stroomOpgenomenVermogenInWatt >= (7 * step);
+                $scope.stroomLed8 = data.stroomOpgenomenVermogenInWatt >= (8 * step);
+                $scope.stroomLed9 = data.stroomOpgenomenVermogenInWatt >= (9 * step);
+
+                if ($scope.oudsteVanVandaag != null) {
+                    $scope.gasVerbruikVandaag = data.gas - $scope.oudsteVanVandaag.gas;
+                }
+            } else {
+                $log.warn("Discarding data, because it's too old: " + JSON.stringify(data));
+            }
         }
     }
 })();
