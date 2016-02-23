@@ -92,7 +92,7 @@
             loadData($scope.data);
         };
 
-        function getTicksForEveryDayInPeriod() {
+        function getTicksForEveryDayInMonth() {
             var tickValues = [];
 
             var numberOfDaysInMonth = Date.getDaysInMonth($scope.selection.getFullYear(), $scope.selection.getMonth());
@@ -101,35 +101,6 @@
                 tickValues.push(tickValue);
             }
             return tickValues;
-        }
-
-        function getStatistics(data) {
-            var min;
-            var max;
-            var avg;
-
-            var total = 0;
-            var nrofdata = 0;
-
-            for (var i = 0; i < data.length; i++) {
-                var value = data[i][$scope.soort];
-
-                if (value != null && (typeof max=='undefined' || value > max)) {
-                    max = value;
-                }
-                if (value != null && (typeof min=='undefined' || value < min)) {
-                    min = value;
-                }
-                if (value != null) {
-                    total += value;
-                    nrofdata += 1;
-                }
-            }
-
-            if (nrofdata > 0) {
-                avg = total / nrofdata;
-            }
-            return {avg: avg, min: min, max: max};
         }
 
         function getEmptyGraphConfig() {
@@ -144,7 +115,7 @@
         function getGraphConfig(data) {
             var graphConfig = {};
 
-            var tickValues = getTicksForEveryDayInPeriod();
+            var tickValues = getTicksForEveryDayInMonth();
 
             var xMin = $scope.selection.getTime() - HALF_DAY_IN_MILLISECONDS;
             var xMax = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
@@ -184,20 +155,7 @@
 
             graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
-
-            var statistics = getStatistics(data);
-
-            var lines = [];
-            if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.avg), class: 'avg', position: 'middle'});
-            }
-            if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.min), class: 'min', position: 'start'});
-            }
-            if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + GrafiekService.formatWithUnitLabel($scope.energiesoort, statistics.max), class: 'max'});
-            }
-            graphConfig.grid.y.lines = lines;
+            graphConfig.grid.y.lines = GrafiekService.getStatisticsGraphGridYLines(data, $scope.energiesoort);
 
             return graphConfig;
         }
