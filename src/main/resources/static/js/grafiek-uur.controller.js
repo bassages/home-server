@@ -18,6 +18,7 @@
             $scope.selection = today;
 
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.period = 'uur';
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.soort = GrafiekService.getSoortData();
@@ -103,6 +104,8 @@
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
+            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
+
             GrafiekService.setSoortData(destinationSoortCode);
             loadData($scope.data);
         };

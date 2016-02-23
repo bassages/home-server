@@ -14,6 +14,7 @@
             $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(new Date()).getFullYear());
 
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.period = 'maand';
             $scope.soort = GrafiekService.getSoortData();
@@ -35,7 +36,9 @@
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
+            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             GrafiekService.setSoortData(destinationSoortCode);
+
             loadData($scope.data);
         };
 
