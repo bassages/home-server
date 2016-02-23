@@ -14,11 +14,7 @@
         activate();
 
         function activate() {
-            var today = new Date();
-            today.setHours(0,0,0,0);
-            $scope.selection = today;
-
-            $scope.numberOfPeriods = 14;
+            $scope.selection = (new Date()).clearTime().moveToFirstDayOfMonth();
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
@@ -34,18 +30,17 @@
         }
 
         $scope.getD3DateFormat = function() {
-            return '%a %d-%m-%Y';
+            return '%b %Y';
         };
 
         var datepicker = $('.datepicker');
         datepicker.datepicker({
+            viewMode: 'months',
+            minViewMode: 'months',
             autoclose: true,
-            todayBtn: "linked",
-            calendarWeeks: true,
             todayHighlight: true,
             endDate: "0d",
             language:"nl",
-            daysOfWeekHighlighted: "0,6",
             format: {
                 toDisplay: function (date, format, language) {
                     var formatter = d3.time.format($scope.getD3DateFormat());
@@ -76,25 +71,16 @@
         });
 
         $scope.isMaxSelected = function() {
-            var result = false;
-
-            var today = new Date();
-            today.setHours(0,0,0,0);
-
-            if ($scope.selection) {
-                result = today.getTime() == $scope.selection.getTime();
-            }
-            return result;
+            return (new Date()).getMonth() == $scope.selection.getMonth() && (new Date()).getFullYear() == $scope.selection.getFullYear();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            var selection = new Date($scope.selection);
-            selection.setDate($scope.selection.getDate() + numberOfPeriods);
+            $scope.selection = new Date($scope.selection);
+            $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            datepicker.datepicker('setDate', selection);
+            datepicker.datepicker('setDate', $scope.selection);
 
-            $scope.selection = selection;
             getDataFromServer();
         };
 
@@ -106,21 +92,12 @@
             loadData($scope.data);
         };
 
-        $scope.showNumberOfPeriodsSelector = function() {
-            return true;
-        };
-
-        $scope.setNumberOfPeriods = function(numberOfPeriods) {
-            if (($scope.numberOfPeriods + numberOfPeriods) >= 1) {
-                $scope.numberOfPeriods = $scope.numberOfPeriods + numberOfPeriods;
-                getDataFromServer();
-            }
-        };
-
         function getTicksForEveryDayInPeriod() {
             var tickValues = [];
-            for (var i = 0; i <= ($scope.numberOfPeriods-1); i++) {
-                var tickValue = $scope.selection.getTime() - (i * ONE_DAY_IN_MILLISECONDS);
+
+            var numberOfDaysInMonth = Date.getDaysInMonth($scope.selection.getFullYear(), $scope.selection.getMonth());
+            for (var i = 0; i < numberOfDaysInMonth; i++) {
+                var tickValue = $scope.selection.getTime() + (i * ONE_DAY_IN_MILLISECONDS);
                 tickValues.push(tickValue);
             }
             return tickValues;
@@ -169,8 +146,8 @@
 
             var tickValues = getTicksForEveryDayInPeriod();
 
-            var xMin = new Date(getFrom().getTime()) - HALF_DAY_IN_MILLISECONDS;
-            var xMax = new Date($scope.selection.getTime() + HALF_DAY_IN_MILLISECONDS);
+            var xMin = $scope.selection.getTime() - HALF_DAY_IN_MILLISECONDS;
+            var xMax = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
             graphConfig.bindto = '#chart';
 
@@ -182,7 +159,7 @@
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: 'timeseries',
-                tick: {format: '%a %d-%m', values: tickValues, centered: true, multiline: true, width: 35},
+                tick: {format: '%a %d', values: tickValues, centered: true, multiline: true, width: 25},
                 min: xMin,
                 max: xMax,
                 padding: {left: 0, right: 10}
@@ -263,16 +240,13 @@
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
-        function getFrom() {
-            var from = new Date($scope.selection);
-            from.setDate(from.getDate() - ($scope.numberOfPeriods - 1));
-            return from;
-        }
-
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + getFrom().getTime() + '/' + $scope.selection.getTime();
+            var van = $scope.selection.getTime();
+            var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+
+            var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + van + '/' + totEnMet;
             $log.info('Getting data from URL: ' + dataUrl);
 
             $http({

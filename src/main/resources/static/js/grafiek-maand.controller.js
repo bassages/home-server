@@ -30,10 +30,6 @@
             return (new Date()).getFullYear() == $scope.selection.getFullYear();
         };
 
-        $scope.showNumberOfPeriodsSelector = function() {
-            return false;
-        };
-
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
             $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);

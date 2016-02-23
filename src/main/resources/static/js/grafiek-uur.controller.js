@@ -86,10 +86,6 @@
             return result;
         };
 
-        $scope.showNumberOfPeriodsSelector = function() {
-            return false;
-        };
-
         $scope.navigate = function(numberOfPeriods) {
             var next = new Date($scope.selection);
             next.setDate($scope.selection.getDate() + numberOfPeriods);
