@@ -136,7 +136,7 @@
                 padding: {left: 0, right: 10}
             };
 
-            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.energiesoort, value); };
+            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel(value); };
             graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
@@ -148,7 +148,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        return GrafiekService.formatWithUnitLabel($scope.energiesoort, value);
+                        return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoort, value);
                     }
                 }
             };
@@ -178,10 +178,10 @@
                 var kosten = '';
 
                 if (data[i].verbruik != null) {
-                    verbruik = GrafiekService.formatWithoutUnitLabel('kosten', data[i].verbruik);
+                    verbruik = GrafiekService.formatWithUnitLabel('verbruik', $scope.energiesoort, data[i].verbruik);
                 }
                 if (data[i].kosten != null) {
-                    kosten = GrafiekService.formatWithoutUnitLabel('verbruik', data[i].kosten);
+                    kosten = GrafiekService.formatWithUnitLabel('kosten',  $scope.energiesoort, data[i].kosten);
                 }
                 $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
             }

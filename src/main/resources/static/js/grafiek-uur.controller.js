@@ -129,11 +129,11 @@
             graphConfig.axis.x = {
                 type: 'category',
                 tick: {
-                    format: function (x) { return x + ':00 - ' + (x+1) + ':00'; }
+                    format: function (value) { return formatAsHourPeriodLabel(value) }
                 }
             };
 
-            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.energiesoort, value); };
+            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel(value); };
             graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
@@ -145,7 +145,7 @@
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        return GrafiekService.formatWithUnitLabel($scope.energiesoort, value);
+                        return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoort, value);
                     }
                 }
             };
@@ -164,20 +164,24 @@
             loadDataIntoTable(data);
         }
 
+        function formatAsHourPeriodLabel(uur) {
+            return numbro(uur).format('00') + ':00 - ' + numbro(uur + 1).format('00') + ':00';
+        }
+
         function loadDataIntoTable(data) {
             $scope.tableData = [];
 
             for (var i = 0; i < data.length; i++) {
-                var label = data[i].uur + ':00 - ' + (data[i].uur + 1) + ':00';
+                var label = formatAsHourPeriodLabel(data[i].uur);
 
                 var verbruik = '';
                 var kosten = '';
 
                 if (data[i].verbruik != null) {
-                    verbruik = GrafiekService.formatWithoutUnitLabel('kosten', data[i].verbruik);
+                    verbruik = GrafiekService.formatWithUnitLabel('verbruik', $scope.energiesoort, data[i].verbruik);
                 }
                 if (data[i].kosten != null) {
-                    kosten = GrafiekService.formatWithoutUnitLabel('verbruik', data[i].kosten);
+                    kosten = GrafiekService.formatWithUnitLabel('kosten', $scope.energiesoort, data[i].kosten);
                 }
                 $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
             }

@@ -23,21 +23,19 @@
             }
         };
 
-        this.formatWithUnitLabel = function(energiesoort, value) {
+        this.formatWithUnitLabel = function(soortData, energiesoort, value) {
             if (soortData == 'verbruik') {
                 return numbro(value).format('0.000') + ' ' + this.getVerbruikLabel(energiesoort);
             } else if (soortData == 'kosten') {
-                var format = d3.format(".2f");
-                return '\u20AC ' + format(value);
+                return '\u20AC ' + numbro(value).format('0.00');
             }
         };
 
-        this.formatWithoutUnitLabel = function(energiesoort, value) {
+        this.formatWithoutUnitLabel = function(value) {
             if (soortData == 'verbruik') {
                 return numbro(value).format('0.000');
             } else if (soortData == 'kosten') {
-                var format = d3.format(".2f");
-                return format(value);
+                return numbro(value).format('0.00');
             }
         };
 
@@ -74,7 +72,7 @@
             if (statistics.avg) {
                 lines.push({
                     value: statistics.avg,
-                    text: 'Gemiddelde: ' + this.formatWithUnitLabel(energiesoort, statistics.avg),
+                    text: 'Gemiddelde: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.avg),
                     class: 'avg',
                     position: 'middle'
                 });
@@ -82,7 +80,7 @@
             if (statistics.min) {
                 lines.push({
                     value: statistics.min,
-                    text: 'Laagste: ' + this.formatWithUnitLabel(energiesoort, statistics.min),
+                    text: 'Laagste: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.min),
                     class: 'min',
                     position: 'start'
                 });
@@ -90,7 +88,7 @@
             if (statistics.max) {
                 lines.push({
                     value: statistics.max,
-                    text: 'Hoogste: ' + this.formatWithUnitLabel(energiesoort, statistics.max),
+                    text: 'Hoogste: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.max),
                     class: 'max'
                 });
             }
