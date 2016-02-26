@@ -6,10 +6,16 @@
     </div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
-            <li ng-show="showOpgenomenVermogen()" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
-            <li ng-hide="hideUur()" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
-            <li ng-hide="hideDag()" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
-            <li ng-hide="hideMaand()" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
+            <li ng-show="showOpgenomenVermogen()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
+            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
+            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
+
+            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 16px;" role="group">
+                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+            </div>
 
             <li class="pull-right">
                 <form class="form-inline without-margin-padding">
@@ -54,7 +60,6 @@
                     <th>Kosten</th>
                 </tr>
             </thead>
-
             <tbody>
                 <tr ng-repeat="tableDataItem in tableData">
                     <td>{{tableDataItem.label}}</td>
