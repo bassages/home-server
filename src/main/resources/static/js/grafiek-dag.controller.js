@@ -15,7 +15,6 @@
 
         function activate() {
             $scope.selection = Date.today().moveToFirstDayOfMonth();
-
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.period = 'dag';

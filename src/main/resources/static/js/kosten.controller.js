@@ -30,9 +30,7 @@
         };
 
         $scope.startAdd = function() {
-            var today = new Date();
-            today.setHours(0,0,0,0);
-            $scope.item = new KostenService({van: today.getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            $scope.item = new KostenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
         };
