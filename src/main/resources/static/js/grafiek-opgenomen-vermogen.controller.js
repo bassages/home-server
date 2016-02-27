@@ -13,10 +13,7 @@
         activate();
 
         function activate() {
-            var today = new Date();
-            today.setHours(0,0,0,0);
-            $scope.selection = today;
-
+            $scope.selection = Date.today();
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.period = 'uur';
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
@@ -27,7 +24,6 @@
 
             LocalizationService.localize();
 
-            clearGraph();
             getDataFromServer();
         }
 
@@ -212,10 +208,6 @@
             return graphConfig;
         }
 
-        function clearGraph() {
-            loadDataIntoGraph([]);
-        }
-
         function loadDataIntoGraph(graphData) {
             $scope.graphData = graphData;
 
@@ -237,6 +229,7 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
+            loadDataIntoGraph([]);
 
             var graphDataUrl = 'rest/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data for graph from URL: ' + graphDataUrl);

@@ -20,15 +20,23 @@
         $scope.gasVerbruikVandaag = 0;
         $scope.oudsteVanVandaag = null;
 
-        $http.get('rest/meterstanden/oudste-vandaag')
-            .success(function(data) {
-                $scope.oudsteVanVandaag = data;
-            }
-        );
-
         $http.get('rest/meterstanden/meest-recente')
             .success(function(data) {
                 update(data);
+            }
+        );
+
+        $http.get('rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().setHours(23, 59, 59, 999)))
+            .success(function(data) {
+                if (data.length == 1) {
+                    $scope.gasVerbruikVandaag = data[0].verbruik
+                }
+            }
+        );
+
+        $http.get('rest/meterstanden/oudste-vandaag')
+            .success(function(data) {
+                $scope.oudsteVanVandaag = data;
             }
         );
 

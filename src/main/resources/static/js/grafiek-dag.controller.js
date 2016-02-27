@@ -14,7 +14,7 @@
         activate();
 
         function activate() {
-            $scope.selection = (new Date()).clearTime().moveToFirstDayOfMonth();
+            $scope.selection = Date.today().moveToFirstDayOfMonth();
 
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
@@ -25,7 +25,6 @@
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
 
-            loadData([]);
             getDataFromServer();
         }
 
@@ -200,6 +199,7 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
+            loadData([]);
 
             var van = $scope.selection.getTime();
             var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);

@@ -22,7 +22,6 @@
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
 
-            loadData([]);
             getDataFromServer();
         }
 
@@ -194,6 +193,7 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
+            loadData([]);
 
             var dataUrl = 'rest/' +  $scope.energiesoort + '/verbruik-per-maand-in-jaar/' + $scope.selection.getFullYear();
             $log.info('Getting data from URL: ' + dataUrl);

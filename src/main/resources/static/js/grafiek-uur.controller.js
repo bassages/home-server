@@ -8,15 +8,10 @@
     UurGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
     function UurGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
-        var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
-
         activate();
 
         function activate() {
-            var today = new Date();
-            today.setHours(0,0,0,0);
-            $scope.selection = today;
-
+            $scope.selection = Date.today();
             $scope.energiesoort = $routeParams.energiesoort;
             $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.period = 'uur';
@@ -28,7 +23,6 @@
 
             LocalizationService.localize();
 
-            loadDataIntoGraph([]);
             getDataFromServer();
         }
 
@@ -202,6 +196,7 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
+            loadDataIntoGraph([]);
 
             var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
             $log.info('Getting data from URL: ' + dataUrl);
@@ -219,4 +214,3 @@
         }
     }
 })();
-
