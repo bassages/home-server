@@ -140,6 +140,10 @@
 
             graphConfig.tooltip = {
                 format: {
+                    title: function (d) {
+                        var formatter = d3.time.format('%a %d-%m');
+                        return formatter(d);
+                    },
                     name: function (name, ratio, id, index) {
                         return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
                     },
