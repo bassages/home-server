@@ -74,11 +74,11 @@
         var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
-            if (applyDatePickerUpdatesInAngularScope) {
+            if (applyDatePickerUpdatesInAngularScope && !Date.equals(e.date, $scope.selection)) {
                 $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
                 $scope.$apply(function() {
-                    $scope.selection = new Date(e.date);
+                    $scope.selection = e.date;
                     getDataFromServer();
                 });
             }
@@ -88,23 +88,17 @@
         $scope.isMaxSelected = function() {
             var result = false;
 
-            var today = new Date();
-            today.setHours(0,0,0,0);
-
             if ($scope.selection) {
-                result = today.getTime() == $scope.selection.getTime();
+                result = Date.today().getTime() == $scope.selection.getTime();
             }
             return result;
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            var next = new Date($scope.selection);
-            next.setDate($scope.selection.getDate() + numberOfPeriods);
+            $scope.selection.setDate($scope.selection.getDate() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            datepicker.datepicker('setDate', next);
-
-            $scope.selection = next;
+            datepicker.datepicker('setDate', $scope.selection);
 
             getDataFromServer();
         };
@@ -112,7 +106,6 @@
         function getTicksForEveryHourInPeriod(from, to) {
             var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
 
-            // Add one tick for every hour
             var tickValues = [];
             for (var i = 0; i <= numberOfHoursInDay; i++) {
                 var tickValue = from.getTime() + (i * 60 * 60 * 1000);
@@ -222,9 +215,7 @@
         }
 
         function getTo() {
-            var to = new Date($scope.selection);
-            to.setDate($scope.selection.getDate() + 1);
-            return to;
+            return $scope.selection.clone().add({ days: 1});
         }
 
         function getDataFromServer() {
@@ -232,7 +223,7 @@
             loadDataIntoGraph([]);
 
             var graphDataUrl = 'rest/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
-            $log.info('Getting data for graph from URL: ' + graphDataUrl);
+            $log.info('Getting data from URL: ' + graphDataUrl);
 
             $http({method: 'GET', url: graphDataUrl})
                 .then(

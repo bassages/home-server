@@ -16,7 +16,6 @@
         function activate() {
             $scope.selection = Date.today().moveToFirstDayOfMonth();
             $scope.energiesoort = $routeParams.energiesoort;
-            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.period = 'dag';
             $scope.soort = GrafiekService.getSoortData();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
@@ -61,7 +60,7 @@
                 $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
                 $scope.$apply(function() {
-                    $scope.selection = new Date(e.date);
+                    $scope.selection = e.date;
                     getDataFromServer();
                 });
             }
@@ -69,11 +68,10 @@
         });
 
         $scope.isMaxSelected = function() {
-            return (new Date()).getMonth() == $scope.selection.getMonth() && (new Date()).getFullYear() == $scope.selection.getFullYear();
+            return Date.today().getMonth() == $scope.selection.getMonth() && Date.today().getFullYear() == $scope.selection.getFullYear();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection = new Date($scope.selection);
             $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
@@ -84,9 +82,7 @@
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
-            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             GrafiekService.setSoortData(destinationSoortCode);
-
             loadData($scope.data);
         };
 
@@ -95,8 +91,7 @@
 
             var numberOfDaysInMonth = Date.getDaysInMonth($scope.selection.getFullYear(), $scope.selection.getMonth());
             for (var i = 0; i < numberOfDaysInMonth; i++) {
-                var tickValue = $scope.selection.getTime() + (i * ONE_DAY_IN_MILLISECONDS);
-                tickValues.push(tickValue);
+                tickValues.push($scope.selection.getTime() + (i * ONE_DAY_IN_MILLISECONDS));
             }
             return tickValues;
         }
@@ -115,9 +110,6 @@
 
             var tickValues = getTicksForEveryDayInMonth();
 
-            var xMin = $scope.selection.getTime() - HALF_DAY_IN_MILLISECONDS;
-            var xMax = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
-
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
@@ -125,12 +117,18 @@
             graphConfig.data.type = 'bar';
             graphConfig.data.keys = {x: 'dt', value: [$scope.soort]};
 
+            // BUG for chrome: https://groups.google.com/forum/#!topic/c3js/0BrndJqBHak
+            //graphConfig.data.onclick = function (d, element) {
+            //    $log.info('d: ' + JSON.stringify(d));
+            //    $log.info('element: ' + element);
+            //};
+
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: 'timeseries',
                 tick: {format: '%a %d', values: tickValues, centered: true, multiline: true, width: 25},
-                min: xMin,
-                max: xMax,
+                min: $scope.selection.getTime() - HALF_DAY_IN_MILLISECONDS,
+                max: $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999),
                 padding: {left: 0, right: 10}
             };
 
@@ -201,7 +199,7 @@
             loadData([]);
 
             var van = $scope.selection.getTime();
-            var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+            var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
             var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + van + '/' + totEnMet;
             $log.info('Getting data from URL: ' + dataUrl);

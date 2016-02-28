@@ -13,7 +13,6 @@
         function activate() {
             $scope.selection = Date.today();
             $scope.energiesoort = $routeParams.energiesoort;
-            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
             $scope.period = 'uur';
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
             $scope.soort = GrafiekService.getSoortData();
@@ -57,11 +56,11 @@
         var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
-            if (applyDatePickerUpdatesInAngularScope) {
+            if (applyDatePickerUpdatesInAngularScope && !Date.equals(e.date, $scope.selection)) {
                 $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
                 $scope.$apply(function() {
-                    $scope.selection = new Date(e.date);
+                    $scope.selection = e.date;
                     getDataFromServer();
                 });
             }
@@ -69,33 +68,20 @@
         });
 
         $scope.isMaxSelected = function() {
-            var result = false;
-
-            var today = new Date();
-            today.setHours(0,0,0,0);
-
-            if ($scope.selection) {
-                result = today.getTime() == $scope.selection.getTime();
-            }
-            return result;
+            return Date.today().getTime() == $scope.selection.getTime();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            var next = new Date($scope.selection);
-            next.setDate($scope.selection.getDate() + numberOfPeriods);
+            $scope.selection.setDate($scope.selection.getDate() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
-            datepicker.datepicker('setDate', next);
-
-            $scope.selection = next;
+            datepicker.datepicker('setDate', $scope.selection);
 
             getDataFromServer();
         };
 
         $scope.switchSoort = function(destinationSoortCode) {
             $scope.soort = destinationSoortCode;
-            $scope.verbruikLabel = GrafiekService.getVerbruikLabel($scope.energiesoort);
-
             GrafiekService.setSoortData(destinationSoortCode);
             loadData($scope.data);
         };
