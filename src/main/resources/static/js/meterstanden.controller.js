@@ -12,16 +12,15 @@
 
         function activate() {
             LocalizationService.localize();
-            $scope.selection = (new Date()).clearTime().moveToFirstDayOfMonth();
+            $scope.selection = Date.today().clearTime().moveToFirstDayOfMonth();
             getDataFromServer();
         }
 
         $scope.isMaxSelected = function() {
-            return (new Date()).getMonth() == $scope.selection.getMonth() && (new Date()).getFullYear() == $scope.selection.getFullYear();
+            return Date.today().getMonth() == $scope.selection.getMonth() && Date.today().getFullYear() == $scope.selection.getFullYear();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection = new Date($scope.selection);
             $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
 
             applyDatePickerUpdatesInAngularScope = false;
@@ -75,7 +74,7 @@
             LoadingIndicatorService.startLoading();
 
             var van = $scope.selection.getTime();
-            var totEnMet = (new Date($scope.selection)).moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+            var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
             MeterstandenService.getMeterstandenPerDagInPeriod(van, totEnMet)
                 .then(

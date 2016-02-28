@@ -86,12 +86,7 @@
         });
 
         $scope.isMaxSelected = function() {
-            var result = false;
-
-            if ($scope.selection) {
-                result = Date.today().getTime() == $scope.selection.getTime();
-            }
-            return result;
+            return Date.today().getTime() == $scope.selection.getTime();
         };
 
         $scope.navigate = function(numberOfPeriods) {
@@ -165,6 +160,7 @@
             var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
 
             graphConfig.bindto = '#chart';
+
             graphConfig.data = {json: graphData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
             graphConfig.axis = {};
             graphConfig.axis.x = {

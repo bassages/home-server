@@ -19,6 +19,5 @@
                 method: 'GET', url: url
             });
         };
-
     }
 })();

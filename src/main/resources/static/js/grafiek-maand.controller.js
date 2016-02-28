@@ -172,6 +172,7 @@
                 $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
             }
         }
+
         function loadDataIntoGraph(data) {
             $scope.data = data;
 
