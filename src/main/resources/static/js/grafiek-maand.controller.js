@@ -35,10 +35,7 @@
 
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
-
-            applyDatePickerUpdatesInAngularScope = false;
             datepicker.datepicker('setDate', $scope.selection);
-
             getDataFromServer();
         };
 
@@ -69,18 +66,16 @@
         });
 
         datepicker.datepicker('setDate', $scope.selection);
-        var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
             $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
-            if (applyDatePickerUpdatesInAngularScope) {
+            if (!Date.equals(e.date, $scope.selection)) {
                 $scope.$apply(function() {
                     $scope.selection = e.date;
                     getDataFromServer();
                 });
             }
-            applyDatePickerUpdatesInAngularScope = true;
         });
 
         function getTicksForEveryMonthInYear() {
@@ -203,5 +198,4 @@
             });
         }
     }
-
 })();

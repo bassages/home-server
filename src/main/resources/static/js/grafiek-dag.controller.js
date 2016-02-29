@@ -53,10 +53,9 @@
         });
 
         datepicker.datepicker('setDate', $scope.selection);
-        var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
-            if (applyDatePickerUpdatesInAngularScope) {
+            if (!Date.equals(e.date, $scope.selection)) {
                 $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
                 $scope.$apply(function() {
@@ -64,7 +63,6 @@
                     getDataFromServer();
                 });
             }
-            applyDatePickerUpdatesInAngularScope = true;
         });
 
         $scope.isMaxSelected = function() {
@@ -73,10 +71,7 @@
 
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
-
-            applyDatePickerUpdatesInAngularScope = false;
             datepicker.datepicker('setDate', $scope.selection);
-
             getDataFromServer();
         };
 
