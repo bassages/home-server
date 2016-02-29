@@ -6,18 +6,32 @@
     </div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
+
             <li ng-show="showOpgenomenVermogen()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+
             <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur">Uur</a></li>
             <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag">Dag</a></li>
             <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand">Maand</a></li>
 
-            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 16px;" role="group">
-                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
-                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
-                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('stroom')" class="btn btn-default btn-sm" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
+                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('gas')" class="btn btn-default btn-sm" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
             </div>
 
-            <li class="pull-right">
+            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/uur" class="btn btn-default btn-sm" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/dag" class="btn btn-default btn-sm" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{energiesoort}}/maand" class="btn btn-default btn-sm" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+            </div>
+
+            <li>
+                <div ng-hide="hideEnergieSoorten()" class="hidden-xs" style="margin-left: 70px; margin-top: 10px;">
+                    <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('stroom') >= 0" ng-click="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom</label>
+                    <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('gas') >= 0" ng-click="toggleEnergiesoort('gas')"><i class="fa fa-fire"></i> Gas</label>
+                </div>
+            </li>
+
+            <li class="pull-right hidden-xs">
                 <form class="form-inline without-margin-padding">
                     <div class="form-group">
                         <div class="input-group date-selector">
@@ -29,6 +43,26 @@
                             <input class="form-control datepicker text-center" formatteddate ng-model="selection" ng-readonly="true"/>
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </li>
+
+            <li class="pull-right hidden-sm hidden-md hidden-lg">
+                <form class="form-inline without-margin-padding">
+                    <div class="form-group">
+                        <div class="input-group date-selector">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-sm" type="button" ng-click="navigate(-1)">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                            </span>
+                            <input class="input-sm form-control datepicker text-center" formatteddate ng-model="selection" ng-readonly="true"/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-sm" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
                                     <i class="fa fa-chevron-right"></i>
                                 </button>
                             </span>
@@ -51,6 +85,7 @@
     <div class="hidden-xs col-md-11 without-lr-padding">
         <div id="chart" class="c3 chart"></div>
     </div>
+
     <div class="hidden-sm hidden-md hidden-lg table-responsive">
         <table class="table table-bordered table-striped table-condensed">
             <thead>

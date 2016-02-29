@@ -16,6 +16,7 @@
         function activate() {
             $scope.selection = Date.today().moveToFirstDayOfMonth();
             $scope.energiesoort = $routeParams.energiesoort;
+            $scope.energiesoorten = ['stroom', 'gas'];
             $scope.period = 'dag';
             $scope.soort = GrafiekService.getSoortData();
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
@@ -25,6 +26,16 @@
 
             getDataFromServer();
         }
+
+        $scope.toggleEnergiesoort = function (energieSoortToToggle) {
+            var indexOf = $scope.energiesoorten.indexOf(energieSoortToToggle);
+            if (indexOf >= 0) {
+                $scope.energiesoorten.splice(indexOf);
+            } else {
+                $scope.energiesoorten.push(energieSoortToToggle);
+            }
+            $log.info('Energiesoorten: ' + JSON.stringify($scope.energiesoorten));
+        };
 
         $scope.getD3DateFormat = function() {
             return '%b %Y';
@@ -192,6 +203,9 @@
             $scope.chart = c3.generate(graphConfig);
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
+
+
+        // See http://stackoverflow.com/questions/26638507/can-two-nested-threads-be-forked-and-joined-in-angularjs-q-without-q-defer
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();

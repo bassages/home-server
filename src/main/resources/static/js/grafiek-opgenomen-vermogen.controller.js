@@ -31,6 +31,10 @@
             return '%a %d-%m-%Y';
         };
 
+        $scope.hideEnergieSoorten = function() {
+            return true;
+        };
+
         $scope.showOpgenomenVermogen = function() {
             return true;
         };
