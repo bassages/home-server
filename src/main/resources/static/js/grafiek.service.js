@@ -9,8 +9,6 @@
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 
-        var soortData = 'verbruik'; // Default value
-
         numbro.culture('nl-NL');
 
         this.getVerbruikLabel = function(energiesoort) {
@@ -23,15 +21,7 @@
             }
         };
 
-        this.formatWithUnitLabel = function(soortData, energiesoort, value) {
-            if (soortData == 'verbruik') {
-                return numbro(value).format('0.000') + ' ' + this.getVerbruikLabel(energiesoort);
-            } else if (soortData == 'kosten') {
-                return '\u20AC ' + numbro(value).format('0.00');
-            }
-        };
-
-        this.formatWithoutUnitLabel = function(value) {
+        this.formatWithoutUnitLabel = function(soortData, value) {
             if (soortData == 'verbruik') {
                 return numbro(value).format('0.000');
             } else if (soortData == 'kosten') {
@@ -39,68 +29,13 @@
             }
         };
 
-        this.getStatistics = function(data) {
-            var min; var max; var avg;
-
-            var total = 0;
-            var nrofdata = 0;
-
-            for (var i = 0; i < data.length; i++) {
-                var value = data[i][soortData];
-
-                if (value != null && (typeof max=='undefined' || value > max)) {
-                    max = value;
-                }
-                if (value != null && (typeof min=='undefined' || value < min)) {
-                    min = value;
-                }
-                if (value != null) {
-                    total += value;
-                    nrofdata += 1;
-                }
+        this.formatWithUnitLabel = function(soortData, energieSoorten, value) {
+            var withoutUnitLabel = this.formatWithoutUnitLabel(soortData, value);
+            if (soortData == 'verbruik') {
+                return withoutUnitLabel + ' ' + this.getVerbruikLabel(energieSoorten[0]);
+            } else if (soortData == 'kosten') {
+                return '\u20AC ' + withoutUnitLabel;
             }
-            if (nrofdata > 0) {
-                avg = total / nrofdata;
-            }
-            return {avg: avg, min: min, max: max};
-        };
-
-        this.getStatisticsGraphGridYLines = function(data, energiesoort) {
-            var statistics = this.getStatistics(data);
-
-            var lines = [];
-            if (statistics.avg) {
-                lines.push({
-                    value: statistics.avg,
-                    text: 'Gemiddelde: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.avg),
-                    class: 'avg',
-                    position: 'middle'
-                });
-            }
-            if (statistics.min) {
-                lines.push({
-                    value: statistics.min,
-                    text: 'Laagste: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.min),
-                    class: 'min',
-                    position: 'start'
-                });
-            }
-            if (statistics.max) {
-                lines.push({
-                    value: statistics.max,
-                    text: 'Hoogste: ' + this.formatWithUnitLabel(soortData, energiesoort, statistics.max),
-                    class: 'max'
-                });
-            }
-            return lines;
-        };
-
-        this.getSoortData = function() {
-            return soortData;
-        };
-
-        this.setSoortData = function(aSoortData) {
-            soortData = aSoortData;
         };
 
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {

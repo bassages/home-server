@@ -13,18 +13,20 @@
                 templateUrl: 'grafiek.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
-            .when('/grafiek/:energiesoort/uur', {
+
+            .when('/grafiek/:soort/uur', {
                 templateUrl: 'grafiek.html',
                 controller: 'UurGrafiekController'
             })
-            .when('/grafiek/:energiesoort/dag', {
+            .when('/grafiek/:soort/dag', {
                 templateUrl: 'grafiek.html',
                 controller: 'DagGrafiekController'
             })
-            .when('/grafiek/:energiesoort/maand', {
+            .when('/grafiek/:soort/maand', {
                 templateUrl: 'grafiek.html',
                 controller: 'MaandGrafiekController'
             })
+
             .when('/meterstanden', {
                 templateUrl: 'meterstanden.html',
                 controller: 'MeterstandenController'

@@ -5,9 +5,9 @@
         .module('app')
         .controller('DagGrafiekController', DagGrafiekController);
 
-    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
+    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
 
-    function DagGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
+    function DagGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -15,11 +15,16 @@
 
         function activate() {
             $scope.selection = Date.today().moveToFirstDayOfMonth();
-            $scope.energiesoort = $routeParams.energiesoort;
-            $scope.energiesoorten = ['stroom', 'gas'];
             $scope.period = 'dag';
-            $scope.soort = GrafiekService.getSoortData();
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': GrafiekService.getVerbruikLabel($scope.energiesoort)}, {'code': 'kosten', 'omschrijving': '\u20AC'}];
+            $scope.soort = $routeParams.soort;
+
+            if ($scope.soort == 'kosten') {
+                $scope.energiesoorten = ['stroom', 'gas'];
+            } else {
+                $scope.energiesoorten = ['stroom'];
+            }
+
+            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Verbruik'}, {'code': 'kosten', 'omschrijving': 'Kosten'}];
 
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
@@ -28,17 +33,22 @@
         }
 
         $scope.toggleEnergiesoort = function (energieSoortToToggle) {
-            var indexOf = $scope.energiesoorten.indexOf(energieSoortToToggle);
-            if (indexOf >= 0) {
-                $scope.energiesoorten.splice(indexOf);
+            if ($scope.soort == 'kosten') {
+                var index = $scope.energiesoorten.indexOf(energieSoortToToggle);
+                if (index >= 0) {
+                    $scope.energiesoorten.splice(index, 1);
+                } else {
+                    $scope.energiesoorten.push(energieSoortToToggle);
+                }
             } else {
-                $scope.energiesoorten.push(energieSoortToToggle);
+                $scope.energiesoorten = [energieSoortToToggle];
             }
             $log.info('Energiesoorten: ' + JSON.stringify($scope.energiesoorten));
+            getDataFromServer();
         };
 
         $scope.getD3DateFormat = function() {
-            return '%b %Y';
+            return '%B %Y';
         };
 
         var datepicker = $('.datepicker');
@@ -86,12 +96,6 @@
             getDataFromServer();
         };
 
-        $scope.switchSoort = function(destinationSoortCode) {
-            $scope.soort = destinationSoortCode;
-            GrafiekService.setSoortData(destinationSoortCode);
-            loadData($scope.data);
-        };
-
         function getTicksForEveryDayInMonth() {
             var tickValues = [];
 
@@ -121,7 +125,8 @@
             graphConfig.data = {};
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
-            graphConfig.data.keys = {x: 'dt', value: [$scope.soort]};
+            graphConfig.data.groups = [$scope.energiesoorten];
+            graphConfig.data.keys = {x: 'dt', value: $scope.energiesoorten};
 
             // BUG for chrome: https://groups.google.com/forum/#!topic/c3js/0BrndJqBHak
             //graphConfig.data.onclick = function (d, element) {
@@ -138,7 +143,7 @@
                 padding: {left: 0, right: 10}
             };
 
-            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel(value); };
+            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.soort, value); };
             graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
@@ -146,22 +151,21 @@
 
             graphConfig.tooltip = {
                 format: {
-                    title: function (d) {
+                    title: function (value) {
                         var formatter = d3.time.format('%a %d-%m');
-                        return formatter(d);
+                        return formatter(value);
                     },
                     name: function (name, ratio, id, index) {
-                        return $scope.soort.charAt(0).toUpperCase() + $scope.soort.slice(1);
+                        return name.charAt(0).toUpperCase() + name.slice(1);
                     },
                     value: function (value, ratio, id) {
-                        return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoort, value);
+                        return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
                     }
                 }
             };
 
             graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
             graphConfig.grid = {y: {show: true}};
-            graphConfig.grid.y.lines = GrafiekService.getStatisticsGraphGridYLines(data, $scope.energiesoort);
 
             return graphConfig;
         }
@@ -204,27 +208,68 @@
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
+        function transformServerdata(serverresponses) {
+            var result = [];
 
-        // See http://stackoverflow.com/questions/26638507/can-two-nested-threads-be-forked-and-joined-in-angularjs-q-without-q-defer
+            for (var i = 0; i < $scope.energiesoorten.length; i++) {
+                var serverdataForEnergiesoort = serverresponses[i].data;
+
+                for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
+
+                    var dataOnDt = getByDt(result, serverdataForEnergiesoort[j].dt);
+
+                    if (dataOnDt == null) {
+                        dataOnDt = {};
+                        dataOnDt['dt'] = serverdataForEnergiesoort[j].dt;
+                        dataOnDt[$scope.energiesoorten[i]] = serverdataForEnergiesoort[j][$scope.soort];
+                        result.push(dataOnDt);
+                    } else {
+                        dataOnDt[$scope.energiesoorten[i]] = serverdataForEnergiesoort[j][$scope.soort];
+                    }
+                }
+            }
+            return result;
+        }
+
+        function getByDt(data, dt) {
+            var result = null;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].dt == dt) {
+                    result = data[i];
+                    break;
+                }
+            }
+            return result;
+        }
 
         function getDataFromServer() {
-            LoadingIndicatorService.startLoading();
             loadData([]);
 
-            var van = $scope.selection.getTime();
-            var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+            if ($scope.energiesoorten.length > 0) {
+                LoadingIndicatorService.startLoading();
 
-            var dataUrl = 'rest/' + $scope.energiesoort + '/verbruik-per-dag/' + van + '/' + totEnMet;
-            $log.info('Getting data from URL: ' + dataUrl);
+                var van = $scope.selection.getTime();
+                var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
-            $http({
-                method: 'GET', url: dataUrl
-            }).then(function successCallback(response) {
-                loadData(response.data);
-                LoadingIndicatorService.stopLoading();
-            }, function errorCallback(response) {
-                LoadingIndicatorService.stopLoading();
-            });
+                var requests = [];
+
+                for (var i = 0; i < $scope.energiesoorten.length; i++) {
+                    var dataUrl = 'rest/' + $scope.energiesoorten[i] + '/verbruik-per-dag/' + van + '/' + totEnMet;
+                    $log.info('Getting data from URL: ' + dataUrl);
+                    requests.push( $http({method: 'GET', url: dataUrl}) );
+                }
+
+                $q.all(requests).then(
+                    function successCallback(response) {
+                        loadData(transformServerdata(response));
+                        LoadingIndicatorService.stopLoading();
+                    },
+                    function errorCallback(response) {
+                        $log.error("ERROR: " + JSON.stringify(response));
+                        LoadingIndicatorService.stopLoading();
+                    }
+                );
+            }
         }
     }
 

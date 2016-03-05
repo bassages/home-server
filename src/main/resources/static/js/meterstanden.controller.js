@@ -22,15 +22,12 @@
 
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
-
-            applyDatePickerUpdatesInAngularScope = false;
             datepicker.datepicker('setDate', $scope.selection);
-
             getDataFromServer();
         };
 
         $scope.getD3DateFormat = function() {
-            return '%b %Y';
+            return '%B %Y';
         };
 
         var datepicker = $('.datepicker');
@@ -56,18 +53,16 @@
         });
 
         datepicker.datepicker('setDate', $scope.selection);
-        var applyDatePickerUpdatesInAngularScope = true;
 
         datepicker.on('changeDate', function(e) {
-            $log.info("changeDate event from datepicker. Selected date: " + e.date);
+            if (!Date.equals(e.date, $scope.selection)) {
+                $log.info("changeDate event from datepicker. Selected date: " + e.date);
 
-            if (applyDatePickerUpdatesInAngularScope) {
                 $scope.$apply(function() {
                     $scope.selection = new Date(e.date);
                     getDataFromServer();
                 });
             }
-            applyDatePickerUpdatesInAngularScope = true;
         });
 
         function getDataFromServer() {

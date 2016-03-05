@@ -19,9 +19,7 @@
             $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
             $scope.soort = 'verbruik'; // This controller only supports verbruik
 
-            GrafiekService.setSoortData($scope.soort);
             GrafiekService.manageGraphSize($scope);
-
             LocalizationService.localize();
 
             getDataFromServer();
