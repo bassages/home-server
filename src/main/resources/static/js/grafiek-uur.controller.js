@@ -118,6 +118,13 @@
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
 
+            graphConfig.data.colors = {
+                'stroom-verbruik': '#4575B3',
+                'stroom-kosten': '#4575B3',
+                'gas-verbruik': '#BA2924',
+                'gas-kosten': '#BA2924'
+            };
+
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
                 keysGroups.push($scope.energiesoorten[i] + "-" + $scope.soort);
@@ -140,13 +147,38 @@
             graphConfig.transition = {duration: 0};
 
             graphConfig.tooltip = {
-                format: {
-                    name: function (name, ratio, id, index) {
-                        return (name.charAt(0).toUpperCase() + name.slice(1)).replace('-verbruik', '').replace('-kosten', '');
-                    },
-                    value: function (value, ratio, id) {
-                        return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
+                contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+                    var $$ = this, config = $$.config, CLASS = $$.CLASS, tooltipContents, total = 0;
+
+                    for (i = 0; i < d.length; i++) {
+                        if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
+
+                        if (!tooltipContents) {
+                            var title = defaultTitleFormat(d[i].x);
+                            tooltipContents = "<table class='" + $$.CLASS.tooltip + "'>" + "<tr><th colspan='2'>" + title + "</th></tr>";
+                        }
+
+                        var formattedName = (d[i].name.charAt(0).toUpperCase() + d[i].name.slice(1)).replace('-verbruik', '').replace('-kosten', '');
+                        var formattedValue = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, d[i].value);
+                        var bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+
+                        tooltipContents += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
+                        tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + "; border-radius: 5px;'></span>" + formattedName + "</td>";
+                        tooltipContents += "<td class='value'>" + formattedValue + "</td>";
+                        tooltipContents += "</tr>";
+
+                        total += d[i].value;
                     }
+
+                    if (d.length > 1) {
+                        tooltipContents += "<tr class='" + CLASS.tooltipName + "'>";
+                        tooltipContents += "<td class='name'><strong>Totaal</strong></td>";
+                        tooltipContents += "<td class='value'><strong>" + GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, total) + "</strong></td>";
+                        tooltipContents += "</tr>";
+                    }
+                    tooltipContents += "</table>";
+
+                    return tooltipContents;
                 }
             };
 
