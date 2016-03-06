@@ -9,28 +9,44 @@
 
             <li ng-show="showOpgenomenVermogen()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
 
+            <!-- Soort selection for SMALL screens -->
+            <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/homecontrol/#/grafiek/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
+            </div>
+
+            <!-- Energiesoort selection for SMALL screens -->
+            <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('stroom')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
+                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('gas')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
+            </div>
+
+            <!-- Period selection for SMALL screens -->
+            <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{soort}}/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{soort}}/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{soort}}/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+            </div>
+
+            <!-- Period selection for MEDIUM/BIG screens -->
             <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/uur">Uur</a></li>
             <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/dag">Dag</a></li>
             <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/maand">Maand</a></li>
 
-            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('stroom')" class="btn btn-default btn-sm" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
-                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('gas')" class="btn btn-default btn-sm" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
-            </div>
-
-            <div class="btn-group btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{soort}}/uur" class="btn btn-default btn-sm" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
-                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{soort}}/dag" class="btn btn-default btn-sm" ng-class="{'active': period=='dag'}" role="button">Dag</a>
-                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{soort}}/maand" class="btn btn-default btn-sm" ng-class="{'active': period=='maand'}" role="button">Maand</a>
-            </div>
-
+            <!-- Energiesoort selection for MEDIUM/BIG screens -->
             <li>
                 <div ng-hide="hideEnergieSoorten()" class="hidden-xs" style="margin-left: 70px; margin-top: 10px;">
-                    <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('stroom') >= 0" ng-click="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom</label>
-                    <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('gas') >= 0" ng-click="toggleEnergiesoort('gas')"><i class="fa fa-fire"></i> Gas</label>
+                    <div ng-hide="allowMultpleEnergiesoorten()">
+                        <label class="radio-inline"><input type="radio" ng-checked="energiesoorten.indexOf('stroom') >= 0" ng-click="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom</label>
+                        <label class="radio-inline"><input type="radio" ng-checked="energiesoorten.indexOf('gas') >= 0" ng-click="toggleEnergiesoort('gas')"><i class="fa fa-fire"></i> Gas</label>
+                    </div>
+                    <div ng-show="allowMultpleEnergiesoorten()">
+                        <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('stroom') >= 0" ng-click="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom</label>
+                        <label class="checkbox-inline"><input type="checkbox" ng-checked="energiesoorten.indexOf('gas') >= 0" ng-click="toggleEnergiesoort('gas')"><i class="fa fa-fire"></i> Gas</label>
+                    </div>
                 </div>
             </li>
 
+            <!-- Period selection for MEDIUM/BIG screens -->
             <li class="pull-right hidden-xs">
                 <form class="form-inline without-margin-padding">
                     <div class="form-group">
@@ -51,6 +67,7 @@
                 </form>
             </li>
 
+            <!-- Period selection for SMALL screens -->
             <li class="pull-right hidden-sm hidden-md hidden-lg">
                 <form class="form-inline without-margin-padding">
                     <div class="form-group">
@@ -75,6 +92,8 @@
 </div>
 
 <div class="row">
+
+    <!-- Energiesoort selection for MEDIUM/BIG screens -->
     <div class="hidden-xs col-md-1 without-lr-padding">
         <ul class="nav nav-pills nav-stacked">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
@@ -82,24 +101,23 @@
             </li>
         </ul>
     </div>
+
+    <!-- Chart -->
     <div class="hidden-xs col-md-11 without-lr-padding">
         <div id="chart" class="c3 chart"></div>
     </div>
 
+    <!-- Table -->
     <div class="hidden-sm hidden-md hidden-lg table-responsive">
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>
-                    <th>&nbsp;</th>
-                    <th>Verbruik</th>
-                    <th>Kosten</th>
+                    <th ng-repeat="column in cols">{{column}}</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="tableDataItem in tableData">
-                    <td>{{tableDataItem.label}}</td>
-                    <td>{{tableDataItem.verbruik}}</td>
-                    <td>{{tableDataItem.kosten}}</td>
+                <tr ng-repeat="row in rows">
+                    <td ng-repeat="column in cols">{{row[column]}}</td>
                 </tr>
             </tbody>
         </table>

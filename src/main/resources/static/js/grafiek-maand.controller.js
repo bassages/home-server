@@ -30,18 +30,24 @@
         }
 
         $scope.toggleEnergiesoort = function (energieSoortToToggle) {
-            if ($scope.soort == 'kosten') {
+            if ($scope.allowMultpleEnergiesoorten()) {
                 var index = $scope.energiesoorten.indexOf(energieSoortToToggle);
                 if (index >= 0) {
                     $scope.energiesoorten.splice(index, 1);
                 } else {
                     $scope.energiesoorten.push(energieSoortToToggle);
                 }
+                getDataFromServer();
             } else {
-                $scope.energiesoorten = [energieSoortToToggle];
+                if ($scope.energiesoorten[0] != energieSoortToToggle) {
+                    $scope.energiesoorten = [energieSoortToToggle];
+                    getDataFromServer();
+                }
             }
-            $log.info('Energiesoorten: ' + JSON.stringify($scope.energiesoorten));
-            getDataFromServer();
+        };
+
+        $scope.allowMultpleEnergiesoorten = function() {
+            return $scope.soort == 'kosten';
         };
 
         $scope.isMaxSelected = function() {
@@ -120,8 +126,13 @@
             graphConfig.data = {};
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
-            graphConfig.data.groups = [$scope.energiesoorten];
-            graphConfig.data.keys = {x: 'maand', value: $scope.energiesoorten};
+
+            var keysGroups = [];
+            for (var i = 0; i < $scope.energiesoorten.length; i++) {
+                keysGroups.push($scope.energiesoorten[i] + "-" + $scope.soort);
+            }
+            graphConfig.data.groups = [keysGroups];
+            graphConfig.data.keys = {x: 'maand', value: keysGroups};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
@@ -144,7 +155,7 @@
                         return LocalizationService.getFullMonths()[d - 1];
                     },
                     name: function (name, ratio, id, index) {
-                        return name.charAt(0).toUpperCase() + name.slice(1);
+                        return (name.charAt(0).toUpperCase() + name.slice(1)).replace('-verbruik', '').replace('-kosten', '');
                     },
                     value: function (value, ratio, id) {
                         return GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
@@ -165,23 +176,40 @@
         }
 
         function loadDataIntoTable(data) {
-            $scope.tableData = [];
+            $scope.rows = [];
 
-            for (var i = 0; i < data.length; i++) {
-                var label = LocalizationService.getFullMonths()[data[i].maand - 1];
+            if ($scope.energiesoorten.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = {};
 
-                var verbruik = '';
-                var kosten = '';
+                    var formatter = d3.time.format('%d-%m (%a)');
+                    var label = LocalizationService.getFullMonths()[data[i].maand - 1];
 
-                if (data[i].verbruik != null) {
-                    verbruik = GrafiekService.formatWithUnitLabel('verbruik', $scope.energiesoorten, data[i].verbruik);
+                    row[""] = label;
+
+                    for (var j = 0; j < $scope.energiesoorten.length; j++) {
+                        var rowLabel = ($scope.energiesoorten[j].charAt(0).toUpperCase() + $scope.energiesoorten[j].slice(1));
+
+                        var value = data[i][$scope.energiesoorten[j] + '-' + $scope.soort];
+
+                        var rowValue = '';
+                        if (value != null) {
+                            rowValue = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
+                        }
+                        row[rowLabel] = rowValue;
+                    }
+
+                    $scope.rows.push(row);
                 }
-                if (data[i].kosten != null) {
-                    kosten = GrafiekService.formatWithUnitLabel('kosten', $scope.energiesoorten, data[i].kosten);
-                }
-                $scope.tableData.push({label: label, verbruik: verbruik, kosten: kosten});
+            }
+
+            if ($scope.rows.length > 0) {
+                $scope.cols = Object.keys($scope.rows[0]);
+            } else {
+                $scope.cols = [];
             }
         }
+
 
         function loadDataIntoGraph(data) {
             $scope.data = data;
@@ -204,15 +232,17 @@
 
                 for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
 
-                    var dataOnDt = getByMaand(result, serverdataForEnergiesoort[j].maand);
+                    var dataOnMaand = getByMaand(result, serverdataForEnergiesoort[j].maand);
 
-                    if (dataOnDt == null) {
-                        dataOnDt = {};
-                        dataOnDt['maand'] = serverdataForEnergiesoort[j].maand;
-                        dataOnDt[$scope.energiesoorten[i]] = serverdataForEnergiesoort[j][$scope.soort];
-                        result.push(dataOnDt);
+                    if (dataOnMaand == null) {
+                        dataOnMaand = {};
+                        dataOnMaand['maand'] = serverdataForEnergiesoort[j].maand;
+                        dataOnMaand[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
+                        dataOnMaand[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
+                        result.push(dataOnMaand);
                     } else {
-                        dataOnDt[$scope.energiesoorten[i]] = serverdataForEnergiesoort[j][$scope.soort];
+                        dataOnMaand[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
+                        dataOnMaand[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
                     }
                 }
             }
