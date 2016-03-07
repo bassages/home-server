@@ -208,24 +208,33 @@
             $scope.rows = [];
 
             if ($scope.energiesoorten.length > 0) {
+
                 for (var i = 0; i < data.length; i++) {
                     var row = {};
 
-                    var formatter = d3.time.format('%d-%m (%a)');
                     var label = LocalizationService.getFullMonths()[data[i].maand - 1];
 
                     row[""] = label;
 
-                    for (var j = 0; j < $scope.energiesoorten.length; j++) {
-                        var rowLabel = ($scope.energiesoorten[j].charAt(0).toUpperCase() + $scope.energiesoorten[j].slice(1));
+                    var rowTotal = null;
 
+                    for (var j = 0; j < $scope.energiesoorten.length; j++) {
+
+                        var rowLabel = ($scope.energiesoorten[j].charAt(0).toUpperCase() + $scope.energiesoorten[j].slice(1));
                         var value = data[i][$scope.energiesoorten[j] + '-' + $scope.soort];
 
                         var rowValue = '';
                         if (value != null) {
                             rowValue = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
+
+                            if (rowTotal == null) { rowTotal = 0; }
+                            rowTotal += value;
                         }
                         row[rowLabel] = rowValue;
+                    }
+
+                    if ($scope.energiesoorten.length > 1 && rowTotal != null) {
+                        row["Totaal"] = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, rowTotal);
                     }
 
                     $scope.rows.push(row);
@@ -238,7 +247,6 @@
                 $scope.cols = [];
             }
         }
-
 
         function loadDataIntoGraph(data) {
             $scope.data = data;
