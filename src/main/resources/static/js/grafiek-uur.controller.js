@@ -117,6 +117,7 @@
             graphConfig.data = {};
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
+            graphConfig.data.order = null;
 
             graphConfig.data.colors = {
                 'stroom-verbruik': '#4575B3',
@@ -149,6 +150,24 @@
             graphConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     var $$ = this, config = $$.config, CLASS = $$.CLASS, tooltipContents, total = 0;
+
+                    var orderAsc = false;
+                    if (config.data_groups.length === 0) {
+                        d.sort(function(a,b){
+                            return orderAsc ? a.value - b.value : b.value - a.value;
+                        });
+                    } else {
+                        var ids = $$.orderTargets($$.data.targets).map(function (i) {
+                            return i.id;
+                        });
+                        d.sort(function(a, b) {
+                            if (a.value > 0 && b.value > 0) {
+                                return orderAsc ? ids.indexOf(a.id) - ids.indexOf(b.id) : ids.indexOf(b.id) - ids.indexOf(a.id);
+                            } else {
+                                return orderAsc ? a.value - b.value : b.value - a.value;
+                            }
+                        });
+                    }
 
                     for (i = 0; i < d.length; i++) {
                         if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
