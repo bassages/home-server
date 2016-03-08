@@ -14,14 +14,8 @@
             $scope.selection = Date.today();
             $scope.period = 'uur';
             $scope.soort = $routeParams.soort;
-
-            if ($scope.soort == 'kosten') {
-                $scope.energiesoorten = ['stroom', 'gas'];
-            } else {
-                $scope.energiesoorten = ['stroom'];
-            }
-
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Verbruik'}, {'code': 'kosten', 'omschrijving': 'Kosten'}];
+            $scope.energiesoorten = GrafiekService.getEnergiesoorten($scope.soort);
+            $scope.supportedsoorten = GrafiekService.getSupportedSoorten();
 
             GrafiekService.manageGraphSize($scope);
             LocalizationService.localize();
@@ -118,13 +112,7 @@
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.order = null;
-
-            graphConfig.data.colors = {
-                'stroom-verbruik': '#4575B3',
-                'stroom-kosten': '#4575B3',
-                'gas-verbruik': '#BA2924',
-                'gas-kosten': '#BA2924'
-            };
+            graphConfig.data.colors = GrafiekService.getDataColors();
 
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
@@ -149,7 +137,11 @@
 
             graphConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-                    var $$ = this, config = $$.config, CLASS = $$.CLASS, tooltipContents, total = 0;
+                    var $$ = this;
+                    var config = $$.config;
+                    var CLASS = $$.CLASS;
+                    var tooltipContents;
+                    var total = 0;
 
                     var orderAsc = false;
                     if (config.data_groups.length === 0) {
@@ -209,7 +201,6 @@
 
         function loadData(data) {
             $scope.data = data;
-
             loadDataIntoGraph(data);
             loadDataIntoTable(data);
         }
@@ -219,55 +210,14 @@
         }
 
         function loadDataIntoTable(data) {
-            $scope.rows = [];
-
-            if ($scope.energiesoorten.length > 0) {
-                for (var i = 0; i < data.length; i++) {
-                    var row = {};
-
-                    row[""] = formatAsHourPeriodLabel(data[i].uur);
-
-                    var rowTotal = null;
-
-                    for (var j = 0; j < $scope.energiesoorten.length; j++) {
-                        var rowLabel = ($scope.energiesoorten[j].charAt(0).toUpperCase() + $scope.energiesoorten[j].slice(1));
-
-                        var value = data[i][$scope.energiesoorten[j] + '-' + $scope.soort];
-
-                        var rowValue = '';
-                        if (value != null) {
-                            rowValue = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
-
-                            if (rowTotal == null) { rowTotal = 0; }
-                            rowTotal += value;
-                        }
-                        row[rowLabel] = rowValue;
-                    }
-
-                    if ($scope.energiesoorten.length > 1 && rowTotal != null) {
-                        row["Totaal"] = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, rowTotal);
-                    }
-
-                    $scope.rows.push(row);
-                }
-            }
-
-            if ($scope.rows.length > 0) {
-                $scope.cols = Object.keys($scope.rows[0]);
-            } else {
-                $scope.cols = [];
-            }
+            var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur) };
+            var table = GrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            $scope.rows = table.rows;
+            $scope.cols = table.cols;
         }
 
         function loadDataIntoGraph(data) {
-            $scope.data = data;
-
-            var graphConfig;
-            if (data.length == 0) {
-                graphConfig = getEmptyGraphConfig();
-            } else {
-                graphConfig = getGraphConfig(data);
-            }
+            var graphConfig = data.length == 0 ? getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
@@ -276,21 +226,21 @@
             var result = [];
 
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
+                var energiesoort = $scope.energiesoorten[i];
                 var serverdataForEnergiesoort = serverresponses[i].data;
 
                 for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
-
                     var dataOnUur = getByUur(result, serverdataForEnergiesoort[j].uur);
 
                     if (dataOnUur == null) {
                         dataOnUur = {};
-                        dataOnUur['uur'] = serverdataForEnergiesoort[j].uur;
-                        dataOnUur[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
-                        dataOnUur[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
                         result.push(dataOnUur);
-                    } else {
-                        dataOnUur[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
-                        dataOnUur[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
+                    }
+                    dataOnUur['uur'] = serverdataForEnergiesoort[j].uur;
+
+                    for (var k = 0; k < $scope.supportedsoorten.length; k++) {
+                        var soort = $scope.supportedsoorten[k].code;
+                        dataOnUur[energiesoort + '-' + soort] = serverdataForEnergiesoort[j][soort];
                     }
                 }
             }
@@ -298,14 +248,12 @@
         }
 
         function getByUur(data, uur) {
-            var result = null;
             for (var i = 0; i < data.length; i++) {
                 if (data[i].uur == uur) {
-                    result = data[i];
-                    break;
+                    return data[i];
                 }
             }
-            return result;
+            return null;
         }
 
         function getDataFromServer() {

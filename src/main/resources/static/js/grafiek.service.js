@@ -11,6 +11,27 @@
 
         numbro.culture('nl-NL');
 
+        this.getDataColors = function() {
+            return {
+                'stroom-verbruik': '#4575B3',
+                'stroom-kosten': '#4575B3',
+                'gas-verbruik': '#BA2924',
+                'gas-kosten': '#BA2924'
+            };
+        };
+
+        this.getEnergiesoorten = function(soort) {
+            if (soort == 'kosten') {
+                return ['stroom', 'gas'];
+            } else {
+                return ['stroom'];
+            }
+        };
+
+        this.getSupportedSoorten = function() {
+            return [{'code': 'verbruik', 'omschrijving': 'Verbruik'}, {'code': 'kosten', 'omschrijving': 'Kosten'}];
+        };
+
         this.getVerbruikLabel = function(energiesoort) {
             if (energiesoort == 'stroom') {
                 return 'kWh'
@@ -36,6 +57,48 @@
             } else if (soortData == 'kosten') {
                 return '\u20AC ' + withoutUnitLabel;
             }
+        };
+
+        this.getTableData = function(data, energiesoorten, soort, labelFormatter) {
+            var rows = [];
+            var cols = [];
+
+            if (energiesoorten.length > 0) {
+
+                for (var i = 0; i < data.length; i++) {
+                    var row = {};
+
+                    row[""] = labelFormatter(data[i]);
+
+                    var rowTotal = null;
+
+                    for (var j = 0; j < energiesoorten.length; j++) {
+                        var energiesoort = energiesoorten[j];
+                        var rowLabel = energiesoort.charAt(0).toUpperCase() + energiesoort.slice(1);
+                        var value = data[i][energiesoort + '-' + soort];
+
+                        var rowValue = '';
+                        if (value != null) {
+                            rowValue = this.formatWithUnitLabel(soort, energiesoorten, value);
+
+                            if (rowTotal == null) { rowTotal = 0; }
+                            rowTotal += value;
+                        }
+                        row[rowLabel] = rowValue;
+                    }
+
+                    if (energiesoorten.length > 1 && rowTotal != null) {
+                        row["Totaal"] = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                    }
+                    rows.push(row);
+                }
+            }
+
+            if (rows.length > 0) {
+                cols = Object.keys(rows[0]);
+            }
+
+            return {rows: rows, cols: cols}
         };
 
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {

@@ -17,14 +17,8 @@
             $scope.selection = Date.today().moveToFirstDayOfMonth();
             $scope.period = 'dag';
             $scope.soort = $routeParams.soort;
-
-            if ($scope.soort == 'kosten') {
-                $scope.energiesoorten = ['stroom', 'gas'];
-            } else {
-                $scope.energiesoorten = ['stroom'];
-            }
-
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Verbruik'}, {'code': 'kosten', 'omschrijving': 'Kosten'}];
+            $scope.energiesoorten = GrafiekService.getEnergiesoorten($scope.soort);
+            $scope.supportedsoorten = GrafiekService.getSupportedSoorten();
 
             LocalizationService.localize();
             GrafiekService.manageGraphSize($scope);
@@ -124,21 +118,13 @@
         function getGraphConfig(data) {
             var graphConfig = {};
 
-            var tickValues = getTicksForEveryDayInMonth();
-
             graphConfig.bindto = '#chart';
 
             graphConfig.data = {};
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.order = null;
-
-            graphConfig.data.colors = {
-                'stroom-verbruik': '#4575B3',
-                'stroom-kosten': '#4575B3',
-                'gas-verbruik': '#BA2924',
-                'gas-kosten': '#BA2924'
-            };
+            graphConfig.data.colors = graphConfig.data.colors = GrafiekService.getDataColors();
 
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
@@ -150,7 +136,7 @@
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: 'timeseries',
-                tick: {format: '%a %d', values: tickValues, centered: true, multiline: true, width: 25},
+                tick: {format: '%a %d', values: getTicksForEveryDayInMonth(), centered: true, multiline: true, width: 25},
                 min: $scope.selection.getTime() - HALF_DAY_IN_MILLISECONDS,
                 max: $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999),
                 padding: {left: 0, right: 10}
@@ -164,7 +150,11 @@
 
             graphConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-                    var $$ = this, config = $$.config, CLASS = $$.CLASS, tooltipContents, total = 0;
+                    var $$ = this;
+                    var config = $$.config;
+                    var CLASS = $$.CLASS;
+                    var tooltipContents;
+                    var total = 0;
 
                     var orderAsc = false;
                     if (config.data_groups.length === 0) {
@@ -225,61 +215,22 @@
 
         function loadData(data) {
             $scope.data = data;
-
             loadDataIntoGraph(data);
             loadDataIntoTable(data);
         }
 
         function loadDataIntoTable(data) {
-            $scope.rows = [];
-
-            if ($scope.energiesoorten.length > 0) {
-                for (var i = 0; i < data.length; i++) {
-                    var row = {};
-
-                    var formatter = d3.time.format('%d-%m (%a)');
-
-                    row[""] = formatter(new Date(data[i].dt));
-
-                    var rowTotal = null;
-
-                    for (var j = 0; j < $scope.energiesoorten.length; j++) {
-                        var rowLabel = ($scope.energiesoorten[j].charAt(0).toUpperCase() + $scope.energiesoorten[j].slice(1));
-
-                        var value = data[i][$scope.energiesoorten[j] + '-' + $scope.soort];
-
-                        var rowValue = '';
-                        if (value != null) {
-                            rowValue = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, value);
-
-                            if (rowTotal == null) { rowTotal = 0; }
-                            rowTotal += value;
-                        }
-                        row[rowLabel] = rowValue;
-                    }
-
-                    if ($scope.energiesoorten.length > 1 && rowTotal != null) {
-                        row["Totaal"] = GrafiekService.formatWithUnitLabel($scope.soort, $scope.energiesoorten, rowTotal);
-                    }
-
-                    $scope.rows.push(row);
-                }
-            }
-
-            if ($scope.rows.length > 0) {
-                $scope.cols = Object.keys($scope.rows[0]);
-            } else {
-                $scope.cols = [];
-            }
+            var labelFormatter = function(d) {
+                var formatter = d3.time.format('%d-%m (%a)');
+                return formatter(new Date(d.dt))
+            };
+            var table = GrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            $scope.rows = table.rows;
+            $scope.cols = table.cols;
         }
 
         function loadDataIntoGraph(data) {
-            var graphConfig;
-            if (data.length == 0) {
-                graphConfig = getEmptyGraphConfig();
-            } else {
-                graphConfig = getGraphConfig(data);
-            }
+            var graphConfig = data.length == 0 ? getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
@@ -288,21 +239,21 @@
             var result = [];
 
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
+                var energiesoort = $scope.energiesoorten[i];
                 var serverdataForEnergiesoort = serverresponses[i].data;
 
                 for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
-
                     var dataOnDt = getByDt(result, serverdataForEnergiesoort[j].dt);
 
                     if (dataOnDt == null) {
                         dataOnDt = {};
-                        dataOnDt['dt'] = serverdataForEnergiesoort[j].dt;
-                        dataOnDt[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
-                        dataOnDt[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
                         result.push(dataOnDt);
-                    } else {
-                        dataOnDt[$scope.energiesoorten[i] + '-kosten'] = serverdataForEnergiesoort[j]['kosten'];
-                        dataOnDt[$scope.energiesoorten[i] + '-verbruik'] = serverdataForEnergiesoort[j]['verbruik'];
+                    }
+                    dataOnDt['dt'] = serverdataForEnergiesoort[j].dt;
+
+                    for (var k = 0; k < $scope.supportedsoorten.length; k++) {
+                        var soort = $scope.supportedsoorten[k].code;
+                        dataOnDt[energiesoort + '-' + soort] = serverdataForEnergiesoort[j][soort];
                     }
                 }
             }
@@ -310,14 +261,12 @@
         }
 
         function getByDt(data, dt) {
-            var result = null;
             for (var i = 0; i < data.length; i++) {
                 if (data[i].dt == dt) {
-                    result = data[i];
-                    break;
+                    return data[i];
                 }
             }
-            return result;
+            return null;
         }
 
         function getDataFromServer() {
