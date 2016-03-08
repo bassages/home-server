@@ -223,37 +223,7 @@
         }
 
         function transformServerdata(serverresponses) {
-            var result = [];
-
-            for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                var energiesoort = $scope.energiesoorten[i];
-                var serverdataForEnergiesoort = serverresponses[i].data;
-
-                for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
-                    var dataOnMaand = getByMaand(result, serverdataForEnergiesoort[j].maand);
-
-                    if (dataOnMaand == null) {
-                        dataOnMaand = {};
-                        result.push(dataOnMaand);
-                    }
-                    dataOnMaand['maand'] = serverdataForEnergiesoort[j].maand;
-
-                    for (var k = 0; k < $scope.supportedsoorten.length; k++) {
-                        var soort = $scope.supportedsoorten[k].code;
-                        dataOnMaand[energiesoort + '-' + soort] = serverdataForEnergiesoort[j][soort];
-                    }
-                }
-            }
-            return result;
-        }
-
-        function getByMaand(data, maand) {
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].maand == maand) {
-                    return data[i];
-                }
-            }
-            return null;
+            return GrafiekService.transformServerdata(serverresponses, 'maand', $scope.energiesoorten, $scope.supportedsoorten);
         }
 
         function getDataFromServer() {

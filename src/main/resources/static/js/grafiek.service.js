@@ -101,6 +101,40 @@
             return {rows: rows, cols: cols}
         };
 
+        this.transformServerdata = function(serverresponses, key, energiesoorten, supportedsoorten) {
+            var result = [];
+
+            for (var i = 0; i < energiesoorten.length; i++) {
+                var energiesoort = energiesoorten[i];
+                var serverdataForEnergiesoort = serverresponses[i].data;
+
+                for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
+                    var dataOnKey = this.getByKey(result, serverdataForEnergiesoort[j][key], key);
+
+                    if (dataOnKey == null) {
+                        dataOnKey = {};
+                        result.push(dataOnKey);
+                    }
+                    dataOnKey[key] = serverdataForEnergiesoort[j][key];
+
+                    for (var k = 0; k < supportedsoorten.length; k++) {
+                        var soort = supportedsoorten[k].code;
+                        dataOnKey[energiesoort + '-' + soort] = serverdataForEnergiesoort[j][soort];
+                    }
+                }
+            }
+            return result;
+        };
+
+        this.getByKey = function(data, keyValue, key) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i][key] == keyValue) {
+                    return data[i];
+                }
+            }
+            return null;
+        };
+
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {
             var height = window.innerHeight - 115;
 
