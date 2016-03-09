@@ -135,6 +135,62 @@
             return null;
         };
 
+        this.getTooltipContent = function(c3, d, defaultTitleFormat, defaultValueFormat, color, soort, energiesoorten) {
+            var $$ = c3;
+            var config = $$.config;
+            var CLASS = $$.CLASS;
+            var tooltipContents;
+            var total = 0;
+
+            var orderAsc = false;
+            if (config.data_groups.length === 0) {
+                d.sort(function(a,b){
+                    return orderAsc ? a.value - b.value : b.value - a.value;
+                });
+            } else {
+                var ids = $$.orderTargets($$.data.targets).map(function (i) {
+                    return i.id;
+                });
+                d.sort(function(a, b) {
+                    if (a.value > 0 && b.value > 0) {
+                        return orderAsc ? ids.indexOf(a.id) - ids.indexOf(b.id) : ids.indexOf(b.id) - ids.indexOf(a.id);
+                    } else {
+                        return orderAsc ? a.value - b.value : b.value - a.value;
+                    }
+                });
+            }
+
+            for (var i = 0; i < d.length; i++) {
+                if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
+
+                if (!tooltipContents) {
+                    var title = defaultTitleFormat(d[i].x);
+                    tooltipContents = "<table class='" + $$.CLASS.tooltip + "'>" + "<tr><th colspan='2'>" + title + "</th></tr>";
+                }
+
+                var formattedName = (d[i].name.charAt(0).toUpperCase() + d[i].name.slice(1)).replace('-verbruik', '').replace('-kosten', '');
+                var formattedValue = this.formatWithUnitLabel(soort, energiesoorten, d[i].value);
+                var bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+
+                tooltipContents += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
+                tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + "; border-radius: 5px;'></span>" + formattedName + "</td>";
+                tooltipContents += "<td class='value'>" + formattedValue + "</td>";
+                tooltipContents += "</tr>";
+
+                total += d[i].value;
+            }
+
+            if (d.length > 1) {
+                tooltipContents += "<tr class='" + CLASS.tooltipName + "'>";
+                tooltipContents += "<td class='name'><strong>Totaal</strong></td>";
+                tooltipContents += "<td class='value'><strong>" + this.formatWithUnitLabel(soort, energiesoorten, total) + "</strong></td>";
+                tooltipContents += "</tr>";
+            }
+            tooltipContents += "</table>";
+
+            return tooltipContents;
+        };
+
         function setGraphHeightMatchingWithAvailableWindowHeight(chart) {
             var height = window.innerHeight - 115;
 
