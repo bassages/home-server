@@ -59,6 +59,24 @@
             }
         };
 
+        this.toggleEnergiesoort = function(energiesoorten, energiesoortToToggle, allowMultpleEnergiesoorten) {
+            if (allowMultpleEnergiesoorten) {
+                var index = energiesoorten.indexOf(energiesoortToToggle);
+                if (index >= 0) {
+                    energiesoorten.splice(index, 1);
+                } else {
+                    energiesoorten.push(energiesoortToToggle);
+                }
+                return true;
+            } else {
+                if (energiesoorten[0] != energiesoortToToggle) {
+                    energiesoorten.splice(0, energiesoorten.length);
+                    energiesoorten.push(energiesoortToToggle);
+                    return true;
+                }
+            }
+        };
+
         this.getTableData = function(data, energiesoorten, soort, labelFormatter) {
             var rows = [];
             var cols = [];

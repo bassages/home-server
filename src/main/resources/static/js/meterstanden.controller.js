@@ -78,6 +78,7 @@
                     LoadingIndicatorService.stopLoading();
                 },
                 function errorCallback(response) {
+                    $log.error(JSON.stringify(response));
                     LoadingIndicatorService.stopLoading();
                     ErrorMessageService.showMessage("Kon meterstanden niet ophalen");
                 }

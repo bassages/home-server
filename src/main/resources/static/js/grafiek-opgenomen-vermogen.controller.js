@@ -5,9 +5,9 @@
         .module('app')
         .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService', 'ErrorMessageService'];
 
-    function OpgenomenVermogenGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
+    function OpgenomenVermogenGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService, ErrorMessageService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
         activate();
@@ -51,23 +51,13 @@
 
         var datepicker = $('.datepicker');
         datepicker.datepicker({
-            autoclose: true,
-            todayBtn: "linked",
-            calendarWeeks: true,
-            todayHighlight: true,
-            endDate: "0d",
-            language:"nl",
-            daysOfWeekHighlighted: "0,6",
+            autoclose: true, todayBtn: "linked", calendarWeeks: true, todayHighlight: true, endDate: "0d", language:"nl", daysOfWeekHighlighted: "0,6",
             format: {
                 toDisplay: function (date, format, language) {
-                    var formatter = d3.time.format($scope.getD3DateFormat());
-                    return formatter(date);
+                    return d3.time.format($scope.getD3DateFormat())(date);
                 },
                 toValue: function (date, format, language) {
-                    if (date == '0d') {
-                        return new Date();
-                    }
-                    return d3.time.format($scope.getD3DateFormat()).parse(date);
+                    return (date == '0d' ? new Date() : d3.time.format($scope.getD3DateFormat()).parse(date));
                 }
             }
         });
@@ -225,7 +215,9 @@
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {
+                        $log.error(JSON.stringify(response));
                         LoadingIndicatorService.stopLoading();
+                        ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
                     }
                 );
         }

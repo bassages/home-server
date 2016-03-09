@@ -5,9 +5,9 @@
         .module('app')
         .controller('MaandGrafiekController', MaandGrafiekController);
 
-    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService'];
+    MaandGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService', 'ErrorMessageService'];
 
-    function MaandGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, GrafiekService) {
+    function MaandGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, GrafiekService, ErrorMessageService) {
         activate();
 
         function activate() {
@@ -23,20 +23,9 @@
             getDataFromServer();
         }
 
-        $scope.toggleEnergiesoort = function (energieSoortToToggle) {
-            if ($scope.allowMultpleEnergiesoorten()) {
-                var index = $scope.energiesoorten.indexOf(energieSoortToToggle);
-                if (index >= 0) {
-                    $scope.energiesoorten.splice(index, 1);
-                } else {
-                    $scope.energiesoorten.push(energieSoortToToggle);
-                }
+        $scope.toggleEnergiesoort = function (energiesoortToToggle) {
+            if (GrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 getDataFromServer();
-            } else {
-                if ($scope.energiesoorten[0] != energieSoortToToggle) {
-                    $scope.energiesoorten = [energieSoortToToggle];
-                    getDataFromServer();
-                }
             }
         };
 
@@ -186,8 +175,9 @@
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {
-                        $log.error("ERROR: " + JSON.stringify(response));
+                        $log.error(JSON.stringify(response));
                         LoadingIndicatorService.stopLoading();
+                        ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
                     }
                 );
             }
