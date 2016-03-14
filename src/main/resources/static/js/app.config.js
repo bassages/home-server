@@ -35,6 +35,10 @@
                 templateUrl: 'kosten.html',
                 controller: 'KostenController'
             })
+            .when('/mindergasnl', {
+                templateUrl: 'mindergasnl.html',
+                controller: 'MindergasnlController'
+            })
             .when('/', {
                 templateUrl: 'dashboard.html',
                 controller: 'DashboardController'
