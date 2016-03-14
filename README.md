@@ -11,8 +11,7 @@
 ![Alt text](screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
 # Kosten per maand in jaar (klein beeldscherm)
-![Alt text](screenshots/kosten-maand-xs.png?raw=true "Kosten per maand in jaar (xs)")
-
+<img src="https://raw.githubusercontent.com/bassages/home-server/master/screenshots/kosten-maand-xs.png" width="400">
 
 **Backlog**
 
