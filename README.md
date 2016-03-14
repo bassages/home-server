@@ -1,6 +1,11 @@
-Kosten per dag in maand
-
+# Kosten per dag in maand
 ![Alt text](screenshots/kosten-maand-xl.png?raw=true "Kosten per dag in maand")
+
+# Verbruik per dag in maand
+![Alt text](screenshots/verbruik-dag-xl.png?raw=true "Verbruik per dag in maand")
+
+# Meterstanden per dag
+![Alt text](screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
 **Backlog**
 
