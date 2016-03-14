@@ -7,8 +7,6 @@
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
 
-            <li ng-show="showOpgenomenVermogen()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
-
             <!-- Soort selection for SMALL screens -->
             <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
                 <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/homecontrol/#/grafiek/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
@@ -28,6 +26,7 @@
             </div>
 
             <!-- Period selection for MEDIUM/BIG screens -->
+            <li ng-show="showOpgenomenVermogen()" class="hidden-xs active"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
             <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/uur">Uur</a></li>
             <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/dag">Dag</a></li>
             <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/maand">Maand</a></li>

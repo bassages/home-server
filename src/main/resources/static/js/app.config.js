@@ -9,7 +9,7 @@
 
     function Config($routeProvider) {
         $routeProvider
-            .when('/grafiek/:energiesoort/opgenomen-vermogen', {
+            .when('/grafiek/stroom/opgenomen-vermogen', {
                 templateUrl: 'grafiek.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })

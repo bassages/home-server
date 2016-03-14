@@ -14,10 +14,10 @@
 
         function activate() {
             $scope.selection = Date.today();
-            $scope.energiesoort = $routeParams.energiesoort;
-            $scope.period = 'uur';
-            $scope.supportedsoorten = [{'code': 'verbruik', 'omschrijving': 'Watt'}];
-            $scope.soort = 'verbruik'; // This controller only supports verbruik
+            $scope.energiesoort = 'stroom';
+            $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
+            $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
+            $scope.soort = 'stroom';
 
             GrafiekService.manageGraphSize($scope);
             LocalizationService.localize();
