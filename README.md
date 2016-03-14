@@ -1,5 +1,5 @@
 # Actueel
-![Alt text](screenshots/actueel.png?raw=true "Actueel")
+![Alt text](screenshots/actueel-xl.png?raw=true "Actueel")
 
 # Kosten per dag in maand
 ![Alt text](screenshots/kosten-maand-xl.png?raw=true "Kosten per dag in maand")
