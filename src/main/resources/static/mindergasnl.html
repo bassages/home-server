@@ -2,7 +2,7 @@
 
 <div>
     <h1>
-        <span>Mindergas.nl upload</span>
+        <span>Mindergas.nl</span>
     </h1>
 </div>
 
@@ -10,9 +10,18 @@
     <hr/>
 
     <div class="form-group">
+        <div class="col-sm-3">
+            <label class="pull-right" for="automatischUploaden">Automatisch uploaden</label>
+        </div>
+        <div class="col-sm-6">
+            <input type="checkbox" id="automatischUploaden" name="automatischUploaden" ng-model="settings.automatischUploaden" />
+        </div>
+    </div>
+
+    <div class="form-group">
         <label for="authenticatietoken" class="col-sm-3 control-label">Authenticatietoken</label>
         <div class="col-sm-6">
-            <input type="text" class="form-control" id="authenticatietoken" name="leverancier" placeholder="Authenticatietoken" ng-maxlength="255" ng-model="authenticatietoken">
+            <input type="text" class="form-control" id="authenticatietoken" name="authenticatietoken" placeholder="Authenticatietoken" ng-maxlength="255" ng-model="settings.authenticatietoken">
         </div>
     </div>
 

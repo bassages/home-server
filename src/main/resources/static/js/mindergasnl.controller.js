@@ -5,17 +5,46 @@
         .module('app')
         .controller('MindergasnlController', MindergasnlController);
 
-    MindergasnlController.$inject = ['$scope', '$log', 'LoadingIndicatorService', 'ErrorMessageService'];
+    MindergasnlController.$inject = ['$scope', '$log', 'MindergasnlService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function MindergasnlController($scope, $log, LoadingIndicatorService, ErrorMessageService) {
+    function MindergasnlController($scope, $log, MindergasnlService, LoadingIndicatorService, ErrorMessageService) {
 
         function activate() {
+            LoadingIndicatorService.startLoading();
 
+            MindergasnlService.query(
+                function(data) {
+                    if (data.length == 0) {
+                        $scope.settings = new MindergasnlService({automatischUploaden: false, authenticatietoken: ''});
+                    } else {
+                        $scope.settings = data[0];
+                    }
+                    LoadingIndicatorService.stopLoading();
+                },
+                function(errorResponse) {
+                    LoadingIndicatorService.stopLoading();
+                    handleServiceError('Ophalen van gegevens is niet gelukt.', errorResponse);
+                }
+            );
         }
 
         activate();
 
         $scope.save = function() {
+            LoadingIndicatorService.startLoading();
+
+            $log.info('Save Mindergas.nl settings: ' + JSON.stringify($scope.settings));
+
+            $scope.settings.$save(
+                function(successResult) {
+                    $scope.settings.id = successResult.id;
+                    LoadingIndicatorService.stopLoading();
+                },
+                function(errorResult) {
+                    LoadingIndicatorService.stopLoading();
+                    handleServiceError('Opslaan is niet gelukt.', errorResult);
+                }
+            );
 
         };
 
