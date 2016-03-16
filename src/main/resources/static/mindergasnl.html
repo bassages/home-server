@@ -10,11 +10,9 @@
     <hr/>
 
     <div class="form-group">
-        <div class="col-sm-3">
-            <label class="pull-right" for="automatischUploaden">Automatisch uploaden</label>
-        </div>
+        <label class="col-sm-3 control-label" for="automatischUploaden">Automatisch uploaden</label>
         <div class="col-sm-6">
-            <input type="checkbox" id="automatischUploaden" name="automatischUploaden" ng-model="settings.automatischUploaden" />
+            <input type="checkbox" togglecheckbox data-on="Aan" data-off="Uit" data-size="small" data-onstyle="success" data-offstyle="danger" data-width="80" id="automatischUploaden" name="automatischUploaden" ng-model="settings.automatischUploaden" />
         </div>
     </div>
 
