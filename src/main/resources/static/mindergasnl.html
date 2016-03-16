@@ -18,10 +18,10 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group has-feedback" ng-class="{'has-error': !editform.authenticatietoken.$valid, 'required': settings.automatischUploaden}">
         <label for="authenticatietoken" class="col-sm-3 control-label">Authenticatietoken</label>
         <div class="col-sm-6">
-            <input type="text" class="form-control" id="authenticatietoken" name="authenticatietoken" placeholder="Authenticatietoken" ng-maxlength="255" ng-model="settings.authenticatietoken">
+            <input type="text" class="form-control" id="authenticatietoken" name="authenticatietoken" placeholder="Authenticatietoken" ng-maxlength="255" ng-required="settings.automatischUploaden" ng-model="settings.authenticatietoken" />
         </div>
     </div>
 
@@ -31,7 +31,7 @@
         </div>
         <div class="col-sm-6">
             <div class="pull-right">
-                <button class='btn btn-primary' ng-click="save()"><i class="fa fa-check"></i> Opslaan</button>
+                <button class='btn btn-primary' ng-click="save()" ng-disabled="!editform.authenticatietoken.$valid"><i class="fa fa-check"></i> Opslaan</button>
             </div>
         </div>
     </div>

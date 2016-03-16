@@ -1,9 +1,7 @@
 package nl.wiegman.homecontrol.services.service.api;
 
-import nl.wiegman.homecontrol.services.model.api.Kosten;
 import nl.wiegman.homecontrol.services.model.api.MindergasnlSettings;
-import nl.wiegman.homecontrol.services.service.KostenService;
-import nl.wiegman.homecontrol.services.service.MindergasnlSettingsService;
+import nl.wiegman.homecontrol.services.service.MindergasnlService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -17,16 +15,16 @@ import java.util.List;
 public class MindergasnlSettingsServiceRest {
 
     @Inject
-    MindergasnlSettingsService mindergasnlSettingsService;
+    MindergasnlService mindergasnlService;
 
     @GET
     public List<MindergasnlSettings> get() {
-        return mindergasnlSettingsService.getAll();
+        return mindergasnlService.getAllSettings();
     }
 
     @POST
     public MindergasnlSettings save(MindergasnlSettings mindergasnlSettings) {
-        return mindergasnlSettingsService.save(mindergasnlSettings);
+        return mindergasnlService.save(mindergasnlSettings);
     }
 
 }
