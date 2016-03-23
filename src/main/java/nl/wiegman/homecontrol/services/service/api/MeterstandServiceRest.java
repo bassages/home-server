@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
 
@@ -22,8 +23,9 @@ public class MeterstandServiceRest {
     private MeterstandService meterstandService;
 
     @POST
-    public void opslaanMeterstand(Meterstand meterstand) {
+    public Response opslaanMeterstand(Meterstand meterstand) {
         meterstandService.opslaanMeterstand(meterstand);
+        return Response.status(Response.Status.CREATED).build();
     }
 
     @GET
