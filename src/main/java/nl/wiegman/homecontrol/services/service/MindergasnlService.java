@@ -1,11 +1,11 @@
 package nl.wiegman.homecontrol.services.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.wiegman.homecontrol.services.model.api.MindergasnlSettings;
 import nl.wiegman.homecontrol.services.repository.MindergasnlSettingsRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,9 +53,7 @@ public class MindergasnlService {
 
             BigDecimal gasStand = meterstandService.perDag(gisteren.getTime(), gisteren.getTime()).get(0).getMeterstand().getGas();
 
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
-            try {
+            try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
                 HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
                 String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(gisteren), gasStand.toString());
@@ -64,23 +61,18 @@ public class MindergasnlService {
 
                 StringEntity params = new StringEntity(message);
 
-                request.addHeader("content-type", "application/json");
+                request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
                 request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
                 request.setEntity(params);
+
                 CloseableHttpResponse response = httpClient.execute(request);
+
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode != 201) {
                     logger.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
                 }
             } catch (Exception ex) {
-                // handle exception here
                 logger.error("Failed to upload to mindergas.nl", ex);
-            } finally {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                    logger.error("Failed to upload to mindergas.nl", e);
-                }
             }
         }
     }
