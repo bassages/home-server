@@ -40,6 +40,7 @@
             socket.stomp.connect({}, startListener);
 
             socket.client.onclose = function() {
+                listener.notify(null);
                 reconnect();
             };
         };

@@ -20,7 +20,7 @@ public class ExceptionHandler implements javax.ws.rs.ext.ExceptionMapper<Throwab
     static final String ERROR_CODE_UNIQUE_KEY_CONSTRAINT_VIOLATION = "UNIQUE_KEY_CONSTRAINT_VIOLATION";
 
     public Response toResponse(Throwable throwable) {
-        Response response = null;
+        Response response;
 
         if (throwable instanceof WebApplicationException) {
             response = ((WebApplicationException) throwable).getResponse();
