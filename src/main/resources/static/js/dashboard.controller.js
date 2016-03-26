@@ -93,7 +93,11 @@
 
         function update(data) {
             var oneMinute = 60000;
-            if (data == null || data.datumtijd < (Date.now() - oneMinute)) {
+            if (data == null) {
+                $log.warn('Data == null');
+                clearData();
+            } else if (data.datumtijd < (Date.now() - oneMinute)) {
+                $log.warn('Data too old');
                 clearData();
             } else {
                 if ($scope.gasVerbruikVandaag == null) {
