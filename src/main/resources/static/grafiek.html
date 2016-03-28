@@ -9,7 +9,7 @@
 
             <!-- Soort selection for SMALL screens -->
             <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/homecontrol/#/grafiek/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
+                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/#/grafiek/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
             </div>
 
             <!-- Energiesoort selection for SMALL screens -->
@@ -20,16 +20,16 @@
 
             <!-- Period selection for SMALL screens -->
             <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideUur()" ng-href="/homecontrol/#/grafiek/{{soort}}/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
-                <a ng-hide="hideDag()" ng-href="/homecontrol/#/grafiek/{{soort}}/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
-                <a ng-hide="hideMaand()" ng-href="/homecontrol/#/grafiek/{{soort}}/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+                <a ng-hide="hideUur()" ng-href="/#/grafiek/{{soort}}/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag()" ng-href="/#/grafiek/{{soort}}/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand()" ng-href="/#/grafiek/{{soort}}/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
             </div>
 
             <!-- Period selection for MEDIUM/BIG screens -->
-            <li ng-show="showOpgenomenVermogen()" class="hidden-xs active"><a ng-href="/homecontrol/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
-            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/uur">Uur</a></li>
-            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/dag">Dag</a></li>
-            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/homecontrol/#/grafiek/{{soort}}/maand">Maand</a></li>
+            <li ng-show="showOpgenomenVermogen()" class="hidden-xs active"><a ng-href="/#/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/#/grafiek/{{soort}}/uur">Uur</a></li>
+            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/#/grafiek/{{soort}}/dag">Dag</a></li>
+            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/#/grafiek/{{soort}}/maand">Maand</a></li>
 
             <!-- Energiesoort selection for MEDIUM/BIG screens -->
             <li>

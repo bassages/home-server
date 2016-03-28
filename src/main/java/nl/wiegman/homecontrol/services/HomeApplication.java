@@ -13,10 +13,10 @@ import java.util.concurrent.Executor;
 @SpringBootApplication
 @EnableAsync
 @EnableCaching
-public class HomeControlApplication {
+public class HomeApplication {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(HomeControlApplication.class, args);
+        ApplicationContext ctx = SpringApplication.run(HomeApplication.class, args);
     }
 
     @Bean

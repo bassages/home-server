@@ -8,6 +8,6 @@
     KostenService.$inject = ['$resource'];
 
     function KostenService($resource) {
-        return $resource('/homecontrol/rest/kosten/:id');
+        return $resource('/rest/kosten/:id');
     }
 })();

@@ -4,13 +4,11 @@ import nl.wiegman.homecontrol.services.model.api.Meterstand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-@RepositoryRestResource(path = "meterstanden", collectionResourceRel = "meterstanden")
 @Transactional
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 

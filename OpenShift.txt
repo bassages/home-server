@@ -8,10 +8,6 @@ ssh 55ef0c9c89f5cff36b000041@homecontrol-bassages.rhcloud.com
 
 https://forums.openshift.com/how-to-erase-all-history-from-a-git-repository-on-openshift-and-start-over-with
 
-Swagger
-http://homecontrol-bassages.rhcloud.com/homecontrol/rest/swagger.json
-http://homecontrol-bassages.rhcloud.com/homecontrol/webjars/swagger-ui/2.1.1/index.html?url=http://homecontrol-bassages.rhcloud.com/homecontrol/rest/swagger.json
-
 Server monitor:
 http://dashboard.monitor.us/
 
