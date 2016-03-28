@@ -21,10 +21,6 @@ Access control
 
 ---------------
 
-Mindergas.nl upload
-
----------------
-
 // BUG for chrome: https://groups.google.com/forum/#!topic/c3js/0BrndJqBHak
 graphConfig.data.onclick = function (d, element) {
     $log.info('d: ' + JSON.stringify(d));
@@ -34,10 +30,6 @@ graphConfig.data.onclick = function (d, element) {
 ---------------
 
 Gasverbruik widget leds op dashboard
-
----------------
-
-Data generator/upload module
 
 ---------------
 
