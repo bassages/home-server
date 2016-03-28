@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationEvent;
 
 public class UpdateEvent extends ApplicationEvent {
 
-    public Object updatedObject;
+    public final Object updatedObject;
 
     public UpdateEvent(Object updatedObject) {
         super(UpdateEvent.class.getSimpleName());
