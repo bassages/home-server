@@ -7,8 +7,6 @@
 	<artifactId>home-server</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
-	<name>HomeControl</name>
-
     <!--
         BUGS TO WATCH:
         https://github.com/spring-projects/spring-boot/issues/4853
