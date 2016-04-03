@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -48,7 +49,8 @@ public class KlimaatService {
             for (BigDecimal validTemperatuur : validTemperaturesFromLastQuarter) {
                 totalTemperature = totalTemperature.add(validTemperatuur);
             }
-            BigDecimal averageTemperatuur = totalTemperature.divide(BigDecimal.valueOf(validTemperaturesFromLastQuarter.size(), BigDecimal.ROUND_CEILING));
+            BigDecimal averageTemperatuur = totalTemperature.divide(BigDecimal.valueOf(validTemperaturesFromLastQuarter.size()), RoundingMode.CEILING);
+            averageTemperatuur.setScale(2, RoundingMode.CEILING);
 
             DateUtils.setMilliseconds(now, 0);
             DateUtils.setSeconds(now, 0);
