@@ -2,7 +2,7 @@ package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
 import nl.wiegman.home.realtime.UpdateEvent;
-import nl.wiegman.home.repository.BinnenklimaatRepository;
+import nl.wiegman.home.repository.KlimaatRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class KlimaatService {
     private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
 
     @Inject
-    private BinnenklimaatRepository klimaatRepository;
+    private KlimaatRepository klimaatRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
