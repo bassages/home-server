@@ -40,6 +40,7 @@
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
         getOudsteMeterstandVanVandaag();
+        getMeestRecenteKlimaat();
 
         function checkUpdates() {
             if ($scope.lastupdate == null) {
@@ -85,6 +86,16 @@
                 method: 'GET', url: 'rest/meterstanden/meest-recente'
             }).then(function successCallback(response) {
                 updateMeterstand(response.data);
+            }, function errorCallback(response) {
+                $log.error(JSON.stringify(response));
+            });
+        }
+
+        function getMeestRecenteKlimaat() {
+            $http({
+                method: 'GET', url: 'rest/klimaat/meest-recente'
+            }).then(function successCallback(response) {
+                updateKlimaat(response.data);
             }, function errorCallback(response) {
                 $log.error(JSON.stringify(response));
             });

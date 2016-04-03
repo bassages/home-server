@@ -1,6 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.KlimaatRepo;
 import org.apache.commons.lang3.time.DateUtils;
@@ -60,6 +61,11 @@ public class KlimaatService {
 
             eventPublisher.publishEvent(new UpdateEvent(savedKlimaat));
         }
+    }
+
+    public Klimaat getMeestRecente() {
+        LOG.info("getMeestRecente()");
+        return klimaatRepository.getMeestRecente();
     }
 
     public void add(Klimaat klimaat) {

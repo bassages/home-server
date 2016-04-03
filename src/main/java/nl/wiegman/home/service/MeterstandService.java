@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class MeterstandService {
 
-    private final Logger logger = LoggerFactory.getLogger(MeterstandService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MeterstandService.class);
 
     @Inject
     private MeterstandRepository meterstandRepository;
@@ -33,7 +33,7 @@ public class MeterstandService {
     private ApplicationEventPublisher eventPublisher;
 
     public Meterstand save(Meterstand meterstand) {
-        logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
+        LOG.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
 
         // Make sure to save BigDecimals with 3 decimals.
         meterstand.setGas(meterstand.getGas().setScale(3, RoundingMode.CEILING));
@@ -48,12 +48,12 @@ public class MeterstandService {
     }
 
     public Meterstand getMeestRecente() {
-        logger.info("getMeestRecente()");
+        LOG.info("getMeestRecente()");
         return meterstandRepository.getMeestRecente();
     }
 
     public Meterstand getOudste() {
-        logger.info("getOudste()");
+        LOG.info("getOudste()");
         return meterstandRepository.getOudste();
     }
 
@@ -62,7 +62,7 @@ public class MeterstandService {
 
         List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
         dagenInPeriode.forEach(dag -> {
-            logger.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
+            LOG.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
 
             Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
             result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));

@@ -5,6 +5,7 @@ import nl.wiegman.home.service.KlimaatService;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,4 +25,11 @@ public class KlimaatServiceRest {
         klimaatService.add(klimaat);
         return Response.status(Response.Status.CREATED).build();
     }
+
+    @GET
+    @Path("meest-recente")
+    public Klimaat getMeestRecente() {
+        return klimaatService.getMeestRecente();
+    }
+
 }
