@@ -1,6 +1,6 @@
 package nl.wiegman.home.service.api;
 
-import nl.wiegman.home.model.api.Kosten;
+import nl.wiegman.home.model.Kosten;
 import nl.wiegman.home.service.KostenService;
 import org.springframework.stereotype.Component;
 

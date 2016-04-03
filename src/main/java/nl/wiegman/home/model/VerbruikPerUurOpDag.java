@@ -1,8 +1,8 @@
-package nl.wiegman.home.model.api;
+package nl.wiegman.home.model;
 
 public class VerbruikPerUurOpDag extends Verbruik {
 
-    // 0 - 23
+    // Range: 0 - 23
     int uur;
 
     public int getUur() {

@@ -1,4 +1,4 @@
-package nl.wiegman.home.model.api;
+package nl.wiegman.home.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

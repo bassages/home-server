@@ -1,6 +1,6 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.Kosten;
+import nl.wiegman.home.model.Kosten;
 import nl.wiegman.home.repository.KostenRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;

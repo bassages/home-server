@@ -1,8 +1,8 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.Meterstand;
-import nl.wiegman.home.model.api.MeterstandOpDag;
-import nl.wiegman.home.model.event.UpdateEvent;
+import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class MeterstandService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    public void opslaanMeterstand(Meterstand meterstand) {
+    public Meterstand save(Meterstand meterstand) {
         logger.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
 
         // Make sure to save BigDecimals with 3 decimals.
@@ -40,9 +40,11 @@ public class MeterstandService {
         meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(3, RoundingMode.CEILING));
         meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(3, RoundingMode.CEILING));
 
-        meterstandRepository.save(meterstand);
+        Meterstand savedMeterstand = meterstandRepository.save(meterstand);
 
-        eventPublisher.publishEvent(new UpdateEvent(meterstand));
+        eventPublisher.publishEvent(new UpdateEvent(savedMeterstand));
+
+        return savedMeterstand;
     }
 
     public Meterstand getMeestRecente() {

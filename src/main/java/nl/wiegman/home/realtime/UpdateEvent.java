@@ -1,4 +1,4 @@
-package nl.wiegman.home.model.event;
+package nl.wiegman.home.realtime;
 
 import org.springframework.context.ApplicationEvent;
 

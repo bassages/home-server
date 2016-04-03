@@ -1,6 +1,6 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.*;
+import nl.wiegman.home.model.*;
 import nl.wiegman.home.repository.KostenRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
@@ -116,7 +116,7 @@ public class VerbruikService {
         Verbruik verbruikInPeriode = getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
 
         VerbruikOpDag verbruikOpDag = new VerbruikOpDag();
-        verbruikOpDag.setDt(dag.getTime());
+        verbruikOpDag.setDatumtijd(dag.getTime());
 
         if (verbruikInPeriode.getVerbruik() != null) {
             verbruikOpDag.setVerbruik(verbruikInPeriode.getVerbruik());

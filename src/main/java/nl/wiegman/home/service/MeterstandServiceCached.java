@@ -1,6 +1,6 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.Meterstand;
+import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;

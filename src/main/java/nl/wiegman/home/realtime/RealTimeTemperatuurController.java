@@ -6,9 +6,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class RealTimeMeterstandController {
+public class RealTimeTemperatuurController {
 
-    public static final String TOPIC = "/topic/meterstand";
+    public static final String TOPIC = "/topic/temperatuur";
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;

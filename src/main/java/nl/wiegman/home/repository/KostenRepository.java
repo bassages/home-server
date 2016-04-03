@@ -1,6 +1,6 @@
 package nl.wiegman.home.repository;
 
-import nl.wiegman.home.model.api.Kosten;
+import nl.wiegman.home.model.Kosten;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,6 +1,6 @@
 package nl.wiegman.home.service.dummydatagenerator;
 
-import nl.wiegman.home.model.api.Meterstand;
+import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.repository.MeterstandRepository;
 import nl.wiegman.home.service.MeterstandService;
 import org.slf4j.Logger;

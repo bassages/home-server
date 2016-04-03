@@ -1,6 +1,6 @@
 package nl.wiegman.home.repository;
 
-import nl.wiegman.home.model.api.Meterstand;
+import nl.wiegman.home.model.Meterstand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

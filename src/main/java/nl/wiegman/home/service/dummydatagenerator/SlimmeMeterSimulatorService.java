@@ -1,6 +1,6 @@
 package nl.wiegman.home.service.dummydatagenerator;
 
-import nl.wiegman.home.model.api.Meterstand;
+import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.service.MeterstandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             meterstand.setGas(getGas(datumtijd));
             meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
 
-            meterstandService.opslaanMeterstand(meterstand);
+            meterstandService.save(meterstand);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }

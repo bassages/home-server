@@ -1,7 +1,9 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.MindergasnlSettings;
+import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.model.MindergasnlSettings;
 import nl.wiegman.home.repository.MindergasnlSettingsRepository;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,14 +25,14 @@ import java.util.List;
 @Component
 public class MindergasnlService {
 
-    private final Logger logger = LoggerFactory.getLogger(MindergasnlService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MindergasnlService.class);
 
     private static final String METERSTAND_UPLOAD_ENDPOINT = "http://www.mindergas.nl/api/gas_meter_readings";
 
     @Inject
-    MindergasnlSettingsRepository mindergasnlSettingsRepository;
+    private MindergasnlSettingsRepository mindergasnlSettingsRepository;
     @Inject
-    MeterstandService meterstandService;
+    private MeterstandService meterstandService;
 
     public List<MindergasnlSettings> getAllSettings() {
         return mindergasnlSettingsRepository.findAll();
@@ -40,8 +42,7 @@ public class MindergasnlService {
         return mindergasnlSettingsRepository.save(mindergasnlSettings);
     }
 
-//    @Scheduled(cron = "*/30 * * * * *") // Elke 30 seconden
-    @Scheduled(cron = "0 0 3 * * *") // 3 uur 's nachts
+    @Scheduled(cron = "0 0 3 * * *") // 3 o'clock in the morning
     public void uploadMeterstand() {
 
         List<MindergasnlSettings> settings = getAllSettings();
@@ -51,28 +52,34 @@ public class MindergasnlService {
             Date vandaag = new Date();
             Date gisteren = DateUtils.addDays(vandaag, -1);
 
-            BigDecimal gasStand = meterstandService.perDag(gisteren.getTime(), gisteren.getTime()).get(0).getMeterstand().getGas();
+            List<MeterstandOpDag> meterstandVanGisteren = meterstandService.perDag(gisteren.getTime(), gisteren.getTime());
 
-            try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
-                HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
+            if (CollectionUtils.isEmpty(meterstandVanGisteren)) {
+                LOG.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
+            } else {
+                BigDecimal gasStand = meterstandVanGisteren.get(0).getMeterstand().getGas();
 
-                String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(gisteren), gasStand.toString());
-                logger.info("Upload to mindergas.nl: " + message);
+                try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
+                    HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
-                StringEntity params = new StringEntity(message);
+                    String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(gisteren), gasStand.toString());
+                    LOG.info("Upload to mindergas.nl: " + message);
 
-                request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
-                request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
-                request.setEntity(params);
+                    StringEntity params = new StringEntity(message);
 
-                CloseableHttpResponse response = httpClient.execute(request);
+                    request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
+                    request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
+                    request.setEntity(params);
 
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode != 201) {
-                    logger.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
+                    CloseableHttpResponse response = httpClient.execute(request);
+
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode != 201) {
+                        LOG.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Failed to upload to mindergas.nl", ex);
                 }
-            } catch (Exception ex) {
-                logger.error("Failed to upload to mindergas.nl", ex);
             }
         }
     }

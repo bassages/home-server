@@ -1,7 +1,7 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.Kosten;
-import nl.wiegman.home.model.api.Verbruik;
+import nl.wiegman.home.model.Kosten;
+import nl.wiegman.home.model.Verbruik;
 import nl.wiegman.home.repository.KostenRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;

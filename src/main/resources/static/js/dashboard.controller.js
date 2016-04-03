@@ -5,7 +5,7 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', '$http', '$log', '$interval', 'RealtimeMeterstandenService'];
+    DashboardController.$inject = ['$scope', '$http', '$log', '$interval', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
 
     function turnOffAllStroomLeds($scope) {
         for (var i = 0; i < 10; i++) {
@@ -13,15 +13,16 @@
         }
     }
 
-    function DashboardController($scope, $http, $log, $interval, RealtimeMeterstandenService) {
+    function DashboardController($scope, $http, $log, $interval, RealtimeMeterstandenService, RealtimeKlimaatService) {
 
         $scope.$on('$destroy', function() {
             $scope.stopCheckUpdateInterval();
         });
 
-        clearData();
+        clearMeterstandData();
+        clearSensorData();
 
-        function clearData() {
+        function clearMeterstandData() {
             turnOffAllStroomLeds($scope);
             $scope.lastupdate = null;
             $scope.huidigOpgenomenVermogen = null;
@@ -32,6 +33,10 @@
             $scope.meterstandGas = null;
         }
 
+        function clearSensorData() {
+            $scope.huidigeTemperatuur = null;
+        }
+
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
         getOudsteMeterstandVanVandaag();
@@ -39,7 +44,7 @@
         function checkUpdates() {
             if ($scope.lastupdate == null) {
                 $scope.showNoConnectionAlert = true;
-                clearData();
+                clearMeterstandData();
             } else {
                 $scope.showNoConnectionAlert = false;
             }
@@ -55,7 +60,11 @@
         var checkUpdateInterval = $interval(checkUpdates, 10000);
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
-            update(jsonData);
+            updateMeterstand(jsonData);
+        });
+
+        RealtimeKlimaatService.receive().then(null, null, function(jsonData) {
+            updateKlimaat(jsonData);
         });
 
         function getGasVerbruikVandaag() {
@@ -75,7 +84,7 @@
             $http({
                 method: 'GET', url: 'rest/meterstanden/meest-recente'
             }).then(function successCallback(response) {
-                update(response.data);
+                updateMeterstand(response.data);
             }, function errorCallback(response) {
                 $log.error(JSON.stringify(response));
             });
@@ -91,14 +100,20 @@
             });
         }
 
-        function update(data) {
+        function updateKlimaat(data) {
+            if (data != null) {
+                $scope.huidigeTemperatuur = data.temperatuur;
+            }
+        }
+
+        function updateMeterstand(data) {
             var oneMinute = 60000;
             if (data == null) {
                 $log.warn('Data == null');
-                clearData();
+                clearMeterstandData();
             } else if (data.datumtijd < (Date.now() - oneMinute)) {
                 $log.warn('Data too old');
-                clearData();
+                clearMeterstandData();
             } else {
                 if ($scope.gasVerbruikVandaag == null) {
                     getGasVerbruikVandaag();

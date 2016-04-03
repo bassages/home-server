@@ -111,7 +111,7 @@
                 keysGroups.push($scope.energiesoorten[i] + "-" + $scope.soort);
             }
             graphConfig.data.groups = [keysGroups];
-            graphConfig.data.keys = {x: 'dt', value: keysGroups};
+            graphConfig.data.keys = {x: 'datumtijd', value: keysGroups};
 
             graphConfig.axis = {};
             graphConfig.axis.x = {
@@ -164,7 +164,7 @@
         }
 
         function transformServerdata(serverresponses) {
-            return GrafiekService.transformServerdata(serverresponses, 'dt', $scope.energiesoorten, $scope.supportedsoorten);
+            return GrafiekService.transformServerdata(serverresponses, 'datumtijd', $scope.energiesoorten, $scope.supportedsoorten);
         }
 
         function getDataFromServer() {

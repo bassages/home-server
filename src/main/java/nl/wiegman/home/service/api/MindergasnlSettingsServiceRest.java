@@ -1,7 +1,7 @@
 package nl.wiegman.home.service.api;
 
 import nl.wiegman.home.service.MindergasnlService;
-import nl.wiegman.home.model.api.MindergasnlSettings;
+import nl.wiegman.home.model.MindergasnlSettings;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

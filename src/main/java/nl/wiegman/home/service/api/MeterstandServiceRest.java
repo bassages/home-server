@@ -1,7 +1,7 @@
 package nl.wiegman.home.service.api;
 
-import nl.wiegman.home.model.api.MeterstandOpDag;
-import nl.wiegman.home.model.api.Meterstand;
+import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.service.MeterstandService;
 import org.springframework.stereotype.Component;
 
@@ -14,17 +14,15 @@ import java.util.List;
 
 @Component
 @Produces(MediaType.APPLICATION_JSON)
-@Path(MeterstandServiceRest.SERVICE_PATH)
+@Path("meterstanden")
 public class MeterstandServiceRest {
-
-    public static final String SERVICE_PATH = "meterstanden";
 
     @Inject
     private MeterstandService meterstandService;
 
     @POST
-    public Response opslaanMeterstand(Meterstand meterstand) {
-        meterstandService.opslaanMeterstand(meterstand);
+    public Response save(Meterstand meterstand) {
+        meterstandService.save(meterstand);
         return Response.status(Response.Status.CREATED).build();
     }
 

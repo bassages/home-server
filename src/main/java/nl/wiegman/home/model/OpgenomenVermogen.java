@@ -1,4 +1,4 @@
-package nl.wiegman.home.model.api;
+package nl.wiegman.home.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

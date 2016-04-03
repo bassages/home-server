@@ -1,6 +1,6 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.api.Kosten;
+import nl.wiegman.home.model.Kosten;
 import nl.wiegman.home.repository.KostenRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;

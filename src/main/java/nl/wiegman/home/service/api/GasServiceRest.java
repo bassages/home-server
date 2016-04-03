@@ -1,8 +1,8 @@
 package nl.wiegman.home.service.api;
 
-import nl.wiegman.home.model.api.VerbruikOpDag;
-import nl.wiegman.home.model.api.VerbruikPerMaandInJaar;
-import nl.wiegman.home.model.api.VerbruikPerUurOpDag;
+import nl.wiegman.home.model.VerbruikOpDag;
+import nl.wiegman.home.model.VerbruikPerMaandInJaar;
+import nl.wiegman.home.model.VerbruikPerUurOpDag;
 import nl.wiegman.home.service.Energiesoort;
 import nl.wiegman.home.service.VerbruikService;
 import org.springframework.stereotype.Component;
