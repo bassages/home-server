@@ -31,8 +31,10 @@ public class KlimaatService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @Scheduled(cron = "*/15 * * * * *") // Every 15 minutes
+    @Scheduled(cron = "0 0/15 * * * ?") // Every 15 minutes
     public void save() {
+        LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
+
         Date now = new Date();
 
         List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
