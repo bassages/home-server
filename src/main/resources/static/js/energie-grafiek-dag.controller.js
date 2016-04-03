@@ -3,11 +3,11 @@
 
     angular
         .module('app')
-        .controller('DagGrafiekController', DagGrafiekController);
+        .controller('DagEnergieGrafiekController', DagEnergieGrafiekController);
 
-    DagGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService', 'ErrorMessageService'];
+    DagEnergieGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieGrafiekService', 'ErrorMessageService'];
 
-    function DagGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, GrafiekService, ErrorMessageService) {
+    function DagEnergieGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieGrafiekService, ErrorMessageService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -17,17 +17,17 @@
             $scope.selection = Date.today().moveToFirstDayOfMonth();
             $scope.period = 'dag';
             $scope.soort = $routeParams.soort;
-            $scope.energiesoorten = GrafiekService.getEnergiesoorten($scope.soort);
-            $scope.supportedsoorten = GrafiekService.getSupportedSoorten();
+            $scope.energiesoorten = EnergieGrafiekService.getEnergiesoorten($scope.soort);
+            $scope.supportedsoorten = EnergieGrafiekService.getSupportedSoorten();
 
             LocalizationService.localize();
-            GrafiekService.manageGraphSize($scope);
+            EnergieGrafiekService.manageGraphSize($scope);
 
             getDataFromServer();
         }
 
         $scope.toggleEnergiesoort = function (energiesoortToToggle) {
-            if (GrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
+            if (EnergieGrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 getDataFromServer();
             }
         };
@@ -104,7 +104,7 @@
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.order = null;
-            graphConfig.data.colors = graphConfig.data.colors = GrafiekService.getDataColors();
+            graphConfig.data.colors = graphConfig.data.colors = EnergieGrafiekService.getDataColors();
 
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
@@ -122,7 +122,7 @@
                 padding: {left: 0, right: 10}
             };
 
-            var yAxisFormat = function (value) { return GrafiekService.formatWithoutUnitLabel($scope.soort, value); };
+            var yAxisFormat = function (value) { return EnergieGrafiekService.formatWithoutUnitLabel($scope.soort, value); };
             graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
@@ -131,7 +131,7 @@
             graphConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     var titleFormat = d3.time.format('%a %d-%m');
-                    return GrafiekService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
+                    return EnergieGrafiekService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
 
@@ -152,7 +152,7 @@
                 var formatter = d3.time.format('%d-%m (%a)');
                 return formatter(new Date(d.dt))
             };
-            var table = GrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            var table = EnergieGrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -160,11 +160,11 @@
         function loadDataIntoGraph(data) {
             var graphConfig = data.length == 0 ? getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
-            GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            EnergieGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function transformServerdata(serverresponses) {
-            return GrafiekService.transformServerdata(serverresponses, 'datumtijd', $scope.energiesoorten, $scope.supportedsoorten);
+            return EnergieGrafiekService.transformServerdata(serverresponses, 'datumtijd', $scope.energiesoorten, $scope.supportedsoorten);
         }
 
         function getDataFromServer() {

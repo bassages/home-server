@@ -5,9 +5,9 @@
         .module('app')
         .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'GrafiekService', 'ErrorMessageService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieGrafiekService', 'ErrorMessageService'];
 
-    function OpgenomenVermogenGrafiekController($scope, $routeParams, $http, $log, LoadingIndicatorService, LocalizationService, GrafiekService, ErrorMessageService) {
+    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, EnergieGrafiekService, ErrorMessageService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
         activate();
@@ -19,7 +19,7 @@
             $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
             $scope.soort = 'stroom';
 
-            GrafiekService.manageGraphSize($scope);
+            EnergieGrafiekService.manageGraphSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
@@ -194,7 +194,7 @@
                 graphConfig = getGraphConfig(graphData);
             }
             $scope.chart = c3.generate(graphConfig);
-            GrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            EnergieGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getTo() {

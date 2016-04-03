@@ -1,0 +1,48 @@
+<div ng-include="'top-menu.html'"></div>
+
+<div class="row" style="margin-bottom: 5px">
+    <div class="col-md-11 without-lr-padding">
+        <form class="form-inline without-margin-padding pull-right">
+            <div class="form-group">
+                <div class="input-group date-selector">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="navigate(-1)">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                    </span>
+                    <input class="form-control datepicker text-center" formatteddate ng-model="selection" ng-readonly="true"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- Chart -->
+    <div class="hidden-xs col-md-11 without-lr-padding">
+        <div id="chart" class="c3 chart"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="hidden-sm hidden-md hidden-lg table-responsive">
+        <table class="table table-bordered table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th ng-repeat="column in cols">{{column}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in rows">
+                    <td ng-repeat="column in cols">{{row[column]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

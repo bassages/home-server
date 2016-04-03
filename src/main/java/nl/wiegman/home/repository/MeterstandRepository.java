@@ -16,12 +16,12 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     String ALL_IN_PERIOD_SORTED = "SELECT m FROM Meterstand m WHERE m.datumtijd >= :van AND m.datumtijd < :tot ORDER BY m.datumtijd";
     String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
     String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
+    String MOST_RECENT = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Meterstand mostrecent)";
+    String OLDEST = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(oldest.datumtijd) FROM Meterstand oldest)";
 
     // Native queries
     String STROOMVERBRUIK_IN_PERIOD = "SELECT (MAX(stroom_tarief1)-MIN(stroom_tarief1)) + (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
     String GASVERBRUIK_IN_PERIOD = "SELECT MAX(gas)-MIN(gas) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
-    String MOST_RECENT = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MAX(datumtijd) FROM meterstand)";
-    String OLDEST = "SELECT * FROM meterstand WHERE datumtijd = (SELECT MIN(datumtijd) FROM meterstand)";
 
     @Query(value = ALL_IN_PERIOD_SORTED)
     List<Meterstand> getMeterstanden(@Param("van") long van, @Param("tot") long tot);
@@ -32,10 +32,10 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     @Query(value = GASVERBRUIK_IN_PERIOD, nativeQuery = true)
     BigDecimal getGasVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
-    @Query(value = MOST_RECENT, nativeQuery = true)
+    @Query(value = MOST_RECENT)
     Meterstand getMeestRecente();
 
-    @Query(value = OLDEST, nativeQuery = true)
+    @Query(value = OLDEST)
     Meterstand getOudste();
 
     @Query(value = MOST_RECENT_IN_PERIOD)

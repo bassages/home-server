@@ -3,9 +3,9 @@
 
     angular
         .module('app')
-        .service('GrafiekService', GrafiekService);
+        .service('EnergieGrafiekService', EnergieGrafiekService);
 
-    function GrafiekService() {
+    function EnergieGrafiekService() {
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 

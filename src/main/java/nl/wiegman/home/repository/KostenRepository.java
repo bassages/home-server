@@ -14,7 +14,10 @@ public interface KostenRepository extends JpaRepository<Kosten, Long> {
 
     String CACHE_NAME_KOSTEN_IN_PERIOD = "kostenInPeriod";
 
+    // JPQL queries
+    String ALL_IN_PERIOD = "SELECT k FROM Kosten k WHERE (:van BETWEEN k.van AND k.totEnMet) OR (:totEnMet BETWEEN k.van AND k.totEnMet) OR (k.van >= :van AND k.totEnMet <= :totEnMet) ORDER BY k.van";
+
     @Cacheable(cacheNames = CACHE_NAME_KOSTEN_IN_PERIOD)
-    @Query(value = "SELECT k FROM Kosten k WHERE (:van BETWEEN k.van AND k.totEnMet) OR (:totEnMet BETWEEN k.van AND k.totEnMet) OR (k.van >= :van AND k.totEnMet <= :totEnMet) ORDER BY k.van")
+    @Query(value = ALL_IN_PERIOD)
     List<Kosten> getKostenInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 }

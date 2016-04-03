@@ -2,12 +2,14 @@ package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
 import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.OpgenomenVermogen;
 import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.KlimaatRepo;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -63,6 +65,10 @@ public class KlimaatService {
 
             eventPublisher.publishEvent(new UpdateEvent(savedKlimaat));
         }
+    }
+
+    public List<Klimaat> getHistory(long from, long to) {
+        return klimaatRepository.getKlimaat(from, to);
     }
 
     public Klimaat getMeestRecente() {

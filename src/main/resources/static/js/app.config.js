@@ -10,21 +10,25 @@
     function Config($routeProvider) {
         $routeProvider
             .when('/grafiek/stroom/opgenomen-vermogen', {
-                templateUrl: 'grafiek.html',
+                templateUrl: 'energie-grafiek.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
 
+            .when('/grafiek/klimaat/temperatuur', {
+                templateUrl: 'klimaat-sensor-grafiek.html',
+                controller: 'KlimaatSensorGrafiekController'
+            })
             .when('/grafiek/:soort/uur', {
-                templateUrl: 'grafiek.html',
-                controller: 'UurGrafiekController'
+                templateUrl: 'energie-grafiek.html',
+                controller: 'UurEnergieGrafiekController'
             })
             .when('/grafiek/:soort/dag', {
-                templateUrl: 'grafiek.html',
-                controller: 'DagGrafiekController'
+                templateUrl: 'energie-grafiek.html',
+                controller: 'DagEnergieGrafiekController'
             })
             .when('/grafiek/:soort/maand', {
-                templateUrl: 'grafiek.html',
-                controller: 'MaandGrafiekController'
+                templateUrl: 'energie-grafiek.html',
+                controller: 'MaandEnergieGrafiekController'
             })
 
             .when('/meterstanden', {
