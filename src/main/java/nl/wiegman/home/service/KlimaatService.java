@@ -48,7 +48,7 @@ public class KlimaatService {
             for (BigDecimal validTemperatuur : validTemperaturesFromLastQuarter) {
                 totalTemperature = totalTemperature.add(validTemperatuur);
             }
-            BigDecimal averageTemperatuur = totalTemperature.divide(BigDecimal.valueOf(validTemperaturesFromLastQuarter.size()));
+            BigDecimal averageTemperatuur = totalTemperature.divide(BigDecimal.valueOf(validTemperaturesFromLastQuarter.size(), BigDecimal.ROUND_CEILING));
 
             DateUtils.setMilliseconds(now, 0);
             DateUtils.setSeconds(now, 0);
