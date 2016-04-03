@@ -1,9 +1,6 @@
 package nl.wiegman.home.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -17,6 +14,7 @@ public class Klimaat {
     @NotNull
     private long datumtijd;
 
+    @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
 
     public long getId() {
