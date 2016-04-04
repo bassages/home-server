@@ -105,9 +105,7 @@
         }
 
         function getStatistics(graphData) {
-            var min;
-            var max;
-            var avg;
+            var min, max, avg;
 
             var total = 0;
             var nrofdata = 0;
@@ -133,12 +131,16 @@
             return {avg: avg, min: min, max: max};
         }
 
+        function getGraphPadding() {
+            return {top: 10, bottom: 25, left: 55, right: 20};
+        }
+
         function getEmptyGraphConfig() {
             return {
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: {top: 10, bottom: 20, left: 50, right: 20}
+                padding: {top: 10, bottom: 30, left: 50, right: 20}
             }
         }
 
@@ -152,7 +154,7 @@
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: "timeseries",
-                tick: {format: "%H:%M", values: tickValues, rotate: -90},
+                tick: {format: "%H:%M", values: tickValues, rotate: -30},
                 min: $scope.selection,
                 max: getTo(),
                 padding: {left: 0, right: 10}
@@ -162,7 +164,7 @@
             graphConfig.point = {show: false};
             graphConfig.transition = {duration: 0};
             graphConfig.tooltip = {show: false};
-            graphConfig.padding = {top: 10, bottom: 45, left: 50, right: 20};
+            graphConfig.padding = getGraphPadding();
             graphConfig.grid = {y: {show: true}};
 
             var statistics = getStatistics(graphData);

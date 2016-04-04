@@ -77,12 +77,16 @@
             return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         }
 
+        function getGraphPadding() {
+            return {top: 10, bottom: 25, left: 55, right: 20};
+        }
+
         function getEmptyGraphConfig() {
             return {
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: {top: 10, bottom: 10, left: 50, right: 20}
+                padding: getGraphPadding()
             }
         }
 
@@ -126,7 +130,7 @@
                     return EnergieGrafiekService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
-            graphConfig.padding = {top: 10, bottom: 10, left: 55, right: 20};
+            graphConfig.padding = getGraphPadding();
             graphConfig.grid = {y: {show: true}};
 
             return graphConfig;

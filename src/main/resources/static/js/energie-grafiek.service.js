@@ -9,8 +9,6 @@
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 
-        numbro.culture('nl-NL');
-
         this.getDataColors = function() {
             return {
                 'stroom-verbruik': '#4575B3',

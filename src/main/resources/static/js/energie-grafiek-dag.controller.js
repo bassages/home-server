@@ -86,12 +86,16 @@
             return tickValues;
         }
 
+        function getGraphPadding() {
+            return {top: 10, bottom: 25, left: 55, right: 20};
+        }
+
         function getEmptyGraphConfig() {
             return {
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: {top: 10, bottom: 20, left: 55, right: 20}
+                padding: getGraphPadding()
             }
         }
 
@@ -135,7 +139,7 @@
                 }
             };
 
-            graphConfig.padding = {top: 10, bottom: 20, left: 50, right: 20};
+            graphConfig.padding = getGraphPadding();
             graphConfig.grid = {y: {show: true}};
 
             return graphConfig;

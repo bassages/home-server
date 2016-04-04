@@ -39,6 +39,8 @@
             });
             d3.time.format = myFormatters.timeFormat;
             d3.format = myFormatters.numberFormat;
+
+            numbro.culture('nl-NL');
         };
     }
 })();
