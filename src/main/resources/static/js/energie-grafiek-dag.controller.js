@@ -153,8 +153,7 @@
 
         function loadDataIntoTable(data) {
             var labelFormatter = function(d) {
-                var formatter = d3.time.format('%d-%m (%a)');
-                return formatter(new Date(d.dt))
+                return d3.time.format('%d-%m (%a)')(new Date(d.datumtijd));
             };
             var table = EnergieGrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;

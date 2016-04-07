@@ -24,7 +24,7 @@
         }
 
         $scope.toggleEnergiesoort = function (energiesoortToToggle) {
-            if (GrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
+            if (EnergieGrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 getDataFromServer();
             }
         };

@@ -110,6 +110,23 @@
             }
         }
 
+        function loadDataIntoTable(data) {
+            var rows = [];
+            var cols = [];
+
+            for (var i = 0; i < data.length; i++) {
+                var row = {};
+                row["Tijdstip"] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
+                row["Temperatuur"] = formatWithUnitLabel(data[i].temperatuur);
+                rows.push(row);
+            }
+            if (rows.length > 0) {
+                cols = Object.keys(rows[0]);
+            }
+            $scope.rows = rows;
+            $scope.cols = cols;
+        }
+
         function formatWithUnitLabel(value) {
             return numbro(value).format('0.00') + '\u2103';
         }
@@ -155,14 +172,17 @@
             return graphConfig;
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function loadData(data) {
+            loadDataIntoGraph(data);
+            loadDataIntoTable(data);
+        }
 
+        function loadDataIntoGraph(data) {
             var graphConfig;
-            if (graphData.length == 0) {
+            if (data.length == 0) {
                 graphConfig = getEmptyGraphConfig();
             } else {
-                graphConfig = getGraphConfig(graphData);
+                graphConfig = getGraphConfig(data);
             }
             $scope.chart = c3.generate(graphConfig);
             KlimaatSensorGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
@@ -174,7 +194,7 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
-            loadDataIntoGraph([]);
+            loadData([]);
 
             var graphDataUrl = 'rest/klimaat/history/' + $scope.selection.getTime() + '/' + getTo().getTime();
             $log.info('Getting data from URL: ' + graphDataUrl);
@@ -182,7 +202,7 @@
             $http({method: 'GET', url: graphDataUrl})
                 .then(
                     function successCallback(response) {
-                        loadDataIntoGraph(response.data);
+                        loadData(response.data);
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {
