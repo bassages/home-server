@@ -5,13 +5,13 @@
         .module('app')
         .service('LoadingIndicatorService', LoadingIndicatorService);
 
-    LoadingIndicatorService.$inject = ['$uibModal'];
+    LoadingIndicatorService.$inject = ['$uibModal', '$log'];
 
-    function LoadingIndicatorService($uibModal) {
+    function LoadingIndicatorService($uibModal, $log) {
         var loadingModalInstance = null;
 
         this.startLoading = function() {
-            this.loadingModalInstance = $uibModal.open({
+            loadingModalInstance = $uibModal.open({
                 animation: false,
                 templateUrl: 'loading-dialog.html',
                 size: 'sm',
@@ -21,8 +21,11 @@
         };
 
         this.stopLoading = function() {
-            this.loadingModalInstance.close();
-            this.loadingModalInstance = null;
+            $log.debug('Closing : ' + JSON.stringify(loadingModalInstance));
+            loadingModalInstance.close();
+            $log.debug('Closed  : ' + JSON.stringify(loadingModalInstance));
+
+            loadingModalInstance = null;
         };
     }
 })();
