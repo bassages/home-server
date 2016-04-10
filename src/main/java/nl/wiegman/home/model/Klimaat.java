@@ -17,6 +17,9 @@ public class Klimaat {
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
 
+    @Column(precision = 4, scale = 1)
+    private BigDecimal luchtvochtigheid;
+
     public long getId() {
         return id;
     }
@@ -31,6 +34,14 @@ public class Klimaat {
 
     public void setTemperatuur(BigDecimal temperatuur) {
         this.temperatuur = temperatuur;
+    }
+
+    public BigDecimal getLuchtvochtigheid() {
+        return luchtvochtigheid;
+    }
+
+    public void setLuchtvochtigheid(BigDecimal luchtvochtigheid) {
+        this.luchtvochtigheid = luchtvochtigheid;
     }
 
     public long getDatumtijd() {
