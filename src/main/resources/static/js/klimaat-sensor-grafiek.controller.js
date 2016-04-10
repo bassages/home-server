@@ -5,13 +5,14 @@
         .module('app')
         .controller('KlimaatSensorGrafiekController', KlimaatSensorGrafiekController);
 
-    KlimaatSensorGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'KlimaatSensorGrafiekService', 'ErrorMessageService'];
+    KlimaatSensorGrafiekController.$inject = ['$scope', '$http', '$routeParams', '$log', 'LoadingIndicatorService', 'LocalizationService', 'KlimaatSensorGrafiekService', 'ErrorMessageService'];
 
-    function KlimaatSensorGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, KlimaatSensorGrafiekService, ErrorMessageService) {
+    function KlimaatSensorGrafiekController($scope, $http, $routeParams, $log, LoadingIndicatorService, LocalizationService, KlimaatSensorGrafiekService, ErrorMessageService) {
         activate();
 
         function activate() {
             $scope.selection = Date.today();
+            $scope.soort = $routeParams.soort;
 
             KlimaatSensorGrafiekService.manageGraphSize($scope);
             LocalizationService.localize();
@@ -77,7 +78,7 @@
             var nrofdata = 0;
 
             for (var i = 0; i < graphData.length; i++) {
-                var data = graphData[i].temperatuur;
+                var data = graphData[i][$scope.soort];
 
                 if (data != null && (typeof max=='undefined' || data > max)) {
                     max = data;
@@ -90,7 +91,6 @@
                     nrofdata += 1;
                 }
             }
-
             if (nrofdata > 0) {
                 avg = total / nrofdata;
             }
@@ -117,7 +117,7 @@
             for (var i = 0; i < data.length; i++) {
                 var row = {};
                 row["Tijdstip"] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
-                row["Temperatuur"] = formatWithUnitLabel(data[i].temperatuur);
+                row[$scope.soort] = formatWithUnitLabel(data[i][$scope.soort]);
                 rows.push(row);
             }
             if (rows.length > 0) {
@@ -128,7 +128,14 @@
         }
 
         function formatWithUnitLabel(value) {
-            return numbro(value).format('0.00') + '\u2103';
+            if ($scope.soort == 'temperatuur') {
+                return numbro(value).format('0.00') + '\u2103';
+            } else if ($scope.soort == 'luchtvochtigheid') {
+                return numbro(value).format('0.0') + '%';
+            } else {
+                $log.warn('Unexpected soort: ' + $scope.soort);
+                return value;
+            }
         }
 
         function getGraphConfig(graphData) {
@@ -137,7 +144,7 @@
 
             graphConfig.bindto = '#chart';
 
-            graphConfig.data = {type: 'spline', json: graphData, keys: {x: "datumtijd", value: ["temperatuur"]}};
+            graphConfig.data = {type: 'spline', json: graphData, keys: {x: "datumtijd", value: [$scope.soort]}};
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: "timeseries",

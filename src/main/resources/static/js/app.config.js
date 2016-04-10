@@ -14,7 +14,7 @@
                 controller: 'OpgenomenVermogenGrafiekController'
             })
 
-            .when('/grafiek/klimaat/temperatuur', {
+            .when('/grafiek/klimaat/:soort', {
                 templateUrl: 'klimaat-sensor-grafiek.html',
                 controller: 'KlimaatSensorGrafiekController'
             })
