@@ -92,10 +92,23 @@
                 <h1 class="panel-title"><i class="wi wi-thermometer"></i> Temperatuur woonkamer</h1>
             </div>
             <div class="panel-body" ng-cloak>
-                    <p>Op dit moment</p>
-                    <p>{{huidigeTemperatuur | number : 2 }}&#8451;</p>
-                </div>
+                <p>Op dit moment</p>
+                <p>{{huidigKlimaat.temperatuur | number : 2 }}&#8451;</p>
             </div>
         </div>
     </div><!-- End temperatuur -->
+
+    <!-- luchtvochtigheid -->
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title"><i class="wi wi-humidity"></i> Luchtvochtigheid woonkamer</h1>
+            </div>
+            <div class="panel-body" ng-cloak>
+                <p>Op dit moment</p>
+                <p>{{huidigKlimaat.luchtvochtigheid | number : 1 }}%</p>
+            </div>
+        </div>
+    </div><!-- End luchtvochtigheid -->
+
 </div>

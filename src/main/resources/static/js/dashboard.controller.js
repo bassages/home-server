@@ -113,7 +113,7 @@
 
         function updateKlimaat(data) {
             if (data != null) {
-                $scope.huidigeTemperatuur = data.temperatuur;
+                $scope.huidigKlimaat = data;
             }
         }
 
