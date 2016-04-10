@@ -42,17 +42,25 @@ public class KlimaatService {
         Date now = new Date();
 
         List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
+        List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter();
 
         receivedInLastQuarter.clear();
 
-        if (validTemperaturesFromLastQuarter.size() >= 2) {
+        if (validTemperaturesFromLastQuarter.size() >= 2 && validHumiditiesFromLastQuarter.size() >= 0) {
             BigDecimal totalTemperature = BigDecimal.ZERO;
+            BigDecimal totalHumidity = BigDecimal.ZERO;
 
             for (BigDecimal validTemperatuur : validTemperaturesFromLastQuarter) {
                 totalTemperature = totalTemperature.add(validTemperatuur);
             }
             BigDecimal averageTemperatuur = totalTemperature.divide(BigDecimal.valueOf(validTemperaturesFromLastQuarter.size()), RoundingMode.CEILING);
-            averageTemperatuur.setScale(2, RoundingMode.CEILING);
+            averageTemperatuur = averageTemperatuur.setScale(2, RoundingMode.CEILING);
+
+            for (BigDecimal validHumidity : validHumiditiesFromLastQuarter) {
+                totalHumidity = totalHumidity.add(validHumidity);
+            }
+            BigDecimal averageHumidity = totalHumidity.divide(BigDecimal.valueOf(validHumiditiesFromLastQuarter.size()), RoundingMode.CEILING);
+            averageHumidity = averageHumidity.setScale(2, RoundingMode.CEILING);
 
             DateUtils.setMilliseconds(now, 0);
             DateUtils.setSeconds(now, 0);
@@ -60,6 +68,7 @@ public class KlimaatService {
             Klimaat klimaatToSave = new Klimaat();
             klimaatToSave.setDatumtijd(now.getTime());
             klimaatToSave.setTemperatuur(averageTemperatuur);
+            klimaatToSave.setLuchtvochtigheid(averageHumidity);
 
             Klimaat savedKlimaat = klimaatRepository.save(klimaatToSave);
 
@@ -87,6 +96,17 @@ public class KlimaatService {
         for (Klimaat klimaat : receivedInLastQuarter) {
             if (!BigDecimal.ZERO.equals(klimaat.getTemperatuur())) {
                 result.add(klimaat.getTemperatuur());
+            }
+        }
+        return result;
+    }
+
+    public List<BigDecimal> getValidHumiditiesFromLastQuarter() {
+        List<BigDecimal> result = new ArrayList<>();
+
+        for (Klimaat klimaat : receivedInLastQuarter) {
+            if (!BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid())) {
+                result.add(klimaat.getLuchtvochtigheid());
             }
         }
         return result;
