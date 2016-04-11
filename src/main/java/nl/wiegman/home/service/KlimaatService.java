@@ -105,7 +105,7 @@ public class KlimaatService {
         List<BigDecimal> result = new ArrayList<>();
 
         for (Klimaat klimaat : receivedInLastQuarter) {
-            if (klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid())) {
+            if (klimaat.getLuchtvochtigheid() != null && klimaat.getLuchtvochtigheid().doubleValue() > 0.0) {
                 result.add(klimaat.getLuchtvochtigheid());
             }
         }
