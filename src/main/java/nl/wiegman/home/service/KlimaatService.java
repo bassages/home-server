@@ -46,7 +46,7 @@ public class KlimaatService {
 
         receivedInLastQuarter.clear();
 
-        if (validTemperaturesFromLastQuarter.size() >= 2 && validHumiditiesFromLastQuarter.size() >= 0) {
+        if (validTemperaturesFromLastQuarter.size() >= 2 && validHumiditiesFromLastQuarter.size() >= 2) {
             BigDecimal totalTemperature = BigDecimal.ZERO;
             BigDecimal totalHumidity = BigDecimal.ZERO;
 
@@ -94,7 +94,7 @@ public class KlimaatService {
         List<BigDecimal> result = new ArrayList<>();
 
         for (Klimaat klimaat : receivedInLastQuarter) {
-            if (!BigDecimal.ZERO.equals(klimaat.getTemperatuur())) {
+            if (klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur())) {
                 result.add(klimaat.getTemperatuur());
             }
         }
@@ -105,7 +105,7 @@ public class KlimaatService {
         List<BigDecimal> result = new ArrayList<>();
 
         for (Klimaat klimaat : receivedInLastQuarter) {
-            if (!BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid())) {
+            if (klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid())) {
                 result.add(klimaat.getLuchtvochtigheid());
             }
         }

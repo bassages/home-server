@@ -35,20 +35,24 @@ public class KlimaatServiceTest {
     public void testHappyFlow() {
         Klimaat klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(20.0));
+        klimaat.setLuchtvochtigheid(new BigDecimal(50.0));
         klimaatService.add(klimaat);
 
         klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(21.0));
+        klimaat.setLuchtvochtigheid(new BigDecimal(51.0));
         klimaatService.add(klimaat);
 
         klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(22.0));
+        klimaat.setLuchtvochtigheid(new BigDecimal(52.0));
         klimaatService.add(klimaat);
 
         klimaatService.save();
 
         verify(klimaatRepositoryMock, times(1)).save(klimaatArgumentCaptor.capture());
 
-        assertThat(klimaatArgumentCaptor.getValue().getTemperatuur()).isEqualTo(new BigDecimal(21.0d));
+        assertThat(klimaatArgumentCaptor.getValue().getTemperatuur().doubleValue()).isEqualTo(21.0d);
+        assertThat(klimaatArgumentCaptor.getValue().getLuchtvochtigheid().doubleValue()).isEqualTo(51.0d);
     }
 }
