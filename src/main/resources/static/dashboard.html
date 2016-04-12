@@ -35,7 +35,7 @@
                     </div>
 
                     <p>Op dit moment</p>
-                    <div class="pdiv">
+                    <div class="p-div">
                         <span odometer="huidigOpgenomenVermogen" odoformat="d"></span><span> Watt</span>
                     </div>
                 </div>
@@ -43,7 +43,9 @@
                 <hr/>
 
                 <div>
-                    <p><small>Meterstand = {{t2 | meterstand}}</small></p>
+                    <div class="p-div-small">
+                        Meterstand = <span odometer="t2" nrofdecimals="3"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,8 +77,8 @@
 
                 <hr/>
 
-                <div>
-                    <p><small>Meterstand = {{meterstandGas | meterstand}}</small></p>
+                <div class="p-div-small">
+                    Meterstand = <span odometer="meterstandGas" nrofdecimals="3"></span>
                 </div>
             </div>
 
@@ -95,7 +97,9 @@
             </div>
             <div class="panel-body" ng-cloak>
                 <p>Op dit moment</p>
-                <p>{{huidigKlimaat.temperatuur | number : 2 }}&#8451;</p>
+                <div class="p-div">
+                    <span odometer="huidigKlimaat.temperatuur" nrofdecimals="2"></span><span>&#8451;</span>
+                </div>
             </div>
         </div>
     </div><!-- End temperatuur -->
@@ -108,7 +112,9 @@
             </div>
             <div class="panel-body" ng-cloak>
                 <p>Op dit moment</p>
-                <p>{{huidigKlimaat.luchtvochtigheid | number : 1 }}%</p>
+                <div class="p-div">
+                    <span odometer="huidigKlimaat.luchtvochtigheid" nrofdecimals="1"></span><span>%</span>
+                </div>
             </div>
         </div>
     </div><!-- End luchtvochtigheid -->
