@@ -1,15 +1,15 @@
 # Features
-- Ontvangen (via JSON berichten) van slimme meter data en deze opslaan
-- Ontvangen (via JSON berichten) van klimaat sensor data (temperatuur en luchtvochtigheid) en deze opslaan
+- Ontvangen (via JSON berichten) van slimme meter data en deze opslaan in een database
+- Ontvangen (via JSON berichten) van klimaat sensor data (temperatuur en luchtvochtigheid) en deze opslaan in een database
 - Beschikbaar stellen van de slimme meter data via een (reponsive) web interface
 - Beschikbaar stellen van de klimaat sensor data via een (reponsive) web interface
 - Mogelijkheid om gas meterstanden automatisch te uploaden naar mindergas.nl
 
-# Used technologies
+# Gebruikte technologie
 - Spring Boot (Java 8, maven)
 - Angular (HTML, javascript)
 - Bootstrap (HTML, CSS)
-- Runtime: OpenShift Cartridges: DIY, MySQL 5.5
+- Runtime: OpenShift DIY en MySQL Cartridges
 
 # Screenshots
 
