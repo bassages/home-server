@@ -15,12 +15,8 @@
 
     function DashboardController($scope, $http, $log, $interval, RealtimeMeterstandenService, RealtimeKlimaatService) {
 
-        $scope.$on('$destroy', function() {
-            $scope.stopCheckUpdateInterval();
-        });
-
         clearMeterstandData();
-        clearSensorData();
+        clearKlimaatData();
 
         function clearMeterstandData() {
             turnOffAllStroomLeds($scope);
@@ -33,32 +29,14 @@
             $scope.meterstandGas = null;
         }
 
-        function clearSensorData() {
-            $scope.huidigeTemperatuur = null;
+        function clearKlimaatData() {
+            $scope.huidigKlimaat = null;
         }
 
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
         getOudsteMeterstandVanVandaag();
         getMeestRecenteKlimaat();
-
-        function checkUpdates() {
-            if ($scope.lastupdate == null) {
-                $scope.showNoConnectionAlert = true;
-                clearMeterstandData();
-            } else {
-                $scope.showNoConnectionAlert = false;
-            }
-        }
-
-        $scope.stopCheckUpdateInterval = function() {
-            if (angular.isDefined(checkUpdateInterval)) {
-                $interval.cancel(checkUpdateInterval);
-                checkUpdateInterval = undefined;
-            }
-        };
-
-        var checkUpdateInterval = $interval(checkUpdates, 10000);
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
@@ -118,14 +96,7 @@
         }
 
         function updateMeterstand(data) {
-            var oneMinute = 60000;
-            if (data == null) {
-                $log.warn('Data == null');
-                clearMeterstandData();
-            } else if (data.datumtijd < (Date.now() - oneMinute)) {
-                $log.warn('Data too old');
-                clearMeterstandData();
-            } else {
+            if (data != null) {
                 if ($scope.gasVerbruikVandaag == null) {
                     getGasVerbruikVandaag();
                 }
@@ -152,7 +123,6 @@
                     $scope.gasVerbruikVandaag = data.gas - $scope.oudsteVanVandaag.gas;
                 }
             }
-            checkUpdates();
         }
     }
 })();

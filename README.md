@@ -1,19 +1,32 @@
-# Actueel
+# Features
+- Ontvangen (via JSON berichten) van slimme meter data en deze opslaan
+- Beschikbaar stellen van de slimme meter data via een (reponsive) web interface
+- Mogelijkheid om gas meterstanden automatisch te uploaden naar mindergas.nl
+
+# Used technologies
+- Spring Boot (Java 8, maven)
+- Angular (HTML, javascript)
+- Bootstrap (HTML, CSS)
+- Runtime: OpenShift Cartridges: DIY, MySQL 5.5
+
+# Screenshots
+
+## Actueel
 ![Alt text](screenshots/actueel-xl.png?raw=true "Actueel")
 
-# Kosten per maand in jaar
+## Kosten per maand in jaar
 ![Alt text](screenshots/kosten-maand-xl.png?raw=true "Kosten per maand in jaar")
 
-# Verbruik per dag in maand
+## Verbruik per dag in maand
 ![Alt text](screenshots/verbruik-dag-xl.png?raw=true "Verbruik per dag in maand")
 
-# Meterstanden per dag
+## Meterstanden per dag
 ![Alt text](screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
-# Kosten per maand in jaar (klein beeldscherm)
+## Kosten per maand in jaar (klein beeldscherm)
 <img src="https://raw.githubusercontent.com/bassages/home-server/master/screenshots/kosten-maand-xs.png" width="400">
 
-**Backlog**
+# Backlog
 
 ---------------
 
@@ -34,17 +47,6 @@ Gasverbruik widget leds op dashboard
 ---------------
 
 Vergelijken met andere jaren (in maand overview)
-
-----------------
-
-Grafiek datum selectie in URL
-
-----------------
-
-Angular bootstrap
-
-Hmmm....
-- Datepicker kan niet alleen de clear button verwijderen.
 
 ----------------
 
