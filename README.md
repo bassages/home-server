@@ -6,9 +6,10 @@
 - Mogelijkheid om gas meterstanden automatisch te uploaden naar mindergas.nl
 
 # Gebruikte technologie
-- Spring Boot (Java 8, maven)
-- Angular (HTML, javascript)
+- Spring Boot (Java 8, Maven)
+- Angular (HTML, Javascript)
 - Bootstrap (HTML, CSS)
+- C3.js voor grafieken
 - Runtime: OpenShift DIY en MySQL Cartridges
 
 # Screenshots
