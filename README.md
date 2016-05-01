@@ -23,6 +23,9 @@
 ## Meterstanden per dag
 ![Alt text](screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
+## Temperatuur
+![Alt text](screenshots/temperatuur.png?raw=true "Temperatuur")
+
 ## Kosten per maand in jaar (klein beeldscherm)
 <img src="https://raw.githubusercontent.com/bassages/home-server/master/screenshots/kosten-maand-xs.png" width="400">
 
