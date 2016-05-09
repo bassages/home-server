@@ -128,14 +128,18 @@
         }
 
         function formatWithUnitLabel(value) {
-            if ($scope.soort == 'temperatuur') {
-                return numbro(value).format('0.00') + '\u2103';
-            } else if ($scope.soort == 'luchtvochtigheid') {
-                return numbro(value).format('0.0') + '%';
-            } else {
-                $log.warn('Unexpected soort: ' + $scope.soort);
-                return value;
+            var result = null;
+            if (value != null) {
+                if ($scope.soort == 'temperatuur') {
+                    result = numbro(value).format('0.00') + '\u2103';
+                } else if ($scope.soort == 'luchtvochtigheid') {
+                    result = numbro(value).format('0.0') + '%';
+                } else {
+                    $log.warn('Unexpected soort: ' + $scope.soort);
+                    result = value;
+                }
             }
+            return result;
         }
 
         function getGraphConfig(graphData) {
