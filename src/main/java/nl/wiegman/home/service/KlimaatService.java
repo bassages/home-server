@@ -40,8 +40,8 @@ public class KlimaatService {
         LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
 
         Date now = new Date();
-        DateUtils.setMilliseconds(now, 0);
-        DateUtils.setSeconds(now, 0);
+        now = DateUtils.setMilliseconds(now, 0);
+        now = DateUtils.setSeconds(now, 0);
 
         List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
         List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter();
