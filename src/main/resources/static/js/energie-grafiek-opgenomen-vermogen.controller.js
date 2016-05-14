@@ -155,8 +155,7 @@
             graphConfig.axis.x = {
                 type: "timeseries",
                 tick: {format: "%H:%M", values: tickValues, rotate: -30},
-                min: $scope.selection,
-                max: getTo(),
+                min: $scope.selection, max: getTo(),
                 padding: {left: 0, right: 10}
             };
             graphConfig.legend = {show: false};

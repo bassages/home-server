@@ -15,7 +15,7 @@
             })
 
             .when('/grafiek/klimaat/:soort', {
-                templateUrl: 'klimaat-sensor-grafiek.html',
+                templateUrl: 'klimaat-sensor-historie.html',
                 controller: 'KlimaatSensorGrafiekController'
             })
             .when('/grafiek/:soort/uur', {
