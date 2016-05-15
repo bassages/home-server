@@ -100,7 +100,7 @@
             getDataFromServer();
         };
 
-        function getTicksForEveryHourInPeriod(selectedDates) {
+        function getTicksForEveryHourInDay() {
             var from = getModelDate();
             var to = getTo(from);
 
@@ -121,18 +121,25 @@
             var nrofdata = 0;
 
             for (var i = 0; i < graphData.length; i++) {
-                var data = graphData[i][$scope.soort];
 
-                if (data != null && (typeof max=='undefined' || data > max)) {
-                    max = data;
-                }
-                if (data != null && data > 0 && (typeof min=='undefined' || data < min)) {
-                    min = data;
-                }
-                if (data != null && data > 0) {
-                    total += data;
-                    nrofdata += 1;
-                }
+                Object.keys(graphData[i]).forEach(function(key, index) {
+                    // key: the name of the object key
+                    // index: the ordinal position of the key within the object
+                    if (key != 'datumtijd') {
+                        var value = graphData[i][key];
+
+                        if (value != null && (typeof max=='undefined' || value > max)) {
+                            max = value;
+                        }
+                        if (value != null && value > 0 && (typeof min=='undefined' || value < min)) {
+                            min = value;
+                        }
+                        if (value != null && value > 0) {
+                            total += value;
+                            nrofdata += 1;
+                        }
+                    }
+                });
             }
             if (nrofdata > 0) {
                 avg = total / nrofdata;
@@ -216,7 +223,7 @@
 
         function getGraphConfig(graphData) {
             var graphConfig = {};
-            var tickValues = getTicksForEveryHourInPeriod($scope.selection);
+            var tickValues = getTicksForEveryHourInDay();
 
             graphConfig.bindto = '#chart';
 
@@ -252,10 +259,8 @@
                 }
             };
 
-            if ($scope.selection.length == 1) {
-                var statistics = getStatistics(graphData);
-                graphConfig.grid.y.lines = getStatisticsGraphLines(statistics);
-            }
+            var statistics = getStatistics(graphData);
+            graphConfig.grid.y.lines = getStatisticsGraphLines(statistics);
 
             return graphConfig;
         }
