@@ -5,7 +5,7 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', '$http', '$log', '$interval', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
+    DashboardController.$inject = ['$scope', '$http', '$log', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
 
     function turnOffAllStroomLeds($scope) {
         for (var i = 0; i < 10; i++) {
@@ -13,7 +13,7 @@
         }
     }
 
-    function DashboardController($scope, $http, $log, $interval, RealtimeMeterstandenService, RealtimeKlimaatService) {
+    function DashboardController($scope, $http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
 
         clearMeterstandData();
         clearKlimaatData();
@@ -47,12 +47,11 @@
         });
 
         function getGasVerbruikVandaag() {
-            var url = 'rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999}));
+            var url = 'rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
             $log.info('Getting data from URL: ' + url);
 
             $http({
-                method: 'GET',
-                url: url
+                method: 'GET', url: url
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
                     $scope.gasVerbruikVandaag = response.data[0].verbruik

@@ -45,14 +45,15 @@
                     return '';
                 }
 
-                function multipleToDisplay(date, formatter) {
+                function multipleToDisplay(dates, formatter) {
                     var result = '';
                     var formatter = d3.time.format(scope.getD3DateFormat());
-                    for (var i = 0; i < date.length; i++) {
+
+                    for (var i = 0; i < dates.length; i++) {
                         if (result != '') {
                             result = result + scope.getMultidateSeparator();
                         }
-                        result = result + formatter(date[i]);
+                        result = result + formatter(dates[i]);
                     }
                     return result;
                 }

@@ -101,7 +101,7 @@
         };
 
         function getTicksForEveryHourInDay() {
-            var from = getModelDate();
+            var from = getFixedDate();
             var to = getTo(from);
 
             var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
@@ -121,10 +121,7 @@
             var nrofdata = 0;
 
             for (var i = 0; i < graphData.length; i++) {
-
                 Object.keys(graphData[i]).forEach(function(key, index) {
-                    // key: the name of the object key
-                    // index: the ordinal position of the key within the object
                     if (key != 'datumtijd') {
                         var value = graphData[i][key];
 
@@ -160,7 +157,7 @@
             }
         }
 
-        function getModelDate() {
+        function getFixedDate() {
             return Date.parse('01-01-2016');
         }
 
@@ -170,15 +167,38 @@
 
             for (var i = 0; i < data.length; i++) {
                 var row = {};
-                row["Tijdstip"] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
-                row[$scope.soort] = formatWithUnitLabel(data[i][$scope.soort]);
+                row[""] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
+
+                Object.keys(data[i]).forEach(function(key, index) {
+                    if (key != 'datumtijd') {
+                        var value = data[i][key];
+                        row[key] = formatWithUnitLabel(value);
+                    }
+                });
                 rows.push(row);
             }
             if (rows.length > 0) {
                 cols = Object.keys(rows[0]);
             }
+
+            cols.sort(sortTableColumns);
+
             $scope.rows = rows;
             $scope.cols = cols;
+        }
+
+        function sortTableColumns(a, b) {
+            var result = 0;
+            if (a != b) {
+                if (a == '') {
+                    result = -1;
+                } else {
+                    var dateA = d3.time.format('%d-%m-%Y').parse(a);
+                    var dateB = d3.time.format('%d-%m-%Y').parse(b);
+                    result = Date.compare(dateA, dateB);
+                }
+            }
+            return result;
         }
 
         function formatWithUnitLabel(value) {
@@ -196,31 +216,6 @@
             return result;
         }
 
-        function getStatisticsGraphLines(statistics) {
-            var lines = [];
-            if (statistics.avg) {
-                lines.push({
-                    value: statistics.avg,
-                    text: 'Gemiddelde: ' + formatWithUnitLabel(statistics.avg),
-                    class: 'avg', position: 'middle'
-                });
-            }
-            if (statistics.min) {
-                lines.push({
-                    value: statistics.min,
-                    text: 'Laagste: ' + formatWithUnitLabel(statistics.min),
-                    class: 'min', position: 'start'
-                });
-            }
-            if (statistics.max) {
-                lines.push({
-                    value: statistics.max,
-                    text: 'Hoogste: ' + formatWithUnitLabel(statistics.max), class: 'max'
-                });
-            }
-            return lines;
-        }
-
         function getGraphConfig(graphData) {
             var graphConfig = {};
             var tickValues = getTicksForEveryHourInDay();
@@ -234,14 +229,15 @@
 
             graphConfig.data = {type: 'spline', json: graphData, keys: {x: "datumtijd", value: value}};
 
+            graphConfig.line = {connectNull: true};
+
             graphConfig.axis = {};
             graphConfig.axis.x = {
                 type: "timeseries",
                 tick: {format: "%H:%M", values: tickValues, rotate: -30},
-                min: getModelDate(), max: getTo(getModelDate()),
+                min: getFixedDate(), max: getTo(getFixedDate()),
                 padding: {left: 0, right: 10}
             };
-
             graphConfig.axis.y = {tick: {format: formatWithUnitLabel }};
 
             graphConfig.legend = {show: false};
@@ -260,7 +256,7 @@
             };
 
             var statistics = getStatistics(graphData);
-            graphConfig.grid.y.lines = getStatisticsGraphLines(statistics);
+            graphConfig.grid.y.lines = KlimaatSensorGrafiekService.getStatisticsGraphLines(statistics, formatWithUnitLabel);
 
             return graphConfig;
         }
@@ -282,7 +278,7 @@
         }
 
         function getTo(from) {
-            return from.clone().add({ days: 1 });
+            return from.clone().add({days: 1});
         }
 
         function transformServerdata(serverresponses) {
@@ -297,7 +293,7 @@
                     var datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
                     var datumtijdValue = serverresponse.data[j][$scope.soort];
 
-                    var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getModelDate().getDate(), month: getModelDate().getMonth(), year: getModelDate().getFullYear()}));
+                    var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getFixedDate().getDate(), month: getFixedDate().getMonth(), year: getFixedDate().getFullYear()}));
                     row[datumtijdKey] = datumtijdValue;
                 }
             }

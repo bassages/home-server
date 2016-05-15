@@ -131,6 +131,10 @@
             return {avg: avg, min: min, max: max};
         }
 
+        function formatWithUnitLabel(value) {
+            return value == null ? null : Math.round(value) + ' watt';
+        }
+
         function getGraphPadding() {
             return {top: 10, bottom: 25, left: 55, right: 20};
         }
@@ -168,17 +172,7 @@
 
             var statistics = getStatistics(graphData);
 
-            var lines = [];
-            if (statistics.avg) {
-                lines.push({value: statistics.avg, text: 'Gemiddelde: ' + Math.round(statistics.avg) + ' watt', class: 'avg', position: 'middle'});
-            }
-            if (statistics.min) {
-                lines.push({value: statistics.min, text: 'Laagste: ' + statistics.min + ' watt', class: 'min', position: 'start'});
-            }
-            if (statistics.max) {
-                lines.push({value: statistics.max, text: 'Hoogste: ' + statistics.max + ' watt', class: 'max'});
-            }
-            graphConfig.grid.y.lines = lines;
+            graphConfig.grid.y.lines = EnergieHistorieService.getStatisticsGraphLines(statistics, formatWithUnitLabel);
 
             addSubPeriodEnd(graphData);
 

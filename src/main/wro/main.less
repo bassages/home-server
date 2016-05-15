@@ -163,19 +163,11 @@ body {
   stroke-width: 1.2px;
   stroke-dasharray: 10,0;
 }
-.c3-ygrid-line.avg text {
-  fill: black;
-  font-weight: bold;
-}
 
 .c3-ygrid-line.min line {
   stroke: #5cb85c;
   stroke-width: 1.2px;
   stroke-dasharray: 10,0;
-}
-.c3-ygrid-line.min text {
-  fill: black;
-  font-weight: bold;
 }
 
 .c3-ygrid-line.max line {
@@ -183,8 +175,10 @@ body {
   stroke-width: 1.2px;
   stroke-dasharray: 10,0;
 }
-.c3-ygrid-line.max text {
-  fill: black;
+
+.c3-ygrid-line.avg text, .c3-ygrid-line.min text, .c3-ygrid-line.max text {
+  fill: black !important;
+  font-size: 12px;
   font-weight: bold;
 }
 
