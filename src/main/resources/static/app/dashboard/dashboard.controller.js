@@ -47,9 +47,12 @@
         });
 
         function getGasVerbruikVandaag() {
+            var url = 'rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999}));
+            $log.info('Getting data from URL: ' + url);
+
             $http({
                 method: 'GET',
-                url: 'rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().setHours(23, 59, 59, 999))
+                url: url
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
                     $scope.gasVerbruikVandaag = response.data[0].verbruik
