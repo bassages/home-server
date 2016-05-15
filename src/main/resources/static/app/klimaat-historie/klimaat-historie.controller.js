@@ -3,11 +3,11 @@
 
     angular
         .module('app')
-        .controller('KlimaatSensorGrafiekController', KlimaatSensorGrafiekController);
+        .controller('KlimaatHistorieController', KlimaatHistorieController);
 
-    KlimaatSensorGrafiekController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', 'LoadingIndicatorService', 'LocalizationService', 'KlimaatSensorGrafiekService', 'ErrorMessageService'];
+    KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', 'LoadingIndicatorService', 'LocalizationService', 'KlimaatHistorieService', 'ErrorMessageService'];
 
-    function KlimaatSensorGrafiekController($scope, $http, $q, $routeParams, $log, LoadingIndicatorService, LocalizationService, KlimaatSensorGrafiekService, ErrorMessageService) {
+    function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, LoadingIndicatorService, LocalizationService, KlimaatSensorGrafiekService, ErrorMessageService) {
         activate();
 
         function activate() {

@@ -13,7 +13,7 @@
         this.startLoading = function() {
             loadingModalInstance = $uibModal.open({
                 animation: false,
-                templateUrl: 'loading-dialog.html',
+                templateUrl: 'app/loading-indicator/loading-indicator-dialog.html',
                 size: 'sm',
                 backdrop: 'static',
                 controller: function ($scope) {}

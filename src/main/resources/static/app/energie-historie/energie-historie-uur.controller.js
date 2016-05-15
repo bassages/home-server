@@ -3,28 +3,28 @@
 
     angular
         .module('app')
-        .controller('UurEnergieGrafiekController', UurEnergieGrafiekController);
+        .controller('UurEnergieHistorieController', UurEnergieHistorieController);
 
-    UurEnergieGrafiekController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieGrafiekService', 'ErrorMessageService'];
+    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function UurEnergieGrafiekController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieGrafiekService, ErrorMessageService) {
+    function UurEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
         activate();
 
         function activate() {
             $scope.selection = Date.today();
             $scope.period = 'uur';
             $scope.soort = $routeParams.soort;
-            $scope.energiesoorten = EnergieGrafiekService.getEnergiesoorten($scope.soort);
-            $scope.supportedsoorten = EnergieGrafiekService.getSupportedSoorten();
+            $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
+            $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
 
-            EnergieGrafiekService.manageGraphSize($scope);
+            EnergieHistorieService.manageGraphSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
         }
 
         $scope.toggleEnergiesoort = function (energiesoortToToggle) {
-            if (EnergieGrafiekService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
+            if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 getDataFromServer();
             }
         };
@@ -95,7 +95,7 @@
             graphConfig.data.json = data;
             graphConfig.data.type = 'bar';
             graphConfig.data.order = null;
-            graphConfig.data.colors = EnergieGrafiekService.getDataColors();
+            graphConfig.data.colors = EnergieHistorieService.getDataColors();
 
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
@@ -112,7 +112,7 @@
                 }
             };
 
-            var yAxisFormat = function (value) { return EnergieGrafiekService.formatWithoutUnitLabel($scope.soort, value); };
+            var yAxisFormat = function (value) { return EnergieHistorieService.formatWithoutUnitLabel($scope.soort, value); };
             graphConfig.axis.y = {tick: {format: yAxisFormat }};
             graphConfig.legend = {show: false};
             graphConfig.bar = {width: {ratio: 0.8}};
@@ -120,7 +120,7 @@
 
             graphConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-                    return EnergieGrafiekService.getTooltipContent(this, d, defaultTitleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
+                    return EnergieHistorieService.getTooltipContent(this, d, defaultTitleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
 
@@ -142,7 +142,7 @@
 
         function loadDataIntoTable(data) {
             var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur) };
-            var table = EnergieGrafiekService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -150,11 +150,11 @@
         function loadDataIntoGraph(data) {
             var graphConfig = data.length == 0 ? getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
-            EnergieGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function transformServerdata(serverresponses) {
-            return EnergieGrafiekService.transformServerdata(serverresponses, 'uur', $scope.energiesoorten, $scope.supportedsoorten);
+            return EnergieHistorieService.transformServerdata(serverresponses, 'uur', $scope.energiesoorten, $scope.supportedsoorten);
         }
 
         function getDataFromServer() {

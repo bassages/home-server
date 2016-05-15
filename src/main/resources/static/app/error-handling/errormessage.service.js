@@ -14,7 +14,7 @@
 
             $uibModal.open({
                 animation: false,
-                templateUrl: 'error-dialog.html',
+                templateUrl: 'app/error-handling/errormessage-dialog.html',
                 backdrop: 'static',
                 controller: function($scope, message) {
                     $scope.message = message;

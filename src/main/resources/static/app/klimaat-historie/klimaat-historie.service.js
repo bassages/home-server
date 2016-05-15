@@ -3,9 +3,9 @@
 
     angular
         .module('app')
-        .service('KlimaatSensorGrafiekService', KlimaatSensorGrafiekService);
+        .service('KlimaatHistorieService', KlimaatHistorieService);
 
-    function KlimaatSensorGrafiekService() {
+    function KlimaatHistorieService() {
         var MINIMUM_HEIGHT = 220;
         var MAXIMUM_HEIGHT = 475;
 

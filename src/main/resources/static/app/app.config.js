@@ -16,19 +16,19 @@
 
             .when('/grafiek/klimaat/:soort', {
                 templateUrl: 'app/klimaat-historie/klimaat-historie.html',
-                controller: 'KlimaatSensorGrafiekController'
+                controller: 'KlimaatHistorieController'
             })
             .when('/grafiek/:soort/uur', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
-                controller: 'UurEnergieGrafiekController'
+                controller: 'UurEnergieHistorieController'
             })
             .when('/grafiek/:soort/dag', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
-                controller: 'DagEnergieGrafiekController'
+                controller: 'DagEnergieHistorieController'
             })
             .when('/grafiek/:soort/maand', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
-                controller: 'MaandEnergieGrafiekController'
+                controller: 'MaandEnergieHistorieController'
             })
 
             .when('/meterstanden', {

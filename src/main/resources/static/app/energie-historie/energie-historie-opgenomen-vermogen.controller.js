@@ -5,9 +5,9 @@
         .module('app')
         .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieGrafiekService', 'ErrorMessageService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, EnergieGrafiekService, ErrorMessageService) {
+    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
         var SIX_MINUTES_IN_MILLISECONDS = 6 * 60 * 1000;
 
         activate();
@@ -19,7 +19,7 @@
             $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
             $scope.soort = 'stroom';
 
-            EnergieGrafiekService.manageGraphSize($scope);
+            EnergieHistorieService.manageGraphSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
@@ -195,7 +195,7 @@
                 graphConfig = getGraphConfig(graphData);
             }
             $scope.chart = c3.generate(graphConfig);
-            EnergieGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getTo() {
@@ -224,4 +224,3 @@
         }
     }
 })();
-
