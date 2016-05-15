@@ -24,12 +24,12 @@
             return '%a %d-%m-%Y';
         };
 
-        $scope.getMultidateSeparator = function() {
-            return ', ';
-        };
-
         $scope.isMultidateAllowed = function() {
             return true;
+        };
+
+        $scope.getMultidateSeparator = function() {
+            return ', ';
         };
 
         var datepicker = $('.datepicker');
@@ -49,8 +49,6 @@
 
         datepicker.on('changeDate', function(e) {
             if (!isSelectionEqual(e.dates, $scope.selection)) {
-                $log.info("changeDate event from datepicker. Selected dates: " + e.dates);
-
                 $scope.$apply(function() {
                     $scope.selection = e.dates;
                     getDataFromServer();
@@ -58,8 +56,6 @@
             }
         });
         datepicker.on('clearDate', function(e) {
-            $log.info("clearDate event from datepicker. Selected dates: " + e.dates);
-
             $scope.$apply(function() {
                 $scope.selection = [];
                 getDataFromServer();
@@ -105,7 +101,7 @@
         };
 
         function getTicksForEveryHourInPeriod(selectedDates) {
-            var from = Date.parse('01-01-2016');
+            var from = getModelDate();
             var to = getTo(from);
 
             var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
@@ -296,7 +292,7 @@
                     var datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
                     var datumtijdValue = serverresponse.data[j][$scope.soort];
 
-                    var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: 1, month: 0, year: 2016, second: 0, millisecond: 0}));
+                    var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getModelDate().getDate(), month: getModelDate().getMonth(), year: getModelDate().getFullYear()}));
                     row[datumtijdKey] = datumtijdValue;
                 }
             }

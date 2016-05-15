@@ -10,43 +10,43 @@
     function Config($routeProvider) {
         $routeProvider
             .when('/grafiek/stroom/opgenomen-vermogen', {
-                templateUrl: 'energie-grafiek.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
 
             .when('/grafiek/klimaat/:soort', {
-                templateUrl: 'klimaat-sensor-historie.html',
+                templateUrl: 'app/klimaat-historie/klimaat-historie.html',
                 controller: 'KlimaatSensorGrafiekController'
             })
             .when('/grafiek/:soort/uur', {
-                templateUrl: 'energie-grafiek.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieGrafiekController'
             })
             .when('/grafiek/:soort/dag', {
-                templateUrl: 'energie-grafiek.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'DagEnergieGrafiekController'
             })
             .when('/grafiek/:soort/maand', {
-                templateUrl: 'energie-grafiek.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieGrafiekController'
             })
 
             .when('/meterstanden', {
-                templateUrl: 'meterstanden.html',
+                templateUrl: 'app/meterstanden/meterstanden.html',
                 controller: 'MeterstandenController'
             })
             .when('/kosten', {
-                templateUrl: 'kosten.html',
+                templateUrl: 'app/beheer/kosten.html',
                 controller: 'KostenController'
             })
             .when('/mindergasnl', {
-                templateUrl: 'mindergasnl.html',
+                templateUrl: 'app/beheer/mindergasnl.html',
                 controller: 'MindergasnlController'
             })
             .when('/', {
-                templateUrl: 'dashboard.html',
+                templateUrl: 'app/dashboard/dashboard.html',
                 controller: 'DashboardController'
             })
-            .otherwise({redirectTo: 'dashboard.html'});
+            .otherwise({redirectTo: 'app/dashboard/dashboard.html'});
     }
 })();
