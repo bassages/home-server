@@ -3,7 +3,6 @@ package nl.wiegman.home;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -16,7 +15,7 @@ import java.util.concurrent.Executor;
 public class HomeServerApplication {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(HomeServerApplication.class, args);
+        SpringApplication.run(HomeServerApplication.class, args);
     }
 
     @Bean

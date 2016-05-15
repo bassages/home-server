@@ -1,15 +1,12 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
-import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.OpgenomenVermogen;
 import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.KlimaatRepo;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,7 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Receives updates from klimaat sensors, stores the values and provides them.
@@ -61,7 +60,7 @@ public class KlimaatService {
         if (averageTemperature != null || averageHumidity != null) {
             Klimaat klimaatToSave = new Klimaat();
             klimaatToSave.setDatumtijd(now.getTime());
-            klimaatToSave.setTemperatuur(averageTemperature.setScale(2, RoundingMode.CEILING));
+            klimaatToSave.setTemperatuur(averageTemperature);
             klimaatToSave.setLuchtvochtigheid(averageHumidity);
 
             Klimaat savedKlimaat = klimaatRepository.save(klimaatToSave);

@@ -56,7 +56,7 @@ public class VerbruikServiceCachedTest {
         kosten2.setTotEnMet(100l);
         kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
 
-        when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(new Kosten[]{kosten1, kosten2}));
+        when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(kosten1, kosten2));
 
         when(meterstandRepositoryMock.getStroomVerbruikInPeriod(10, 14)).thenReturn(new BigDecimal(1));
         when(meterstandRepositoryMock.getStroomVerbruikInPeriod(15, 20)).thenReturn(new BigDecimal(2));

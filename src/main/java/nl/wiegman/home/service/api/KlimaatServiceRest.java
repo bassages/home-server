@@ -1,7 +1,6 @@
 package nl.wiegman.home.service.api;
 
 import nl.wiegman.home.model.Klimaat;
-import nl.wiegman.home.model.OpgenomenVermogen;
 import nl.wiegman.home.service.KlimaatService;
 import org.springframework.stereotype.Component;
 
