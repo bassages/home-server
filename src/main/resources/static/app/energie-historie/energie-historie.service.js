@@ -190,7 +190,7 @@
                 var bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
 
                 tooltipContents += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
-                tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + "; border-radius: 5px;'></span>" + formattedName + "</td>";
+                tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + ";'></span>" + formattedName + "</td>";
                 tooltipContents += "<td class='value'>" + formattedValue + "</td>";
                 tooltipContents += "</tr>";
 
