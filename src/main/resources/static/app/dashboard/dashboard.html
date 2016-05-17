@@ -2,15 +2,6 @@
 
 <div class="row">
     <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <div ng-show="showNoConnectionAlert" class="alert alert-danger" style="margin-bottom: 10px">
-            <i class="fa fa-exclamation-circle"></i> Vanwege technische problemen kunnen de gegevens momenteel niet getoond worden
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-2"></div>
 
     <!-- stroom -->
     <div class="col-md-4">
@@ -22,16 +13,16 @@
 
                 <div>
                     <div id="ledbar-stroom" class="ledbar pull-left">
-                        <div ng-class="stroomLed9 ? 'led9' : 'leduit'"></div>
-                        <div ng-class="stroomLed8 ? 'led8' : 'leduit'"></div>
-                        <div ng-class="stroomLed7 ? 'led7' : 'leduit'"></div>
-                        <div ng-class="stroomLed6 ? 'led6' : 'leduit'"></div>
-                        <div ng-class="stroomLed5 ? 'led5' : 'leduit'"></div>
-                        <div ng-class="stroomLed4 ? 'led4' : 'leduit'"></div>
-                        <div ng-class="stroomLed3 ? 'led3' : 'leduit'"></div>
-                        <div ng-class="stroomLed2 ? 'led2' : 'leduit'"></div>
-                        <div ng-class="stroomLed1 ? 'led1' : 'leduit'"></div>
-                        <div ng-class="stroomLed0 ? 'led0' : 'leduit'"></div>
+                        <div ng-class="opgenomenVermogenLed9 ? 'opgenomen-vermogen-led-9' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed8 ? 'opgenomen-vermogen-led-8' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed7 ? 'opgenomen-vermogen-led-7' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed6 ? 'opgenomen-vermogen-led-6' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed5 ? 'opgenomen-vermogen-led-5' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed4 ? 'opgenomen-vermogen-led-4' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed3 ? 'opgenomen-vermogen-led-3' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed2 ? 'opgenomen-vermogen-led-2' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed1 ? 'opgenomen-vermogen-led-1' : 'led-uit'"></div>
+                        <div ng-class="opgenomenVermogenLed0 ? 'opgenomen-vermogen-led-0' : 'led-uit'"></div>
                     </div>
 
                     <p>Op dit moment</p>
@@ -58,16 +49,16 @@
             <div class="panel-body">
 
                 <div class="ledbar pull-left">
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
-                    <div class="led leduit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
                 </div>
 
                 <p>Vandaag</p>
@@ -93,9 +84,23 @@
     <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h1 class="panel-title"><i class="wi wi-thermometer"></i> Temperatuur woonkamer</h1>
+                <h1 class="panel-title"><i class="wi wi-thermometer"></i> Temperatuur</h1>
             </div>
             <div class="panel-body" ng-cloak>
+
+                <div class="ledbar pull-left">
+                    <div ng-class="temperatuurLed9 ? 'temperatuur-led-9' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed8 ? 'temperatuur-led-8' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed7 ? 'temperatuur-led-7' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed6 ? 'temperatuur-led-6' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed5 ? 'temperatuur-led-5' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed4 ? 'temperatuur-led-4' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed3 ? 'temperatuur-led-3' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed2 ? 'temperatuur-led-2' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed1 ? 'temperatuur-led-1' : 'led-uit'"></div>
+                    <div ng-class="temperatuurLed0 ? 'temperatuur-led-0' : 'led-uit'"></div>
+                </div>
+
                 <p>Op dit moment</p>
                 <div class="p-div">
                     <span odometer="huidigKlimaat.temperatuur" nrofdecimals="2"></span><span>&#8451;</span>
@@ -108,9 +113,23 @@
     <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h1 class="panel-title"><i class="wi wi-humidity"></i> Luchtvochtigheid woonkamer</h1>
+                <h1 class="panel-title"><i class="wi wi-humidity"></i> Luchtvochtigheid</h1>
             </div>
             <div class="panel-body" ng-cloak>
+
+                <div class="ledbar pull-left">
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                    <div class="led led-uit"></div>
+                </div>
+
                 <p>Op dit moment</p>
                 <div class="p-div">
                     <span odometer="huidigKlimaat.luchtvochtigheid" nrofdecimals="1"></span><span>%</span>
