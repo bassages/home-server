@@ -13,16 +13,7 @@
 
                 <div>
                     <div id="ledbar-stroom" class="ledbar pull-left">
-                        <div ng-class="opgenomenVermogenLed9 ? 'opgenomen-vermogen-led-9' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed8 ? 'opgenomen-vermogen-led-8' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed7 ? 'opgenomen-vermogen-led-7' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed6 ? 'opgenomen-vermogen-led-6' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed5 ? 'opgenomen-vermogen-led-5' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed4 ? 'opgenomen-vermogen-led-4' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed3 ? 'opgenomen-vermogen-led-3' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed2 ? 'opgenomen-vermogen-led-2' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed1 ? 'opgenomen-vermogen-led-1' : 'led-uit'"></div>
-                        <div ng-class="opgenomenVermogenLed0 ? 'opgenomen-vermogen-led-0' : 'led-uit'"></div>
+                        <div ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="opgenomenVermogenLed{{n}} ? 'opgenomen-vermogen-led-{{n}}' : 'led-uit'"></div>
                     </div>
 
                     <p>Op dit moment</p>
@@ -49,16 +40,7 @@
             <div class="panel-body">
 
                 <div class="ledbar pull-left">
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
+                    <div ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="'led-uit'"></div>
                 </div>
 
                 <p>Vandaag</p>
@@ -89,16 +71,7 @@
             <div class="panel-body" ng-cloak>
 
                 <div class="ledbar pull-left">
-                    <div ng-class="temperatuurLed9 ? 'temperatuur-led-9' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed8 ? 'temperatuur-led-8' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed7 ? 'temperatuur-led-7' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed6 ? 'temperatuur-led-6' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed5 ? 'temperatuur-led-5' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed4 ? 'temperatuur-led-4' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed3 ? 'temperatuur-led-3' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed2 ? 'temperatuur-led-2' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed1 ? 'temperatuur-led-1' : 'led-uit'"></div>
-                    <div ng-class="temperatuurLed0 ? 'temperatuur-led-0' : 'led-uit'"></div>
+                    <div ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="temperatuurLed{{n}} ? 'temperatuur-led-{{n}}' : 'led-uit'"></div>
                 </div>
 
                 <p>Op dit moment</p>
@@ -118,16 +91,7 @@
             <div class="panel-body" ng-cloak>
 
                 <div class="ledbar pull-left">
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
-                    <div class="led led-uit"></div>
+                    <div ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="luchtvochtigheidLed{{n}} ? 'luchtvochtigheid-led-{{n}}' : 'led-uit'"></div>
                 </div>
 
                 <p>Op dit moment</p>

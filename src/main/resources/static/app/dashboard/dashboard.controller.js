@@ -14,9 +14,13 @@
     }
 
     function DashboardController($scope, $http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
-
         clearMeterstandData();
         clearKlimaatData();
+
+        getMeestRecenteMeterstand();
+        getGasVerbruikVandaag();
+        getOudsteMeterstandVanVandaag();
+        getMeestRecenteKlimaat();
 
         function clearMeterstandData() {
             turnOffAllStroomLeds($scope);
@@ -32,11 +36,6 @@
         function clearKlimaatData() {
             $scope.huidigKlimaat = null;
         }
-
-        getMeestRecenteMeterstand();
-        getGasVerbruikVandaag();
-        getOudsteMeterstandVanVandaag();
-        getMeestRecenteKlimaat();
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
@@ -95,6 +94,7 @@
             if (data != null) {
                 $scope.huidigKlimaat = data;
                 setTemperatuurLeds(data.temperatuur);
+                setLuchtVochtigheidLeds(data.luchtvochtigheid);
             }
         }
 
@@ -105,7 +105,6 @@
 
             for (var i = 1; i < 9; i++) {
                 $scope['opgenomenVermogenLed' + i] = stroomOpgenomenVermogenInWatt >= (i * step);
-
             }
         }
 
@@ -116,10 +115,28 @@
             $scope.temperatuurLed6 = temperatuur >= 22; //&& temperatuur < 23;
             $scope.temperatuurLed5 = temperatuur >= 21; //&& temperatuur < 22;
             $scope.temperatuurLed4 = temperatuur >= 20; //&& temperatuur < 21;
-            $scope.temperatuurLed3 = temperatuur >= 19; //&& temperatuur < 20;
-            $scope.temperatuurLed2 = temperatuur >= 18; //&& temperatuur < 19;
-            $scope.temperatuurLed1 = temperatuur >= 17; //&& temperatuur < 18;
+            $scope.temperatuurLed3 = temperatuur >= 19;
+            $scope.temperatuurLed2 = temperatuur >= 18;
+            $scope.temperatuurLed1 = temperatuur >= 17;
             $scope.temperatuurLed0 = true;
+        }
+
+        function setLuchtVochtigheidLeds(luchtvochtigheid) {
+            for (var i = 0; i <= 9; i++) {
+                $scope['luchtvochtigheidLed' + i] = luchtvochtigheid >= (i * 10);
+            }
+            //
+            //
+            //$scope.luchtvochtigheidLed9 = luchtvochtigheid >= 90;
+            //$scope.luchtvochtigheidLed8 = luchtvochtigheid >= 80;
+            //$scope.luchtvochtigheidLed7 = luchtvochtigheid >= 70;
+            //$scope.luchtvochtigheidLed6 = luchtvochtigheid >= 60;
+            //$scope.luchtvochtigheidLed5 = luchtvochtigheid >= 50;
+            //$scope.luchtvochtigheidLed4 = luchtvochtigheid >= 40;
+            //$scope.luchtvochtigheidLed3 = luchtvochtigheid >= 30;
+            //$scope.luchtvochtigheidLed2 = luchtvochtigheid >= 20;
+            //$scope.luchtvochtigheidLed1 = luchtvochtigheid >= 10;
+            //$scope.luchtvochtigheidLed0 = luchtvochtigheid >= 0;
         }
 
         function updateMeterstand(data) {
