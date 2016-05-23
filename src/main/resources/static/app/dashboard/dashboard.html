@@ -18,14 +18,14 @@
 
                     <p>Op dit moment</p>
                     <div class="p-div">
-                        <span odometer="huidigOpgenomenVermogen"></span><span> Watt</span>
+                        <span odometer="huidigeMeterstanden.stroomOpgenomenVermogenInWatt"></span><span> Watt</span>
                     </div>
                 </div>
 
                 <hr/>
 
                 <div class="p-div-small">
-                    Meterstand = <span odometer="t2" nrofdecimals="3"></span>
+                    Meterstand = <span odometer="huidigeMeterstanden.stroomTarief1" nrofdecimals="3"></span>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
                 <hr/>
 
                 <div class="p-div-small">
-                    Meterstand = <span odometer="meterstandGas" nrofdecimals="3"></span>
+                    Meterstand = <span odometer="huidigeMeterstanden.gas" nrofdecimals="3"></span>
                 </div>
             </div>
 
@@ -76,7 +76,7 @@
 
                 <p>Op dit moment</p>
                 <div class="p-div">
-                    <span odometer="huidigKlimaat.temperatuur" nrofdecimals="2"></span><span>&#8451;</span>
+                    {{huidigKlimaat.temperatuur | number:2}}&#8451;
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
 
                 <p>Op dit moment</p>
                 <div class="p-div">
-                    <span odometer="huidigKlimaat.luchtvochtigheid" nrofdecimals="1"></span><span>%</span>
+                    {{huidigKlimaat.luchtvochtigheid | number:1}}%
                 </div>
             </div>
         </div>

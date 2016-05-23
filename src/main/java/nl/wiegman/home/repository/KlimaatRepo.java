@@ -19,5 +19,5 @@ public interface KlimaatRepo extends JpaRepository<Klimaat, Long> {
     List<Klimaat> getKlimaat(@Param("van") long van, @Param("tot") long tot);
 
     @Query(value = MOST_RECENT)
-    Klimaat getMeestRecente();
+    Klimaat getMostRecent();
 }

@@ -7,35 +7,11 @@
 
     DashboardController.$inject = ['$scope', '$http', '$log', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
 
-    function turnOffAllStroomLeds($scope) {
-        for (var i = 0; i < 10; i++) {
-            $scope['opgenomenVermogenLed' + i] = false;
-        }
-    }
-
     function DashboardController($scope, $http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
-        clearMeterstandData();
-        clearKlimaatData();
-
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
         getOudsteMeterstandVanVandaag();
         getMeestRecenteKlimaat();
-
-        function clearMeterstandData() {
-            turnOffAllStroomLeds($scope);
-            $scope.lastupdate = null;
-            $scope.huidigOpgenomenVermogen = null;
-            $scope.gasVerbruikVandaag = null;
-            $scope.oudsteVanVandaag = null;
-            $scope.t1 = null;
-            $scope.t2 = null;
-            $scope.meterstandGas = null;
-        }
-
-        function clearKlimaatData() {
-            $scope.huidigKlimaat = null;
-        }
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
@@ -99,62 +75,40 @@
         }
 
         function setOpgenomenVermogenLeds(stroomOpgenomenVermogenInWatt) {
-            var step = 150;
-
             $scope.opgenomenVermogenLed0 = stroomOpgenomenVermogenInWatt > 0;
 
             for (var i = 1; i < 9; i++) {
-                $scope['opgenomenVermogenLed' + i] = stroomOpgenomenVermogenInWatt >= (i * step);
+                $scope['opgenomenVermogenLed' + i] = stroomOpgenomenVermogenInWatt >= (i * 150);
             }
         }
 
         function setTemperatuurLeds(temperatuur) {
-            $scope.temperatuurLed9 = temperatuur >= 25; //&& temperatuur < 26;
-            $scope.temperatuurLed8 = temperatuur >= 24; //&& temperatuur < 25;
-            $scope.temperatuurLed7 = temperatuur >= 23; //&& temperatuur < 24;
-            $scope.temperatuurLed6 = temperatuur >= 22; //&& temperatuur < 23;
-            $scope.temperatuurLed5 = temperatuur >= 21; //&& temperatuur < 22;
-            $scope.temperatuurLed4 = temperatuur >= 20; //&& temperatuur < 21;
-            $scope.temperatuurLed3 = temperatuur >= 19;
-            $scope.temperatuurLed2 = temperatuur >= 18;
-            $scope.temperatuurLed1 = temperatuur >= 17;
             $scope.temperatuurLed0 = true;
+
+            for (var i = 1; i < 9; i++) {
+                var temperatuurForLed = i + 16;
+                $scope['temperatuurLed' + i] = temperatuur >= temperatuurForLed;
+            }
         }
 
         function setLuchtVochtigheidLeds(luchtvochtigheid) {
             for (var i = 0; i <= 9; i++) {
                 $scope['luchtvochtigheidLed' + i] = luchtvochtigheid >= (i * 10);
             }
-            //
-            //
-            //$scope.luchtvochtigheidLed9 = luchtvochtigheid >= 90;
-            //$scope.luchtvochtigheidLed8 = luchtvochtigheid >= 80;
-            //$scope.luchtvochtigheidLed7 = luchtvochtigheid >= 70;
-            //$scope.luchtvochtigheidLed6 = luchtvochtigheid >= 60;
-            //$scope.luchtvochtigheidLed5 = luchtvochtigheid >= 50;
-            //$scope.luchtvochtigheidLed4 = luchtvochtigheid >= 40;
-            //$scope.luchtvochtigheidLed3 = luchtvochtigheid >= 30;
-            //$scope.luchtvochtigheidLed2 = luchtvochtigheid >= 20;
-            //$scope.luchtvochtigheidLed1 = luchtvochtigheid >= 10;
-            //$scope.luchtvochtigheidLed0 = luchtvochtigheid >= 0;
         }
 
-        function updateMeterstand(data) {
-            if (data != null) {
+        function updateMeterstand(meterstanden) {
+            if (meterstanden != null) {
                 if ($scope.gasVerbruikVandaag == null) {
                     getGasVerbruikVandaag();
                 }
 
-                $scope.lastupdate = new Date(data.datumtijd);
-                $scope.t1 = data.stroomTarief1;
-                $scope.t2 = data.stroomTarief2;
-                $scope.meterstandGas = data.gas;
-                $scope.huidigOpgenomenVermogen = data.stroomOpgenomenVermogenInWatt;
+                $scope.huidigeMeterstanden = meterstanden;
 
-                setOpgenomenVermogenLeds(data.stroomOpgenomenVermogenInWatt);
+                setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
                 if ($scope.oudsteVanVandaag != null) {
-                    $scope.gasVerbruikVandaag = data.gas - $scope.oudsteVanVandaag.gas;
+                    $scope.gasVerbruikVandaag = meterstanden.gas - $scope.oudsteVanVandaag.gas;
                 }
             }
         }

@@ -26,8 +26,8 @@ public class KlimaatServiceRest {
 
     @GET
     @Path("meest-recente")
-    public Klimaat getMeestRecente() {
-        return klimaatService.getMeestRecente();
+    public Klimaat getMostRecent() {
+        return klimaatService.getMostRecent();
     }
 
     @GET

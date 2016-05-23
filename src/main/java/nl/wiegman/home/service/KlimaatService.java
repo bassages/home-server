@@ -86,9 +86,9 @@ public class KlimaatService {
         return klimaatRepository.getKlimaat(from, to);
     }
 
-    public Klimaat getMeestRecente() {
-        LOG.info("getMeestRecente()");
-        return klimaatRepository.getMeestRecente();
+    public Klimaat getMostRecent() {
+        LOG.info("getMostRecent()");
+        return klimaatRepository.getMostRecent();
     }
 
     public void add(Klimaat klimaat) {

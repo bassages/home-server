@@ -48,7 +48,7 @@ public class MeterstandService {
     }
 
     public Meterstand getMeestRecente() {
-        LOG.info("getMeestRecente()");
+        LOG.info("getMostRecent()");
         return meterstandRepository.getMeestRecente();
     }
 
