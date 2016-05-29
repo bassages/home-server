@@ -5,7 +5,8 @@
         'ngRoute',
         'ngResource',
         'ngAnimate',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'dialogs.main'
     ]);
 
 })();
