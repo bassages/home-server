@@ -31,10 +31,10 @@ public class KlimaatServiceRest {
     }
 
     @GET
-    @Path("history/{from}/{to}")
+    @Path("get/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Klimaat> getOpgenomenVermogenHistory(@PathParam("from") long from, @PathParam("to") long to) {
-        return klimaatService.getHistory(from, to);
+    public List<Klimaat> get(@PathParam("from") long from, @PathParam("to") long to) {
+        return klimaatService.getInPeriod(from, to);
     }
 
 }

@@ -9,4 +9,5 @@
     <cache name="stroomVerbruikInPeriode" />
     <cache name="opgenomenVermogenHistory" />
     <cache name="meestRecenteMeterstandOpDag" />
+    <cache name="klimaatInPeriod" />
 </ehcache>

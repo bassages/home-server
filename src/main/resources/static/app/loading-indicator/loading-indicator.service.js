@@ -34,6 +34,10 @@
         this.stopLoading = function() {
             loadingModalInstance.close();
             loadingModalInstance = null;
+
+            // Workaround for issue where somtimes the dialog is nog closed
+            angular.element(document).find('.modal-backdrop').remove();
+            angular.element(document).find('.modal').remove();
         };
     }
 })();

@@ -29,6 +29,9 @@ public class KlimaatService {
     private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
 
     @Inject
+    private KlimaatServiceCached klimaatServiceCached;
+
+    @Inject
     private KlimaatRepo klimaatRepository;
 
     @Autowired
@@ -82,8 +85,13 @@ public class KlimaatService {
         }
     }
 
-    public List<Klimaat> getHistory(long from, long to) {
-        return klimaatRepository.getKlimaat(from, to);
+    public List<Klimaat> getInPeriod(long from, long to) {
+        if (to < new Date().getTime()) {
+            return klimaatServiceCached.getInPeriod(from, to);
+        } else {
+            return klimaatRepository.getInPeriod(from, to);
+        }
+
     }
 
     public Klimaat getMostRecent() {

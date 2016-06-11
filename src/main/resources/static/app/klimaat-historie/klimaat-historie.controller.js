@@ -321,29 +321,25 @@
             loadData([]);
             if ($scope.selection.length > 0) {
 
-                LoadingIndicatorService.startLoading(
+                LoadingIndicatorService.startLoading();
 
-                    function () {
-                        var requests = [];
+                var requests = [];
 
-                        for (var i = 0; i < $scope.selection.length; i++) {
-                            var dataUrl = 'rest/klimaat/history/' + $scope.selection[i].getTime() + '/' + getTo($scope.selection[i]).getTime();
-                            $log.info('Getting data from URL: ' + dataUrl);
-                            requests.push( $http({method: 'GET', url: dataUrl}) );
-                        }
+                for (var i = 0; i < $scope.selection.length; i++) {
+                    var dataUrl = 'rest/klimaat/get/' + $scope.selection[i].getTime() + '/' + getTo($scope.selection[i]).getTime();
+                    $log.info('Getting data from URL: ' + dataUrl);
+                    requests.push( $http({method: 'GET', url: dataUrl}) );
+                }
 
-                        $q.all(requests).then(
-                            function successCallback(response) {
-                                loadData(transformServerdata(response));
-                                LoadingIndicatorService.stopLoading();
-                            },
-                            function errorCallback(response) {
-                                $log.error(JSON.stringify(response));
-                                LoadingIndicatorService.stopLoading();
-                                ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
-                            }
-                        );
-
+                $q.all(requests).then(
+                    function successCallback(response) {
+                        loadData(transformServerdata(response));
+                        LoadingIndicatorService.stopLoading();
+                    },
+                    function errorCallback(response) {
+                        $log.error(JSON.stringify(response));
+                        LoadingIndicatorService.stopLoading();
+                        ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
                     }
                 );
             }

@@ -16,7 +16,7 @@ public interface KlimaatRepo extends JpaRepository<Klimaat, Long> {
     String MOST_RECENT = "SELECT k FROM Klimaat k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Klimaat mostrecent)";
 
     @Query(value = ALL_IN_PERIOD_SORTED)
-    List<Klimaat> getKlimaat(@Param("van") long van, @Param("tot") long tot);
+    List<Klimaat> getInPeriod(@Param("van") long van, @Param("tot") long tot);
 
     @Query(value = MOST_RECENT)
     Klimaat getMostRecent();
