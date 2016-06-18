@@ -321,7 +321,7 @@
             loadData([]);
             if ($scope.selection.length > 0) {
 
-                var loading = LoadingIndicatorService.startLoading();
+                $scope.loading = LoadingIndicatorService.startLoading();
 
                 var requests = [];
 
@@ -334,11 +334,11 @@
                 $q.all(requests).then(
                     function successCallback(response) {
                         loadData(transformServerdata(response));
-                        loading.close();
+                        $scope.loading.close();
                     },
                     function errorCallback(response) {
                         $log.error(JSON.stringify(response));
-                        loading.close();
+                        $scope.loading.close();
                         ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
                     }
                 );
