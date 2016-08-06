@@ -17,7 +17,7 @@
                 templateUrl: 'app/loading-indicator/loading-indicator-dialog.html',
                 size: 'sm',
                 backdrop: 'static',
-                keyboard: false
+                keyboard: true
             });
 
             //$q.all(loadingModalInstance.opened, loadingModalInstance.rendered).then(
