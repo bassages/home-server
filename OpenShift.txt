@@ -35,3 +35,17 @@ rhc ssh -a homecontrol
 cd $OPENSHIFT_DEPENDENCIES_DIR
 rm -rf *
 exit
+
+
+----
+
+Set database timezone
+
+SSH into the database container and execute:
+
+mysql_tzinfo_to_sql /usr/share/zoneinfo/Europe/Amsterdam Europe/Amsterdam | mysql -u<username> -p<password> --database=mysql
+
+Then log in using for example PHPMyadmin / MySQLWorkbench and execute:
+
+SET time_zone='Europe/Amsterdam';
+SET GLOBAL time_zone = 'Europe/Berlin';
