@@ -1,5 +1,6 @@
 package nl.wiegman.home.config;
 
+import nl.wiegman.home.service.api.*;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +11,15 @@ import javax.ws.rs.ApplicationPath;
 public class RestConfig extends ResourceConfig {
 
     public RestConfig() {
-        packages("nl.wiegman.home.service");
+        register(CacheServiceRest.class);
+        register(GasServiceRest.class);
+        register(KlimaatServiceRest.class);
+        register(KostenServiceRest.class);
+        register(MeterstandServiceRest.class);
+        register(MindergasnlSettingsServiceRest.class);
+        register(StroomServiceRest.class);
+
+        // See https://github.com/jersey/jersey/pull/196
+        // packages("nl.wiegman.home.service");
     }
 }
