@@ -62,7 +62,7 @@ public class KlimaatService {
 
         if (averageTemperature != null || averageHumidity != null) {
             Klimaat klimaatToSave = new Klimaat();
-            klimaatToSave.setDatumtijd(now.getTime());
+            klimaatToSave.setDatumtijd(now);
             klimaatToSave.setTemperatuur(averageTemperature);
             klimaatToSave.setLuchtvochtigheid(averageHumidity);
 
@@ -85,11 +85,11 @@ public class KlimaatService {
         }
     }
 
-    public List<Klimaat> getInPeriod(long from, long to) {
-        if (to < new Date().getTime()) {
+    public List<Klimaat> getInPeriod(Date from, Date to) {
+        if (to.before(new Date())) {
             return klimaatServiceCached.getInPeriod(from, to);
         } else {
-            return klimaatRepository.getInPeriod(from, to);
+            return klimaatRepository.findByDatumtijdBetweenOrderByDatumtijd(from, to);
         }
 
     }

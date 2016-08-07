@@ -68,3 +68,14 @@ var chart = c3.generate({
     }
 });
 
+----------------
+
+Hoogst gemeten temperaturen waarbij temperatuur groter was dan XXX.
+
+SELECT
+	datumtijd,
+    MAX(temperatuur) hoogste_temperatuur from klimaatd
+group by
+	date(datumtijd)
+having hoogste_temperatuur > 24.5
+order by hoogste_temperatuur desc

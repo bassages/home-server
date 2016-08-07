@@ -25,8 +25,10 @@ public class KlimaatSensor implements HealthIndicator {
         Date now = new Date();
 
         Klimaat mostRecentKlimaat = klimaatService.getMostRecent();
-        String formattedKlimaatDateTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(mostRecentKlimaat.getDatumtijd()));
-        if (mostRecentKlimaat.getDatumtijd() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
+
+        String formattedKlimaatDateTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(mostRecentKlimaat.getDatumtijd());
+
+        if (mostRecentKlimaat.getDatumtijd().getTime() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
             return Health.down()
                     .withDetail("message", "Most recent valid klimaat was saved at " + formattedKlimaatDateTime + ". Which is more than " + MAXIMUM_KLIMAAT_AGE_IN_MINUTES + " minutes ago.")
                     .build();

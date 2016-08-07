@@ -1,7 +1,7 @@
 package nl.wiegman.home.service.api;
 
-import nl.wiegman.home.model.MeterstandOpDag;
 import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.MeterstandOpDag;
 import nl.wiegman.home.service.MeterstandService;
 import org.springframework.stereotype.Component;
 

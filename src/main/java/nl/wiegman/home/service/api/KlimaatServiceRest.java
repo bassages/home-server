@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -34,7 +35,7 @@ public class KlimaatServiceRest {
     @Path("get/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Klimaat> get(@PathParam("from") long from, @PathParam("to") long to) {
-        return klimaatService.getInPeriod(from, to);
+        return klimaatService.getInPeriod(new Date(from), new Date(to));
     }
 
 }

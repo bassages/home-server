@@ -6,17 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @Transactional
 public interface KlimaatRepo extends JpaRepository<Klimaat, Long> {
 
-    // JPQL queries
-    String ALL_IN_PERIOD_SORTED = "SELECT k FROM Klimaat k WHERE k.datumtijd >= :van AND k.datumtijd < :tot ORDER BY k.datumtijd";
-    String MOST_RECENT = "SELECT k FROM Klimaat k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Klimaat mostrecent)";
+    String MOST_RECENT = "SELECT k FROM KlimaatD k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM KlimaatD mostrecent)";
 
-    @Query(value = ALL_IN_PERIOD_SORTED)
-    List<Klimaat> getInPeriod(@Param("van") long van, @Param("tot") long tot);
+    List<Klimaat> findByDatumtijdBetweenOrderByDatumtijd(@Param("van") Date van, @Param("tot") Date tot);
 
     @Query(value = MOST_RECENT)
     Klimaat getMostRecent();

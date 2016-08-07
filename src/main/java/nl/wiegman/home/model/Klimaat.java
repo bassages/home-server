@@ -3,6 +3,7 @@ package nl.wiegman.home.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 public class Klimaat {
@@ -12,7 +13,8 @@ public class Klimaat {
     private long id;
 
     @NotNull
-    private long datumtijd;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date datumtijd;
 
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
@@ -44,11 +46,11 @@ public class Klimaat {
         this.luchtvochtigheid = luchtvochtigheid;
     }
 
-    public long getDatumtijd() {
+    public Date getDatumtijd() {
         return datumtijd;
     }
 
-    public void setDatumtijd(long datumtijd) {
+    public void setDatumtijd(Date datumtijd) {
         this.datumtijd = datumtijd;
     }
 }
