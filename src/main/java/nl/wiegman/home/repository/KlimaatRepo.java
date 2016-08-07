@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional
 public interface KlimaatRepo extends JpaRepository<Klimaat, Long> {
 
-    String MOST_RECENT = "SELECT k FROM KlimaatD k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM KlimaatD mostrecent)";
+    String MOST_RECENT = "SELECT k FROM Klimaat k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Klimaat mostrecent)";
 
     List<Klimaat> findByDatumtijdBetweenOrderByDatumtijd(@Param("van") Date van, @Param("tot") Date tot);
 
