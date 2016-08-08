@@ -32,6 +32,22 @@ public class KlimaatServiceRest {
     }
 
     @GET
+    @Path("hoogste")
+    public List<Klimaat> getHighest(@QueryParam("sensortype") String sensortype, @QueryParam("limit") int limit) {
+        Date from = new Date();
+        Date to = new Date();
+        return klimaatService.getHighest(sensortype, from, to, limit);
+    }
+
+    @GET
+    @Path("laagste")
+    public List<Klimaat> getLowest(@QueryParam("sensortype") String sensortype, @QueryParam("limit") int limit) {
+        Date from = new Date();
+        Date to = new Date();
+        return klimaatService.getLowest(sensortype, from, to, limit);
+    }
+
+    @GET
     @Path("get/{from}/{to}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Klimaat> get(@PathParam("from") long from, @PathParam("to") long to) {

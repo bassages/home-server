@@ -70,12 +70,19 @@ var chart = c3.generate({
 
 ----------------
 
-Hoogst gemeten temperaturen waarbij temperatuur groter was dan XXX.
+10 hoogste temperaturen in periode
 
-SELECT
+select
+	id,
 	datumtijd,
-    MAX(temperatuur) hoogste_temperatuur from klimaatd
+    max(temperatuur) hoogste_temperatuur
+from
+	klimaat
 group by
 	date(datumtijd)
-having hoogste_temperatuur > 24.5
+having
+    datumtijd >= '2016-05-01 00:00:00'
+    and
+    datumtijd < '2016-06-01 00:00:00'
 order by hoogste_temperatuur desc
+limit 10

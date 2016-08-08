@@ -9,6 +9,5 @@
 
     function KlimaatHistorieService(BaseHistorieService) {
         angular.extend(KlimaatHistorieService.prototype, BaseHistorieService);
-
     }
 })();
