@@ -13,12 +13,12 @@
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
-            .when('/grafiek/klimaat/:soort', {
-                templateUrl: 'app/klimaat-historie/klimaat-historie.html',
+            .when('/grafiek/klimaat/:sensortype', {
+                templateUrl: 'app/klimaat/klimaat-historie.html',
                 controller: 'KlimaatHistorieController'
             })
-            .when('/klimaat/top-charts/:soort', {
-                templateUrl: 'app/klimaat-top-charts/klimaat-top-charts.html',
+            .when('/klimaat/top-charts/:sensortype', {
+                templateUrl: 'app/klimaat/klimaat-top-charts.html',
                 controller: 'KlimaatTopChartsController'
             })
             .when('/grafiek/:soort/uur', {

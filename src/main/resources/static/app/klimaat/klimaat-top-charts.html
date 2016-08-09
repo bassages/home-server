@@ -1,0 +1,78 @@
+<div ng-include="'top-menu.html'"></div>
+
+<div class="row">
+    <div class="col-md-2"></div>
+
+    <div class="col-md-8">
+        <p class="h1">Laagste / hoogste {{sensortype}}</p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-2"></div>
+
+    <div class="col-md-1">
+        <div class="form-group">
+            <label for="limit">Aantal:</label>
+            <select class="form-control" id="limit" ng-options="limit for limit in limits" ng-model="limit" ng-change="limitUpdate()">
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"></div>
+
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p class="panel-title h1"><i style="color:blue" class="fa fa-arrow-down" aria-hidden="true"></i> Laagst gemeten</p>
+            </div>
+            <div class="panel-body" ng-cloak>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th class="text-right">Datum/tijd</th>
+                            <th class="text-right text-capitalize">{{sensortype}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="klimaat in laagste">
+                            <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
+                            <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title"><i style="color:red" class="fa fa-arrow-up" aria-hidden="true"></i> Hoogst gemeten</h1>
+            </div>
+            <div class="panel-body" ng-cloak>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-condensed">
+                        <thead>
+                        <tr>
+                            <th class="text-right">Datum/tijd</th>
+                            <th class="text-right text-capitalize">{{sensortype}}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="klimaat in hoogste">
+                            <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
+                            <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

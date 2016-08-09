@@ -127,23 +127,24 @@ public class KlimaatService {
     }
 
     public List<Klimaat> getHighest(String sensortype, Date from, Date to, int limit) {
+        List<Date> peakTemperatureDates = klimaatRepository.getPeakHighTemperatureDates(from, to, limit);
+
         List<Klimaat> result = new ArrayList<>();
 
-        Date now = new Date();
-
-        for (int i = 0; i<limit; i++) {
-            Klimaat klimaat = new Klimaat();
-            klimaat.setTemperatuur(new BigDecimal(i));
-            klimaat.setLuchtvochtigheid(new BigDecimal(i));
-            klimaat.setDatumtijd(DateUtils.addHours(now, i));
-            klimaat.setDatumtijd(DateUtils.addMinutes(now, i * 15));
-            klimaat.setDatumtijd(DateUtils.addSeconds(now, i * 10));
-            result.add(klimaat);
+        for (Date date : peakTemperatureDates) {
+            result.add(klimaatRepository.firstHighestTemperatureOnDay(date));
         }
         return result;
     }
 
     public List<Klimaat> getLowest(String sensortype, Date from, Date to, int limit) {
-        return getHighest(sensortype, from, to, limit);
+        List<Date> peakTemperatureDates = klimaatRepository.getPeakLowTemperatureDates(from, to, limit);
+
+        List<Klimaat> result = new ArrayList<>();
+
+        for (Date date : peakTemperatureDates) {
+            result.add(klimaatRepository.firstLowestTemperatureOnDay(date));
+        }
+        return result;
     }
 }

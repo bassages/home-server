@@ -12,7 +12,7 @@
 
         function activate() {
             $scope.selection = [Date.today()];
-            $scope.soort = $routeParams.soort;
+            $scope.sensortype = $routeParams.sensortype;
 
             KlimaatSensorGrafiekService.manageGraphSize($scope);
             LocalizationService.localize();
@@ -204,12 +204,12 @@
         function formatWithUnitLabel(value) {
             var result = null;
             if (value != null) {
-                if ($scope.soort == 'temperatuur') {
+                if ($scope.sensortype == 'temperatuur') {
                     result = numbro(value).format('0.00') + '\u2103';
-                } else if ($scope.soort == 'luchtvochtigheid') {
+                } else if ($scope.sensortype == 'luchtvochtigheid') {
                     result = numbro(value).format('0.0') + '%';
                 } else {
-                    $log.warn('Unexpected soort: ' + $scope.soort);
+                    $log.warn('Unexpected sensortype: ' + $scope.sensortype);
                     result = value;
                 }
             }
@@ -291,7 +291,7 @@
                     var datumtijd = new Date(serverresponse.data[j].datumtijd);
 
                     var datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
-                    var datumtijdValue = serverresponse.data[j][$scope.soort];
+                    var datumtijdValue = serverresponse.data[j][$scope.sensortype];
 
                     var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getFixedDate().getDate(), month: getFixedDate().getMonth(), year: getFixedDate().getFullYear()}));
                     row[datumtijdKey] = datumtijdValue;
