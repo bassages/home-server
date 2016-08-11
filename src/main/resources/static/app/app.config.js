@@ -9,11 +9,11 @@
 
     function Config($routeProvider) {
         $routeProvider
-            .when('/grafiek/stroom/opgenomen-vermogen', {
+            .when('/energie/stroom/opgenomen-vermogen', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
-            .when('/grafiek/klimaat/:sensortype', {
+            .when('/klimaat/grafiek/:sensortype', {
                 templateUrl: 'app/klimaat/klimaat-historie.html',
                 controller: 'KlimaatHistorieController'
             })
@@ -21,26 +21,26 @@
                 templateUrl: 'app/klimaat/klimaat-top-charts.html',
                 controller: 'KlimaatTopChartsController'
             })
-            .when('/grafiek/:soort/uur', {
+            .when('/energie/:soort/grafiek/uur', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieHistorieController'
             })
-            .when('/grafiek/:soort/dag', {
+            .when('/energie/:soort/grafiek/dag', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'DagEnergieHistorieController'
             })
-            .when('/grafiek/:soort/maand', {
+            .when('/energie/:soort/grafiek/maand', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieHistorieController'
             })
 
-            .when('/meterstanden', {
+            .when('/energie/meterstanden', {
                 templateUrl: 'app/meterstanden/meterstanden.html',
                 controller: 'MeterstandenController'
             })
-            .when('/kosten', {
-                templateUrl: 'app/beheer/kosten.html',
-                controller: 'KostenController'
+            .when('/energiecontracten', {
+                templateUrl: 'app/beheer/energiecontracten.html',
+                controller: 'EnergieContractenController'
             })
             .when('/mindergasnl', {
                 templateUrl: 'app/beheer/mindergasnl.html',

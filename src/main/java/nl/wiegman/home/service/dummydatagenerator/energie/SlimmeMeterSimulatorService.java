@@ -1,4 +1,4 @@
-package nl.wiegman.home.service.dummydatagenerator;
+package nl.wiegman.home.service.dummydatagenerator.energie;
 
 import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.service.MeterstandService;
@@ -33,7 +33,10 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private BigDecimal lastGeneratedGas = null;
 
     @Value("${slimmeMeterSimulator.autostart}")
-    boolean autoStart = false;
+    boolean autoStart;
+
+    @Value("${slimmeMeterSimulator.initialDelaySeconds}")
+    int initialDelaySeconds;
 
     @Autowired
     private MeterstandService meterstandService;
@@ -54,13 +57,12 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             startSlimmeMeterSimulator();
         }
     }
-
+    
     @POST
     @Path("startSlimmeMeterSimulator")
     public void startSlimmeMeterSimulator() {
         if (slimmeMeterSimulator == null) {
-            long initialDelay = 30; // Give some time to the application to start up
-            slimmeMeterSimulator = slimmeMeterSimulatorScheduler.scheduleAtFixedRate(this::simulateUpdateFromSlimmeMeter, initialDelay, SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
+            slimmeMeterSimulator = slimmeMeterSimulatorScheduler.scheduleAtFixedRate(this::simulateUpdateFromSlimmeMeter, initialDelaySeconds, SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 

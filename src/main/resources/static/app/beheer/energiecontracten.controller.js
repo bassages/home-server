@@ -3,16 +3,16 @@
 
     angular
         .module('app')
-        .controller('KostenController', KostenController);
+        .controller('EnergieContractenController', EnergieContractenController);
 
-    KostenController.$inject = ['$scope', '$log', 'KostenService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    EnergieContractenController.$inject = ['$scope', '$log', 'EnergieContractenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function KostenController($scope, $log, KostenService, LoadingIndicatorService, ErrorMessageService) {
+    function EnergieContractenController($scope, $log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
 
         function activate() {
             LoadingIndicatorService.startLoading();
 
-            KostenService.query(
+            EnergieContractenService.query(
                 function(data) {
                     $scope.kosten = data;
                     LoadingIndicatorService.stopLoading();
@@ -34,7 +34,7 @@
         };
 
         $scope.startAdd = function() {
-            $scope.item = new KostenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            $scope.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
         };
@@ -95,7 +95,7 @@
 
             var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
 
-            KostenService.delete({id: $scope.item.id},
+            EnergieContractenService.delete({id: $scope.item.id},
                 function(successResult) {
                     $scope.kosten.splice(index, 1);
                     $scope.cancelEdit();

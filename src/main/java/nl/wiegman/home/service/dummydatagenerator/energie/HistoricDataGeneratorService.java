@@ -1,4 +1,4 @@
-package nl.wiegman.home.service.dummydatagenerator;
+package nl.wiegman.home.service.dummydatagenerator.energie;
 
 import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.repository.MeterstandRepository;
@@ -42,6 +42,9 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     @Value("${historicDataGenerator.autostart}")
     boolean autoStart = false;
 
+    @Value("${historicDataGenerator.initialDelaySeconds}")
+    int initialDelaySeconds;
+
     @Autowired
     private MeterstandService meterstandService;
 
@@ -71,8 +74,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
     @Path("startGeneratingHistoricData")
     public void startGeneratingHistoricData() {
         if (historischeDataGenerator == null) {
-            long initialDelay = 30; // Give some time to the application to start up
-            historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelay, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
+            historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelaySeconds, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 

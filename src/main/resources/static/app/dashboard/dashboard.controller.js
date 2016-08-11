@@ -67,10 +67,15 @@
         }
 
         function updateKlimaat(data) {
-            if (data != null) {
+            if (data) {
                 $scope.huidigKlimaat = data;
-                setTemperatuurLeds(data.temperatuur);
-                setLuchtVochtigheidLeds(data.luchtvochtigheid);
+
+                if (data.temperatuur) {
+                    setTemperatuurLeds(data.temperatuur);
+                }
+                if (data.luchtvochtigheid) {
+                    setLuchtVochtigheidLeds(data.luchtvochtigheid);
+                }
             }
         }
 
@@ -85,7 +90,7 @@
         function setTemperatuurLeds(temperatuur) {
             $scope.temperatuurLed0 = true;
 
-            for (var i = 1; i < 9; i++) {
+            for (var i = 1; i <= 9; i++) {
                 var temperatuurForLed = i + 16;
                 $scope['temperatuurLed' + i] = temperatuur >= temperatuurForLed;
             }

@@ -65,10 +65,7 @@ public class KlimaatService {
             klimaatToSave.setDatumtijd(now);
             klimaatToSave.setTemperatuur(averageTemperature);
             klimaatToSave.setLuchtvochtigheid(averageHumidity);
-
-            Klimaat savedKlimaat = klimaatRepository.save(klimaatToSave);
-
-            eventPublisher.publishEvent(new UpdateEvent(savedKlimaat));
+            klimaatRepository.save(klimaatToSave);
         }
     }
 
@@ -91,7 +88,6 @@ public class KlimaatService {
         } else {
             return klimaatRepository.findByDatumtijdBetweenOrderByDatumtijd(from, to);
         }
-
     }
 
     public Klimaat getMostRecent() {
@@ -102,6 +98,7 @@ public class KlimaatService {
     public void add(Klimaat klimaat) {
         LOG.info("Recieved klimaat");
         receivedInLastQuarter.add(klimaat);
+        eventPublisher.publishEvent(new UpdateEvent(klimaat));
     }
 
     private List<BigDecimal> getValidTemperaturesFromLastQuarter() {

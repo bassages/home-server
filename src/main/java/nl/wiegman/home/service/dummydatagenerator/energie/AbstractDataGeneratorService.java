@@ -1,4 +1,4 @@
-package nl.wiegman.home.service.dummydatagenerator;
+package nl.wiegman.home.service.dummydatagenerator.energie;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
