@@ -15,7 +15,12 @@
             $scope.unitlabel = KlimaatService.getUnitlabel($scope.sensortype);
 
             $scope.limits = [5, 10, 25, 50, 100];
-            $scope.limit = 5;
+            $scope.limit = 10;
+
+            $scope.from = Date.january().first();
+            $scope.to = $scope.from.clone().addYears(1);
+
+            $scope.dateformat = 'EEEE. dd-MM-yyyy';
 
             getDataFromServer();
         }
@@ -52,9 +57,7 @@
         }
 
         function getTopChartData(charttype) {
-            var from = Date.january().first();
-            var to = from.clone().addYears(1);
-            return $http( { method: 'GET', url: 'rest/klimaat/' + charttype + '?from=' + from.getTime() + '&to=' + to.getTime() + '&sensortype=' + $scope.sensortype + '&limit=' + $scope.limit } );
+            return $http( { method: 'GET', url: 'rest/klimaat/' + charttype + '?from=' + $scope.from.getTime() + '&to=' + $scope.to.getTime() + '&sensortype=' + $scope.sensortype + '&limit=' + $scope.limit } );
         }
 
         function handleServiceError(message, errorResult) {
@@ -62,9 +65,40 @@
             ErrorMessageService.showMessage(message);
         }
 
+        $scope.$watch("from", function(newValue, oldValue) {
+            getDataFromServer();
+        });
+        $scope.$watch("to", function(newValue, oldValue) {
+            getDataFromServer();
+        });
+
+        $scope.datepickerPopupFromOptions = {
+            maxDate: Date.today()
+        };
+
+        $scope.datepickerPopupFrom = {
+            opened: false
+        };
+
+        $scope.toggleDatepickerPopupFrom = function() {
+            $scope.datepickerPopupFrom.opened = !$scope.datepickerPopupFrom.opened;
+        };
+
+        $scope.datepickerPopupToOptions = {
+            maxDate: Date.today()
+        };
+
+        $scope.datepickerPopupTo = {
+            opened: false
+        };
+
+        $scope.toggleDatepickerPopupTo = function() {
+            $scope.datepickerPopupTo.opened = !$scope.datepickerPopupTo.opened;
+        };
+
         $scope.limitUpdate = function() {
             getDataFromServer();
-        }
+        };
     }
 
 })();

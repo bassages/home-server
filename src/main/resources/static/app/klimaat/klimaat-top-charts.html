@@ -8,16 +8,33 @@
     </div>
 </div>
 
-
 <div class="row">
     <div class="col-md-2"></div>
 
-    <div class="col-md-1">
+    <div class="col-md-2">
         <div class="form-group">
             <label for="limit">Aantal:</label>
-            <select class="form-control" id="limit" ng-options="limit for limit in limits" ng-model="limit" ng-change="limitUpdate()">
-            </select>
+            <select class="form-control" id="limit" ng-options="limit for limit in limits" ng-model="limit" ng-change="limitUpdate()"></select>
         </div>
+    </div>
+
+    <div class="col-md-3">
+        <label for="period-from">Van:</label>
+        <p class="input-group">
+            <input id="period-from" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopupFrom()" uib-datepicker-popup="{{dateformat}}" ng-model="from" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopupFrom.opened" datepicker-options="datepickerPopupFromOptions" ng-required="true" />
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="toggleDatepickerPopupFrom()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+        </p>
+    </div>
+    <div class="col-md-3">
+        <label for="period-to">Tot en met:</label>
+        <p class="input-group">
+            <input id="period-to" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopupTo()" uib-datepicker-popup="{{dateformat}}" ng-model="to" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopupTo.opened" datepicker-options="datepickerPopupToOptions" ng-required="true" />
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="toggleDatepickerPopupTo()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+        </p>
     </div>
 </div>
 
