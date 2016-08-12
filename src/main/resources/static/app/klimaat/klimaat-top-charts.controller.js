@@ -57,7 +57,7 @@
         }
 
         function getTopChartData(charttype) {
-            var dataUrl = 'rest/klimaat/' + charttype + '?from=' + $scope.from.getTime() + '&to=' + $scope.to.add(1).day().getTime() + '&sensortype=' + $scope.sensortype + '&limit=' + $scope.limit;
+            var dataUrl = 'rest/klimaat/' + charttype + '?from=' + $scope.from.getTime() + '&to=' + $scope.to.clone().add(1).day().getTime() + '&sensortype=' + $scope.sensortype + '&limit=' + $scope.limit;
             $log.info('Getting data from URL: ' + dataUrl);
             return $http( { method: 'GET', url: dataUrl } );
         }
