@@ -49,10 +49,13 @@
         //}
 
         this.stopLoading = function() {
-            if (loadingModalInstance != null) {
-                loadingModalInstance.close();
-                loadingModalInstance = null;
-            }
+            window.setTimeout(function () {
+                if (loadingModalInstance != null) {
+                    loadingModalInstance.close();
+                    loadingModalInstance = null;
+                }
+            }, 1);
+
         };
     }
 })();

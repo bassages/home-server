@@ -28,10 +28,10 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var requests = [];
-
-            requests.push(getTopChartData('hoogste'));
-            requests.push(getTopChartData('laagste'));
+            var requests = [
+                getTopChartData('hoogste'),
+                getTopChartData('laagste')
+            ];
 
             $q.all(requests).then(
                 function successCallback(responses) {
@@ -66,10 +66,14 @@
         }
 
         $scope.$watch("from", function(newValue, oldValue) {
-            getDataFromServer();
+            if (oldValue.getTime() != newValue.getTime()) {
+                getDataFromServer();
+            }
         });
         $scope.$watch("to", function(newValue, oldValue) {
-            getDataFromServer();
+            if (oldValue.getTime() != newValue.getTime()) {
+                getDataFromServer();
+            }
         });
 
         $scope.datepickerPopupFromOptions = {
