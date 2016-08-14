@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -124,6 +125,17 @@ public class KlimaatService {
     }
 
     public List<Klimaat> getHighest(String sensortype, Date from, Date to, int limit) {
+        switch (sensortype) {
+            case "temperatuur":
+                return getHighestTemperature(from, to, limit);
+            case "luchtvochtigheid":
+                return getHighestHumidity(from, to, limit);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    private List<Klimaat> getHighestTemperature(Date from, Date to, int limit) {
         List<Date> peakTemperatureDates = klimaatRepository.getPeakHighTemperatureDates(from, to, limit);
 
         List<Klimaat> result = new ArrayList<>();
@@ -134,7 +146,29 @@ public class KlimaatService {
         return result;
     }
 
+    private List<Klimaat> getHighestHumidity(Date from, Date to, int limit) {
+        List<Date> peakHumidityDates = klimaatRepository.getPeakHighHumidityDates(from, to, limit);
+
+        List<Klimaat> result = new ArrayList<>();
+
+        for (Date date : peakHumidityDates) {
+            result.add(klimaatRepository.firstHighestHumidityOnDay(date));
+        }
+        return result;
+    }
+
     public List<Klimaat> getLowest(String sensortype, Date from, Date to, int limit) {
+        switch (sensortype) {
+            case "temperatuur":
+                return getLowestTemperature(from, to, limit);
+            case "luchtvochtigheid":
+                return getLowestHumidity(from, to, limit);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    public List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
         List<Date> peakTemperatureDates = klimaatRepository.getPeakLowTemperatureDates(from, to, limit);
 
         List<Klimaat> result = new ArrayList<>();
@@ -144,4 +178,16 @@ public class KlimaatService {
         }
         return result;
     }
+
+    public List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
+        List<Date> peakHumidityDates = klimaatRepository.getPeakLowHumidityDates(from, to, limit);
+
+        List<Klimaat> result = new ArrayList<>();
+
+        for (Date date : peakHumidityDates) {
+            result.add(klimaatRepository.firstLowestHumidityOnDay(date));
+        }
+        return result;
+    }
+
 }

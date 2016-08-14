@@ -76,16 +76,16 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-condensed">
                         <thead>
-                        <tr>
-                            <th class="text-right">Datum/tijd</th>
-                            <th class="text-right text-capitalize">{{sensortype}}</th>
-                        </tr>
+                            <tr>
+                                <th class="text-right">Datum/tijd</th>
+                                <th class="text-right text-capitalize">{{sensortype}}</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="klimaat in hoogste">
-                            <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
-                            <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
-                        </tr>
+                            <tr ng-repeat="klimaat in hoogste">
+                                <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
+                                <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
