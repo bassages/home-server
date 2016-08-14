@@ -22,10 +22,10 @@ public interface KlimaatRepo extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_TEMPERATURE_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MIN(temperatuur) AS temperatuur FROM klimaat GROUP BY date(datumtijd) HAVING datum >= :van and datum < :tot ORDER BY temperatuur ASC LIMIT :limit) datums";
     String FIRST_LOWEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE date(datumtijd) = :date ORDER BY temperatuur ASC, datumtijd ASC LIMIT 1";
 
-    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MAX(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING datum >= :van and datum < :tot ORDER BY luchtvochtigheid DESC LIMIT :limit) datums";
+    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MAX(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING luchtvochtigheid IS NOT NULL AND datum >= :van and datum < :tot ORDER BY luchtvochtigheid DESC LIMIT :limit) datums";
     String FIRST_HIGHEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE date(datumtijd) = :date ORDER BY luchtvochtigheid DESC, datumtijd ASC LIMIT 1";
 
-    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING datum >= :van and datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
+    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING luchtvochtigheid IS NOT NULL AND datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE date(datumtijd) = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
     List<Klimaat> findByDatumtijdBetweenOrderByDatumtijd(@Param("van") Date van, @Param("tot") Date tot);
