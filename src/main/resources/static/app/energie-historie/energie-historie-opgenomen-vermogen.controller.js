@@ -18,16 +18,13 @@
             $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
             $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
             $scope.soort = 'stroom';
+            $scope.dateformat = 'EEE. dd-MM-yyyy';
 
             EnergieHistorieService.manageGraphSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
         }
-
-        $scope.getD3DateFormat = function() {
-            return '%a %d-%m-%Y';
-        };
 
         $scope.hideEnergieSoorten = function() {
             return true;
@@ -49,39 +46,28 @@
             return true;
         };
 
-        var datepicker = $('.datepicker');
-        datepicker.datepicker({
-            autoclose: true, todayBtn: "linked", calendarWeeks: true, todayHighlight: true, endDate: "0d", language:"nl", daysOfWeekHighlighted: "0,6",
-            format: {
-                toDisplay: function (date, format, language) {
-                    return d3.time.format($scope.getD3DateFormat())(date);
-                },
-                toValue: function (date, format, language) {
-                    return (date == '0d' ? new Date() : d3.time.format($scope.getD3DateFormat()).parse(date));
-                }
-            }
-        });
-
-        datepicker.datepicker('setDate', $scope.selection);
-
-        datepicker.on('changeDate', function(e) {
-            if (!Date.equals(e.date, $scope.selection)) {
-                $log.info("changeDate event from datepicker. Selected date: " + e.date);
-
-                $scope.$apply(function() {
-                    $scope.selection = e.date;
-                    getDataFromServer();
-                });
-            }
-        });
-
         $scope.isMaxSelected = function() {
             return Date.today().getTime() == $scope.selection.getTime();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection.setDate($scope.selection.getDate() + numberOfPeriods);
-            datepicker.datepicker('setDate', $scope.selection);
+            $scope.selection = $scope.selection.clone().add(numberOfPeriods).days();
+            getDataFromServer();
+        };
+
+        $scope.datepickerPopupOptions = {
+            maxDate: Date.today()
+        };
+
+        $scope.datepickerPopup = {
+            opened: false
+        };
+
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        };
+
+        $scope.selectionChange = function() {
             getDataFromServer();
         };
 

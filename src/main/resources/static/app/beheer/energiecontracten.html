@@ -2,7 +2,7 @@
 
 <div>
     <h1>
-        <span><small>Beheer</small> Energiecontracten</span>
+        <span>Energiecontracten</span>
         <div class='pull-right'>
             <button class='btn btn-primary' ng-click="startAdd()"><i class="fa fa-plus-circle"></i> Toevoegen</button>
         </div>
@@ -37,8 +37,8 @@
         <label for="vanaf" class="col-sm-3 control-label">Vanaf</label>
         <div class="col-sm-6">
             <div class="input-group">
-                <input type="text" epochmodeldatepicker ng-readonly="true" class="form-control" id="vanaf" name="vanaf" placeholder="dd-MM-jjjj" ng-model="item.van" required>
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                <input id="vanaf" name="vanaf" placeholder="dd-mm-jjjj" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopup()" uib-datepicker-popup="{{dateformat}}" ng-model="vanaf" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopup.opened" datepicker-options="datepickerPopupOptions" />
+                <span class="input-group-addon" ng-click="toggleDatepickerPopup()"><i class="fa fa-calendar"></i></span>
             </div>
         </div>
     </div>

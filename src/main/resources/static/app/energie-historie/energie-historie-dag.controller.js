@@ -19,6 +19,7 @@
             $scope.soort = $routeParams.soort;
             $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
             $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+            $scope.dateformat = 'MMMM yyyy';
 
             LocalizationService.localize();
             EnergieHistorieService.manageGraphSize($scope);
@@ -36,43 +37,30 @@
             return $scope.soort == 'kosten';
         };
 
-        $scope.getD3DateFormat = function() {
-            return '%B %Y';
-        };
-
-        var datepicker = $('.datepicker');
-        datepicker.datepicker({
-            viewMode: 'months', minViewMode: 'months', autoclose: true, todayHighlight: true, endDate: "0d", language:"nl",
-            format: {
-                toDisplay: function (date, format, language) {
-                    return d3.time.format($scope.getD3DateFormat())(date);
-                },
-                toValue: function (date, format, language) {
-                    return (date == '0d'? new Date() :  d3.time.format($scope.getD3DateFormat()).parse(date));
-                }
-            }
-        });
-
-        datepicker.datepicker('setDate', $scope.selection);
-
-        datepicker.on('changeDate', function(e) {
-            if (!Date.equals(e.date, $scope.selection)) {
-                $log.info("changeDate event from datepicker. Selected date: " + e.date);
-
-                $scope.$apply(function() {
-                    $scope.selection = e.date;
-                    getDataFromServer();
-                });
-            }
-        });
-
         $scope.isMaxSelected = function() {
             return Date.today().getMonth() == $scope.selection.getMonth() && Date.today().getFullYear() == $scope.selection.getFullYear();
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
-            datepicker.datepicker('setDate', $scope.selection);
+            $scope.selection = $scope.selection.clone().add(numberOfPeriods).months();
+            getDataFromServer();
+        };
+
+        $scope.datepickerPopupOptions = {
+            datepickerMode: 'month',
+            minMode: 'month',
+            maxDate: Date.today()
+        };
+
+        $scope.datepickerPopup = {
+            opened: false
+        };
+
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        };
+
+        $scope.selectionChange = function() {
             getDataFromServer();
         };
 

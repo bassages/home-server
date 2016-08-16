@@ -16,6 +16,7 @@
             $scope.soort = $routeParams.soort;
             $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
             $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+            $scope.dateformat = 'yyyy';
 
             LocalizationService.localize();
             EnergieHistorieService.manageGraphSize($scope);
@@ -38,40 +39,27 @@
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection.setFullYear($scope.selection.getFullYear() + numberOfPeriods);
-            datepicker.datepicker('setDate', $scope.selection);
+            $scope.selection = $scope.selection.clone().add(numberOfPeriods).years();
             getDataFromServer();
         };
 
-        $scope.getD3DateFormat = function() {
-            return '%Y';
+        $scope.datepickerPopupOptions = {
+            datepickerMode: 'year',
+            minMode: 'year',
+            maxDate: Date.today()
         };
 
-        var datepicker = $('.datepicker');
-        datepicker.datepicker({
-            viewMode: 'years', minViewMode: 'years', autoclose: true, todayHighlight: true, endDate: "0d", language:"nl",
-            format: {
-                toDisplay: function (date, format, language) {
-                    return d3.time.format($scope.getD3DateFormat())(date);
-                },
-                toValue: function (date, format, language) {
-                    return (date == '0d' ? new Date() : d3.time.format($scope.getD3DateFormat()).parse(date));
-                }
-            }
-        });
+        $scope.datepickerPopup = {
+            opened: false
+        };
 
-        datepicker.datepicker('setDate', $scope.selection);
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        };
 
-        datepicker.on('changeDate', function(e) {
-            $log.info("changeDate event from datepicker. Selected date: " + e.date);
-
-            if (!Date.equals(e.date, $scope.selection)) {
-                $scope.$apply(function() {
-                    $scope.selection = e.date;
-                    getDataFromServer();
-                });
-            }
-        });
+        $scope.selectionChange = function() {
+            getDataFromServer();
+        };
 
         function getTicksForEveryMonthInYear() {
             return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];

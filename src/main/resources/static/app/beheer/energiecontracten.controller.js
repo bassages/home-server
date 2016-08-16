@@ -12,6 +12,8 @@
         function activate() {
             LoadingIndicatorService.startLoading();
 
+            $scope.dateformat = 'EEEE dd-MM-yyyy';
+
             EnergieContractenService.query(
                 function(data) {
                     $scope.kosten = data;
@@ -26,8 +28,9 @@
 
         activate();
 
-        $scope.startEdit = function(kosten) {
-            $scope.item = angular.copy(kosten);
+        $scope.startEdit = function(energiecontract) {
+            $scope.item = angular.copy(energiecontract);
+            $scope.vanaf = new Date(energiecontract.van);
             $scope.selectedId = $scope.item.id;
             $scope.detailsmode = 'edit';
             $scope.showDetails = true;
@@ -35,11 +38,25 @@
 
         $scope.startAdd = function() {
             $scope.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            $scope.vanaf = $scope.item.van;
             $scope.detailsmode = 'add';
             $scope.showDetails = true;
         };
 
+        $scope.datepickerPopupOptions = {
+            minDate: Date.today()
+        };
+
+        $scope.datepickerPopup = {
+            opened: false
+        };
+
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        };
+
         function saveAdd() {
+            $scope.item.van = $scope.vanaf.getTime();
             $scope.item.$save(
                 function(successResult) {
                     $scope.item.id = successResult.id;
@@ -55,6 +72,7 @@
         }
 
         function saveEdit() {
+
             $scope.item.$save(
                 function(successResult) {
                     var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
@@ -71,6 +89,8 @@
 
         $scope.save = function() {
             LoadingIndicatorService.startLoading();
+
+            $scope.item.van = $scope.vanaf.getTime();
 
             $log.info('Save kosten: ' + JSON.stringify($scope.item));
 
@@ -91,7 +111,7 @@
         $scope.delete = function() {
             LoadingIndicatorService.startLoading();
 
-            $log.info('Delete kosten: ' + JSON.stringify($scope.item));
+            $log.info('Delete energiecontract: ' + JSON.stringify($scope.item));
 
             var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
 
