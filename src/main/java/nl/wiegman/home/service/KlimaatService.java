@@ -2,7 +2,7 @@ package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
 import nl.wiegman.home.realtime.UpdateEvent;
-import nl.wiegman.home.repository.KlimaatRepository;
+import nl.wiegman.home.repository.KlimaatRepos;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class KlimaatService {
     private KlimaatServiceCached klimaatServiceCached;
 
     @Inject
-    private KlimaatRepository klimaatRepository;
+    private KlimaatRepos klimaatRepository;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
