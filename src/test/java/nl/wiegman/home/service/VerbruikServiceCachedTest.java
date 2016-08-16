@@ -1,8 +1,8 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.Kosten;
+import nl.wiegman.home.model.Energiecontract;
 import nl.wiegman.home.model.Verbruik;
-import nl.wiegman.home.repository.KostenRepository;
+import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class VerbruikServiceCachedTest {
     MeterstandRepository meterstandRepositoryMock;
 
     @Mock
-    KostenRepository kostenRepositoryMock;
+    EnergiecontractRepository energiecontractRepositoryMock;
 
     @InjectMocks
     VerbruikServiceCached verbruikServiceCached;
@@ -46,17 +46,17 @@ public class VerbruikServiceCachedTest {
 
     @Test
     public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
-        Kosten kosten1 = new Kosten();
-        kosten1.setVan(10l);
-        kosten1.setTotEnMet(14l);
-        kosten1.setStroomPerKwh(BigDecimal.valueOf(1));
+        Energiecontract energiecontract1 = new Energiecontract();
+        energiecontract1.setVan(10l);
+        energiecontract1.setTotEnMet(14l);
+        energiecontract1.setStroomPerKwh(BigDecimal.valueOf(1));
 
-        Kosten kosten2 = new Kosten();
-        kosten2.setVan(15l);
-        kosten2.setTotEnMet(100l);
-        kosten2.setStroomPerKwh(BigDecimal.valueOf(2));
+        Energiecontract energiecontract2 = new Energiecontract();
+        energiecontract2.setVan(15l);
+        energiecontract2.setTotEnMet(100l);
+        energiecontract2.setStroomPerKwh(BigDecimal.valueOf(2));
 
-        when(kostenRepositoryMock.getKostenInPeriod(10, 20)).thenReturn(Arrays.asList(kosten1, kosten2));
+        when(energiecontractRepositoryMock.findAllInInPeriod(10, 20)).thenReturn(Arrays.asList(energiecontract1, energiecontract2));
 
         when(meterstandRepositoryMock.getStroomVerbruikInPeriod(10, 14)).thenReturn(new BigDecimal(1));
         when(meterstandRepositoryMock.getStroomVerbruikInPeriod(15, 20)).thenReturn(new BigDecimal(2));

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table
-public class Kosten {
+public class Energiecontract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

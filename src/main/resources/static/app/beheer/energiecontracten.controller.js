@@ -44,7 +44,6 @@
         };
 
         $scope.datepickerPopupOptions = {
-            minDate: Date.today()
         };
 
         $scope.datepickerPopup = {

@@ -5,7 +5,7 @@
          dynamicConfig="false"
          maxBytesLocalHeap="50M">
 
-    <cache name="kostenInPeriod" />
+    <cache name="energiecontractenInPeriod" />
     <cache name="stroomVerbruikInPeriode" />
     <cache name="opgenomenVermogenHistory" />
     <cache name="meestRecenteMeterstandOpDag" />

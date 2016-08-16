@@ -8,6 +8,6 @@
     EnergieContractenService.$inject = ['$resource'];
 
     function EnergieContractenService($resource) {
-        return $resource('/rest/kosten/:id');
+        return $resource('/rest/energiecontract/:id');
     }
 })();

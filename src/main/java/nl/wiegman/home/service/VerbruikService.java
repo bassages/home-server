@@ -1,7 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.*;
-import nl.wiegman.home.repository.KostenRepository;
+import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class VerbruikService {
     MeterstandRepository meterstandRepository;
 
     @Inject
-    KostenRepository kostenRepository;
+    EnergiecontractRepository energiecontractRepository;
 
     @Inject
     VerbruikServiceCached verbruikServiceCached;

@@ -1,8 +1,8 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.Kosten;
+import nl.wiegman.home.model.Energiecontract;
 import nl.wiegman.home.model.Verbruik;
-import nl.wiegman.home.repository.KostenRepository;
+import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,7 +20,7 @@ public class VerbruikServiceCached {
     MeterstandRepository meterstandRepository;
 
     @Inject
-    KostenRepository kostenRepository;
+    EnergiecontractRepository energiecontractRepository;
 
     @Cacheable(cacheNames = "stroomVerbruikInPeriode")
     public Verbruik getPotentiallyCachedVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {
@@ -33,16 +33,16 @@ public class VerbruikServiceCached {
 
         if (periodeVan < System.currentTimeMillis()) {
 
-            List<Kosten> kostenInPeriod = kostenRepository.getKostenInPeriod(periodeVan, periodeTotEnMet);
+            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
-            if (CollectionUtils.isNotEmpty(kostenInPeriod)) {
+            if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
 
-                for (Kosten kosten : kostenInPeriod) {
-                    long subVanMillis = kosten.getVan();
+                for (Energiecontract energiecontract : energiecontractInPeriod) {
+                    long subVanMillis = energiecontract.getVan();
                     if (subVanMillis < periodeVan) {
                         subVanMillis = periodeVan;
                     }
-                    long subTotEnMetMillis = kosten.getTotEnMet();
+                    long subTotEnMetMillis = energiecontract.getTotEnMet();
                     if (subTotEnMetMillis > periodeTotEnMet) {
                         subTotEnMetMillis = periodeTotEnMet;
                     }
@@ -53,7 +53,7 @@ public class VerbruikServiceCached {
                         if (totaalVerbruik == null) {
                             totaalVerbruik = BigDecimal.ZERO;
                         }
-                        totaalKosten = totaalKosten.add(kosten.getKosten(energiesoort).multiply(verbruik));
+                        totaalKosten = totaalKosten.add(energiecontract.getKosten(energiesoort).multiply(verbruik));
                         totaalVerbruik = totaalVerbruik.add(verbruik);
                     }
                 }

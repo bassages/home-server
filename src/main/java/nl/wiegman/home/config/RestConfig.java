@@ -14,7 +14,7 @@ public class RestConfig extends ResourceConfig {
         register(CacheServiceRest.class);
         register(GasServiceRest.class);
         register(KlimaatServiceRest.class);
-        register(KostenServiceRest.class);
+        register(EnergiecontractServiceRest.class);
         register(MeterstandServiceRest.class);
         register(MindergasnlSettingsServiceRest.class);
         register(StroomServiceRest.class);
