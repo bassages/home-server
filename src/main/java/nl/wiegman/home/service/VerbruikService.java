@@ -103,7 +103,7 @@ public class VerbruikService {
         verbruikPerMaandInJaar.setMaand(maand);
 
         if (verbruikInPeriode.getVerbruik() != null) {
-            verbruikPerMaandInJaar.setVerbruik(verbruikInPeriode.getVerbruik().setScale(0, RoundingMode.HALF_UP));
+            verbruikPerMaandInJaar.setVerbruik(verbruikInPeriode.getVerbruik());
             verbruikPerMaandInJaar.setKosten(verbruikInPeriode.getKosten());
         }
         return verbruikPerMaandInJaar;
