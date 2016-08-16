@@ -1,7 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
-import nl.wiegman.home.repository.KlimaatRepo;
+import nl.wiegman.home.repository.KlimaatRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 public class KlimaatServiceTest {
 
     @Mock
-    private KlimaatRepo klimaatRepositoryMock;
+    private KlimaatRepository klimaatRepositoryMock;
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 

@@ -18,7 +18,7 @@
             $scope.limit = 10;
 
             $scope.from = Date.january().first();
-            $scope.to = $scope.from.clone().addYears(1);
+            $scope.to = Date.today();
 
             $scope.dateformat = 'EEEE. dd-MM-yyyy';
 
@@ -67,17 +67,6 @@
             ErrorMessageService.showMessage(message);
         }
 
-        $scope.$watch("from", function(newValue, oldValue) {
-            if (oldValue.getTime() != newValue.getTime()) {
-                getDataFromServer();
-            }
-        });
-        $scope.$watch("to", function(newValue, oldValue) {
-            if (oldValue.getTime() != newValue.getTime()) {
-                getDataFromServer();
-            }
-        });
-
         $scope.datepickerPopupFromOptions = {
             maxDate: Date.today()
         };
@@ -102,7 +91,15 @@
             $scope.datepickerPopupTo.opened = !$scope.datepickerPopupTo.opened;
         };
 
-        $scope.limitUpdate = function() {
+        $scope.fromChange = function() {
+            getDataFromServer();
+        };
+
+        $scope.toChange = function() {
+            getDataFromServer();
+        };
+
+        $scope.limitChange = function() {
             getDataFromServer();
         };
     }

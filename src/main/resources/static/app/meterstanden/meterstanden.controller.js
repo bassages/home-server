@@ -13,6 +13,7 @@
         function activate() {
             LocalizationService.localize();
             $scope.selection = Date.today().clearTime().moveToFirstDayOfMonth();
+            $scope.dateformat = 'MMMM yyyy';
             getDataFromServer();
         }
 
@@ -21,49 +22,27 @@
         };
 
         $scope.navigate = function(numberOfPeriods) {
-            $scope.selection.setMonth($scope.selection.getMonth() + numberOfPeriods);
-            datepicker.datepicker('setDate', $scope.selection);
+            $scope.selection = $scope.selection.clone().add(numberOfPeriods).months();
             getDataFromServer();
         };
 
-        $scope.getD3DateFormat = function() {
-            return '%B %Y';
+        $scope.datepickerPopupOptions = {
+            datepickerMode: 'month',
+            minMode: 'month',
+            maxDate: Date.today()
         };
 
-        var datepicker = $('.datepicker');
-        datepicker.datepicker({
-            viewMode: 'months',
-            minViewMode: 'months',
-            autoclose: true,
-            todayHighlight: true,
-            endDate: "0d",
-            language:"nl",
-            format: {
-                toDisplay: function (date, format, language) {
-                    var formatter = d3.time.format($scope.getD3DateFormat());
-                    return formatter(date);
-                },
-                toValue: function (date, format, language) {
-                    if (date == '0d') {
-                        return new Date();
-                    }
-                    return d3.time.format($scope.getD3DateFormat()).parse(date);
-                }
-            }
-        });
+        $scope.datepickerPopup = {
+            opened: false
+        };
 
-        datepicker.datepicker('setDate', $scope.selection);
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        };
 
-        datepicker.on('changeDate', function(e) {
-            if (!Date.equals(e.date, $scope.selection)) {
-                $log.info("changeDate event from datepicker. Selected date: " + e.date);
-
-                $scope.$apply(function() {
-                    $scope.selection = new Date(e.date);
-                    getDataFromServer();
-                });
-            }
-        });
+        $scope.selectionChange = function() {
+            getDataFromServer();
+        };
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
