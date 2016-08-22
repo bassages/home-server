@@ -1,6 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.model.SensorType;
 import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.KlimaatRepos;
 import org.apache.commons.lang3.time.DateUtils;
@@ -157,18 +158,29 @@ public class KlimaatService {
         return result;
     }
 
-    public List<Klimaat> getLowest(String sensortype, Date from, Date to, int limit) {
+    public List<Klimaat> getLowest(SensorType sensortype, Date from, Date to, int limit) {
         switch (sensortype) {
-            case "temperatuur":
+            case TEMPERATUUR:
                 return getLowestTemperature(from, to, limit);
-            case "luchtvochtigheid":
+            case LUCHTVOCHTIGHEID:
                 return getLowestHumidity(from, to, limit);
             default:
-                return Collections.emptyList();
+                return null;
         }
     }
 
-    public List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
+    public BigDecimal getAverage(SensorType sensortype, Date from, Date to) {
+        switch (sensortype) {
+            case TEMPERATUUR:
+                return klimaatRepository.getAverageTemperatuur(from, to);
+            case LUCHTVOCHTIGHEID:
+                return klimaatRepository.getAverageLuchtvochtigheid(from, to);
+            default:
+                return null;
+        }
+    }
+
+    private List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
         List<Date> peakTemperatureDates = klimaatRepository.getPeakLowTemperatureDates(from, to, limit);
 
         List<Klimaat> result = new ArrayList<>();
@@ -179,7 +191,7 @@ public class KlimaatService {
         return result;
     }
 
-    public List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
+    private List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
         List<Date> peakHumidityDates = klimaatRepository.getPeakLowHumidityDates(from, to, limit);
 
         List<Klimaat> result = new ArrayList<>();
@@ -189,5 +201,4 @@ public class KlimaatService {
         }
         return result;
     }
-
 }

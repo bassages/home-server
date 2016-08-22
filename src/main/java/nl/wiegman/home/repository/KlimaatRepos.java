@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -57,4 +58,9 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     @Query(value = FIRST_LOWEST_HUMIDITY_ON_DAY, nativeQuery = true)
     Klimaat firstLowestHumidityOnDay(@Param("date") Date day);
 
+    @Query(value = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot")
+    BigDecimal getAverageTemperatuur(@Param("van") Date van, @Param("tot") Date tot);
+
+    @Query(value = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot")
+    BigDecimal getAverageLuchtvochtigheid(@Param("van") Date van, @Param("tot") Date tot);
 }

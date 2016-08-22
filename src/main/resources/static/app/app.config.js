@@ -21,6 +21,10 @@
                 templateUrl: 'app/klimaat/klimaat-top-charts.html',
                 controller: 'KlimaatTopChartsController'
             })
+            .when('/klimaat/average/:sensortype', {
+                templateUrl: 'app/klimaat/klimaat-average.html',
+                controller: 'KlimaatAverageController'
+            })
             .when('/energie/:soort/grafiek/uur', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieHistorieController'
