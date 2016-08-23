@@ -13,11 +13,8 @@
         function activate() {
             $scope.sensortype = $routeParams.sensortype;
             $scope.unitlabel = KlimaatService.getUnitlabel($scope.sensortype);
-
-            $scope.from = Date.january().first();
-            $scope.to = Date.today();
-
-            $scope.dateformat = 'EEEE. dd-MM-yyyy';
+            $scope.selection = Date.january().first();
+            $scope.dateformat = 'yyyy';
 
             getDataFromServer();
         }
@@ -25,19 +22,33 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var dataUrl = 'rest/klimaat/gemiddelde?from=' + $scope.from.getTime() + '&to=' + $scope.to.clone().add(1).day().getTime() + '&sensortype=' + $scope.sensortype;
-            $log.info('Getting data from URL: ' + dataUrl);
-            $http( { method: 'GET', url: dataUrl } )
-                .then(
-                    function successCallback(response) {
-                        $scope.gemiddelde = response.data;
-                        LoadingIndicatorService.stopLoading();
-                    },
-                    function errorCallback(response) {
-                        LoadingIndicatorService.stopLoading();
-                        handleServiceError('Ophalen van gegevens is niet gelukt.', response);
+            $scope.averagePerMonthInYear = [];
+
+            var month = $scope.selection.clone();
+
+            var requests = [];
+
+            for (var i = 1; i <= 12 ;i++) {
+                var dataUrl = 'rest/klimaat/gemiddelde?from=' + month.getTime() + '&to=' + month.clone().add(1).month().getTime() + '&sensortype=' + $scope.sensortype;
+                $log.info('Getting data from URL: ' + dataUrl);
+                requests.push( $http( { method: 'GET', url: dataUrl } ) );
+                month = month.clone().add(1).month();
+            }
+
+            $q.all(requests).then(
+                function successCallback(response) {
+                    for (var i = 0; i < requests.length; i++) {
+                        var dateString = $scope.selection.getFullYear() + '-' + (i + 1) + '-1';
+                        $log.info(response[i].data);
+                        $scope.averagePerMonthInYear.push({date: new Date(dateString), average: response[i].data ? response[i].data : null});
                     }
-                );
+                    LoadingIndicatorService.stopLoading();
+                },
+                function errorCallback(response) {
+                    LoadingIndicatorService.stopLoading();
+                    handleServiceError("Er is een fout opgetreden bij het ophalen van de gegevens", response);
+                }
+            );
         }
 
         function handleServiceError(message, errorResult) {
@@ -45,39 +56,21 @@
             ErrorMessageService.showMessage(message);
         }
 
-        $scope.datepickerPopupFromOptions = {
-            maxDate: Date.today()
+        $scope.datepickerPopupOptions = {
+            maxDate: Date.today(),
+            datepickerMode: 'year',
+            minMode: 'year'
         };
 
-        $scope.datepickerPopupFrom = {
+        $scope.datepickerPopup = {
             opened: false
         };
 
-        $scope.toggleDatepickerPopupFrom = function() {
-            $scope.datepickerPopupFrom.opened = !$scope.datepickerPopupFrom.opened;
+        $scope.toggleDatepickerPopup = function() {
+            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
         };
 
-        $scope.datepickerPopupToOptions = {
-            maxDate: Date.today()
-        };
-
-        $scope.datepickerPopupTo = {
-            opened: false
-        };
-
-        $scope.toggleDatepickerPopupTo = function() {
-            $scope.datepickerPopupTo.opened = !$scope.datepickerPopupTo.opened;
-        };
-
-        $scope.fromChange = function() {
-            getDataFromServer();
-        };
-
-        $scope.toChange = function() {
-            getDataFromServer();
-        };
-
-        $scope.limitChange = function() {
+        $scope.datepickerChange = function() {
             getDataFromServer();
         };
     }

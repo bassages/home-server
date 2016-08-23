@@ -11,21 +11,12 @@
 <div class="row">
     <div class="col-md-2"></div>
 
-    <div class="col-md-3">
-        <label for="period-from">Van:</label>
+    <div class="col-md-2">
+        <label for="selection">Jaar:</label>
         <p class="input-group">
-            <input id="period-from" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopupFrom()" uib-datepicker-popup="{{dateformat}}" ng-model="from" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopupFrom.opened" datepicker-options="datepickerPopupFromOptions" ng-change="fromChange()" />
+            <input id="selection" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopup()" uib-datepicker-popup="{{dateformat}}" ng-model="selection" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopup.opened" datepicker-options="datepickerPopupOptions" ng-change="datepickerChange()" />
             <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="toggleDatepickerPopupFrom()"><i class="fa fa-calendar"></i></button>
-            </span>
-        </p>
-    </div>
-    <div class="col-md-3">
-        <label for="period-to">Tot en met:</label>
-        <p class="input-group">
-            <input id="period-to" class="form-control" ng-readonly="true" ng-click="toggleDatepickerPopupTo()" uib-datepicker-popup="{{dateformat}}" ng-model="to" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopupTo.opened" datepicker-options="datepickerPopupToOptions" ng-change="toChange()" />
-            <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="toggleDatepickerPopupTo()"><i class="fa fa-calendar"></i></button>
+                <button type="button" class="btn btn-default" ng-click="toggleDatepickerPopup()"><i class="fa fa-calendar"></i></button>
             </span>
         </p>
     </div>
@@ -34,14 +25,20 @@
 <div class="row">
     <div class="col-md-2"></div>
 
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <p class="panel-title h1">x&#772; Gemiddelde</p>
-            </div>
-            <div class="panel-body" ng-cloak>
-                {{gemiddelde | number : 2}}
-            </div>
-        </div>
+    <div class="col-md-4">
+        <table class="table table-bordered table-striped table-condensed">
+            <thead>
+            <tr>
+                <th class="text-right">Maand</th>
+                <th class="text-right text-capitalize">Gemiddelde {{sensortype}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="avg in averagePerMonthInYear">
+                <td class="text-right">{{avg.date | date : 'MMMM'}}</td>
+                <td class="text-right">{{avg.average | number : 2}}{{avg.average ? unitlabel : ''}}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
