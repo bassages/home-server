@@ -10,10 +10,8 @@
     function RealtimeKlimaatService($q, $timeout, $log) {
         var service = {};
         var listener = $q.defer();
-        var socket = {
-            client: null,
-            stomp: null
-        };
+
+        var socket = { client: null, stomp: null };
 
         service.RECONNECT_TIMEOUT = 10000;
         service.SOCKET_URL = "/ws/klimaat";
