@@ -48,10 +48,6 @@ Vergelijken met andere jaren (in maand overview)
 
 ----------------
 
-Directive voor datepicker op grafiek pagina
-
-----------------
-
 Gebruik en kosten per leverancier
 
 var chart = c3.generate({
@@ -67,47 +63,3 @@ var chart = c3.generate({
         keys:  {x: 'maand', value: ['Essent', 'GreenChoice']}
     }
 });
-
-----------------
-
-10 hoogste temperaturen in periode
-
-select * from klimaat where id in (
-	select highest.id from (
-
-		select
-			id,
-			datumtijd,
-			max(temperatuur) hoogste_temperatuur
-		from
-			klimaat
-		group by
-			date(datumtijd)
-		having
-			datumtijd >= '2016-01-01 00:00:00'
-			and
-			datumtijd < '2017-01-01 00:00:00'
-		order by hoogste_temperatuur desc
-		limit 10
-
-	) highest
-);
-
-
-SELECT tt.* FROM klimaat tt
-INNER JOIN
-    (
-		SELECT date(datumtijd) as dt, MAX(temperatuur) AS hoogste_temperatuur
-		FROM klimaat
-		GROUP BY date(datumtijd)
-        order by hoogste_temperatuur desc
-		) groupedtt
-ON date(tt.datumtijd) = groupedtt.dt
-AND tt.temperatuur = groupedtt.hoogste_temperatuur
-order by temperatuur desc
-limit 10;
-
-
-select * from klimaat where date(datumtijd) = '2016-05-11' and temperatuur = 26.04
-order by datumtijd asc
-limit 1
