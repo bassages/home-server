@@ -16,4 +16,3 @@ mv ${OPENSHIFT_REPO_DIR}/target/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 
 # Clean up to regain some diskspace
 rm -R ${OPENSHIFT_REPO_DIR}/target
-rm -R rm -R ~/app-root/dependencies/*
