@@ -12,7 +12,7 @@ sh ${M2_HOME}/bin/mvn -version
 
 # Build maven project
 cd ${OPENSHIFT_REPO_DIR}
-sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.test.skip=true 2>&1 | tee mvn-build-status.txt
+sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.test.skip=true
 
 # Move final artifact to repo dir
 mv ${OPENSHIFT_REPO_DIR}/target/home-server-*.jar ${OPENSHIFT_REPO_DIR}
