@@ -4,6 +4,9 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 export JAVACMD=${JAVA_HOME}/bin/java
 export M2_HOME=/usr/share/java/apache-maven-3.0.4
 
+# In bash, to use rm -- !(file.txt), you must enable extglob:
+shopt -s extglob
+
 # Log version info
 sh ${M2_HOME}/bin/mvn -version
 
@@ -15,4 +18,5 @@ sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.t
 mv ${OPENSHIFT_REPO_DIR}/target/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 
 # Clean up to regain some diskspace
-rm -R ${OPENSHIFT_REPO_DIR}/target
+cd ${OPENSHIFT_REPO_DIR}
+rm -R -- !(*.jar)
