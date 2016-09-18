@@ -4,10 +4,16 @@ export PATH=${JAVA_HOME}/bin:${PATH}
 export JAVACMD=${JAVA_HOME}/bin/java
 export M2_HOME=/usr/share/java/apache-maven-3.0.4
 
+# Log version info
+sh ${M2_HOME}/bin/mvn -version
+
 # Build maven project
 cd ${OPENSHIFT_REPO_DIR}
-sh ${M2_HOME}/bin/mvn -version
 sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.test.skip=true
 
 # Move final artifact to repo dir
 mv ${OPENSHIFT_REPO_DIR}/target/home-server-*.jar ${OPENSHIFT_REPO_DIR}
+
+# Clean up to regain some diskspace
+rm -R ${OPENSHIFT_REPO_DIR}/target
+rm -R rm -R ~/app-root/dependencies/*
