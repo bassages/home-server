@@ -36,7 +36,6 @@ cd $OPENSHIFT_DEPENDENCIES_DIR
 rm -rf *
 exit
 
-
 ----
 
 Set database timezone
@@ -49,3 +48,12 @@ Then log in using for example PHPMyadmin / MySQLWorkbench and execute:
 
 SET time_zone='Europe/Amsterdam';
 SET GLOBAL time_zone = 'Europe/Berlin';
+
+
+---
+
+How to Shrink MySQL ibdata1 Size using innodb_file_per_table
+
+http://www.thegeekstuff.com/2016/02/mysql-innodb-file-per-table/
+
+---

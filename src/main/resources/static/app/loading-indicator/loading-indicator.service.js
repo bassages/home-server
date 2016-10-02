@@ -52,7 +52,7 @@
             window.setTimeout(function () {
                 if (loadingModalInstance != null) {
                     loadingModalInstance.close();
-                    loadingModalInstance = null;
+                    loadingModalInstance = undefined;
                 }
             }, 1);
 
