@@ -32,7 +32,7 @@
                     $scope.gasVerbruikVandaag = response.data[0].verbruik
                 }
             }, function errorCallback(response) {
-                $log.error(JSON.stringify(response));
+                $log.error(angular.toJson(response));
             });
         }
 
@@ -42,7 +42,7 @@
             }).then(function successCallback(response) {
                 updateMeterstand(response.data);
             }, function errorCallback(response) {
-                $log.error(JSON.stringify(response));
+                $log.error(angular.toJson(response));
             });
         }
 
@@ -52,7 +52,7 @@
             }).then(function successCallback(response) {
                 updateKlimaat(response.data);
             }, function errorCallback(response) {
-                $log.error(JSON.stringify(response));
+                $log.error(angular.toJson(response));
             });
         }
 
@@ -62,7 +62,7 @@
             }).then(function successCallback(response) {
                 $scope.oudsteVanVandaag = response.data;
             }, function errorCallback(response) {
-                $log.error(JSON.stringify(response));
+                $log.error(angular.toJson(response));
             });
         }
 

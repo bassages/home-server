@@ -63,7 +63,7 @@
         }
 
         function handleServiceError(message, errorResult) {
-            $log.error(message + ' Cause=' + JSON.stringify(errorResult));
+            $log.error(message + ' Cause=' + angular.toJson(errorResult));
             ErrorMessageService.showMessage(message);
         }
 

@@ -44,7 +44,8 @@
             })
             .when('/energiecontracten', {
                 templateUrl: 'app/beheer/energiecontracten.html',
-                controller: 'EnergieContractenController'
+                controller: 'EnergieContractenController',
+                controllerAs: 'vm'
             })
             .when('/mindergasnl', {
                 templateUrl: 'app/beheer/mindergasnl.html',

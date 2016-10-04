@@ -33,7 +33,7 @@
         $scope.save = function() {
             LoadingIndicatorService.startLoading();
 
-            $log.info('Save Mindergas.nl settings: ' + JSON.stringify($scope.settings));
+            $log.info('Save Mindergas.nl settings: ' + angular.toJson($scope.settings));
 
             $scope.settings.$save(
                 function(successResult) {
@@ -49,7 +49,7 @@
         };
 
         function handleServiceError(message, errorResult) {
-            $log.error(message + ' Cause=' + JSON.stringify(errorResult));
+            $log.error(message + ' Cause=' + angular.toJson(errorResult));
             ErrorMessageService.showMessage(message);
         }
 

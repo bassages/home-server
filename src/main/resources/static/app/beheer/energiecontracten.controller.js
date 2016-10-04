@@ -5,18 +5,19 @@
         .module('app')
         .controller('EnergieContractenController', EnergieContractenController);
 
-    EnergieContractenController.$inject = ['$scope', '$log', 'EnergieContractenService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    EnergieContractenController.$inject = ['$log', 'EnergieContractenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function EnergieContractenController($scope, $log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
+    function EnergieContractenController($log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
+        var vm = this;
 
         function activate() {
             LoadingIndicatorService.startLoading();
 
-            $scope.dateformat = 'EEEE dd-MM-yyyy';
+            vm.dateformat = 'EEEE dd-MM-yyyy';
 
             EnergieContractenService.query(
                 function(data) {
-                    $scope.kosten = data;
+                    vm.kosten = data;
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResponse) {
@@ -28,39 +29,38 @@
 
         activate();
 
-        $scope.startEdit = function(energiecontract) {
-            $scope.item = angular.copy(energiecontract);
-            $scope.vanaf = new Date(energiecontract.van);
-            $scope.selectedId = $scope.item.id;
-            $scope.detailsmode = 'edit';
-            $scope.showDetails = true;
+        vm.startEdit = function(energiecontract) {
+            vm.item = angular.copy(energiecontract);
+            vm.vanaf = new Date(energiecontract.van);
+            vm.selectedId = vm.item.id;
+            vm.detailsmode = 'edit';
+            vm.showDetails = true;
         };
 
-        $scope.startAdd = function() {
-            $scope.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
-            $scope.vanaf = $scope.item.van;
-            $scope.detailsmode = 'add';
-            $scope.showDetails = true;
+        vm.startAdd = function() {
+            vm.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            vm.vanaf = vm.item.van;
+            vm.detailsmode = 'add';
+            vm.showDetails = true;
         };
 
-        $scope.datepickerPopupOptions = {
+        vm.datepickerPopupOptions = {
         };
 
-        $scope.datepickerPopup = {
+        vm.datepickerPopup = {
             opened: false
         };
 
-        $scope.toggleDatepickerPopup = function() {
-            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        vm.toggleDatepickerPopup = function() {
+            vm.datepickerPopup.opened = !vm.datepickerPopup.opened;
         };
 
         function saveAdd() {
-            $scope.item.van = $scope.vanaf.getTime();
-            $scope.item.$save(
+            vm.item.$save(
                 function(successResult) {
-                    $scope.item.id = successResult.id;
-                    $scope.kosten.push($scope.item);
-                    $scope.cancelEdit();
+                    vm.item.id = successResult.id;
+                    vm.kosten.push(vm.item);
+                    vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {
@@ -71,12 +71,11 @@
         }
 
         function saveEdit() {
-
-            $scope.item.$save(
+            vm.item.$save(
                 function(successResult) {
-                    var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
-                    angular.copy($scope.item, $scope.kosten[index]);
-                    $scope.cancelEdit();
+                    var index = getIndexOfItemWithId(vm.item.id, vm.kosten);
+                    angular.copy(vm.item, vm.kosten[index]);
+                    vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {
@@ -86,38 +85,38 @@
             );
         }
 
-        $scope.save = function() {
+        vm.save = function() {
             LoadingIndicatorService.startLoading();
 
-            $scope.item.van = $scope.vanaf.getTime();
+            vm.item.van = new Date(vm.vanaf).getTime();
 
-            $log.info('Save kosten: ' + JSON.stringify($scope.item));
+            $log.info('Save kosten: ' + angular.toJson(vm.item));
 
-            if ($scope.detailsmode == 'add') {
+            if (vm.detailsmode == 'add') {
                 saveAdd();
-            } else if ($scope.detailsmode == 'edit') {
+            } else if (vm.detailsmode == 'edit') {
                 saveEdit();
             } else {
-                handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + $scope.detailsmode);
+                handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + vm.detailsmode);
             }
         };
 
-        $scope.cancelEdit = function() {
-            $scope.selectedId = null;
-            $scope.showDetails = false;
+        vm.cancelEdit = function() {
+            vm.selectedId = null;
+            vm.showDetails = false;
         };
 
-        $scope.delete = function() {
+        vm.delete = function() {
             LoadingIndicatorService.startLoading();
 
-            $log.info('Delete energiecontract: ' + JSON.stringify($scope.item));
+            $log.info('Delete energiecontract: ' + angular.toJson(vm.item));
 
-            var index = getIndexOfItemWithId($scope.item.id, $scope.kosten);
+            var index = getIndexOfItemWithId(vm.item.id, vm.kosten);
 
-            EnergieContractenService.delete({id: $scope.item.id},
+            EnergieContractenService.delete({id: vm.item.id},
                 function(successResult) {
-                    $scope.kosten.splice(index, 1);
-                    $scope.cancelEdit();
+                    vm.kosten.splice(index, 1);
+                    vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {
@@ -142,7 +141,7 @@
                 var userMessage = 'Er bestaat al een rij met dezelfde vanaf datum. Kies een andere datum a.u.b.';
                 ErrorMessageService.showMessage(userMessage);
             } else {
-                $log.error(message + ' Cause=' + JSON.stringify(errorResult));
+                $log.error(message + ' Cause=' + angular.toJson(errorResult));
                 ErrorMessageService.showMessage(message);
             }
         }

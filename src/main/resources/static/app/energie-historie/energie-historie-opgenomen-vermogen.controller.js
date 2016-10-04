@@ -196,7 +196,7 @@
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {
-                        $log.error(JSON.stringify(response));
+                        $log.error(angular.toJson(response));
                         LoadingIndicatorService.stopLoading();
                         ErrorMessageService.showMessage("Er is een fout opgetreden bij het ophalen van de gegevens");
                     }
