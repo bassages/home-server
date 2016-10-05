@@ -49,11 +49,13 @@
             })
             .when('/mindergasnl', {
                 templateUrl: 'app/beheer/mindergasnl.html',
-                controller: 'MindergasnlController'
+                controller: 'MindergasnlController',
+                controllerAs: 'vm'
             })
             .when('/', {
                 templateUrl: 'app/dashboard/dashboard.html',
-                controller: 'DashboardController'
+                controller: 'DashboardController',
+                controllerAs: 'vm'
             })
             .otherwise({redirectTo: 'app/dashboard/dashboard.html'});
     }

@@ -5,9 +5,10 @@
         .module('app')
         .controller('MindergasnlController', MindergasnlController);
 
-    MindergasnlController.$inject = ['$scope', '$log', 'MindergasnlService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    MindergasnlController.$inject = ['$log', 'MindergasnlService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function MindergasnlController($scope, $log, MindergasnlService, LoadingIndicatorService, ErrorMessageService) {
+    function MindergasnlController($log, MindergasnlService, LoadingIndicatorService, ErrorMessageService) {
+        var vm = this;
 
         function activate() {
             LoadingIndicatorService.startLoading();
@@ -15,9 +16,9 @@
             MindergasnlService.query(
                 function(data) {
                     if (data.length == 0) {
-                        $scope.settings = new MindergasnlService({automatischUploaden: false, authenticatietoken: ''});
+                        vm.settings = new MindergasnlService({automatischUploaden: false, authenticatietoken: ''});
                     } else {
-                        $scope.settings = data[0];
+                        vm.settings = data[0];
                     }
                     LoadingIndicatorService.stopLoading();
                 },
@@ -30,14 +31,14 @@
 
         activate();
 
-        $scope.save = function() {
+        vm.save = function() {
             LoadingIndicatorService.startLoading();
 
-            $log.info('Save Mindergas.nl settings: ' + angular.toJson($scope.settings));
+            $log.info('Save Mindergas.nl settings: ' + angular.toJson(vm.settings));
 
-            $scope.settings.$save(
+            vm.settings.$save(
                 function(successResult) {
-                    $scope.settings.id = successResult.id;
+                    vm.settings.id = successResult.id;
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResult) {

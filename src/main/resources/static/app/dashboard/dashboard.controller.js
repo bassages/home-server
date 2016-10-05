@@ -5,9 +5,11 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$scope', '$http', '$log', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
+    DashboardController.$inject = ['$http', '$log', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
 
-    function DashboardController($scope, $http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
+    function DashboardController($http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
+        var vm = this;
+
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
         getOudsteMeterstandVanVandaag();
@@ -29,7 +31,7 @@
                 method: 'GET', url: url
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
-                    $scope.gasVerbruikVandaag = response.data[0].verbruik
+                    vm.gasVerbruikVandaag = response.data[0].verbruik
                 }
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
@@ -60,7 +62,7 @@
             $http({
                 method: 'GET', url: 'rest/meterstanden/oudste-vandaag'
             }).then(function successCallback(response) {
-                $scope.oudsteVanVandaag = response.data;
+                vm.oudsteVanVandaag = response.data;
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
             });
@@ -68,7 +70,7 @@
 
         function updateKlimaat(data) {
             if (data) {
-                $scope.huidigKlimaat = data;
+                vm.huidigKlimaat = data;
 
                 if (data.temperatuur) {
                     setTemperatuurLeds(data.temperatuur);
@@ -80,40 +82,40 @@
         }
 
         function setOpgenomenVermogenLeds(stroomOpgenomenVermogenInWatt) {
-            $scope.opgenomenVermogenLed0 = stroomOpgenomenVermogenInWatt > 0;
+            vm.opgenomenVermogenLed0 = stroomOpgenomenVermogenInWatt > 0;
 
             for (var i = 1; i < 9; i++) {
-                $scope['opgenomenVermogenLed' + i] = stroomOpgenomenVermogenInWatt >= (i * 150);
+                vm['opgenomenVermogenLed' + i] = stroomOpgenomenVermogenInWatt >= (i * 150);
             }
         }
 
         function setTemperatuurLeds(temperatuur) {
-            $scope.temperatuurLed0 = true;
+            vm.temperatuurLed0 = true;
 
             for (var i = 1; i <= 9; i++) {
                 var temperatuurForLed = i + 16;
-                $scope['temperatuurLed' + i] = temperatuur >= temperatuurForLed;
+                vm['temperatuurLed' + i] = temperatuur >= temperatuurForLed;
             }
         }
 
         function setLuchtVochtigheidLeds(luchtvochtigheid) {
             for (var i = 0; i <= 9; i++) {
-                $scope['luchtvochtigheidLed' + i] = luchtvochtigheid >= (i * 10);
+                vm['luchtvochtigheidLed' + i] = luchtvochtigheid >= (i * 10);
             }
         }
 
         function updateMeterstand(meterstanden) {
             if (meterstanden != null) {
-                if ($scope.gasVerbruikVandaag == null) {
+                if (vm.gasVerbruikVandaag == null) {
                     getGasVerbruikVandaag();
                 }
 
-                $scope.huidigeMeterstanden = meterstanden;
+                vm.huidigeMeterstanden = meterstanden;
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
-                if ($scope.oudsteVanVandaag != null) {
-                    $scope.gasVerbruikVandaag = meterstanden.gas - $scope.oudsteVanVandaag.gas;
+                if (vm.oudsteVanVandaag != null) {
+                    vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
                 }
             }
         }
