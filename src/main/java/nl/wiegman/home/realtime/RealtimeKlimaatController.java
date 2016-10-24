@@ -1,15 +1,15 @@
 package nl.wiegman.home.realtime;
 
-import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.Klimaat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class RealTimeMeterstandController {
+public class RealtimeKlimaatController {
 
-    public static final String TOPIC = "/topic/meterstand";
+    public static final String TOPIC = "/topic/klimaat";
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -17,9 +17,8 @@ public class RealTimeMeterstandController {
     @EventListener
     public void onApplicationEvent(UpdateEvent event) {
         Object updatedObject = event.getUpdatedObject();
-        if (updatedObject instanceof Meterstand) {
+        if (updatedObject instanceof Klimaat) {
             messagingTemplate.convertAndSend(TOPIC, updatedObject);
         }
-
     }
 }
