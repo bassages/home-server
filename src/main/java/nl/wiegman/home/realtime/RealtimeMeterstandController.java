@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class RealtimeMeterstandenController {
+public class RealtimeMeterstandController {
 
     public static final String TOPIC = "/topic/meterstand";
 
