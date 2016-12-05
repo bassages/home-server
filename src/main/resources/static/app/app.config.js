@@ -52,6 +52,11 @@
                 controller: 'MindergasnlController',
                 controllerAs: 'vm'
             })
+            .when('/schakelaars', {
+                templateUrl: 'app/schakelaars/schakelaars.html',
+                controller: 'SchakelaarsController',
+                controllerAs: 'vm'
+            })
             .when('/', {
                 templateUrl: 'app/dashboard/dashboard.html',
                 controller: 'DashboardController',
