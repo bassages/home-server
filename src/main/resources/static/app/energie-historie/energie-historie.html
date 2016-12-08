@@ -9,7 +9,7 @@
 
             <!-- Soort selection for SMALL screens -->
             <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/#/grafiek/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
+                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/#/energie/{{supportedsoort.code}}/grafiek/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
             </div>
 
             <!-- Energiesoort selection for SMALL screens -->

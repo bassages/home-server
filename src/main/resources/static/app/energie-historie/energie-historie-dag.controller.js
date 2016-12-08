@@ -74,19 +74,6 @@
             return tickValues;
         }
 
-        function getGraphPadding() {
-            return {top: 10, bottom: 25, left: 55, right: 20};
-        }
-
-        function getEmptyGraphConfig() {
-            return {
-                data: {json: {}},
-                legend: {show: false},
-                axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: getGraphPadding()
-            }
-        }
-
         function getGraphConfig(data) {
             var graphConfig = {};
 
@@ -127,7 +114,7 @@
                 }
             };
 
-            graphConfig.padding = getGraphPadding();
+            graphConfig.padding = EnergieHistorieService.getGraphPadding();
             graphConfig.grid = {y: {show: true}};
 
             return graphConfig;
@@ -149,7 +136,7 @@
         }
 
         function loadDataIntoGraph(data) {
-            var graphConfig = data.length == 0 ? getEmptyGraphConfig() : getGraphConfig(data);
+            var graphConfig = data.length == 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
