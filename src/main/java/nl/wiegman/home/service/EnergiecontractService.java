@@ -4,12 +4,12 @@ import nl.wiegman.home.model.Energiecontract;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
 
-@Component
+@Service
 public class EnergiecontractService {
 
     public static final long SINT_JUTTEMIS = 7258114800000l;

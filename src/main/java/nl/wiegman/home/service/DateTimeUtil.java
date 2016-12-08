@@ -26,7 +26,6 @@ public class DateTimeUtil {
                 datum = DateUtils.addDays(datum, 1);
             }
         }
-//        Collections.reverse(dagenInPeriode);
         return dagenInPeriode;
     }
 

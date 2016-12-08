@@ -2,10 +2,11 @@ package nl.wiegman.home.service;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 
-@Component
+@Service
 public class CacheService {
 
     @Inject

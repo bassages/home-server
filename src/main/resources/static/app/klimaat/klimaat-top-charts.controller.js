@@ -5,22 +5,24 @@
         .module('app')
         .controller('KlimaatTopChartsController', KlimaatTopChartsController);
 
-    KlimaatTopChartsController.$inject = ['$scope', '$http', '$q', '$log', '$routeParams', 'KlimaatService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    KlimaatTopChartsController.$inject = ['$http', '$q', '$log', '$routeParams', 'KlimaatService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function KlimaatTopChartsController($scope, $http, $q, $log, $routeParams, KlimaatService, LoadingIndicatorService, ErrorMessageService) {
+    function KlimaatTopChartsController($http, $q, $log, $routeParams, KlimaatService, LoadingIndicatorService, ErrorMessageService) {
+        var vm = this;
+
         activate();
 
         function activate() {
-            $scope.sensortype = $routeParams.sensortype;
-            $scope.unitlabel = KlimaatService.getUnitlabel($scope.sensortype);
+            vm.sensortype = $routeParams.sensortype;
+            vm.unitlabel = KlimaatService.getUnitlabel(vm.sensortype);
 
-            $scope.limits = [5, 10, 25, 50, 100];
-            $scope.limit = 10;
+            vm.limits = [5, 10, 25, 50, 100];
+            vm.limit = 10;
 
-            $scope.from = Date.january().first();
-            $scope.to = Date.today();
+            vm.from = Date.january().first();
+            vm.to = Date.today();
 
-            $scope.dateformat = 'EEEE. dd-MM-yyyy';
+            vm.dateformat = 'EEEE. dd-MM-yyyy';
 
             getDataFromServer();
         }
@@ -35,8 +37,8 @@
 
             $q.all(requests).then(
                 function successCallback(responses) {
-                    $scope.laagste = getResponseData(responses, 'laagste');
-                    $scope.hoogste = getResponseData(responses, 'hoogste');
+                    vm.laagste = getResponseData(responses, 'laagste');
+                    vm.hoogste = getResponseData(responses, 'hoogste');
                     LoadingIndicatorService.stopLoading();
                 },
                 function errorCallback(response) {
@@ -57,7 +59,7 @@
         }
 
         function getTopChartData(charttype) {
-            var dataUrl = 'rest/klimaat/' + charttype + '?from=' + $scope.from.getTime() + '&to=' + $scope.to.clone().add(1).day().getTime() + '&sensortype=' + $scope.sensortype + '&limit=' + $scope.limit;
+            var dataUrl = 'rest/klimaat/' + charttype + '?from=' + vm.from.getTime() + '&to=' + vm.to.clone().add(1).day().getTime() + '&sensortype=' + vm.sensortype + '&limit=' + vm.limit;
             $log.info('Getting data from URL: ' + dataUrl);
             return $http( { method: 'GET', url: dataUrl } );
         }
@@ -67,39 +69,39 @@
             ErrorMessageService.showMessage(message);
         }
 
-        $scope.datepickerPopupFromOptions = {
+        vm.datepickerPopupFromOptions = {
             maxDate: Date.today()
         };
 
-        $scope.datepickerPopupFrom = {
+        vm.datepickerPopupFrom = {
             opened: false
         };
 
-        $scope.toggleDatepickerPopupFrom = function() {
-            $scope.datepickerPopupFrom.opened = !$scope.datepickerPopupFrom.opened;
+        vm.toggleDatepickerPopupFrom = function() {
+            vm.datepickerPopupFrom.opened = !vm.datepickerPopupFrom.opened;
         };
 
-        $scope.datepickerPopupToOptions = {
+        vm.datepickerPopupToOptions = {
             maxDate: Date.today()
         };
 
-        $scope.datepickerPopupTo = {
+        vm.datepickerPopupTo = {
             opened: false
         };
 
-        $scope.toggleDatepickerPopupTo = function() {
-            $scope.datepickerPopupTo.opened = !$scope.datepickerPopupTo.opened;
+        vm.toggleDatepickerPopupTo = function() {
+            vm.datepickerPopupTo.opened = !vm.datepickerPopupTo.opened;
         };
 
-        $scope.fromChange = function() {
+        vm.fromChange = function() {
             getDataFromServer();
         };
 
-        $scope.toChange = function() {
+        vm.toChange = function() {
             getDataFromServer();
         };
 
-        $scope.limitChange = function() {
+        vm.limitChange = function() {
             getDataFromServer();
         };
     }

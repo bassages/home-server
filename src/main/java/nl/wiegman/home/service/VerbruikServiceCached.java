@@ -6,14 +6,14 @@ import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-@Component
+@Service
 public class VerbruikServiceCached {
 
     @Inject

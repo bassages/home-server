@@ -19,11 +19,13 @@
             })
             .when('/klimaat/top-charts/:sensortype', {
                 templateUrl: 'app/klimaat/klimaat-top-charts.html',
-                controller: 'KlimaatTopChartsController'
+                controller: 'KlimaatTopChartsController',
+                controllerAs: 'vm'
             })
             .when('/klimaat/average/:sensortype', {
                 templateUrl: 'app/klimaat/klimaat-average.html',
-                controller: 'KlimaatAverageController'
+                controller: 'KlimaatAverageController',
+                controllerAs: 'vm'
             })
             .when('/energie/:soort/grafiek/uur', {
                 templateUrl: 'app/energie-historie/energie-historie.html',
@@ -40,7 +42,8 @@
 
             .when('/energie/meterstanden', {
                 templateUrl: 'app/meterstanden/meterstanden.html',
-                controller: 'MeterstandenController'
+                controller: 'MeterstandenController',
+                controllerAs: 'vm'
             })
             .when('/energiecontracten', {
                 templateUrl: 'app/beheer/energiecontracten.html',

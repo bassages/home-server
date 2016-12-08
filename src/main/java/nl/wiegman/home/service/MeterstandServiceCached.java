@@ -3,12 +3,12 @@ package nl.wiegman.home.service;
 import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.Date;
 
-@Component
+@Service
 public class MeterstandServiceCached {
 
     @Inject

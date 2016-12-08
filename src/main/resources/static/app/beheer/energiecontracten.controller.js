@@ -10,6 +10,8 @@
     function EnergieContractenController($log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        activate();
+
         function activate() {
             LoadingIndicatorService.startLoading();
 
@@ -26,8 +28,6 @@
                 }
             );
         }
-
-        activate();
 
         vm.startEdit = function(energiecontract) {
             vm.item = angular.copy(energiecontract);

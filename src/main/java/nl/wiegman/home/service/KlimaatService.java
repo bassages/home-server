@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Receives updates from klimaat sensors, stores the values and provides them.
  */
-@Component
+@Service
 public class KlimaatService {
 
     private static final Logger LOG = LoggerFactory.getLogger(KlimaatService.class);

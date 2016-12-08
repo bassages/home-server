@@ -10,6 +10,8 @@
     function MindergasnlController($log, MindergasnlService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        activate();
+
         function activate() {
             LoadingIndicatorService.startLoading();
 
@@ -28,8 +30,6 @@
                 }
             );
         }
-
-        activate();
 
         vm.save = function() {
             LoadingIndicatorService.startLoading();

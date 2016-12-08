@@ -5,55 +5,57 @@
         .module('app')
         .controller('MeterstandenController', MeterstandenController);
 
-    MeterstandenController.$inject = ['$scope', '$log', 'MeterstandenService', 'LocalizationService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    MeterstandenController.$inject = ['$log', 'MeterstandenService', 'LocalizationService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function MeterstandenController($scope, $log, MeterstandenService, LocalizationService, LoadingIndicatorService, ErrorMessageService) {
+    function MeterstandenController($log, MeterstandenService, LocalizationService, LoadingIndicatorService, ErrorMessageService) {
+        var vm = this;
+
         activate();
 
         function activate() {
             LocalizationService.localize();
-            $scope.selection = Date.today().clearTime().moveToFirstDayOfMonth();
-            $scope.dateformat = 'MMMM yyyy';
+            vm.selection = Date.today().clearTime().moveToFirstDayOfMonth();
+            vm.dateformat = 'MMMM yyyy';
             getDataFromServer();
         }
 
-        $scope.isMaxSelected = function() {
-            return Date.today().getMonth() == $scope.selection.getMonth() && Date.today().getFullYear() == $scope.selection.getFullYear();
+        vm.isMaxSelected = function() {
+            return Date.today().getMonth() == vm.selection.getMonth() && Date.today().getFullYear() == vm.selection.getFullYear();
         };
 
-        $scope.navigate = function(numberOfPeriods) {
-            $scope.selection = $scope.selection.clone().add(numberOfPeriods).months();
+        vm.navigate = function(numberOfPeriods) {
+            vm.selection = vm.selection.clone().add(numberOfPeriods).months();
             getDataFromServer();
         };
 
-        $scope.datepickerPopupOptions = {
+        vm.datepickerPopupOptions = {
             datepickerMode: 'month',
             minMode: 'month',
             maxDate: Date.today()
         };
 
-        $scope.datepickerPopup = {
+        vm.datepickerPopup = {
             opened: false
         };
 
-        $scope.toggleDatepickerPopup = function() {
-            $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
+        vm.toggleDatepickerPopup = function() {
+            vm.datepickerPopup.opened = !vm.datepickerPopup.opened;
         };
 
-        $scope.selectionChange = function() {
+        vm.selectionChange = function() {
             getDataFromServer();
         };
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var van = $scope.selection.getTime();
-            var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+            var van = vm.selection.getTime();
+            var totEnMet = vm.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
             MeterstandenService.getMeterstandenPerDagInPeriod(van, totEnMet)
                 .then(
                 function successCallback(response) {
-                    $scope.meterstandenPerDag = response.data;
+                    vm.meterstandenPerDag = response.data;
                     LoadingIndicatorService.stopLoading();
                 },
                 function errorCallback(response) {

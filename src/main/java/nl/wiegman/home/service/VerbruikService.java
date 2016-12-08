@@ -6,10 +6,9 @@ import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-@Component
+@Service
 public class VerbruikService {
 
     private final Logger logger = LoggerFactory.getLogger(VerbruikService.class);

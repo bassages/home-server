@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
@@ -17,7 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Service
 public class KlimaatDataGeneratorService extends AbstractDataGeneratorService {
 
     private static final Logger LOG = LoggerFactory.getLogger(KlimaatDataGeneratorService.class);
@@ -30,7 +30,7 @@ public class KlimaatDataGeneratorService extends AbstractDataGeneratorService {
     public static final BigDecimal LUCHTVOCHTIGHEID_MINIMUM = new BigDecimal(20.0d);
     public static final BigDecimal LUCHTVOCHTIGHEID_MAXIMUM = new BigDecimal(90.0d);
 
-    public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 2;
+    public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 10;
 
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> dataGeneratorScheduler = null;
