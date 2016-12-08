@@ -80,6 +80,9 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-websocket:1.4.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-messaging:4.3.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-websocket:4.3.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-hateoas:1.4.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.hateoas:spring-hateoas:0.20.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-actuator:1.4.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-actuator:1.4.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-actuator-docs:1.4.2.RELEASE" level="project" />
