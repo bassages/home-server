@@ -76,7 +76,7 @@
                                     <i class="fa fa-chevron-left"></i>
                                 </button>
                             </span>
-                            <input class="form-control text-center text-capitalize" ng-readonly="true" ng-click="toggleDatepickerPopup()" uib-datepicker-popup="{{dateformat}}" ng-model="selection" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopup.opened" datepicker-options="datepickerPopupOptions" ng-change="selectionChange()" />
+                            <input class="form-control text-center text-capitalize input-sm" ng-readonly="true" ng-click="toggleDatepickerPopup()" uib-datepicker-popup="{{dateformat}}" ng-model="selection" datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" is-open="datepickerPopup.opened" datepicker-options="datepickerPopupOptions" ng-change="selectionChange()" />
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default btn-sm" ng-disabled="isMaxSelected()" ng-class="{'disabled': isMaxSelected()}" ng-click="navigate(+1)">
                                     <i class="fa fa-chevron-right"></i>
