@@ -60,7 +60,7 @@
                         <tr ng-repeat="klimaat in vm.laagste">
                             <td class="text-right">{{$index+1}}.</td>
                             <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
-                            <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
+                            <td class="text-right">{{klimaat[vm.sensortype] | number : 2}}{{vm.unitlabel}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -88,7 +88,7 @@
                             <tr ng-repeat="klimaat in vm.hoogste">
                                 <td class="text-right">{{$index+1}}.</td>
                                 <td class="text-right">{{klimaat.datumtijd | date : 'dd-MM-yyyy HH:mm:ss'}}</td>
-                                <td class="text-right">{{klimaat[sensortype] | number : 2}}{{unitlabel}}</td>
+                                <td class="text-right">{{klimaat[vm.sensortype] | number : 2}}{{vm.unitlabel}}</td>
                             </tr>
                         </tbody>
                     </table>
