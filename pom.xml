@@ -179,7 +179,7 @@
             <plugin>
                 <groupId>ro.isdc.wro4j</groupId>
                 <artifactId>wro4j-maven-plugin</artifactId>
-                <version>1.7.9</version>
+                <version>1.8.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -200,7 +200,7 @@
                     <dependency>
                         <groupId>com.github.sommeri</groupId>
                         <artifactId>less4j</artifactId>
-                        <version>1.14.0</version>
+                        <version>1.17.2</version>
                     </dependency>
                 </dependencies>
             </plugin>

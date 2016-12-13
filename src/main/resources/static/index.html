@@ -60,9 +60,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 
     <!-- Bootstrap datepicker. See https://bootstrap-datepicker.readthedocs.org/ -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.nl.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css">
 
     <!-- Date.js. See http://www.datejs.com/ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
@@ -83,7 +83,7 @@
 
     <!-- Odometer. See http://github.hubspot.com/odometer/ -->
     <link rel="stylesheet" href="app/dashboard/odometer-theme-default.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.7/odometer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.7/odometer.min.js"></script>
 
     <link href="css/home.css" rel="stylesheet">
 </head>
@@ -95,51 +95,45 @@
         <div ng-view></div>
     </div>
 
-    <!-- Modules -->
-    <script src="app/app.module.js"></script>
+    <!--<script src="app/app.module.js"></script>-->
 
-    <!-- Directives -->
-    <script src="app/epochmodeldatepicker.directive.js"></script>
-    <script src="app/energieprijs.directive.js"></script>
-    <script src="app/formatteddate.directive.js"></script>
-    <script src="app/toggle-checkbox.directive.js"></script>
-    <script src="app/dashboard/odometer.directive.js"></script>
+    <!--<script src="app/epochmodeldatepicker.directive.js"></script>-->
+    <!--<script src="app/energieprijs.directive.js"></script>-->
+    <!--<script src="app/formatteddate.directive.js"></script>-->
+    <!--<script src="app/toggle-checkbox.directive.js"></script>-->
+    <!--<script src="app/dashboard/odometer.directive.js"></script>-->
 
-    <!-- Filters -->
-    <script src="app/meterstand.filter.js"></script>
+    <!--<script src="app/meterstand.filter.js"></script>-->
 
-    <!-- Services -->
-    <script src="app/localization.service.js"></script>
-    <script src="app/base-history.service.js"></script>
-    <script src="app/klimaat/klimaat.service.js"></script>
-    <script src="app/klimaat/klimaat-historie.service.js"></script>
-    <script src="app/energie-historie/energie-historie.service.js"></script>
-    <script src="app/meterstanden/meterstanden.service.js"></script>
-    <script src="app/beheer/energiecontracten.service.js"></script>
-    <script src="app/beheer/mindergasnl.service.js"></script>
-    <script src="app/loading-indicator/loading-indicator.service.js"></script>
-    <script src="app/dashboard/realtimemeterstanden.service.js"></script>
-    <script src="app/dashboard/realtimeklimaat.service.js"></script>
-    <script src="app/error-handling/errormessage.service.js"></script>
+    <!--<script src="app/localization.service.js"></script>-->
+    <!--<script src="app/base-history.service.js"></script>-->
+    <!--<script src="app/klimaat/klimaat.service.js"></script>-->
+    <!--<script src="app/klimaat/klimaat-historie.service.js"></script>-->
+    <!--<script src="app/energie-historie/energie-historie.service.js"></script>-->
+    <!--<script src="app/meterstanden/meterstanden.service.js"></script>-->
+    <!--<script src="app/beheer/energiecontracten.service.js"></script>-->
+    <!--<script src="app/beheer/mindergasnl.service.js"></script>-->
+    <!--<script src="app/loading-indicator/loading-indicator.service.js"></script>-->
+    <!--<script src="app/dashboard/realtimemeterstanden.service.js"></script>-->
+    <!--<script src="app/dashboard/realtimeklimaat.service.js"></script>-->
+    <!--<script src="app/error-handling/errormessage.service.js"></script>-->
 
-    <!-- Controllers -->
-    <script src="app/schakelaars/schakelaars.controller.js"></script>
-    <script src="app/meterstanden/meterstanden.controller.js"></script>
-    <script src="app/beheer/energiecontracten.controller.js"></script>
-    <script src="app/dashboard/dashboard.controller.js"></script>
-    <script src="app/beheer/energiecontracten.controller.js"></script>
-    <script src="app/beheer/mindergasnl.controller.js"></script>
-    <script src="app/klimaat/klimaat-historie.controller.js"></script>
-    <script src="app/klimaat/klimaat-top-charts.controller.js"></script>
-    <script src="app/klimaat/klimaat-average.controller.js"></script>
+    <!--<script src="app/schakelaars/schakelaars.controller.js"></script>-->
+    <!--<script src="app/meterstanden/meterstanden.controller.js"></script>-->
+    <!--<script src="app/beheer/energiecontracten.controller.js"></script>-->
+    <!--<script src="app/dashboard/dashboard.controller.js"></script>-->
+    <!--<script src="app/beheer/energiecontracten.controller.js"></script>-->
+    <!--<script src="app/beheer/mindergasnl.controller.js"></script>-->
+    <!--<script src="app/klimaat/klimaat-historie.controller.js"></script>-->
+    <!--<script src="app/klimaat/klimaat-top-charts.controller.js"></script>-->
+    <!--<script src="app/klimaat/klimaat-average.controller.js"></script>-->
 
-    <script src="app/energie-historie/energie-historie-opgenomen-vermogen.controller.js"></script>
-    <script src="app/energie-historie/energie-historie-uur.controller.js"></script>
-    <script src="app/energie-historie/energie-historie-dag.controller.js"></script>
-    <script src="app/energie-historie/energie-historie-maand.controller.js"></script>
+    <!--<script src="app/energie-historie/energie-historie-opgenomen-vermogen.controller.js"></script>-->
+    <!--<script src="app/energie-historie/energie-historie-uur.controller.js"></script>-->
+    <!--<script src="app/energie-historie/energie-historie-dag.controller.js"></script>-->
+    <!--<script src="app/energie-historie/energie-historie-maand.controller.js"></script>-->
 
-    <!-- Configuration -->
-    <script src="app/app.config.js"></script>
+    <!--<script src="app/app.config.js"></script>-->
 
 </body>
 </html>
