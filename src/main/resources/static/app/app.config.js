@@ -17,61 +17,61 @@
     function Config($routeProvider) {
         $routeProvider
             .when('/energie/stroom/opgenomen-vermogen', {
-                templateUrl: 'app/energie-historie/energie-historie.html',
+                templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
             .when('/klimaat/grafiek/:sensortype', {
-                templateUrl: 'app/klimaat/klimaat-historie.html',
+                templateUrl: '/app/klimaat/klimaat-historie.html',
                 controller: 'KlimaatHistorieController'
             })
             .when('/klimaat/top-charts/:sensortype', {
-                templateUrl: 'app/klimaat/klimaat-top-charts.html',
+                templateUrl: '/app/klimaat/klimaat-top-charts.html',
                 controller: 'KlimaatTopChartsController',
                 controllerAs: 'vm'
             })
             .when('/klimaat/average/:sensortype', {
-                templateUrl: 'app/klimaat/klimaat-average.html',
+                templateUrl: '/app/klimaat/klimaat-average.html',
                 controller: 'KlimaatAverageController',
                 controllerAs: 'vm'
             })
             .when('/energie/:soort/grafiek/uur', {
-                templateUrl: 'app/energie-historie/energie-historie.html',
+                templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieHistorieController'
             })
             .when('/energie/:soort/grafiek/dag', {
-                templateUrl: 'app/energie-historie/energie-historie.html',
+                templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'DagEnergieHistorieController'
             })
             .when('/energie/:soort/grafiek/maand', {
-                templateUrl: 'app/energie-historie/energie-historie.html',
+                templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieHistorieController'
             })
 
             .when('/energie/meterstanden', {
-                templateUrl: 'app/meterstanden/meterstanden.html',
+                templateUrl: '/app/meterstanden/meterstanden.html',
                 controller: 'MeterstandenController',
                 controllerAs: 'vm'
             })
             .when('/energiecontracten', {
-                templateUrl: 'app/beheer/energiecontracten.html',
+                templateUrl: '/app/beheer/energiecontracten.html',
                 controller: 'EnergieContractenController',
                 controllerAs: 'vm'
             })
             .when('/mindergasnl', {
-                templateUrl: 'app/beheer/mindergasnl.html',
+                templateUrl: '/app/beheer/mindergasnl.html',
                 controller: 'MindergasnlController',
                 controllerAs: 'vm'
             })
             .when('/schakelaars', {
-                templateUrl: 'app/schakelaars/schakelaars.html',
+                templateUrl: '/app/schakelaars/schakelaars.html',
                 controller: 'SchakelaarsController',
                 controllerAs: 'vm'
             })
             .when('/', {
-                templateUrl: 'app/dashboard/dashboard.html',
+                templateUrl: '/app/dashboard/dashboard.html',
                 controller: 'DashboardController',
                 controllerAs: 'vm'
             })
-            .otherwise({redirectTo: 'app/dashboard/dashboard.html'});
+            .otherwise({redirectTo: '/index.html'});
     }
 })();

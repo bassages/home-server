@@ -4,8 +4,6 @@ import nl.wiegman.home.model.Klimaat;
 import nl.wiegman.home.repository.KlimaatRepos;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Mockito.*;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -15,7 +13,9 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {

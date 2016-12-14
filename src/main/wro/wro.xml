@@ -2,7 +2,5 @@
     <group name="home">
         <css>file:src/main/wro/main.less</css>
         <js>file:src/main/**.js</js>
-        <js>webjar:stomp-websocket/2.3.3/stomp.min.js</js>
-        <js>webjar:sockjs-client/1.0.2/sockjs.min.js</js>
     </group>
 </groups>
