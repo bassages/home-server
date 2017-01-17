@@ -24,7 +24,7 @@
         });
 
         function getGasVerbruikVandaag() {
-            var url = 'rest/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
+            var url = 'api/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
             $log.info('Getting data from URL: ' + url);
 
             $http({
@@ -40,7 +40,7 @@
 
         function getMeestRecenteMeterstand() {
             $http({
-                method: 'GET', url: 'rest/meterstanden/meest-recente'
+                method: 'GET', url: 'api/meterstanden/meest-recente'
             }).then(function successCallback(response) {
                 updateMeterstand(response.data);
             }, function errorCallback(response) {
@@ -50,7 +50,7 @@
 
         function getMeestRecenteKlimaat() {
             $http({
-                method: 'GET', url: 'rest/klimaat/meest-recente'
+                method: 'GET', url: 'api/klimaat/meest-recente'
             }).then(function successCallback(response) {
                 updateKlimaat(response.data);
             }, function errorCallback(response) {
@@ -60,7 +60,7 @@
 
         function getOudsteMeterstandVanVandaag() {
             $http({
-                method: 'GET', url: 'rest/meterstanden/oudste-vandaag'
+                method: 'GET', url: 'api/meterstanden/oudste-vandaag'
             }).then(function successCallback(response) {
                 vm.oudsteVanVandaag = response.data;
             }, function errorCallback(response) {

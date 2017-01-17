@@ -143,7 +143,7 @@
                 var requests = [];
 
                 for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'rest/' +  $scope.energiesoorten[i] + '/verbruik-per-maand-in-jaar/' + $scope.selection.getFullYear();
+                    var dataUrl = 'api/' +  $scope.energiesoorten[i] + '/verbruik-per-maand-in-jaar/' + $scope.selection.getFullYear();
                     $log.info('Getting data from URL: ' + dataUrl);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }

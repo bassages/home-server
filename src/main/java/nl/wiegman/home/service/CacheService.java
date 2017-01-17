@@ -1,14 +1,13 @@
 package nl.wiegman.home.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 
 @Service
 public class CacheService {
 
-    @Inject
+    @Autowired
     CacheManager cacheManager;
 
     public void clearAll() {

@@ -7,11 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -21,8 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@Service
-@Path(HistoricDataGeneratorService.SERVICE_PATH)
+@RestController(HistoricDataGeneratorService.SERVICE_PATH)
 public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     private final Logger logger = LoggerFactory.getLogger(HistoricDataGeneratorService.class);
@@ -70,16 +68,14 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
         }
     }
 
-    @POST
-    @Path("startGeneratingHistoricData")
+    @PostMapping(path = "startGeneratingHistoricData")
     public void startGeneratingHistoricData() {
         if (historischeDataGenerator == null) {
             historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelaySeconds, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
-    @POST
-    @Path("stopGeneratingHistoricData")
+    @PostMapping("stopGeneratingHistoricData")
     public void stopGeneratingHistoricData() {
         if (historischeDataGenerator != null) {
             historischeDataGenerator.cancel(false);

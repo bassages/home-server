@@ -5,10 +5,10 @@ import nl.wiegman.home.model.Verbruik;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 @Service
 public class VerbruikServiceCached {
 
-    @Inject
+    @Autowired
     MeterstandRepository meterstandRepository;
 
-    @Inject
+    @Autowired
     EnergiecontractRepository energiecontractRepository;
 
     @Cacheable(cacheNames = "stroomVerbruikInPeriode")

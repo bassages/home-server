@@ -8,6 +8,6 @@
     MindergasnlService.$inject = ['$resource'];
 
     function MindergasnlService($resource) {
-        return $resource('/rest/mindergasnl/:id');
+        return $resource('/api/mindergasnl/:id');
     }
 })();

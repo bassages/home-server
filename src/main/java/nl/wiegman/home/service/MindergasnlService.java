@@ -13,10 +13,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,10 +29,11 @@ public class MindergasnlService {
 
     private static final String METERSTAND_UPLOAD_ENDPOINT = "http://www.mindergas.nl/api/gas_meter_readings";
 
-    @Inject
-    private MindergasnlSettingsRepository mindergasnlSettingsRepository;
-    @Inject
-    private MeterstandService meterstandService;
+    @Autowired
+    MindergasnlSettingsRepository mindergasnlSettingsRepository;
+
+    @Autowired
+    MeterstandService meterstandService;
 
     public List<MindergasnlSettings> getAllSettings() {
         return mindergasnlSettingsRepository.findAll();

@@ -139,7 +139,7 @@
                 var requests = [];
 
                 for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'rest/' + $scope.energiesoorten[i] + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
+                    var dataUrl = 'api/' + $scope.energiesoorten[i] + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
                     $log.info('Getting data from URL: ' + dataUrl);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }

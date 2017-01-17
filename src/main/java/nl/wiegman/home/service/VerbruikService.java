@@ -6,9 +6,9 @@ import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,16 +22,16 @@ public class VerbruikService {
 
     private final Logger logger = LoggerFactory.getLogger(VerbruikService.class);
 
-    @Inject
+    @Autowired
     MeterstandRepository meterstandRepository;
 
-    @Inject
+    @Autowired
     EnergiecontractRepository energiecontractRepository;
 
-    @Inject
+    @Autowired
     VerbruikServiceCached verbruikServiceCached;
 
-    @Inject
+    @Autowired
     OpgenomenVermogenService opgenomenVermogenService;
 
     public List<VerbruikPerUurOpDag> getVerbruikPerUurOpDag(Energiesoort energiesoort, long dag) {

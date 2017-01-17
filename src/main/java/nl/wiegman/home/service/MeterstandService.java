@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,14 +22,14 @@ public class MeterstandService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MeterstandService.class);
 
-    @Inject
-    private MeterstandRepository meterstandRepository;
-
-    @Inject
-    private MeterstandServiceCached meterstandServiceCached;
+    @Autowired
+    MeterstandRepository meterstandRepository;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    MeterstandServiceCached meterstandServiceCached;
+
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     public Meterstand save(Meterstand meterstand) {
         LOG.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));

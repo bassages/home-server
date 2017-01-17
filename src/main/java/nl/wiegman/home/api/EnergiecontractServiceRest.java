@@ -1,35 +1,31 @@
-package nl.wiegman.home.service.api;
+package nl.wiegman.home.api;
 
 import nl.wiegman.home.model.Energiecontract;
 import nl.wiegman.home.service.EnergiecontractService;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@Component
-@Path("energiecontract")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping("/api/energiecontract")
 public class EnergiecontractServiceRest {
 
-    @Inject
+    @Autowired
     EnergiecontractService energiecontractService;
 
-    @GET
+    @GetMapping
     public List<Energiecontract> getAll() {
         return energiecontractService.getAll();
     }
 
-    @POST
-    public Energiecontract save(Energiecontract energiecontract) {
+    @PostMapping
+    public Energiecontract save(@RequestBody Energiecontract energiecontract) {
         return energiecontractService.save(energiecontract);
     }
 
-    @DELETE
-    @Path("{id}")
-    public void delete(@PathParam("id") long id) {
+    @DeleteMapping(path = "{id}")
+    public void delete(@PathVariable("id") long id) {
         energiecontractService.delete(id);
     }
 }

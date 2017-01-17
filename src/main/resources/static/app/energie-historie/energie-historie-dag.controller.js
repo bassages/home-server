@@ -157,7 +157,7 @@
                 var requests = [];
 
                 for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'rest/' + $scope.energiesoorten[i] + '/verbruik-per-dag/' + van + '/' + totEnMet;
+                    var dataUrl = 'api/' + $scope.energiesoorten[i] + '/verbruik-per-dag/' + van + '/' + totEnMet;
                     $log.info('Getting data from URL: ' + dataUrl);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }

@@ -31,7 +31,7 @@
             var requests = [];
 
             for (var i = 1; i <= 12 ;i++) {
-                var dataUrl = 'rest/klimaat/gemiddelde?from=' + month.getTime() + '&to=' + month.clone().add(1).month().getTime() + '&sensortype=' + vm.sensortype;
+                var dataUrl = 'api/klimaat/gemiddelde?from=' + month.getTime() + '&to=' + month.clone().add(1).month().getTime() + '&sensortype=' + vm.sensortype;
                 $log.info('Getting data from URL: ' + dataUrl);
                 requests.push( $http( { method: 'GET', url: dataUrl } ) );
                 month = month.clone().add(1).month();

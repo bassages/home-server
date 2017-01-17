@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -30,14 +29,14 @@ public class KlimaatService {
 
     private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
 
-    @Inject
-    private KlimaatServiceCached klimaatServiceCached;
-
-    @Inject
-    private KlimaatRepos klimaatRepository;
+    @Autowired
+    KlimaatServiceCached klimaatServiceCached;
 
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    KlimaatRepos klimaatRepository;
+
+    @Autowired
+    ApplicationEventPublisher eventPublisher;
 
     @Scheduled(cron = "0 0/15 * * * ?") // Every 15 minutes
     public void save() {

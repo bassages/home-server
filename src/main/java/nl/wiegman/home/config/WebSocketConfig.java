@@ -21,5 +21,4 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws/meterstand").setAllowedOrigins("*").withSockJS();
         registry.addEndpoint("/ws/klimaat").setAllowedOrigins("*").withSockJS();
     }
-
 }

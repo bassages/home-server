@@ -6,19 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import java.math.BigDecimal;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@Service
-@Path(SlimmeMeterSimulatorService.SERVICE_PATH)
+@RestController(SlimmeMeterSimulatorService.SERVICE_PATH)
 public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
 
     private final Logger logger = LoggerFactory.getLogger(SlimmeMeterSimulatorService.class);
@@ -58,16 +56,14 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         }
     }
     
-    @POST
-    @Path("startSlimmeMeterSimulator")
+    @PostMapping(path = "startSlimmeMeterSimulator")
     public void startSlimmeMeterSimulator() {
         if (slimmeMeterSimulator == null) {
             slimmeMeterSimulator = slimmeMeterSimulatorScheduler.scheduleAtFixedRate(this::simulateUpdateFromSlimmeMeter, initialDelaySeconds, SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
-    @POST
-    @Path("stopSlimmeMeterSimulator")
+    @PostMapping(path = "stopSlimmeMeterSimulator")
     public void stopSlimmeMeterSimulator() {
         if (slimmeMeterSimulator != null) {
             slimmeMeterSimulator.cancel(false);

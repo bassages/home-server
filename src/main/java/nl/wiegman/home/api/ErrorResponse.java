@@ -1,4 +1,4 @@
-package nl.wiegman.home.service;
+package nl.wiegman.home.api;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

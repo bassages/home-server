@@ -186,7 +186,7 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoGraph([]);
 
-            var graphDataUrl = 'rest/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
+            var graphDataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + SIX_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data from URL: ' + graphDataUrl);
 
             $http({method: 'GET', url: graphDataUrl})
