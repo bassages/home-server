@@ -25,6 +25,9 @@ public class KlimaatService {
 
     private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/15 * * * ?";
 
+    private static final int TEMPERATURE_SCALE = 2;
+    private static final int HUMIDITY_SCALE = 1;
+
     private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
 
     @Autowired
@@ -51,12 +54,12 @@ public class KlimaatService {
 
         BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
         if (averageTemperature != null) {
-            averageTemperature = averageTemperature.setScale(2, RoundingMode.CEILING);
+            averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.CEILING);
         }
 
         BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
         if (averageHumidity != null) {
-            averageHumidity = averageHumidity.setScale(1, RoundingMode.CEILING);
+            averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.CEILING);
         }
 
         if (averageTemperature != null || averageHumidity != null) {
@@ -168,24 +171,20 @@ public class KlimaatService {
     }
 
     private List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
-        List<Date> peakTemperatureDates = klimaatRepository.getPeakLowTemperatureDates(from, to, limit);
-
         List<Klimaat> result = new ArrayList<>();
 
-        for (Date date : peakTemperatureDates) {
-            result.add(klimaatRepository.firstLowestTemperatureOnDay(date));
-        }
+        klimaatRepository.getPeakLowTemperatureDates(from, to, limit)
+                .forEach(date -> result.add(klimaatRepository.firstLowestTemperatureOnDay(date)));
+
         return result;
     }
 
     private List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
-        List<Date> peakHumidityDates = klimaatRepository.getPeakLowHumidityDates(from, to, limit);
-
         List<Klimaat> result = new ArrayList<>();
 
-        for (Date date : peakHumidityDates) {
-            result.add(klimaatRepository.firstLowestHumidityOnDay(date));
-        }
+        klimaatRepository.getPeakLowHumidityDates(from, to, limit)
+                .forEach(date -> result.add(klimaatRepository.firstLowestHumidityOnDay(date)));
+
         return result;
     }
 }

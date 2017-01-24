@@ -1,6 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Energiecontract;
+import nl.wiegman.home.model.Energiesoort;
 import nl.wiegman.home.model.Verbruik;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
@@ -15,6 +16,8 @@ import java.util.List;
 
 @Service
 public class VerbruikServiceCached {
+
+    private static final int KOSTEN_SCALE = 2;
 
     @Autowired
     MeterstandRepository meterstandRepository;
@@ -70,7 +73,7 @@ public class VerbruikServiceCached {
         if (totaalVerbruik == null) {
             verbruik.setKosten(null);
         } else {
-            verbruik.setKosten(totaalKosten.setScale(2, RoundingMode.CEILING));
+            verbruik.setKosten(totaalKosten.setScale(KOSTEN_SCALE, RoundingMode.CEILING));
         }
         return verbruik;
     }

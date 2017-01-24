@@ -22,6 +22,9 @@ public class MeterstandService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MeterstandService.class);
 
+    private static final int GAS_SCALE = 3;
+    private static final int STROOM_SCALE = 3;
+
     @Autowired
     MeterstandRepository meterstandRepository;
 
@@ -34,10 +37,9 @@ public class MeterstandService {
     public Meterstand save(Meterstand meterstand) {
         LOG.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
 
-        // Make sure to save BigDecimals with 3 decimals.
-        meterstand.setGas(meterstand.getGas().setScale(3, RoundingMode.CEILING));
-        meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(3, RoundingMode.CEILING));
-        meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(3, RoundingMode.CEILING));
+        meterstand.setGas(meterstand.getGas().setScale(GAS_SCALE, RoundingMode.CEILING));
+        meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(STROOM_SCALE, RoundingMode.CEILING));
+        meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(STROOM_SCALE, RoundingMode.CEILING));
 
         Meterstand savedMeterstand = meterstandRepository.save(meterstand);
 

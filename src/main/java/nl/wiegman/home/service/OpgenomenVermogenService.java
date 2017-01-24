@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class OpgenomenVermogenService {
 
         long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
 
-        for (int i=0; i<=nrOfSubPeriodsInPeriod; i++) {
+        for (int i = 0; i <= nrOfSubPeriodsInPeriod; i++) {
             long subStart = from + (i * subPeriodLength);
             long subEnd = subStart + subPeriodLength;
 
@@ -47,7 +48,7 @@ public class OpgenomenVermogenService {
         return list.stream()
                 .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
                 .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt()))
-                .max((ov1, ov2) -> Integer.compare(ov1.getOpgenomenVermogenInWatt(), ov2.getOpgenomenVermogenInWatt()))
+                .max(Comparator.comparingInt(OpgenomenVermogen::getOpgenomenVermogenInWatt))
                 .orElse(null);
     }
 }

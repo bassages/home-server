@@ -17,7 +17,7 @@ public class KlimaatSensor implements HealthIndicator {
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 20;
 
     @Autowired
-    private KlimaatService klimaatService;
+    KlimaatService klimaatService;
 
     @Override
     public Health health() {

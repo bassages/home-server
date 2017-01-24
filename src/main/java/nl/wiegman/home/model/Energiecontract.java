@@ -1,7 +1,6 @@
 package nl.wiegman.home.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import nl.wiegman.home.service.Energiesoort;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

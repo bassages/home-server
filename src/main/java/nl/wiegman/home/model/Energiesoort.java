@@ -1,4 +1,4 @@
-package nl.wiegman.home.service;
+package nl.wiegman.home.model;
 
 public enum Energiesoort {
     STROOM,

@@ -12,7 +12,7 @@ public class RealtimeMeterstandController {
     public static final String TOPIC = "/topic/meterstand";
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    SimpMessagingTemplate messagingTemplate;
 
     @EventListener
     public void onApplicationEvent(UpdateEvent event) {

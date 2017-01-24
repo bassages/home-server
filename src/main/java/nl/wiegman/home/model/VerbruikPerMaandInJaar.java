@@ -2,8 +2,7 @@ package nl.wiegman.home.model;
 
 public class VerbruikPerMaandInJaar extends Verbruik {
 
-    // Range: 1 .. 12
-    private int maand;
+    private int maand; // Range: 1 .. 12
 
     public int getMaand() {
         return maand;

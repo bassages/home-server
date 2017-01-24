@@ -12,7 +12,7 @@ public class RealtimeKlimaatController {
     public static final String TOPIC = "/topic/klimaat";
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    SimpMessagingTemplate messagingTemplate;
 
     @EventListener
     public void onApplicationEvent(UpdateEvent event) {

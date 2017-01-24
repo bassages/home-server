@@ -13,11 +13,10 @@ import java.util.List;
 public class KlimaatServiceCached {
 
     @Autowired
-    private KlimaatRepos klimaatRepository;
+    KlimaatRepos klimaatRepository;
 
     @Cacheable(cacheNames = "klimaatInPeriod")
     public List<Klimaat> getInPeriod(Date from, Date to) {
         return klimaatRepository.findByDatumtijdBetweenOrderByDatumtijd(from, to);
     }
-
 }

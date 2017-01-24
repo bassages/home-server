@@ -28,6 +28,7 @@ public class MindergasnlService {
     private static final Logger LOG = LoggerFactory.getLogger(MindergasnlService.class);
 
     private static final String METERSTAND_UPLOAD_ENDPOINT = "http://www.mindergas.nl/api/gas_meter_readings";
+    private static final String THREE_AM = "0 0 3 * * *";
 
     @Autowired
     MindergasnlSettingsRepository mindergasnlSettingsRepository;
@@ -43,33 +44,33 @@ public class MindergasnlService {
         return mindergasnlSettingsRepository.save(mindergasnlSettings);
     }
 
-    @Scheduled(cron = "0 0 3 * * *") // 3 o'clock in the morning
+    @Scheduled(cron = THREE_AM)
     public void uploadMeterstand() {
 
         List<MindergasnlSettings> settings = getAllSettings();
 
         if (!settings.isEmpty() && getAllSettings().get(0).isAutomatischUploaden()) {
 
-            Date vandaag = new Date();
-            Date gisteren = DateUtils.addDays(vandaag, -1);
+            Date today = new Date();
+            Date yesterday = DateUtils.addDays(today, -1);
 
-            List<MeterstandOpDag> meterstandVanGisteren = meterstandService.perDag(gisteren.getTime(), gisteren.getTime());
+            List<MeterstandOpDag> yesterdaysMeterstand = meterstandService.perDag(yesterday.getTime(), yesterday.getTime());
 
-            if (CollectionUtils.isEmpty(meterstandVanGisteren)) {
+            if (CollectionUtils.isEmpty(yesterdaysMeterstand)) {
                 LOG.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
             } else {
-                BigDecimal gasStand = meterstandVanGisteren.get(0).getMeterstand().getGas();
+                BigDecimal gasStand = yesterdaysMeterstand.get(0).getMeterstand().getGas();
 
                 try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
                     HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
-                    String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(gisteren), gasStand.toString());
+                    String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(yesterday), gasStand.toString());
                     LOG.info("Upload to mindergas.nl: " + message);
-
-                    StringEntity params = new StringEntity(message);
 
                     request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
                     request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
+
+                    StringEntity params = new StringEntity(message);
                     request.setEntity(params);
 
                     CloseableHttpResponse response = httpClient.execute(request);
