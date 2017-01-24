@@ -19,13 +19,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Receives updates from klimaat sensors, stores the values and provides them.
- */
 @Service
 public class KlimaatService {
-
     private static final Logger LOG = LoggerFactory.getLogger(KlimaatService.class);
+
+    private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/15 * * * ?";
 
     private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
 
@@ -38,7 +36,7 @@ public class KlimaatService {
     @Autowired
     ApplicationEventPublisher eventPublisher;
 
-    @Scheduled(cron = "0 0/15 * * * ?") // Every 15 minutes
+    @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
     public void save() {
         LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
 
@@ -71,16 +69,12 @@ public class KlimaatService {
     }
 
     private BigDecimal getAverage(List<BigDecimal> decimals) {
-        if (decimals.isEmpty()) {
-            return null;
-        } else {
-            BigDecimal total = BigDecimal.ZERO;
-
-            for (BigDecimal decimal : decimals) {
-                total = total.add(decimal);
-            }
-            return total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.CEILING);
+        BigDecimal average = null;
+        if (!decimals.isEmpty()) {
+            BigDecimal total = decimals.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+            average = total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.CEILING);
         }
+        return average;
     }
 
     public List<Klimaat> getInPeriod(Date from, Date to) {
@@ -136,13 +130,9 @@ public class KlimaatService {
     }
 
     private List<Klimaat> getHighestTemperature(Date from, Date to, int limit) {
-        List<Date> peakTemperatureDates = klimaatRepository.getPeakHighTemperatureDates(from, to, limit);
-
-        List<Klimaat> result = new ArrayList<>();
-
-        for (Date date : peakTemperatureDates) {
-            result.add(klimaatRepository.firstHighestTemperatureOnDay(date));
-        }
+        final List<Klimaat> result = new ArrayList<>();
+        klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
+            .forEach(date -> result.add(klimaatRepository.firstHighestTemperatureOnDay(date)));
         return result;
     }
 
