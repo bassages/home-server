@@ -31,7 +31,7 @@ public class KlimaatServiceRest {
 
     @GetMapping(path = "hoogste")
     public List<Klimaat> getHighest(@RequestParam("sensortype") String sensortype, @RequestParam("from") long from, @RequestParam("to") long to, @RequestParam("limit") int limit) {
-        return klimaatService.getHighest(sensortype, new Date(from), new Date(to), limit);
+        return klimaatService.getHighest(SensorType.fromString(sensortype), new Date(from), new Date(to), limit);
     }
 
     @GetMapping(path = "laagste")

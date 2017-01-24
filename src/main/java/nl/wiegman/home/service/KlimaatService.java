@@ -85,6 +85,17 @@ public class KlimaatService {
         }
     }
 
+    public BigDecimal getAverage(SensorType sensortype, Date from, Date to) {
+        switch (sensortype) {
+            case TEMPERATUUR:
+                return klimaatRepository.getAverageTemperatuur(from, to);
+            case LUCHTVOCHTIGHEID:
+                return klimaatRepository.getAverageLuchtvochtigheid(from, to);
+            default:
+                return null;
+        }
+    }
+
     public Klimaat getMostRecent() {
         LOG.info("getMostRecent()");
         return klimaatRepository.getMostRecent();
@@ -99,30 +110,28 @@ public class KlimaatService {
     private List<BigDecimal> getValidTemperaturesFromLastQuarter() {
         List<BigDecimal> result = new ArrayList<>();
 
-        for (Klimaat klimaat : receivedInLastQuarter) {
-            if (klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur())) {
-                result.add(klimaat.getTemperatuur());
-            }
-        }
+        receivedInLastQuarter.stream()
+                .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
+                .forEach(klimaat -> result.add(klimaat.getTemperatuur()));
+
         return result;
     }
 
     public List<BigDecimal> getValidHumiditiesFromLastQuarter() {
         List<BigDecimal> result = new ArrayList<>();
 
-        for (Klimaat klimaat : receivedInLastQuarter) {
-            if (klimaat.getLuchtvochtigheid() != null && klimaat.getLuchtvochtigheid().doubleValue() > 0.0) {
-                result.add(klimaat.getLuchtvochtigheid());
-            }
-        }
+        receivedInLastQuarter.stream()
+                .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
+                .forEach(klimaat -> result.add(klimaat.getLuchtvochtigheid()));
+
         return result;
     }
 
-    public List<Klimaat> getHighest(String sensortype, Date from, Date to, int limit) {
+    public List<Klimaat> getHighest(SensorType sensortype, Date from, Date to, int limit) {
         switch (sensortype) {
-            case "temperatuur":
+            case TEMPERATUUR:
                 return getHighestTemperature(from, to, limit);
-            case "luchtvochtigheid":
+            case LUCHTVOCHTIGHEID:
                 return getHighestHumidity(from, to, limit);
             default:
                 return Collections.emptyList();
@@ -130,20 +139,20 @@ public class KlimaatService {
     }
 
     private List<Klimaat> getHighestTemperature(Date from, Date to, int limit) {
-        final List<Klimaat> result = new ArrayList<>();
+        List<Klimaat> result = new ArrayList<>();
+
         klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
             .forEach(date -> result.add(klimaatRepository.firstHighestTemperatureOnDay(date)));
+
         return result;
     }
 
     private List<Klimaat> getHighestHumidity(Date from, Date to, int limit) {
-        List<Date> peakHumidityDates = klimaatRepository.getPeakHighHumidityDates(from, to, limit);
-
         List<Klimaat> result = new ArrayList<>();
 
-        for (Date date : peakHumidityDates) {
-            result.add(klimaatRepository.firstHighestHumidityOnDay(date));
-        }
+        klimaatRepository.getPeakHighHumidityDates(from, to, limit)
+                .forEach(date -> result.add(klimaatRepository.firstHighestHumidityOnDay(date)));
+
         return result;
     }
 
@@ -153,17 +162,6 @@ public class KlimaatService {
                 return getLowestTemperature(from, to, limit);
             case LUCHTVOCHTIGHEID:
                 return getLowestHumidity(from, to, limit);
-            default:
-                return null;
-        }
-    }
-
-    public BigDecimal getAverage(SensorType sensortype, Date from, Date to) {
-        switch (sensortype) {
-            case TEMPERATUUR:
-                return klimaatRepository.getAverageTemperatuur(from, to);
-            case LUCHTVOCHTIGHEID:
-                return klimaatRepository.getAverageLuchtvochtigheid(from, to);
             default:
                 return null;
         }
