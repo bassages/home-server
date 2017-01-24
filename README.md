@@ -3,9 +3,9 @@
 - Ontvangen van klimaat sensor data (temperatuur en luchtvochtigheid) en deze opslaan in een database
 - Beschikbaar stellen van de slimme meter data via een (reponsive) web interface
 - Beschikbaar stellen van de klimaat sensor data via een (reponsive) web interface
-- Mogelijkheid om gas meterstanden automatisch te uploaden naar mindergas.nl
+- Mogelijkheid om gas meterstanden dagelijks automatisch te uploaden naar mindergas.nl
 
-# Gebruikte technologie
+# Technologie
 - Spring Boot (Java 8, Maven)
 - AngularJS
 - Bootstrap
