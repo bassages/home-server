@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class KlimaatService {
@@ -111,23 +112,17 @@ public class KlimaatService {
     }
 
     private List<BigDecimal> getValidTemperaturesFromLastQuarter() {
-        List<BigDecimal> result = new ArrayList<>();
-
-        receivedInLastQuarter.stream()
+        return receivedInLastQuarter.stream()
                 .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
-                .forEach(klimaat -> result.add(klimaat.getTemperatuur()));
-
-        return result;
+                .map(klimaat -> klimaat.getTemperatuur())
+                .collect(Collectors.toList());
     }
 
     public List<BigDecimal> getValidHumiditiesFromLastQuarter() {
-        List<BigDecimal> result = new ArrayList<>();
-
-        receivedInLastQuarter.stream()
+        return receivedInLastQuarter.stream()
                 .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
-                .forEach(klimaat -> result.add(klimaat.getLuchtvochtigheid()));
-
-        return result;
+                .map(klimaat -> klimaat.getLuchtvochtigheid())
+                .collect(Collectors.toList());
     }
 
     public List<Klimaat> getHighest(SensorType sensortype, Date from, Date to, int limit) {
@@ -142,21 +137,17 @@ public class KlimaatService {
     }
 
     private List<Klimaat> getHighestTemperature(Date from, Date to, int limit) {
-        List<Klimaat> result = new ArrayList<>();
-
-        klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
-            .forEach(date -> result.add(klimaatRepository.firstHighestTemperatureOnDay(date)));
-
-        return result;
+        return klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
+                    .stream()
+                    .map(date -> klimaatRepository.firstHighestTemperatureOnDay(date))
+                    .collect(Collectors.toList());
     }
 
     private List<Klimaat> getHighestHumidity(Date from, Date to, int limit) {
-        List<Klimaat> result = new ArrayList<>();
-
-        klimaatRepository.getPeakHighHumidityDates(from, to, limit)
-                .forEach(date -> result.add(klimaatRepository.firstHighestHumidityOnDay(date)));
-
-        return result;
+        return klimaatRepository.getPeakHighHumidityDates(from, to, limit)
+                    .stream()
+                    .map(date -> klimaatRepository.firstHighestHumidityOnDay(date))
+                    .collect(Collectors.toList());
     }
 
     public List<Klimaat> getLowest(SensorType sensortype, Date from, Date to, int limit) {
@@ -171,20 +162,16 @@ public class KlimaatService {
     }
 
     private List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
-        List<Klimaat> result = new ArrayList<>();
-
-        klimaatRepository.getPeakLowTemperatureDates(from, to, limit)
-                .forEach(date -> result.add(klimaatRepository.firstLowestTemperatureOnDay(date)));
-
-        return result;
+        return klimaatRepository.getPeakLowTemperatureDates(from, to, limit)
+                    .stream()
+                    .map(date -> klimaatRepository.firstLowestTemperatureOnDay(date))
+                    .collect(Collectors.toList());
     }
 
     private List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
-        List<Klimaat> result = new ArrayList<>();
-
-        klimaatRepository.getPeakLowHumidityDates(from, to, limit)
-                .forEach(date -> result.add(klimaatRepository.firstLowestHumidityOnDay(date)));
-
-        return result;
+        return klimaatRepository.getPeakLowHumidityDates(from, to, limit)
+                    .stream()
+                    .map(date -> klimaatRepository.firstLowestHumidityOnDay(date))
+                    .collect(Collectors.toList());
     }
 }

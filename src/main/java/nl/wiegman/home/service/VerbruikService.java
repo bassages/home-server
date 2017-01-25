@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -45,24 +46,17 @@ public class VerbruikService {
     }
 
     public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(Energiesoort energiesoort, int jaar) {
-        List<VerbruikPerMaandInJaar> result = new ArrayList<>();
-
-        IntStream.rangeClosed(1, 12).forEach(
-            maand -> result.add(getVerbruikInMaand(energiesoort, maand, jaar))
-        );
-        return result;
+        return IntStream.rangeClosed(1, 12)
+                 .mapToObj(maand -> getVerbruikInMaand(energiesoort, maand, jaar))
+                 .collect(Collectors.toList());
     }
 
     public List<VerbruikOpDag> getVerbruikPerDag(Energiesoort energiesoort, long van, long totEnMet) {
-        List<VerbruikOpDag> result = new ArrayList<>();
-
         List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
-        for (Date dag : dagenInPeriode) {
-            logger.info("Get " + energiesoort.name() + " verbruik op dag: " + dag);
 
-            result.add(getVerbruikOpDag(energiesoort, dag));
-        }
-        return result;
+        return dagenInPeriode.stream()
+                .map(dag -> getVerbruikOpDag(energiesoort, dag))
+                .collect(Collectors.toList());
     }
 
     private VerbruikPerUurOpDag getVerbruikInUur(Energiesoort energiesoort, Date dag, int uur) {
@@ -109,6 +103,8 @@ public class VerbruikService {
     }
 
     private VerbruikOpDag getVerbruikOpDag(Energiesoort energiesoort, Date dag) {
+        logger.info("Get " + energiesoort.name() + " verbruik op dag: " + dag);
+
         long vanMillis = dag.getTime();
         long totEnMetMillis = DateUtils.addDays(dag, 1).getTime() - 1;
 

@@ -1,6 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Energiecontract;
+import nl.wiegman.home.model.Energiesoort;
 import nl.wiegman.home.model.Verbruik;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
@@ -46,13 +47,13 @@ public class VerbruikServiceCachedTest {
     @Test
     public void stroomverbruikPerMaandWithMultipleKosten() throws ParseException {
         Energiecontract energiecontract1 = new Energiecontract();
-        energiecontract1.setVan(10l);
-        energiecontract1.setTotEnMet(14l);
+        energiecontract1.setVan(10L);
+        energiecontract1.setTotEnMet(14L);
         energiecontract1.setStroomPerKwh(BigDecimal.valueOf(1));
 
         Energiecontract energiecontract2 = new Energiecontract();
-        energiecontract2.setVan(15l);
-        energiecontract2.setTotEnMet(100l);
+        energiecontract2.setVan(15L);
+        energiecontract2.setTotEnMet(100L);
         energiecontract2.setStroomPerKwh(BigDecimal.valueOf(2));
 
         when(energiecontractRepositoryMock.findAllInInPeriod(10, 20)).thenReturn(Arrays.asList(energiecontract1, energiecontract2));
