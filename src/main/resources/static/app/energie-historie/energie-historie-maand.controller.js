@@ -118,14 +118,14 @@
         }
 
         function loadDataIntoTable(data) {
-            var labelFormatter = function(d) { return LocalizationService.getFullMonths()[d.maand - 1] };
+            var labelFormatter = function(d) { return LocalizationService.getFullMonths()[d.maand - 1]; };
             var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
 
         function loadDataIntoGraph(data) {
-            var graphConfig = data.length == 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
+            var graphConfig = data.length === 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }

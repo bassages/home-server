@@ -24,7 +24,7 @@
 
         this.stopLoading = function() {
             window.setTimeout(function () {
-                if (loadingModalInstance != null) {
+                if (loadingModalInstance !== null) {
                     loadingModalInstance.close();
                     loadingModalInstance = undefined;
                 }

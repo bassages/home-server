@@ -81,7 +81,7 @@
             graphConfig.axis.x = {
                 type: 'category',
                 tick: {
-                    format: function (value) { return formatAsHourPeriodLabel(value) }
+                    format: function (value) { return formatAsHourPeriodLabel(value); }
                 }
             };
 
@@ -114,14 +114,14 @@
         }
 
         function loadDataIntoTable(data) {
-            var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur) };
+            var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur); };
             var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
 
         function loadDataIntoGraph(data) {
-            var graphConfig = data.length == 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
+            var graphConfig = data.length === 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }

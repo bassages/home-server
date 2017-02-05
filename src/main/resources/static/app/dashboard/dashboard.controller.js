@@ -31,7 +31,7 @@
                 method: 'GET', url: url
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
-                    vm.gasVerbruikVandaag = response.data[0].verbruik
+                    vm.gasVerbruikVandaag = response.data[0].verbruik;
                 }
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
@@ -105,8 +105,8 @@
         }
 
         function updateMeterstand(meterstanden) {
-            if (meterstanden != null) {
-                if (vm.gasVerbruikVandaag == null) {
+            if (meterstanden !== null) {
+                if (vm.gasVerbruikVandaag === null) {
                     getGasVerbruikVandaag();
                 }
 
@@ -114,7 +114,7 @@
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
-                if (vm.oudsteVanVandaag != null) {
+                if (vm.oudsteVanVandaag !== null) {
                     vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
                 }
             }

@@ -99,13 +99,13 @@
             for (var i = 0; i < graphData.length; i++) {
                 var data = graphData[i].watt;
 
-                if (data != null && (typeof max=='undefined' || data > max)) {
+                if (data !== null && (typeof max=='undefined' || data > max)) {
                     max = data;
                 }
-                if (data != null && data > 0 && (typeof min=='undefined' || data < min)) {
+                if (data !== null && data > 0 && (typeof min=='undefined' || data < min)) {
                     min = data;
                 }
-                if (data != null && data > 0) {
+                if (data !== null && data > 0) {
                     total += data;
                     nrofdata += 1;
                 }
@@ -118,7 +118,7 @@
         }
 
         function formatWithUnitLabel(value) {
-            return value == null ? null : Math.round(value) + ' watt';
+            return value === null ? null : Math.round(value) + ' watt';
         }
 
         function getGraphPadding() {
@@ -131,7 +131,7 @@
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
                 padding: {top: 10, bottom: 30, left: 50, right: 20}
-            }
+            };
         }
 
         function getGraphConfig(graphData) {
@@ -169,7 +169,7 @@
             $scope.graphData = graphData;
 
             var graphConfig;
-            if (graphData.length == 0) {
+            if (graphData.length === 0) {
                 graphConfig = getEmptyGraphConfig();
             } else {
                 graphConfig = getGraphConfig(graphData);

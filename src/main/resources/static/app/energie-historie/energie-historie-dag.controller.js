@@ -136,7 +136,7 @@
         }
 
         function loadDataIntoGraph(data) {
-            var graphConfig = data.length == 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
+            var graphConfig = data.length === 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
             $scope.chart = c3.generate(graphConfig);
             EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
         }

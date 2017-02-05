@@ -23,7 +23,7 @@
                     var result = [];
                     var dates = text.split(scope.getMultidateSeparator());
                     for (var i = 0; i < dates.length; i++) {
-                        if (dates[i] != '') {
+                        if (dates[i] !== '') {
                             result.push(d3.time.format(scope.getD3DateFormat()).parse(dates[i]));
                         }
                     }
@@ -45,12 +45,12 @@
                     return '';
                 }
 
-                function multipleToDisplay(dates, formatter) {
+                function multipleToDisplay(dates) {
                     var result = '';
                     var formatter = d3.time.format(scope.getD3DateFormat());
 
                     for (var i = 0; i < dates.length; i++) {
-                        if (result != '') {
+                        if (result !== '') {
                             result = result + scope.getMultidateSeparator();
                         }
                         result = result + formatter(dates[i]);

@@ -17,7 +17,7 @@
 
             MindergasnlService.query(
                 function(data) {
-                    if (data.length == 0) {
+                    if (data.length === 0) {
                         vm.settings = new MindergasnlService({automatischUploaden: false, authenticatietoken: ''});
                     } else {
                         vm.settings = data[0];

@@ -37,7 +37,7 @@
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
                 padding: this.getGraphPadding()
-            }
+            };
         };
 
         this.getSupportedSoorten = function() {
@@ -46,7 +46,7 @@
 
         this.getVerbruikLabel = function(energiesoort) {
             if (energiesoort == 'stroom') {
-                return 'kWh'
+                return 'kWh';
             } else if (energiesoort == 'gas') {
                 return 'M\u00B3';
             } else {
@@ -108,17 +108,17 @@
                         var value = data[i][energiesoort + '-' + soort];
 
                         var rowValue = '';
-                        if (value != null) {
+                        if (value !== null) {
                             rowValue = this.formatWithUnitLabel(soort, energiesoorten, value);
 
-                            if (rowTotal == null) { rowTotal = 0; }
+                            if (rowTotal === null) { rowTotal = 0; }
                             rowTotal += value;
                         }
                         row[rowLabel] = rowValue;
                     }
 
-                    if (energiesoorten.length > 1 && rowTotal != null) {
-                        row["Totaal"] = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                    if (energiesoorten.length > 1 && rowTotal !== null) {
+                        row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
                     }
                     rows.push(row);
                 }
@@ -128,7 +128,7 @@
                 cols = Object.keys(rows[0]);
             }
 
-            return {rows: rows, cols: cols}
+            return {rows: rows, cols: cols};
         };
 
         this.transformServerdata = function(serverresponses, key, energiesoorten, supportedsoorten) {
@@ -141,7 +141,7 @@
                 for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
                     var dataOnKey = this.getByKey(result, serverdataForEnergiesoort[j][key], key);
 
-                    if (dataOnKey == null) {
+                    if (dataOnKey === null) {
                         dataOnKey = {};
                         result.push(dataOnKey);
                     }

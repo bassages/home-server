@@ -21,7 +21,7 @@
                     }
                 }
                 function toUser(prijs) {
-                    if(prijs != null) {
+                    if(prijs !== null) {
                         ngModel.$setValidity("energieprijs", true);
                         return prijs.toFixed(4).replace('.',',');
                     } else {

@@ -40,7 +40,7 @@
 
                 //Watch for changes and update the element value (causing odometer to redraw)
                 scope.$watch(attrs.odometer, function(val) {
-                    if (val != null) {
+                    if (val !== null) {
 
                         if (nrOfDecimals == 1) {
                             val = val + 0.01;

@@ -125,13 +125,13 @@
                     if (key != 'datumtijd') {
                         var value = graphData[i][key];
 
-                        if (value != null && (typeof max=='undefined' || value > max)) {
+                        if (value !== null && (typeof max=='undefined' || value > max)) {
                             max = value;
                         }
-                        if (value != null && value > 0 && (typeof min=='undefined' || value < min)) {
+                        if (value !== null && value > 0 && (typeof min=='undefined' || value < min)) {
                             min = value;
                         }
-                        if (value != null && value > 0) {
+                        if (value !== null && value > 0) {
                             total += value;
                             nrofdata += 1;
                         }
@@ -154,7 +154,7 @@
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
                 padding: getGraphPadding()
-            }
+            };
         }
 
         function getFixedDate() {
@@ -190,7 +190,7 @@
         function sortTableColumns(a, b) {
             var result = 0;
             if (a != b) {
-                if (a == '') {
+                if (a === '') {
                     result = -1;
                 } else {
                     var dateA = d3.time.format('%d-%m-%Y').parse(a);
@@ -203,7 +203,7 @@
 
         function formatWithUnitLabel(value) {
             var result = null;
-            if (value != null) {
+            if (value !== null) {
                 if ($scope.sensortype == 'temperatuur') {
                     result = numbro(value).format('0.00') + '\u2103';
                 } else if ($scope.sensortype == 'luchtvochtigheid') {
@@ -268,7 +268,7 @@
 
         function loadDataIntoGraph(data) {
             var graphConfig;
-            if (data.length == 0) {
+            if (data.length === 0) {
                 graphConfig = getEmptyGraphConfig();
             } else {
                 graphConfig = getGraphConfig(data);
@@ -309,9 +309,9 @@
                     break;
                 }
             }
-            if (row == null) {
+            if (row === null) {
                 row = {};
-                row['datumtijd'] = datumtijd;
+                row.datumtijd = datumtijd;
                 currentRows.push(row);
             }
             return row;
