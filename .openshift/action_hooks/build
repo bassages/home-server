@@ -9,7 +9,7 @@ shopt -s extglob
 
 # Build gradle project
 cd ${OPENSHIFT_REPO_DIR}
-sh gradlew clean build --no-daemon
+sh gradlew clean build -x test --no-daemon
 
 # Move final artifact to repo dir
 mv ${OPENSHIFT_REPO_DIR}/build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
