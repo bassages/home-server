@@ -8,7 +8,7 @@ shopt -s extglob
 
 # Build gradle project
 cd ${OPENSHIFT_REPO_DIR}
-sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.test.skip=true
+sh gradlew clean build
 
 # Move final artifact to repo dir
 mv ${OPENSHIFT_REPO_DIR}/build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
