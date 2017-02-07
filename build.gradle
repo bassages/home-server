@@ -67,3 +67,5 @@ gulp_build.dependsOn 'npmInstall'
 //make sure gulp generates artifacts for the build
 bootRun.dependsOn gulp_build
 processResources.dependsOn gulp_build
+
+//clean.delete << file('node_modules')
