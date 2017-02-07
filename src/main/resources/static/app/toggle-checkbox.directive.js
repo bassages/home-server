@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Bootstrap-toggle Directive
  * Forked from from: https://gist.github.com/dave-newson/f6c5e9c2f3bc315e292c
@@ -7,9 +5,15 @@
  *
  * @link https://gist.github.com/jjmontesl/54457bf1342edeb218b7
  */
+
+( function () {
+    'use strict';
+
 angular
     .module('app')
-    .directive('togglecheckbox', function() {
+    .directive('togglecheckbox', togglecheckbox);
+
+    function togglecheckbox() {
 
         return {
             restrict: 'A',
@@ -64,4 +68,6 @@ angular
 
             }
         };
-    });
+    }
+
+} )();

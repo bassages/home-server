@@ -6,8 +6,8 @@
 - Mogelijkheid om gas meterstanden dagelijks automatisch te uploaden naar mindergas.nl
 
 # Technologie
-- Spring Boot (Java 8, Maven)
-- AngularJS
+- Spring Boot (Java 8, Gradle)
+- AngularJS (NPM, Gulp, Less)
 - Bootstrap
 - C3.js voor grafieken
 - Runtime: OpenShift DIY en MySQL Cartridges

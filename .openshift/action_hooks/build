@@ -2,21 +2,17 @@
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=${JAVA_HOME}/bin:${PATH}
 export JAVACMD=${JAVA_HOME}/bin/java
-export M2_HOME=/usr/share/java/apache-maven-3.0.4
 
 # In bash, to use rm -- !(file.txt), you must enable extglob:
 shopt -s extglob
 
-# Log version info
-sh ${M2_HOME}/bin/mvn -version
-
-# Build maven project
+# Build gradle project
 cd ${OPENSHIFT_REPO_DIR}
 sh ${M2_HOME}/bin/mvn clean package --settings .openshift/settings.xml -Dmaven.test.skip=true
 
 # Move final artifact to repo dir
-mv ${OPENSHIFT_REPO_DIR}/target/home-server-*.jar ${OPENSHIFT_REPO_DIR}
+mv ${OPENSHIFT_REPO_DIR}/build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 
 # Clean up to regain some diskspace
-cd ${OPENSHIFT_REPO_DIR}
-rm -R -- !(*.jar)
+#cd ${OPENSHIFT_REPO_DIR}/build/libs
+#rm -R -- !(*.jar)

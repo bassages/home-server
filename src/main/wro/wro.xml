@@ -1,6 +1,0 @@
-<groups xmlns="http://www.isdc.ro/wro">
-    <group name="home">
-        <css>file:src/main/wro/main.less</css>
-        <js>file:src/main/**.js</js>
-    </group>
-</groups>
