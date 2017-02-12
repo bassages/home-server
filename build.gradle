@@ -3,6 +3,11 @@ plugins {
     id "com.moowork.gulp" version "1.1.1"
 }
 
+
+if (!project.hasProperty("buildtype")) {
+    ext.buildtype = 'dev'
+}
+
 repositories {
     jcenter()
     mavenCentral()
@@ -59,18 +64,27 @@ dependencies {
 }
 
 // Take over system properties.
-// Needed to be able to set the active profile for Spring Boot
+// Needed to be able to set the active profile for Spring Boot.
+// e.g. -Dspring.profiles.active=development-h2db
 bootRun {
     systemProperties System.properties
 }
 
-// make sure npm install has been performed before calling the build task in gulpfile.js
-gulp_build.dependsOn 'npm_install'
-
 // make sure gulp generates artifacts for the build
-bootRun.dependsOn 'gulp_build'
-processResources.dependsOn 'gulp_build'
+bootRun.dependsOn 'buildGulpFromGradle'
+processResources.dependsOn 'buildGulpFromGradle'
 
+// Cleans up node_modules and nodejs dirs on clean task
 clean.doFirst {
     delete "${rootDir}/node_modules"
+    delete "${rootDir}/.gradle/nodejs"
+}
+
+task buildGulpFromGradle(type: GulpTask) {
+    description = "Triggers the Gulp build. -Pbuildtype=prod will build resources minified/uglified"
+
+    // make sure npm install has been performed before calling the build task in gulpfile.js
+    dependsOn = [ npmInstall ]
+
+    args = ['build', "--buildtype=${project.buildtype}" ]
 }

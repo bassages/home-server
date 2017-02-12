@@ -43,8 +43,8 @@ gulp.task('build-js', function() {
     return gulp.src(appSourcesDir + '/**/*.js')
         .pipe(sourcemaps.init())
         .pipe(concat('home.js'))
-        // only uglify if gulp is ran with '--type prod
-        .pipe(gutil.env.type === 'prod' ? uglify() : gutil.noop())
+        // only uglify if gulp is ran with '--buildtype prod
+        .pipe(gutil.env.buildtype === 'prod' ? uglify() : gutil.noop())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(buildJsDir));
 });
@@ -53,7 +53,8 @@ gulp.task('build-js', function() {
 gulp.task('build-css', function() {
     gulp.src(appStylesDir + '/main.less')
         .pipe(less())
-        .pipe(gutil.env.type === 'prod' ? minifyCSS() : gutil.noop())
+         // only minify if gulp is ran with '--buildtype prod
+        .pipe(gutil.env.buildtype === 'prod' ? minifyCSS() : gutil.noop())
         .pipe(rename('home.css'))
         .pipe(gulp.dest(buildCssDir));
 });

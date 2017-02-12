@@ -13,6 +13,12 @@ http://dashboard.monitor.us/
 
 ----
 
+Filesystem Overview
+
+https://developers.openshift.com/managing-your-applications/filesystem.html
+
+----
+
 https://blog.openshift.com/sharing-database-across-applications/
 
 Database op OpenShift vanaf localhost aan kunnen roepen:
