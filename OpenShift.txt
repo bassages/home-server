@@ -30,10 +30,14 @@ rhc app stop -a homecontrol
 rhc app-tidy -a homecontrol
 rhc app start -a homecontrol
 
-// Maven repo
+// Clean up gradle repo. The next build will last longer after this, because dependencies need to to be downloaded again
 rhc ssh -a homecontrol
-cd $OPENSHIFT_DEPENDENCIES_DIR
-rm -rf *
+rm -rf ${OPENSHIFT_DATA_DIR}.gradle
+exit
+
+// Clean up npm repo. The next build will last longer after this, because dependencies need to to be downloaded again
+rhc ssh -a homecontrol
+rm -rf ${OPENSHIFT_DATA_DIR}.npm
 exit
 
 ----
