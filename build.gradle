@@ -60,12 +60,13 @@ bootRun {
     systemProperties System.properties
 }
 
-// make sure node and gulp are installed before calling the build task in gulpfile.js
-gulp_build.dependsOn 'installGulp'
-gulp_build.dependsOn 'npmInstall'
+// make sure npm install has been performed before calling the build task in gulpfile.js
+gulp_build.dependsOn 'npm_install'
 
-//make sure gulp generates artifacts for the build
-bootRun.dependsOn gulp_build
-processResources.dependsOn gulp_build
+// make sure gulp generates artifacts for the build
+bootRun.dependsOn 'gulp_build'
+processResources.dependsOn 'gulp_build'
 
-//clean.delete << file('node_modules')
+clean.doFirst {
+    delete "${rootDir}/node_modules"
+}

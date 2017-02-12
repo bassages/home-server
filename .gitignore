@@ -1,5 +1,3 @@
-release.properties
-buildNumber.properties
 .idea
 .gradle
 node_modules
