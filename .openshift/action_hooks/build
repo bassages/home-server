@@ -16,6 +16,9 @@ sh gradlew clean build -x test --no-daemon --info
 #mv ${OPENSHIFT_REPO_DIR}/.openshift/artifact/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 mv ${OPENSHIFT_REPO_DIR}build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 
-# TODO... Clean up to regain some diskspace
-#cd ${OPENSHIFT_REPO_DIR}/build/libs
-#rm -R -- !(*.jar)
+# Clean up to regain some diskspace
+cd ${OPENSHIFT_REPO_DIR}
+rm -R -- !(*.jar)
+rm -rf ${OPENSHIFT_REPO_DIR}.gradle
+rm -rf ${OPENSHIFT_REPO_DIR}.openshift
+rm ${OPENSHIFT_REPO_DIR}.gitignore
