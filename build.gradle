@@ -23,6 +23,10 @@ targetCompatibility = 1.8
 
 version = '1.0.0'
 
+jar {
+    baseName = 'home-server'
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-cache")
