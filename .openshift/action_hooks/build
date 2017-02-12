@@ -19,5 +19,4 @@ mv ${OPENSHIFT_REPO_DIR}build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
 cd ${OPENSHIFT_REPO_DIR}
 rm -R -- !(*.jar)
 rm -rf ${OPENSHIFT_REPO_DIR}.gradle
-rm -rf ${OPENSHIFT_REPO_DIR}.openshift
-rm ${OPENSHIFT_REPO_DIR}.gitignore
+
