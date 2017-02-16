@@ -114,7 +114,7 @@
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
-                if (vm.oudsteVanVandaag !== null) {
+                if (vm.oudsteVanVandaag) {
                     vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
                 }
             }
