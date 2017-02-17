@@ -68,15 +68,15 @@
             });
         }
 
-        function updateKlimaat(data) {
-            if (data) {
-                vm.huidigKlimaat = data;
+        function updateKlimaat(klimaat) {
+            if (klimaat) {
+                vm.huidigKlimaat = klimaat;
 
-                if (data.temperatuur) {
-                    setTemperatuurLeds(data.temperatuur);
+                if (klimaat.temperatuur) {
+                    setTemperatuurLeds(klimaat.temperatuur);
                 }
-                if (data.luchtvochtigheid) {
-                    setLuchtVochtigheidLeds(data.luchtvochtigheid);
+                if (klimaat.luchtvochtigheid) {
+                    setLuchtVochtigheidLeds(klimaat.luchtvochtigheid);
                 }
             }
         }
@@ -105,7 +105,7 @@
         }
 
         function updateMeterstand(meterstanden) {
-            if (meterstanden !== null) {
+            if (meterstanden) {
                 if (vm.gasVerbruikVandaag === null) {
                     getGasVerbruikVandaag();
                 }

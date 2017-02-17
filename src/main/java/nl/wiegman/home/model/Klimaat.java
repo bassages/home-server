@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Klimaat {
 
@@ -21,6 +23,10 @@ public class Klimaat {
 
     @Column(precision = 4, scale = 1)
     private BigDecimal luchtvochtigheid;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private KlimaatSensor klimaatSensor;
 
     public long getId() {
         return id;
@@ -52,5 +58,13 @@ public class Klimaat {
 
     public void setDatumtijd(Date datumtijd) {
         this.datumtijd = datumtijd;
+    }
+
+    public KlimaatSensor getKlimaatSensor() {
+        return klimaatSensor;
+    }
+
+    public void setKlimaatSensor(KlimaatSensor klimaatSensor) {
+        this.klimaatSensor = klimaatSensor;
     }
 }

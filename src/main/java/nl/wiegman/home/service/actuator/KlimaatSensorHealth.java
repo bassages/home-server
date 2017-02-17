@@ -1,6 +1,7 @@
 package nl.wiegman.home.service.actuator;
 
 import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.repository.KlimaatSensorRepository;
 import nl.wiegman.home.service.KlimaatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
@@ -12,12 +13,15 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class KlimaatSensor implements HealthIndicator {
+public class KlimaatSensorHealth implements HealthIndicator {
 
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 20;
 
     @Autowired
     KlimaatService klimaatService;
+
+    @Autowired
+    KlimaatSensorRepository klimaatSensorRepository;
 
     @Override
     public Health health() {

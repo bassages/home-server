@@ -19,8 +19,8 @@ public class MeterstandServiceRest {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody Meterstand meterstand) {
-        meterstandService.save(meterstand);
+    public Meterstand save(@RequestBody Meterstand meterstand) {
+        return meterstandService.save(meterstand);
     }
 
     @GetMapping("meest-recente")
