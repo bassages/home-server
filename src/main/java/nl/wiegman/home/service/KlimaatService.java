@@ -1,11 +1,15 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.Klimaat;
-import nl.wiegman.home.model.KlimaatSensor;
-import nl.wiegman.home.model.SensorType;
-import nl.wiegman.home.realtime.UpdateEvent;
-import nl.wiegman.home.repository.KlimaatRepos;
-import nl.wiegman.home.repository.KlimaatSensorRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -15,13 +19,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.model.KlimaatSensor;
+import nl.wiegman.home.model.SensorType;
+import nl.wiegman.home.realtime.UpdateEvent;
+import nl.wiegman.home.repository.KlimaatRepos;
+import nl.wiegman.home.repository.KlimaatSensorRepository;
 
 @Service
 public class KlimaatService {
@@ -32,7 +35,7 @@ public class KlimaatService {
     private static final int TEMPERATURE_SCALE = 2;
     private static final int HUMIDITY_SCALE = 1;
 
-    private final List<Klimaat> receivedInLastQuarter = new ArrayList<>();
+    private final Map<String, List<Klimaat>> receivedInLastQuarter = new ConcurrentHashMap<>();
 
     @Autowired
     KlimaatServiceCached klimaatServiceCached;
@@ -49,19 +52,14 @@ public class KlimaatService {
     public void save() {
         LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
 
-        if (!receivedInLastQuarter.isEmpty()) {
-            // TODO: group by klimaatsensor
+        Date now = new Date();
+        now = DateUtils.truncate(now, Calendar.MINUTE);
 
-            Date now = new Date();
-            now = DateUtils.setMilliseconds(now, 0);
-            now = DateUtils.setSeconds(now, 0);
+        for (Map.Entry<String, List<Klimaat>> receivedItem : receivedInLastQuarter.entrySet()) {
+            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter(receivedItem.getKey());
+            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter(receivedItem.getKey());
 
-            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
-            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter();
-
-            KlimaatSensor klimaatSensor = receivedInLastQuarter.get(0).getKlimaatSensor();
-
-            receivedInLastQuarter.clear();
+            KlimaatSensor klimaatSensor = receivedItem.getValue().get(0).getKlimaatSensor();
 
             BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
             if (averageTemperature != null) {
@@ -82,6 +80,7 @@ public class KlimaatService {
                 klimaatRepository.save(klimaatToSave);
             }
         }
+        receivedInLastQuarter.clear();
     }
 
     public KlimaatSensor getKlimaatSensorByCode(String code) {
@@ -114,12 +113,15 @@ public class KlimaatService {
 
     public void add(Klimaat klimaat) {
         LOG.info("Recieved klimaat");
-        receivedInLastQuarter.add(klimaat);
+        if (!receivedInLastQuarter.containsKey(klimaat.getKlimaatSensor().getCode())) {
+            receivedInLastQuarter.put(klimaat.getKlimaatSensor().getCode(), new ArrayList<>());
+        }
+        receivedInLastQuarter.get(klimaat.getKlimaatSensor().getCode()).add(klimaat);
         eventPublisher.publishEvent(new UpdateEvent(klimaat));
     }
 
-    public List<BigDecimal> getValidHumiditiesFromLastQuarter() {
-        return receivedInLastQuarter.stream()
+    public List<BigDecimal> getValidHumiditiesFromLastQuarter(String sensorId) {
+        return receivedInLastQuarter.get(sensorId).stream()
                 .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
                 .map(klimaat -> klimaat.getLuchtvochtigheid())
                 .collect(Collectors.toList());
@@ -147,8 +149,8 @@ public class KlimaatService {
         }
     }
 
-    private List<BigDecimal> getValidTemperaturesFromLastQuarter() {
-        return receivedInLastQuarter.stream()
+    private List<BigDecimal> getValidTemperaturesFromLastQuarter(String sensorId) {
+        return receivedInLastQuarter.get(sensorId).stream()
                 .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
                 .map(klimaat -> klimaat.getTemperatuur())
                 .collect(Collectors.toList());
