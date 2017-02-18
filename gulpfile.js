@@ -23,7 +23,7 @@ gulp.task('jshint', function() {
 });
 
 // Task to watch resource changes
-gulp.task('watch', ['watch-styles', 'watch-js']);
+gulp.task('watch', ['jshint', 'watch-styles', 'watch-js']);
 
 // Task to watch style changes
 gulp.task('watch-styles', function() {
@@ -36,7 +36,7 @@ gulp.task('watch-js', function() {
 });
 
 // Task to build all frontend artifacts
-gulp.task('build', ['build-js', 'build-css']);
+gulp.task('build', ['jshint', 'build-js', 'build-css']);
 
 // Task to build js file
 gulp.task('build-js', function() {

@@ -117,31 +117,43 @@
         function getStatistics(graphData) {
             var min, max, avg;
 
-            var total = 0;
-            var nrofdata = 0;
+            var sumOfAllKlimaatValues = 0;
+            var nrOfKlimaatValues = 0;
 
             for (var i = 0; i < graphData.length; i++) {
-                Object.keys(graphData[i]).forEach(function(key, index) {
-                    if (key != 'datumtijd') {
-                        var value = graphData[i][key];
+                var klimaatValuesOnSameTimeOfMultipleDays = graphData[i];
 
-                        if (value !== null && (typeof max=='undefined' || value > max)) {
-                            max = value;
-                        }
-                        if (value !== null && value > 0 && (typeof min=='undefined' || value < min)) {
-                            min = value;
-                        }
-                        if (value !== null && value > 0) {
-                            total += value;
-                            nrofdata += 1;
-                        }
+                // The next array will contain the formatted date(s) and an item with value 'datumtijd'
+                var formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
+                // Remove the datumtijd value, so that only formatted dates remain
+                removeItemFromList(formattedDates, 'datumtijd');
+
+                for (var j = 0; j < formattedDates.length; j++) {
+                    var formattedDate = formattedDates[j];
+
+                    var klimaatValue = klimaatValuesOnSameTimeOfMultipleDays[formattedDate];
+
+                    if (klimaatValue !== null && (typeof max=='undefined' || klimaatValue > max)) {
+                        max = klimaatValue;
                     }
-                });
+                    if (klimaatValue !== null && klimaatValue > 0 && (typeof min=='undefined' || klimaatValue < min)) {
+                        min = klimaatValue;
+                    }
+                    if (klimaatValue !== null && klimaatValue > 0) {
+                        sumOfAllKlimaatValues += klimaatValue;
+                        nrOfKlimaatValues += 1;
+                    }
+                }
             }
-            if (nrofdata > 0) {
-                avg = total / nrofdata;
+            if (nrOfKlimaatValues > 0) {
+                avg = sumOfAllKlimaatValues / nrOfKlimaatValues;
             }
             return {avg: avg, min: min, max: max};
+        }
+
+        function removeItemFromList(list, itemToRemove) {
+            list.splice(list.indexOf(itemToRemove), 1);
+            return list;
         }
 
         function getGraphPadding() {
@@ -166,15 +178,19 @@
             var cols = [];
 
             for (var i = 0; i < data.length; i++) {
+                var klimaatValuesOnSameTimeOfMultipleDays = data[i];
+
                 var row = {};
                 row[""] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
 
-                Object.keys(data[i]).forEach(function(key, index) {
-                    if (key != 'datumtijd') {
-                        var value = data[i][key];
-                        row[key] = formatWithUnitLabel(value);
-                    }
-                });
+                var formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
+                formattedDates = removeItemFromList(formattedDates, 'datumtijd');
+
+                for (var j = 0; j < formattedDates.length; j++) {
+                    var formattedDate = formattedDates[j];
+                    var sensorValue = klimaatValuesOnSameTimeOfMultipleDays[formattedDate];
+                    row[formattedDate] = formatWithUnitLabel(sensorValue);
+                }
                 rows.push(row);
             }
             if (rows.length > 0) {

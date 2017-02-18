@@ -49,34 +49,38 @@ public class KlimaatService {
     public void save() {
         LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
 
-        Date now = new Date();
-        now = DateUtils.setMilliseconds(now, 0);
-        now = DateUtils.setSeconds(now, 0);
+        if (!receivedInLastQuarter.isEmpty()) {
+            // TODO: group by klimaatsensor
 
-        List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
-        List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter();
+            Date now = new Date();
+            now = DateUtils.setMilliseconds(now, 0);
+            now = DateUtils.setSeconds(now, 0);
 
-        KlimaatSensor klimaatSensor = receivedInLastQuarter.get(0).getKlimaatSensor();
+            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter();
+            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter();
 
-        receivedInLastQuarter.clear();
+            KlimaatSensor klimaatSensor = receivedInLastQuarter.get(0).getKlimaatSensor();
 
-        BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
-        if (averageTemperature != null) {
-            averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.CEILING);
-        }
+            receivedInLastQuarter.clear();
 
-        BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
-        if (averageHumidity != null) {
-            averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.CEILING);
-        }
+            BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
+            if (averageTemperature != null) {
+                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.CEILING);
+            }
 
-        if (averageTemperature != null || averageHumidity != null) {
-            Klimaat klimaatToSave = new Klimaat();
-            klimaatToSave.setDatumtijd(now);
-            klimaatToSave.setTemperatuur(averageTemperature);
-            klimaatToSave.setLuchtvochtigheid(averageHumidity);
-            klimaatToSave.setKlimaatSensor(klimaatSensor);
-            klimaatRepository.save(klimaatToSave);
+            BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
+            if (averageHumidity != null) {
+                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.CEILING);
+            }
+
+            if (averageTemperature != null || averageHumidity != null) {
+                Klimaat klimaatToSave = new Klimaat();
+                klimaatToSave.setDatumtijd(now);
+                klimaatToSave.setTemperatuur(averageTemperature);
+                klimaatToSave.setLuchtvochtigheid(averageHumidity);
+                klimaatToSave.setKlimaatSensor(klimaatSensor);
+                klimaatRepository.save(klimaatToSave);
+            }
         }
     }
 
