@@ -56,8 +56,8 @@ public class KlimaatService {
         now = DateUtils.truncate(now, Calendar.MINUTE);
 
         for (Map.Entry<String, List<Klimaat>> receivedItem : receivedInLastQuarter.entrySet()) {
-            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperaturesFromLastQuarter(receivedItem.getKey());
-            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumiditiesFromLastQuarter(receivedItem.getKey());
+            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(receivedItem.getValue());
+            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(receivedItem.getValue());
 
             KlimaatSensor klimaatSensor = receivedItem.getValue().get(0).getKlimaatSensor();
 
@@ -120,10 +120,17 @@ public class KlimaatService {
         eventPublisher.publishEvent(new UpdateEvent(klimaat));
     }
 
-    public List<BigDecimal> getValidHumiditiesFromLastQuarter(String sensorId) {
-        return receivedInLastQuarter.get(sensorId).stream()
+    public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
+        return klimaatList.stream()
                 .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
                 .map(klimaat -> klimaat.getLuchtvochtigheid())
+                .collect(Collectors.toList());
+    }
+
+    private List<BigDecimal> getValidTemperatures(List<Klimaat> klimaatList) {
+        return klimaatList.stream()
+                .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
+                .map(klimaat -> klimaat.getTemperatuur())
                 .collect(Collectors.toList());
     }
 
@@ -147,13 +154,6 @@ public class KlimaatService {
             default:
                 return null;
         }
-    }
-
-    private List<BigDecimal> getValidTemperaturesFromLastQuarter(String sensorId) {
-        return receivedInLastQuarter.get(sensorId).stream()
-                .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
-                .map(klimaat -> klimaat.getTemperatuur())
-                .collect(Collectors.toList());
     }
 
     private List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {

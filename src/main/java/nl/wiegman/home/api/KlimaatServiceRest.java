@@ -1,21 +1,28 @@
 package nl.wiegman.home.api;
 
-import nl.wiegman.home.api.dto.KlimaatDTO;
-import nl.wiegman.home.model.Klimaat;
-import nl.wiegman.home.model.KlimaatSensor;
-import nl.wiegman.home.model.SensorType;
-import nl.wiegman.home.service.KlimaatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.model.KlimaatSensor;
+import nl.wiegman.home.model.SensorType;
+import nl.wiegman.home.service.KlimaatService;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -24,10 +31,16 @@ public class KlimaatServiceRest {
     @Autowired
     private KlimaatService klimaatService;
 
-    @PostMapping
+    @PostMapping("sensor/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@RequestBody KlimaatDTO klimaat) {
-        klimaatService.add(mapDtoToKlimaat(klimaat));
+    public void add(@PathVariable("sensorCode") String sensorCode, @RequestBody Klimaat klimaat) {
+        KlimaatSensor klimaatSensor = klimaatService.getKlimaatSensorByCode(sensorCode);
+        if (klimaatSensor == null) {
+            throw new IllegalArgumentException(String.format("klimaatsensor with code %s does not exist", sensorCode));
+        } else {
+            klimaat.setKlimaatSensor(klimaatSensor);
+        }
+        klimaatService.add(klimaat);
     }
 
     @GetMapping(path = "meest-recente")
@@ -58,19 +71,6 @@ public class KlimaatServiceRest {
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleBadRequests(HttpServletResponse response, IllegalArgumentException ex) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-    }
-
-    private Klimaat mapDtoToKlimaat(KlimaatDTO klimaat) {
-        KlimaatSensor klimaatSensor = klimaatService.getKlimaatSensorByCode(klimaat.getKlimaatSensorCode());
-        if (klimaatSensor == null) {
-            throw new IllegalArgumentException(String.format("klimaatsensor with code %s does not exist", klimaat.getKlimaatSensorCode()));
-        }
-        Klimaat klimaatToSave = new Klimaat();
-        klimaatToSave.setDatumtijd(klimaat.getDatumtijd());
-        klimaatToSave.setTemperatuur(klimaat.getTemperatuur());
-        klimaatToSave.setLuchtvochtigheid(klimaat.getLuchtvochtigheid());
-        klimaatToSave.setKlimaatSensor(klimaatSensor);
-        return klimaatToSave;
     }
 
 }
