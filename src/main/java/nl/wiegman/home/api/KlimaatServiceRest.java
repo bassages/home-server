@@ -31,7 +31,7 @@ public class KlimaatServiceRest {
     @Autowired
     private KlimaatService klimaatService;
 
-    @PostMapping("sensor/{sensorCode}")
+    @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@PathVariable("sensorCode") String sensorCode, @RequestBody Klimaat klimaat) {
         KlimaatSensor klimaatSensor = klimaatService.getKlimaatSensorByCode(sensorCode);
