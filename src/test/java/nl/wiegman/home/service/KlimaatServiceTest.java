@@ -1,6 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Klimaat;
+import nl.wiegman.home.model.KlimaatSensor;
 import nl.wiegman.home.repository.KlimaatRepos;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,26 +34,34 @@ public class KlimaatServiceTest {
 
     @Test
     public void testHappyFlow() {
+        KlimaatSensor klimaatSensor = new KlimaatSensor();
+        klimaatSensor.setCode("LIVINGROOM");
+
         Klimaat klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(20.0));
         klimaat.setLuchtvochtigheid(new BigDecimal(50.0));
+        klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
 
         klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(21.0));
         klimaat.setLuchtvochtigheid(new BigDecimal(51.0));
+        klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
 
         klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(22.0));
         klimaat.setLuchtvochtigheid(new BigDecimal(52.0));
+        klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
 
         klimaatService.save();
 
         verify(klimaatRepositoryMock, times(1)).save(klimaatArgumentCaptor.capture());
 
-        assertThat(klimaatArgumentCaptor.getValue().getTemperatuur().doubleValue()).isEqualTo(21.0d);
-        assertThat(klimaatArgumentCaptor.getValue().getLuchtvochtigheid().doubleValue()).isEqualTo(51.0d);
+        Klimaat savedKlimaat = klimaatArgumentCaptor.getValue();
+        assertThat(savedKlimaat.getTemperatuur().doubleValue()).isEqualTo(21.0d);
+        assertThat(savedKlimaat.getLuchtvochtigheid().doubleValue()).isEqualTo(51.0d);
+        assertThat(savedKlimaat.getKlimaatSensor()).isEqualTo(klimaatSensor);
     }
 }

@@ -83,15 +83,15 @@ public class KlimaatService {
         receivedInLastQuarter.clear();
     }
 
-    public KlimaatSensor getKlimaatSensorByCode(String code) {
-        return klimaatSensorRepository.findFirstByCode(code);
+    public KlimaatSensor getKlimaatSensorByCode(String klimaatSensorCode) {
+        return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
-    public List<Klimaat> getInPeriod(Date from, Date to) {
+    public List<Klimaat> getInPeriod(String klimaatSensorCode, Date from, Date to) {
         if (to.before(new Date())) {
-            return klimaatServiceCached.getInPeriod(from, to);
+            return klimaatServiceCached.getInPeriod(klimaatSensorCode, from, to);
         } else {
-            return klimaatRepository.findByDatumtijdBetweenOrderByDatumtijd(from, to);
+            return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, from, to);
         }
     }
 
@@ -192,5 +192,4 @@ public class KlimaatService {
                 .map(date -> klimaatRepository.firstHighestHumidityOnDay(date))
                 .collect(Collectors.toList());
     }
-
 }

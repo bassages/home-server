@@ -58,9 +58,9 @@ public class KlimaatServiceRest {
         return klimaatService.getLowest(SensorType.fromString(sensortype), new Date(from), new Date(to), limit);
     }
 
-    @GetMapping("get/{from}/{to}")
-    public List<Klimaat> get(@PathVariable("from") long from, @PathVariable("to") long to) {
-        return klimaatService.getInPeriod(new Date(from), new Date(to));
+    @GetMapping
+    public List<Klimaat> findAllInPeriod(@RequestParam("from") long from, @RequestParam("to") long to) {
+        return klimaatService.getInPeriod("WOONKAMER", new Date(from), new Date(to));
     }
 
     @GetMapping(path = "gemiddelde")

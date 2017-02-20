@@ -29,7 +29,7 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING luchtvochtigheid IS NOT NULL AND datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE luchtvochtigheid IS NOT NULL AND date(datumtijd) = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
-    List<Klimaat> findByDatumtijdBetweenOrderByDatumtijd(@Param("van") Date van, @Param("tot") Date tot);
+    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode, @Param("van") Date van, @Param("tot") Date tot);
 
     @Query(value = MOST_RECENT)
     Klimaat getMostRecent();

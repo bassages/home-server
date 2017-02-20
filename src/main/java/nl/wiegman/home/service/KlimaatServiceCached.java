@@ -16,7 +16,7 @@ public class KlimaatServiceCached {
     KlimaatRepos klimaatRepository;
 
     @Cacheable(cacheNames = "klimaatInPeriod")
-    public List<Klimaat> getInPeriod(Date from, Date to) {
-        return klimaatRepository.findByDatumtijdBetweenOrderByDatumtijd(from, to);
+    public List<Klimaat> getInPeriod(String klimaatSensorCode, Date from, Date to) {
+        return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, from, to);
     }
 }
