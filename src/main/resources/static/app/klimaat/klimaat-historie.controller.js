@@ -342,7 +342,7 @@
                 var requests = [];
 
                 for (var i = 0; i < $scope.selection.length; i++) {
-                    var dataUrl = 'api/klimaat?' + $scope.selection[i].getTime() + '/' + (getTo($scope.selection[i]).getTime() - 1);
+                    var dataUrl = 'api/klimaat?' + $scope.selection[i].getTime() + '&' + (getTo($scope.selection[i]).getTime() - 1);
                     $log.info('Getting data from URL: ' + dataUrl);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }
