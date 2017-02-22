@@ -6,6 +6,7 @@ import nl.wiegman.home.model.Verbruik;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,15 @@ public class VerbruikServiceCached {
 
         if (periodeVan < System.currentTimeMillis()) {
 
-            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
+            long queryPeriodeVan = periodeVan;
+            long queryPeriodeTotEnMet = periodeTotEnMet;
+            if (energiesoort == Energiesoort.GAS) {
+                // Gas is registered once every hour, in the hour after it actually is used. Compensate for that tho make the query return the correct values.
+                queryPeriodeVan -= DateUtils.MILLIS_PER_HOUR;
+                queryPeriodeTotEnMet -= DateUtils.MILLIS_PER_HOUR;
+            }
+
+            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(queryPeriodeVan, queryPeriodeTotEnMet);
 
             if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
 
