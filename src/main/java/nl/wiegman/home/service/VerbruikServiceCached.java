@@ -37,15 +37,7 @@ public class VerbruikServiceCached {
 
         if (periodeVan < System.currentTimeMillis()) {
 
-            long queryPeriodeVan = periodeVan;
-            long queryPeriodeTotEnMet = periodeTotEnMet;
-            if (energiesoort == Energiesoort.GAS) {
-                // Gas is registered once every hour, in the hour after it actually is used. Compensate for that tho make the query return the correct values.
-                queryPeriodeVan -= DateUtils.MILLIS_PER_HOUR;
-                queryPeriodeTotEnMet -= DateUtils.MILLIS_PER_HOUR;
-            }
-
-            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(queryPeriodeVan, queryPeriodeTotEnMet);
+            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
             if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
 
@@ -90,7 +82,8 @@ public class VerbruikServiceCached {
     private BigDecimal getVerbruik(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
         switch (energiesoort) {
             case GAS:
-                return meterstandRepository.getGasVerbruikInPeriod(periodeVan, periodeTotEnMet);
+                // Gas is registered once every hour, in the hour after it actually is used. Compensate for that tho make the query return the correct values.
+                return meterstandRepository.getGasVerbruikInPeriod(periodeVan - DateUtils.MILLIS_PER_HOUR, periodeTotEnMet - DateUtils.MILLIS_PER_HOUR);
             case STROOM:
                 return meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);
             default:
