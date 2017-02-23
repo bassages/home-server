@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -8,12 +8,14 @@
     meterstand.$inject = ['$filter'];
 
     function meterstand($filter) {
-
         numbro.culture('nl-NL');
 
-        return function(input) {
-            if(input === null){ return ""; }
-            return numbro(input).format('0.000');
+        return function (input) {
+            if (!input) {
+                return "";
+            } else {
+                return numbro(input).format('0.000');
+            }
         };
     }
 
