@@ -29,21 +29,21 @@
 <div class="table-responsive">
     <table class="table table-bordered table-striped table-condensed">
         <thead>
-            <tr>
-                <th colspan="2">Datum</th>
-                <th>Stroom T1</th>
-                <th>Stroom T2</th>
-                <th>Gas</th>
-            </tr>
+        <tr>
+            <th colspan="2" width="25%">Datum</th>
+            <th class="text-right" width="25%">Stroom T1</th>
+            <th class="text-right" width="25%">Stroom T2</th>
+            <th class="text-right" width="25%">Gas</th>
+        </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="meterstandOpDag in vm.meterstandenPerDag | orderBy:'datumtijd'">
-                <td style="width: 50px;">{{meterstandOpDag.datumtijd | date : 'EEE.'}}</td>
-                <td style="width: 25%">{{meterstandOpDag.datumtijd | date : 'dd-MM-yyyy'}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief1 | meterstand}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.stroomTarief2 | meterstand}}</td>
-                <td style="width: 25%">{{meterstandOpDag.meterstand.gas | meterstand}}</td>
-            </tr>
+        <tr ng-repeat="meterstandOpDag in vm.meterstandenPerDag | orderBy:'datumtijd'">
+            <td class="text-right">{{meterstandOpDag.datumtijd | date : 'EEE.'}}</td>
+            <td>{{meterstandOpDag.datumtijd | date : 'dd-MM-yyyy'}}</td>
+            <td class="text-right">{{meterstandOpDag.meterstand.stroomTarief1 | meterstand}}</td>
+            <td class="text-right">{{meterstandOpDag.meterstand.stroomTarief2 | meterstand}}</td>
+            <td class="text-right">{{meterstandOpDag.meterstand.gas | meterstand}}</td>
+        </tr>
         </tbody>
     </table>
 </div>
