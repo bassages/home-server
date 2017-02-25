@@ -1,3 +1,5 @@
+<a href="https://travis-ci.org/bassages/home-server"><img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
+
 # Features
 - Ontvangen van slimme meter data en deze opslaan in een database
 - Ontvangen van klimaat sensor data (temperatuur en luchtvochtigheid) en deze opslaan in een database
