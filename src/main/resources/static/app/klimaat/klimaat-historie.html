@@ -37,12 +37,12 @@
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>
-                    <th ng-repeat="column in cols" class="text-capitalize">{{column}}</th>
+                    <th class="text-right" ng-repeat="column in cols" class="text-capitalize">{{column}}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="row in rows">
-                    <td ng-repeat="column in cols">{{row[column]}}</td>
+                    <td class="text-right" ng-repeat="column in cols">{{row[column]}}</td>
                 </tr>
             </tbody>
         </table>
