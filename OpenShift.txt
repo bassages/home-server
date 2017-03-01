@@ -58,8 +58,7 @@ mysql_tzinfo_to_sql /usr/share/zoneinfo/Europe/Amsterdam Europe/Amsterdam | mysq
 Then log in using for example PHPMyadmin / MySQLWorkbench and execute:
 
 SET time_zone='Europe/Amsterdam';
-SET GLOBAL time_zone = 'Europe/Berlin';
-
+SET GLOBAL time_zone = 'Europe/Amsterdam';
 
 ---
 

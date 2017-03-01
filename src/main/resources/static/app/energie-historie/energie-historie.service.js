@@ -117,8 +117,12 @@
                         row[rowLabel] = rowValue;
                     }
 
-                    if (energiesoorten.length > 1 && rowTotal !== null) {
-                        row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                    if (energiesoorten.length > 1) {
+                        if (rowTotal === null) {
+                            row.Totaal = '';
+                        } else {
+                            row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                        }
                     }
                     rows.push(row);
                 }
