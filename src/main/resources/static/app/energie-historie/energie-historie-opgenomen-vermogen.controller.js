@@ -8,7 +8,7 @@
     OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
 
     function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
-        var FIVE_MINUTES_IN_MILLISECONDS = 5 * 60 * 1000;
+        var FOUR_MINUTES_IN_MILLISECONDS = 4 * 60 * 1000;
 
         activate();
 
@@ -85,7 +85,7 @@
         function addSubPeriodEnd(data) {
             var length = data.length;
             for (var i = 0; i < length; i++) {
-                var subPeriodEnd = data[i].dt + (FIVE_MINUTES_IN_MILLISECONDS - 1);
+                var subPeriodEnd = data[i].dt + (FOUR_MINUTES_IN_MILLISECONDS - 1);
                 data.push({dt: subPeriodEnd, watt: data[i].watt});
             }
         }
@@ -186,7 +186,7 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoGraph([]);
 
-            var graphDataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + FIVE_MINUTES_IN_MILLISECONDS;
+            var graphDataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + FOUR_MINUTES_IN_MILLISECONDS;
             $log.info('Getting data from URL: ' + graphDataUrl);
 
             $http({method: 'GET', url: graphDataUrl})
