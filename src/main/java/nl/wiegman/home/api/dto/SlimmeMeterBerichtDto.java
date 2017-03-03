@@ -12,6 +12,7 @@ public class SlimmeMeterBerichtDto {
     private String stroomTariefIndicator;
     private BigDecimal gas;
 
+    private String tariefIndicatorStroom;
     private String meterIdentificatieStroom;
     private String meterIdentificatieGas;
     private Integer aantalStroomStoringenInAlleFases;
@@ -140,5 +141,13 @@ public class SlimmeMeterBerichtDto {
 
     public void setMeterIdentificatieGas(String meterIdentificatieGas) {
         this.meterIdentificatieGas = meterIdentificatieGas;
+    }
+
+    public String getTariefIndicatorStroom() {
+        return tariefIndicatorStroom;
+    }
+
+    public void setTariefIndicatorStroom(String tariefIndicatorStroom) {
+        this.tariefIndicatorStroom = tariefIndicatorStroom;
     }
 }
