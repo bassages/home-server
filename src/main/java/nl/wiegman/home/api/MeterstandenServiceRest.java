@@ -1,26 +1,29 @@
 package nl.wiegman.home.api;
 
-import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.MeterstandOpDag;
-import nl.wiegman.home.service.MeterstandService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.service.MeterstandService;
+
 @RestController
 @RequestMapping("/api/meterstanden")
-public class MeterstandServiceRest {
+public class MeterstandenServiceRest {
+
+    private final MeterstandService meterstandService;
 
     @Autowired
-    private MeterstandService meterstandService;
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Meterstand save(@RequestBody Meterstand meterstand) {
-        return meterstandService.save(meterstand);
+    public MeterstandenServiceRest(MeterstandService meterstandService, ObjectMapper objectMapper) {
+        this.meterstandService = meterstandService;
     }
 
     @GetMapping("meest-recente")

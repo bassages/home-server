@@ -1,9 +1,10 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.MeterstandOpDag;
-import nl.wiegman.home.realtime.UpdateEvent;
-import nl.wiegman.home.repository.MeterstandRepository;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,19 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.realtime.UpdateEvent;
+import nl.wiegman.home.repository.MeterstandRepository;
 
 @Service
 public class MeterstandService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MeterstandService.class);
-
-    private static final int GAS_SCALE = 3;
-    private static final int STROOM_SCALE = 3;
 
     @Autowired
     MeterstandRepository meterstandRepository;
@@ -35,12 +32,6 @@ public class MeterstandService {
     ApplicationEventPublisher eventPublisher;
 
     public Meterstand save(Meterstand meterstand) {
-        LOG.info("Save for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(meterstand.getDatumtijd())));
-
-        meterstand.setGas(meterstand.getGas().setScale(GAS_SCALE, RoundingMode.CEILING));
-        meterstand.setStroomTarief1(meterstand.getStroomTarief1().setScale(STROOM_SCALE, RoundingMode.CEILING));
-        meterstand.setStroomTarief2(meterstand.getStroomTarief2().setScale(STROOM_SCALE, RoundingMode.CEILING));
-
         Meterstand savedMeterstand = meterstandRepository.save(meterstand);
 
         eventPublisher.publishEvent(new UpdateEvent(savedMeterstand));
