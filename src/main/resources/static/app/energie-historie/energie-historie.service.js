@@ -48,9 +48,9 @@
             if (energiesoort == 'stroom') {
                 return 'kWh';
             } else if (energiesoort == 'gas') {
-                return 'M\u00B3';
+                return 'm\u00B3';
             } else {
-                return '???';
+                return '?';
             }
         };
 
