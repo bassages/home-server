@@ -28,24 +28,25 @@
 <div class="row">
 
     <!-- Chart -->
-    <div ng-show="showChart" class="col-md-12">
+    <div ng-show="showChart" class="col-xs-12">
         <div id="chart" class="c3 chart"></div>
     </div>
 
     <!-- Table -->
-    <div ng-show="showTable" class="table-responsive">
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
-                <tr>
-                    <th class="text-right" ng-repeat="column in cols" class="text-capitalize">{{column}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="row in rows">
-                    <td class="text-right" ng-repeat="column in cols">{{row[column]}}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div ng-show="showTable" class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th class="text-right" ng-repeat="column in cols" class="text-capitalize">{{column}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in rows">
+                        <td class="text-right" ng-repeat="column in cols">{{row[column]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </div>

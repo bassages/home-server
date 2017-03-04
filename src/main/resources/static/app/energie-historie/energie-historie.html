@@ -1,8 +1,8 @@
 <div ng-include="'top-menu.html'"></div>
 
 <div class="row">
-    <div class="visible-md visible-lg col-md-1 without-lr-padding">&nbsp;</div>
-    <div class="col-md-11 without-lr-padding">
+    <div class="hidden-xs hidden-sm col-md-1">&nbsp;</div>
+    <div class="col-md-11">
         <ul class="nav nav-tabs">
 
             <!-- Soort selection for SMALL screens -->
@@ -89,34 +89,48 @@
 </div>
 
 <div class="row">
-
-    <!-- Energiesoort selection for MEDIUM/BIG screens -->
-    <div class="hidden-xs col-md-1 without-lr-padding">
-        <ul class="nav nav-pills nav-stacked">
+    <!-- Energiesoort selection for SMALL -->
+    <div class="visible-sm col-sm-12">
+        <ul class="nav nav-pills nav-justified">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}" class="left-pill">{{supportedsoort.omschrijving}}</a>
+                <a class="pill" ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>
+</div>
+
+<div class="row">
+
+    <!-- Energiesoort selection for MEDIUM/LARGE -->
+    <div class="hidden-xs visible-md visible-lg col-md-1">
+        <ul class="nav nav-pills nav-stacked" style="margin-right:-30px;">
+            <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
+                <a class="left-pill" ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}">{{supportedsoort.omschrijving}}</a>
+            </li>
+        </ul>
+    </div>
+
     <!-- Chart -->
-    <div ng-show="showChart" class="col-md-11 without-lr-padding">
+    <div ng-show="showChart" class="col-xs-12 col-md-11">
         <div id="chart" class="c3 chart"></div>
     </div>
 
     <!-- Table -->
-    <div ng-show="showTable" class="table-responsive">
-        <table class="table table-bordered table-striped table-condensed">
-            <thead>
+    <div ng-show="showTable" class="col-xs-12 col-md-11">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-condensed">
+                <thead>
                 <tr>
                     <th class="text-right" ng-repeat="column in cols">{{column}}</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr ng-repeat="row in rows">
                     <td class="text-right" ng-repeat="column in cols">{{row[column]}}</td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 </div>
