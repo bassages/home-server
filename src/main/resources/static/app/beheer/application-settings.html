@@ -1,0 +1,23 @@
+<div ng-include="'top-menu.html'"></div>
+
+<div>
+    <h1>
+        <span>Weergave opties</span>
+    </h1>
+
+    <hr/>
+
+    <h3>Historische data</h3>
+
+    <div class="form-group">
+        <div class="radio">
+            <label><input type="radio" value="auto" ng-model="vm.settings.displayChartOrTable" ng-model="vm.settings.displayChartOrTable"/>Automatisch, gebaseerd op vensterbreedte</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" value="chart" ng-model="vm.settings.displayChartOrTable"/>Grafiek</label>
+        </div>
+        <div class="radio">
+            <label><input type="radio" value="table" ng-model="vm.settings.displayChartOrTable"/>Tabel</label>
+        </div>
+    </div>
+</div>

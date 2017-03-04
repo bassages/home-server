@@ -28,12 +28,12 @@
 <div class="row">
 
     <!-- Chart -->
-    <div class="hidden-xs col-md-12">
+    <div ng-show="showChart" class="col-md-12">
         <div id="chart" class="c3 chart"></div>
     </div>
 
     <!-- Table -->
-    <div class="hidden-sm hidden-md hidden-lg table-responsive">
+    <div ng-show="showTable" class="table-responsive">
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>

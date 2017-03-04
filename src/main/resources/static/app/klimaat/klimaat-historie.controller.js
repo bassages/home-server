@@ -14,7 +14,7 @@
             $scope.selection = [Date.today()];
             $scope.sensortype = $routeParams.sensortype;
 
-            KlimaatSensorGrafiekService.manageGraphSize($scope);
+            KlimaatSensorGrafiekService.manageChartSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
@@ -114,14 +114,14 @@
             return tickValues;
         }
 
-        function getStatistics(graphData) {
+        function getStatistics(chartData) {
             var min, max, avg;
 
             var sumOfAllKlimaatValues = 0;
             var nrOfKlimaatValues = 0;
 
-            for (var i = 0; i < graphData.length; i++) {
-                var klimaatValuesOnSameTimeOfMultipleDays = graphData[i];
+            for (var i = 0; i < chartData.length; i++) {
+                var klimaatValuesOnSameTimeOfMultipleDays = chartData[i];
 
                 // The next array will contain the formatted date(s) and an item with value 'datumtijd'
                 var formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
@@ -156,16 +156,16 @@
             return list;
         }
 
-        function getGraphPadding() {
+        function getChartPadding() {
             return {top: 10, bottom: 25, left: 55, right: 20};
         }
 
-        function getEmptyGraphConfig() {
+        function getEmptyChartConfig() {
             return {
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: getGraphPadding()
+                padding: getChartPadding()
             };
         }
 
@@ -232,37 +232,37 @@
             return result;
         }
 
-        function getGraphConfig(graphData) {
-            var graphConfig = {};
+        function getChartConfig(chartData) {
+            var chartConfig = {};
             var tickValues = getTicksForEveryHourInDay();
 
-            graphConfig.bindto = '#chart';
+            chartConfig.bindto = '#chart';
 
             var value  = [];
             for (var i = 0; i < $scope.selection.length; i++) {
                 value.push(d3.time.format('%d-%m-%Y')($scope.selection[i]));
             }
 
-            graphConfig.data = {type: 'spline', json: graphData, keys: {x: "datumtijd", value: value}};
+            chartConfig.data = {type: 'spline', json: chartData, keys: {x: "datumtijd", value: value}};
 
-            graphConfig.line = {connectNull: true};
+            chartConfig.line = {connectNull: true};
 
-            graphConfig.axis = {};
-            graphConfig.axis.x = {
+            chartConfig.axis = {};
+            chartConfig.axis.x = {
                 type: "timeseries",
                 tick: {format: "%H:%M", values: tickValues, rotate: -30},
                 min: getFixedDate(), max: getTo(getFixedDate()),
                 padding: {left: 0, right: 10}
             };
-            graphConfig.axis.y = {tick: {format: formatWithUnitLabel }};
+            chartConfig.axis.y = {tick: {format: formatWithUnitLabel }};
 
-            graphConfig.legend = {show: false};
-            graphConfig.bar = {width: {ratio: 1}};
-            graphConfig.transition = {duration: 0};
-            graphConfig.padding = getGraphPadding();
-            graphConfig.grid = {y: {show: true}};
+            chartConfig.legend = {show: false};
+            chartConfig.bar = {width: {ratio: 1}};
+            chartConfig.transition = {duration: 0};
+            chartConfig.padding = getChartPadding();
+            chartConfig.grid = {y: {show: true}};
 
-            graphConfig.tooltip = {
+            chartConfig.tooltip = {
                 format: {
                     name: function (name, ratio, id, index) {
                         var theDate = d3.time.format('%d-%m-%Y').parse(name);
@@ -271,26 +271,26 @@
                 }
             };
 
-            var statistics = getStatistics(graphData);
-            graphConfig.grid.y.lines = KlimaatSensorGrafiekService.getStatisticsGraphLines(statistics, formatWithUnitLabel);
+            var statistics = getStatistics(chartData);
+            chartConfig.grid.y.lines = KlimaatSensorGrafiekService.getStatisticsChartLines(statistics, formatWithUnitLabel);
 
-            return graphConfig;
+            return chartConfig;
         }
 
         function loadData(data) {
-            loadDataIntoGraph(data);
+            loadDataIntoChart(data);
             loadDataIntoTable(data);
         }
 
-        function loadDataIntoGraph(data) {
-            var graphConfig;
+        function loadDataIntoChart(data) {
+            var chartConfig;
             if (data.length === 0) {
-                graphConfig = getEmptyGraphConfig();
+                chartConfig = getEmptyChartConfig();
             } else {
-                graphConfig = getGraphConfig(data);
+                chartConfig = getChartConfig(data);
             }
-            $scope.chart = c3.generate(graphConfig);
-            KlimaatSensorGrafiekService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            $scope.chart = c3.generate(chartConfig);
+            KlimaatSensorGrafiekService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getTo(from) {

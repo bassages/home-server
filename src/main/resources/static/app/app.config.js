@@ -62,6 +62,11 @@
                 controller: 'MindergasnlController',
                 controllerAs: 'vm'
             })
+            .when('/application-settings', {
+                templateUrl: '/app/beheer/application-settings.html',
+                controller: 'ApplicationSettingsController',
+                controllerAs: 'vm'
+            })
             .when('/bedien', {
                 templateUrl: '/app/bedien/bedien.html',
                 controller: 'BedienController',

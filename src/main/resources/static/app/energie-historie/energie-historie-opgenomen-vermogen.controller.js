@@ -19,8 +19,8 @@
             $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
             $scope.soort = 'stroom';
             $scope.dateformat = 'EEE. dd-MM-yyyy';
-
-            EnergieHistorieService.manageGraphSize($scope);
+            $scope.historicDataDisplayType = 'chart';
+            EnergieHistorieService.manageChartSize($scope);
             LocalizationService.localize();
 
             getDataFromServer();
@@ -90,14 +90,14 @@
             }
         }
 
-        function getStatistics(graphData) {
+        function getStatistics(chartData) {
             var min, max, avg;
 
             var total = 0;
             var nrofdata = 0;
 
-            for (var i = 0; i < graphData.length; i++) {
-                var data = graphData[i].watt;
+            for (var i = 0; i < chartData.length; i++) {
+                var data = chartData[i].watt;
 
                 if (data !== null && (typeof max=='undefined' || data > max)) {
                     max = data;
@@ -121,11 +121,11 @@
             return value === null ? null : Math.round(value) + ' watt';
         }
 
-        function getGraphPadding() {
+        function getChartPadding() {
             return {top: 10, bottom: 25, left: 55, right: 20};
         }
 
-        function getEmptyGraphConfig() {
+        function getEmptyChartConfig() {
             return {
                 data: {json: {}},
                 legend: {show: false},
@@ -134,48 +134,48 @@
             };
         }
 
-        function getGraphConfig(graphData) {
-            var graphConfig = {};
+        function getChartConfig(chartData) {
+            var chartConfig = {};
             var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
 
-            graphConfig.bindto = '#chart';
+            chartConfig.bindto = '#chart';
 
-            graphConfig.data = {json: graphData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
-            graphConfig.axis = {};
-            graphConfig.axis.x = {
+            chartConfig.data = {json: chartData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
+            chartConfig.axis = {};
+            chartConfig.axis.x = {
                 type: "timeseries",
                 tick: {format: "%H:%M", values: tickValues, rotate: -30},
                 min: $scope.selection, max: getTo(),
                 padding: {left: 0, right: 10}
             };
-            graphConfig.legend = {show: false};
-            graphConfig.bar = {width: {ratio: 1}};
-            graphConfig.point = {show: false};
-            graphConfig.transition = {duration: 0};
-            graphConfig.tooltip = {show: false};
-            graphConfig.padding = getGraphPadding();
-            graphConfig.grid = {y: {show: true}};
+            chartConfig.legend = {show: false};
+            chartConfig.bar = {width: {ratio: 1}};
+            chartConfig.point = {show: false};
+            chartConfig.transition = {duration: 0};
+            chartConfig.tooltip = {show: false};
+            chartConfig.padding = getChartPadding();
+            chartConfig.grid = {y: {show: true}};
 
-            var statistics = getStatistics(graphData);
+            var statistics = getStatistics(chartData);
 
-            graphConfig.grid.y.lines = EnergieHistorieService.getStatisticsGraphLines(statistics, formatWithUnitLabel);
+            chartConfig.grid.y.lines = EnergieHistorieService.getStatisticsChartLines(statistics, formatWithUnitLabel);
 
-            addSubPeriodEnd(graphData);
+            addSubPeriodEnd(chartData);
 
-            return graphConfig;
+            return chartConfig;
         }
 
-        function loadDataIntoGraph(graphData) {
-            $scope.graphData = graphData;
+        function loadDataIntoChart(chartData) {
+            $scope.chartData = chartData;
 
-            var graphConfig;
-            if (graphData.length === 0) {
-                graphConfig = getEmptyGraphConfig();
+            var chartConfig;
+            if (chartData.length === 0) {
+                chartConfig = getEmptyChartConfig();
             } else {
-                graphConfig = getGraphConfig(graphData);
+                chartConfig = getChartConfig(chartData);
             }
-            $scope.chart = c3.generate(graphConfig);
-            EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+            $scope.chart = c3.generate(chartConfig);
+            EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function getTo() {
@@ -184,15 +184,15 @@
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
-            loadDataIntoGraph([]);
+            loadDataIntoChart([]);
 
-            var graphDataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
-            $log.info('Getting data from URL: ' + graphDataUrl);
+            var dataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
+            $log.info('Getting data from URL: ' + dataUrl);
 
-            $http({method: 'GET', url: graphDataUrl})
+            $http({method: 'GET', url: dataUrl})
                 .then(
                     function successCallback(response) {
-                        loadDataIntoGraph(response.data);
+                        loadDataIntoChart(response.data);
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

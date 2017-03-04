@@ -27,16 +27,16 @@
             }
         };
 
-        this.getGraphPadding = function() {
+        this.getChartPadding = function() {
             return {top: 10, bottom: 25, left: 55, right: 20};
         };
 
-        this.getEmptyGraphConfig = function() {
+        this.getEmptyChartConfig = function() {
             return {
                 data: {json: {}},
                 legend: {show: false},
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
-                padding: this.getGraphPadding()
+                padding: this.getChartPadding()
             };
         };
 

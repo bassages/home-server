@@ -19,7 +19,7 @@
             $scope.dateformat = 'yyyy';
 
             LocalizationService.localize();
-            EnergieHistorieService.manageGraphSize($scope);
+            EnergieHistorieService.manageChartSize($scope);
 
             getDataFromServer();
         }
@@ -65,26 +65,26 @@
             return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         }
 
-        function getGraphConfig(data) {
-            var graphConfig = {};
+        function getChartConfig(data) {
+            var chartConfig = {};
 
-            graphConfig.bindto = '#chart';
+            chartConfig.bindto = '#chart';
 
-            graphConfig.data = {};
-            graphConfig.data.json = data;
-            graphConfig.data.type = 'bar';
-            graphConfig.data.order = null;
-            graphConfig.data.colors = EnergieHistorieService.getDataColors();
+            chartConfig.data = {};
+            chartConfig.data.json = data;
+            chartConfig.data.type = 'bar';
+            chartConfig.data.order = null;
+            chartConfig.data.colors = EnergieHistorieService.getDataColors();
 
             var keysGroups = [];
             for (var i = 0; i < $scope.energiesoorten.length; i++) {
                 keysGroups.push($scope.energiesoorten[i] + "-" + $scope.soort);
             }
-            graphConfig.data.groups = [keysGroups];
-            graphConfig.data.keys = {x: 'maand', value: keysGroups};
+            chartConfig.data.groups = [keysGroups];
+            chartConfig.data.keys = {x: 'maand', value: keysGroups};
 
-            graphConfig.axis = {};
-            graphConfig.axis.x = {
+            chartConfig.axis = {};
+            chartConfig.axis.x = {
                 tick: {
                     format: function (d) {
                         return LocalizationService.getShortMonths()[d - 1];
@@ -94,26 +94,26 @@
             };
 
             var yAxisFormat = function (value) { return EnergieHistorieService.formatWithoutUnitLabel($scope.soort, value); };
-            graphConfig.axis.y = {tick: {format: yAxisFormat }};
-            graphConfig.legend = {show: false};
-            graphConfig.bar = {width: {ratio: 0.8}};
-            graphConfig.transition = {duration: 0};
+            chartConfig.axis.y = {tick: {format: yAxisFormat }};
+            chartConfig.legend = {show: false};
+            chartConfig.bar = {width: {ratio: 0.8}};
+            chartConfig.transition = {duration: 0};
 
-            graphConfig.tooltip = {
+            chartConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     var titleFormat = function(d) { return LocalizationService.getFullMonths()[d - 1]; };
                     return EnergieHistorieService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
-            graphConfig.padding = EnergieHistorieService.getGraphPadding();
-            graphConfig.grid = {y: {show: true}};
+            chartConfig.padding = EnergieHistorieService.getChartPadding();
+            chartConfig.grid = {y: {show: true}};
 
-            return graphConfig;
+            return chartConfig;
         }
 
         function loadData(data) {
             $scope.data = data;
-            loadDataIntoGraph(data);
+            loadDataIntoChart(data);
             loadDataIntoTable(data);
         }
 
@@ -124,10 +124,10 @@
             $scope.cols = table.cols;
         }
 
-        function loadDataIntoGraph(data) {
-            var graphConfig = data.length === 0 ? EnergieHistorieService.getEmptyGraphConfig() : getGraphConfig(data);
-            $scope.chart = c3.generate(graphConfig);
-            EnergieHistorieService.setGraphHeightMatchingWithAvailableWindowHeight($scope.chart);
+        function loadDataIntoChart(data) {
+            var chartConfig = data.length === 0 ? EnergieHistorieService.getEmptyChartConfig() : getChartConfig(data);
+            $scope.chart = c3.generate(chartConfig);
+            EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
         function transformServerdata(serverresponses) {

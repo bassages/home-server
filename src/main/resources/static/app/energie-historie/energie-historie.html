@@ -1,9 +1,7 @@
 <div ng-include="'top-menu.html'"></div>
 
 <div class="row">
-    <div class="col-md-1 without-lr-padding">
-        &nbsp;
-    </div>
+    <div class="visible-md visible-lg col-md-1 without-lr-padding">&nbsp;</div>
     <div class="col-md-11 without-lr-padding">
         <ul class="nav nav-tabs">
 
@@ -13,13 +11,13 @@
             </div>
 
             <!-- Energiesoort selection for SMALL screens -->
-            <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('stroom')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
-                <a ng-hide="hideEnergieSoorten()" ng-click="toggleEnergiesoort('gas')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
+            <div ng-hide="hideEnergieSoorten()" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-click="toggleEnergiesoort('stroom')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
+                <a ng-click="toggleEnergiesoort('gas')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
             </div>
 
             <!-- Period selection for SMALL screens -->
-            <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+            <div ng-hide="hideUur() && hideDag() && hideMaand()" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
                 <a ng-hide="hideUur()" ng-href="/#!/energie/{{soort}}/grafiek/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
                 <a ng-hide="hideDag()" ng-href="/#!/energie/{{soort}}/grafiek/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
                 <a ng-hide="hideMaand()" ng-href="/#!/energie/{{soort}}/grafiek/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
@@ -100,14 +98,13 @@
             </li>
         </ul>
     </div>
-
     <!-- Chart -->
-    <div class="hidden-xs col-md-11 without-lr-padding">
+    <div ng-show="showChart" class="col-md-11 without-lr-padding">
         <div id="chart" class="c3 chart"></div>
     </div>
 
     <!-- Table -->
-    <div class="hidden-sm hidden-md hidden-lg table-responsive">
+    <div ng-show="showTable" class="table-responsive">
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>

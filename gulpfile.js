@@ -23,16 +23,16 @@ gulp.task('jshint', function() {
 });
 
 // Task to watch resource changes
-gulp.task('watch', ['jshint', 'watch-styles', 'watch-js']);
+gulp.task('watch', ['build', 'watch-js', 'watch-styles']);
 
 // Task to watch style changes
 gulp.task('watch-styles', function() {
-    gulp.watch(appStylesDir + '/**/*.less' , ['build-css']);
+    gulp.watch(appStylesDir + '/**/*.less', ['build-css']);
 });
 
 // Task to watch js changes
 gulp.task('watch-js', function() {
-    gulp.watch(appSourcesDir + '/**/*.js', ['jshint']);
+    gulp.watch(appSourcesDir + '/**/*.js', ['jshint', 'build-js']);
 });
 
 // Task to build all frontend artifacts
