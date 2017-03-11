@@ -24,16 +24,16 @@ public class VerbruikService {
     private final Logger logger = LoggerFactory.getLogger(VerbruikService.class);
 
     @Autowired
-    MeterstandRepository meterstandRepository;
+    private MeterstandRepository meterstandRepository;
 
     @Autowired
-    EnergiecontractRepository energiecontractRepository;
+    private EnergiecontractRepository energiecontractRepository;
 
     @Autowired
-    VerbruikServiceCached verbruikServiceCached;
+    private VerbruikServiceCached verbruikServiceCached;
 
     @Autowired
-    OpgenomenVermogenService opgenomenVermogenService;
+    private OpgenomenVermogenService opgenomenVermogenService;
 
     public List<VerbruikPerUurOpDag> getVerbruikPerUurOpDag(Energiesoort energiesoort, long dag) {
         List<VerbruikPerUurOpDag> result = new ArrayList<>();

@@ -15,6 +15,10 @@ public class DateTimeUtil {
         Date datumVan = DateUtils.truncate(new Date(van), Calendar.DATE);
         Date datumTotEnMet = DateUtils.truncate(new Date(totEnMet), Calendar.DATE);
 
+        if (datumVan.after(datumTotEnMet)) {
+            throw new RuntimeException("van must be smaller or equal to totEnMet");
+        }
+
         Date datum = datumVan;
 
         while (true) {

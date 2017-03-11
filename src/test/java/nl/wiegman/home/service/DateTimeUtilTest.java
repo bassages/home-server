@@ -7,13 +7,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class DateTimeUtilTest {
 
     @Test
-    public void testThat1DayPeriodAreCorrect() throws ParseException {
+    public void singleDayPeriodIsCorrect() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         Date van = simpleDateFormat.parse("01-01-2015");
@@ -24,7 +25,7 @@ public class DateTimeUtilTest {
     }
 
     @Test
-    public void testThat10DaysInPeriodAreCorrect() throws ParseException {
+    public void tenDayPeriodIsCorrect() throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         Date van = simpleDateFormat.parse("01-01-2015");
@@ -34,4 +35,15 @@ public class DateTimeUtilTest {
         assertThat(dagenInPeriode.size(), is(10));
     }
 
+    @Test
+    public void toMustNotBeBeforeThenFrom() throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date van = simpleDateFormat.parse("01-01-2015");
+        Date totEnMet = simpleDateFormat.parse("31-12-2014");
+
+        assertThatThrownBy(() -> {
+            DateTimeUtil.getDagenInPeriode(van.getTime(), totEnMet.getTime());
+        }).isInstanceOf(RuntimeException.class);
+    }
 }

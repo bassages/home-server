@@ -12,6 +12,7 @@
 
         getMeestRecenteMeterstand();
         getGasVerbruikVandaag();
+        getGemiddeldeGasVerbruikPerDagInAfgelopenWeek();
         getOudsteMeterstandVanVandaag();
         getMeestRecenteKlimaat();
 
@@ -23,6 +24,23 @@
             updateKlimaat(jsonData);
         });
 
+        function getGemiddeldeGasVerbruikPerDagInAfgelopenWeek() {
+            var gisteren = Date.parse('yesterday').getTime();
+            var weekVoorGisteren = Date.parse('yesterday').add(-6).days().getTime();
+
+            var url = 'api/gas/gemiddelde-per-dag-in-periode/' + weekVoorGisteren + '/' + gisteren;
+            $log.info('Getting data from URL: ' + url);
+
+            $http({
+                method: 'GET', url: url
+            }).then(function successCallback(response) {
+                vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek = response.data.verbruik;
+                setGasVandaagLeds(vm);
+            }, function errorCallback(response) {
+                $log.error(angular.toJson(response));
+            });
+        }
+
         function getGasVerbruikVandaag() {
             var url = 'api/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
             $log.info('Getting data from URL: ' + url);
@@ -32,6 +50,7 @@
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
                     vm.gasVerbruikVandaag = response.data[0].verbruik;
+                    setGasVandaagLeds();
                 }
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
@@ -101,6 +120,24 @@
         function setLuchtVochtigheidLeds(luchtvochtigheid) {
             for (var i = 0; i <= 9; i++) {
                 vm['luchtvochtigheidLed' + i] = luchtvochtigheid >= (i * 10);
+            }
+        }
+
+        function setGasVandaagLeds() {
+            if (vm.gasVerbruikVandaag && vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) {
+                var procentueleVeranderingTovAfgelopenWeek = ((vm.gasVerbruikVandaag - vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) / vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) * 100;
+                $log.debug('Procentuele verandering: ' + procentueleVeranderingTovAfgelopenWeek);
+
+                if (procentueleVeranderingTovAfgelopenWeek <= 0) {
+                    vm.gasVandaagMood = 'positive';
+                } else {
+                    vm.gasVandaagMood = 'negative';
+                }
+
+                var procentueleVerandering = Math.abs(procentueleVeranderingTovAfgelopenWeek);
+                for (var i = 0; i <= 9; i++) {
+                    vm['gasVandaagLed' + i] = procentueleVerandering >= (i * 3);
+                }
             }
         }
 

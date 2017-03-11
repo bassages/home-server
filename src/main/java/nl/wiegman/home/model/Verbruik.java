@@ -12,8 +12,8 @@ public class Verbruik {
         return verbruik;
     }
 
-    public void setVerbruik(BigDecimal kWh) {
-        this.verbruik = kWh;
+    public void setVerbruik(BigDecimal verbruik) {
+        this.verbruik = verbruik;
     }
 
     public BigDecimal getKosten() {
