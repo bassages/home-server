@@ -3,15 +3,14 @@ package nl.wiegman.home.api.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SlimmeMeterBerichtDto {
+public class Dsmr42ReadingDto {
 
     private long datumtijd;
     private int stroomOpgenomenVermogenInWatt;
     private BigDecimal stroomTarief1;
     private BigDecimal stroomTarief2;
-    private String stroomTariefIndicator;
+    private Integer stroomTariefIndicator;
     private BigDecimal gas;
-
     private String tariefIndicatorStroom;
     private String meterIdentificatieStroom;
     private String meterIdentificatieGas;
@@ -63,11 +62,11 @@ public class SlimmeMeterBerichtDto {
         this.gas = gas;
     }
 
-    public String getStroomTariefIndicator() {
+    public Integer getStroomTariefIndicator() {
         return stroomTariefIndicator;
     }
 
-    public void setStroomTariefIndicator(String stroomTariefIndicator) {
+    public void setStroomTariefIndicator(Integer stroomTariefIndicator) {
         this.stroomTariefIndicator = stroomTariefIndicator;
     }
 

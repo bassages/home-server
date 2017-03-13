@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import nl.wiegman.home.api.dto.SlimmeMeterBerichtDto;
+import nl.wiegman.home.api.dto.Dsmr42ReadingDto;
 import nl.wiegman.home.model.Meterstand;
 import nl.wiegman.home.service.MeterstandService;
 
@@ -39,7 +39,7 @@ public class SlimmeMeterServiceRest {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody SlimmeMeterBerichtDto slimmeMeterBericht) {
+    public void save(@RequestBody Dsmr42ReadingDto slimmeMeterBericht) {
         try {
             LOG.info(objectMapper.writeValueAsString(slimmeMeterBericht));
         } catch (JsonProcessingException e) {
@@ -48,7 +48,7 @@ public class SlimmeMeterServiceRest {
         meterstandService.save(mapToMeterStand(slimmeMeterBericht));
     }
 
-    private Meterstand mapToMeterStand(SlimmeMeterBerichtDto slimmeMeterBericht) {
+    private Meterstand mapToMeterStand(Dsmr42ReadingDto slimmeMeterBericht) {
         Meterstand meterstand = new Meterstand();
         meterstand.setDatumtijd(slimmeMeterBericht.getDatumtijd());
         meterstand.setStroomOpgenomenVermogenInWatt(slimmeMeterBericht.getStroomOpgenomenVermogenInWatt());
