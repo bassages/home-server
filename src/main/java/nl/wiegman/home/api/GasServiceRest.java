@@ -34,7 +34,7 @@ public class GasServiceRest {
     }
 
     private BigDecimal berekenGemiddelde(List<VerbruikOpDag> verbruikPerDag, Function<VerbruikOpDag, BigDecimal> attributeToAverageGetter, int scale) {
-        BigDecimal sumVerbruik = verbruikPerDag.stream().map(attributeToAverageGetter).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal sumVerbruik = verbruikPerDag.stream().filter(attributeValue -> attributeToAverageGetter.apply(attributeValue) != null).map(attributeToAverageGetter).reduce(BigDecimal.ZERO, BigDecimal::add);
         return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), BigDecimal.ROUND_CEILING).setScale(scale, BigDecimal.ROUND_CEILING);
     }
 

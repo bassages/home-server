@@ -43,9 +43,7 @@
             <div class="panel-body">
 
                 <div class="ledbar pull-left">
-                    <div ng-if="!vm.gasVandaagMood" ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" class="led-uit"></div>
-                    <div ng-if="vm.gasVandaagMood == 'positive'" ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="vm.gasVandaagLed{{n}} ? 'gas-vandaag-positive-led-{{n}}' : 'led-uit'"></div>
-                    <div ng-if="vm.gasVandaagMood == 'negative'" ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="vm.gasVandaagLed{{n}} ? 'gas-vandaag-negative-led-{{n}}' : 'led-uit'"></div>
+                    <div ng-repeat="n in [9,8,7,6,5,4,3,2,1,0]" ng-class="vm.gasVandaagLed{{n}} ? 'gas-vandaag-led-{{n}}' : 'led-uit'"></div>
                 </div>
 
                 <p>Vandaag</p>

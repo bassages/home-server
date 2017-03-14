@@ -126,18 +126,16 @@
         function setGasVandaagLeds() {
             if (vm.gasVerbruikVandaag && vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) {
                 var procentueleVeranderingTovAfgelopenWeek = ((vm.gasVerbruikVandaag - vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) / vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) * 100;
-                $log.debug('Procentuele verandering: ' + procentueleVeranderingTovAfgelopenWeek);
-
-                if (procentueleVeranderingTovAfgelopenWeek <= 0) {
-                    vm.gasVandaagMood = 'positive';
-                } else {
-                    vm.gasVandaagMood = 'negative';
-                }
-
-                var procentueleVerandering = Math.abs(procentueleVeranderingTovAfgelopenWeek);
-                for (var i = 0; i <= 9; i++) {
-                    vm['gasVandaagLed' + i] = procentueleVerandering >= (i * 3);
-                }
+                vm.gasVandaagLed9 = procentueleVeranderingTovAfgelopenWeek >= 50;
+                vm.gasVandaagLed8 = procentueleVeranderingTovAfgelopenWeek >= 40;
+                vm.gasVandaagLed7 = procentueleVeranderingTovAfgelopenWeek >= 30;
+                vm.gasVandaagLed6 = procentueleVeranderingTovAfgelopenWeek >= 20;
+                vm.gasVandaagLed5 = procentueleVeranderingTovAfgelopenWeek >= 10;
+                vm.gasVandaagLed4 = procentueleVeranderingTovAfgelopenWeek >= 0;
+                vm.gasVandaagLed3 = procentueleVeranderingTovAfgelopenWeek >= -10;
+                vm.gasVandaagLed2 = procentueleVeranderingTovAfgelopenWeek >= -20;
+                vm.gasVandaagLed1 = procentueleVeranderingTovAfgelopenWeek >= -30;
+                vm.gasVandaagLed0 = true;
             }
         }
 
