@@ -44,5 +44,4 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     @Query(value = OLDEST_IN_PERIOD)
     Meterstand getOudsteInPeriode(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
-    Meterstand findByDatumtijd(long datumtijd);
 }

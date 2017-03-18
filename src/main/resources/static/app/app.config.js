@@ -12,9 +12,14 @@
         .module('app')
         .config(Config);
 
-    Config.$inject = ['$routeProvider'];
+    Config.$inject = ['$routeProvider', '$compileProvider'];
 
-    function Config($routeProvider) {
+    function Config($routeProvider, $compileProvider) {
+        // See https://docs.angularjs.org/guide/production
+        $compileProvider.debugInfoEnabled(false);
+        $compileProvider.commentDirectivesEnabled(false);
+        $compileProvider.cssClassDirectivesEnabled(false);
+
         $routeProvider
             .when('/energie/stroom/opgenomen-vermogen', {
                 templateUrl: '/app/energie-historie/energie-historie.html',

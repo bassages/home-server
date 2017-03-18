@@ -82,7 +82,8 @@ public class VerbruikServiceCached {
     private BigDecimal getVerbruik(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
         switch (energiesoort) {
             case GAS:
-                // Gas is registered once every hour, in the hour after it actually is used. Compensate for that hour to make the query return the correct values.
+                // Gas is registered once every hour, in the hour after it actually is used.
+                // Compensate for that hour to make the query return the correct values.
                 return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
             case STROOM:
                 return meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);

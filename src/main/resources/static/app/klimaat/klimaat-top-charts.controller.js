@@ -60,7 +60,6 @@
 
         function getTopChartData(charttype) {
             var dataUrl = 'api/klimaat/' + charttype + '?from=' + vm.from.getTime() + '&to=' + vm.to.clone().add(1).day().getTime() + '&sensortype=' + vm.sensortype + '&limit=' + vm.limit;
-            $log.info('Getting data from URL: ' + dataUrl);
             return $http( { method: 'GET', url: dataUrl } );
         }
 

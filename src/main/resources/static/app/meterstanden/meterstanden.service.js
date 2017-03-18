@@ -13,8 +13,6 @@
 
             var url = 'api/meterstanden/per-dag/' + van + '/' + totEnMet;
 
-            $log.info('Getting data for meterstanden from URL: ' + url);
-
             return $http({
                 method: 'GET', url: url
             });

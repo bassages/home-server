@@ -29,12 +29,12 @@
             var weekVoorGisteren = Date.parse('yesterday').add(-6).days().getTime();
 
             var url = 'api/gas/gemiddelde-per-dag-in-periode/' + weekVoorGisteren + '/' + gisteren;
-            $log.info('Getting data from URL: ' + url);
 
             $http({
                 method: 'GET', url: url
             }).then(function successCallback(response) {
                 vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek = response.data.verbruik;
+                $log.debug("Gemiddelde gasverbruik per dag over afgelopen week: " + vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek);
                 setGasVandaagLeds(vm);
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
@@ -43,7 +43,6 @@
 
         function getGasVerbruikVandaag() {
             var url = 'api/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
-            $log.info('Getting data from URL: ' + url);
 
             $http({
                 method: 'GET', url: url
@@ -126,6 +125,7 @@
         function setGasVandaagLeds() {
             if (vm.gasVerbruikVandaag && vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) {
                 var procentueleVeranderingTovAfgelopenWeek = ((vm.gasVerbruikVandaag - vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) / vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) * 100;
+                $log.debug("Procentuele verandering gas dagverbruik t.o.v. gemiddelde in afgelopen week: " + procentueleVeranderingTovAfgelopenWeek);
                 vm.gasVandaagLed9 = procentueleVeranderingTovAfgelopenWeek >= 50;
                 vm.gasVandaagLed8 = procentueleVeranderingTovAfgelopenWeek >= 40;
                 vm.gasVandaagLed7 = procentueleVeranderingTovAfgelopenWeek >= 30;

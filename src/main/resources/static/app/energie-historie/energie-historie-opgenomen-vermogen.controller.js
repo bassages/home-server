@@ -187,7 +187,6 @@
             loadDataIntoChart([]);
 
             var dataUrl = 'api/' + $scope.energiesoort + '/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
-            $log.info('Getting data from URL: ' + dataUrl);
 
             $http({method: 'GET', url: dataUrl})
                 .then(

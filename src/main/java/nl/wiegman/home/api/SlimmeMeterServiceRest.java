@@ -46,17 +46,16 @@ public class SlimmeMeterServiceRest {
             LOG.warn("Failed to serialize recieved object", e);
         }
         meterstandService.save(mapToMeterStand(slimmeMeterBericht));
+        meterstandService.save(mapToMeterStand(slimmeMeterBericht));
     }
 
     private Meterstand mapToMeterStand(Dsmr42ReadingDto slimmeMeterBericht) {
         Meterstand meterstand = new Meterstand();
         meterstand.setDatumtijd(slimmeMeterBericht.getDatumtijd());
         meterstand.setStroomOpgenomenVermogenInWatt(slimmeMeterBericht.getStroomOpgenomenVermogenInWatt());
-
         meterstand.setGas(slimmeMeterBericht.getGas().setScale(GAS_SCALE, RoundingMode.CEILING));
         meterstand.setStroomTarief1(slimmeMeterBericht.getStroomTarief1().setScale(STROOM_SCALE, RoundingMode.CEILING));
         meterstand.setStroomTarief2(slimmeMeterBericht.getStroomTarief2().setScale(STROOM_SCALE, RoundingMode.CEILING));
-
         return meterstand;
     }
 }

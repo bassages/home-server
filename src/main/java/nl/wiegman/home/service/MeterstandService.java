@@ -20,32 +20,34 @@ import nl.wiegman.home.repository.MeterstandRepository;
 @Service
 public class MeterstandService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MeterstandService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandService.class);
+
+    private final MeterstandRepository meterstandRepository;
+    private final MeterstandServiceCached meterstandServiceCached;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    MeterstandRepository meterstandRepository;
+    public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached,
+            ApplicationEventPublisher eventPublisher) {
 
-    @Autowired
-    MeterstandServiceCached meterstandServiceCached;
-
-    @Autowired
-    ApplicationEventPublisher eventPublisher;
+        this.meterstandRepository = meterstandRepository;
+        this.meterstandServiceCached = meterstandServiceCached;
+        this.eventPublisher = eventPublisher;
+    }
 
     public Meterstand save(Meterstand meterstand) {
         Meterstand savedMeterstand = meterstandRepository.save(meterstand);
-
         eventPublisher.publishEvent(new UpdateEvent(savedMeterstand));
-
         return savedMeterstand;
     }
 
     public Meterstand getMeestRecente() {
-        LOG.info("getMostRecent()");
+        LOGGER.info("getMostRecent()");
         return meterstandRepository.getMeestRecente();
     }
 
     public Meterstand getOudste() {
-        LOG.info("getOudste()");
+        LOGGER.info("getOudste()");
         return meterstandRepository.getOudste();
     }
 
@@ -54,7 +56,7 @@ public class MeterstandService {
 
         List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
         dagenInPeriode.forEach(dag -> {
-            LOG.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
+            LOGGER.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
 
             Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
             result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));
@@ -78,9 +80,5 @@ public class MeterstandService {
         } else {
             return meterstandServiceCached.getPotentiallyCachedMeestRecenteMeterstandOpDag(dag);
         }
-    }
-
-    public boolean bestaatOpDatumTijd(long datumtijd) {
-        return meterstandRepository.findByDatumtijd(datumtijd) != null;
     }
 }

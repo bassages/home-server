@@ -22,18 +22,13 @@ public class MeterstandenServiceRest {
     private final MeterstandService meterstandService;
 
     @Autowired
-    public MeterstandenServiceRest(MeterstandService meterstandService, ObjectMapper objectMapper) {
+    public MeterstandenServiceRest(MeterstandService meterstandService) {
         this.meterstandService = meterstandService;
     }
 
     @GetMapping("meest-recente")
     public Meterstand getMeestRecente() {
         return meterstandService.getMeestRecente();
-    }
-
-    @GetMapping("oudste")
-    public Meterstand getOudste() {
-        return meterstandService.getOudste();
     }
 
     @GetMapping("oudste-vandaag")
@@ -45,10 +40,4 @@ public class MeterstandenServiceRest {
     public List<MeterstandOpDag> perDag(@PathVariable("vanaf") long vanaf, @PathVariable("totEnMet") long totEnMet) {
         return meterstandService.perDag(vanaf, totEnMet);
     }
-
-    @GetMapping("bestaat-op-datumtijd/{datumtijd}")
-    public boolean bestaatOpDatumTijd(@PathVariable("datumtijd") long datumtijd) {
-        return meterstandService.bestaatOpDatumTijd(datumtijd);
-    }
-
 }

@@ -343,7 +343,6 @@
 
                 for (var i = 0; i < $scope.selection.length; i++) {
                     var dataUrl = 'api/klimaat?from=' + $scope.selection[i].getTime() + '&to=' + (getTo($scope.selection[i]).getTime() - 1);
-                    $log.info('Getting data from URL: ' + dataUrl);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }
 
