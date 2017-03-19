@@ -17,9 +17,21 @@
             $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
             $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
             $scope.dateformat = 'EEE. dd-MM-yyyy';
+            $scope.data = [];
 
-            EnergieHistorieService.manageChartSize($scope);
             LocalizationService.localize();
+            EnergieHistorieService.manageChartSize($scope);
+
+            $scope.$watch('showChart', function(newValue, oldValue) {
+                if (newValue !== oldValue && newValue) {
+                    loadDataIntoChart($scope.data);
+                }
+            });
+            $scope.$watch('showTable', function(newValue, oldValue) {
+                if (newValue !== oldValue && newValue) {
+                    loadDataIntoTable($scope.data);
+                }
+            });
 
             getDataFromServer();
         }
@@ -105,8 +117,12 @@
 
         function loadData(data) {
             $scope.data = data;
-            loadDataIntoChart(data);
-            loadDataIntoTable(data);
+            if ($scope.showChart) {
+                loadDataIntoChart(data);
+            }
+            if ($scope.showTable) {
+                loadDataIntoTable(data);
+            }
         }
 
         function formatAsHourPeriodLabel(uur) {
@@ -114,6 +130,8 @@
         }
 
         function loadDataIntoTable(data) {
+            $log.debug('loadDataIntoTable', data.length);
+
             var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur); };
             var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
@@ -121,6 +139,8 @@
         }
 
         function loadDataIntoChart(data) {
+            $log.debug('loadDataIntoChart', data.length);
+
             var chartConfig = data.length === 0 ? EnergieHistorieService.getEmptyChartConfig() : getChartConfig(data);
             $scope.chart = c3.generate(chartConfig);
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
