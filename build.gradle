@@ -7,7 +7,6 @@ plugins {
     id 'com.github.ksoichiro.build.info' version '0.2.0'
 }
 
-
 if (!project.hasProperty("buildtype")) {
     ext.buildtype = 'dev'
 }
