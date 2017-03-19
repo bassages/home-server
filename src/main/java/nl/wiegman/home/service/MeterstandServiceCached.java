@@ -28,10 +28,15 @@ public class MeterstandServiceCached {
     public Meterstand getOudsteMeterstandOpDag(Date dag) {
         Meterstand oudsteStroomStandOpDag = meterstandRepository.getOudsteInPeriode(DateTimeUtil.getStartOfDay(dag), DateTimeUtil.getEndOfDay(dag));
 
-        // Gas is registered once every hour, in the hour AFTER it actually is used.
-        // Compensate for that hour
-        Meterstand oudsteGasStandOpDag = meterstandRepository.getOudsteInPeriode(DateTimeUtil.getStartOfDay(dag) + DateUtils.MILLIS_PER_HOUR, DateTimeUtil.getEndOfDay(dag) + DateUtils.MILLIS_PER_HOUR);
-        oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
+        if (oudsteStroomStandOpDag != null) {
+            // Gas is registered once every hour, in the hour AFTER it actually is used.
+            // Compensate for that hour
+            Meterstand oudsteGasStandOpDag = meterstandRepository.getOudsteInPeriode(DateTimeUtil.getStartOfDay(dag) + DateUtils.MILLIS_PER_HOUR, DateTimeUtil.getEndOfDay(dag) + DateUtils.MILLIS_PER_HOUR);
+
+            if (oudsteGasStandOpDag != null) {
+                oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
+            }
+        }
 
         return oudsteStroomStandOpDag;
     }
