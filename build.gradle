@@ -30,7 +30,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '6.9.5'
+    version = '6.10.0'
     download = true
 }
 
