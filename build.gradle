@@ -1,12 +1,23 @@
 plugins {
     id 'org.springframework.boot' version '1.5.2.RELEASE'
     id "com.moowork.gulp" version "1.1.1"
-    id "com.gorylenko.gradle-git-properties" version "1.4.17"
+
+    // Generates a git.properties file and fills MANIFEST.MF with various build info.
+    // The "info" actuator endpoint will pick up the git.properties file and shows the info in it.
+    id 'com.github.ksoichiro.build.info' version '0.2.0'
 }
 
 
 if (!project.hasProperty("buildtype")) {
     ext.buildtype = 'dev'
+}
+
+buildInfo {
+    // Date format string used to Git committer date.
+    committerDateFormat "yyyy-MM-dd'T'HH:mm:ssZ"
+
+    // Date format string used to build date.
+    buildDateFormat "yyyy-MM-dd'T'HH:mm:ssZ"
 }
 
 repositories {
@@ -19,7 +30,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '6.9.5'
+    version = '7.7.3'
     download = true
 }
 
@@ -29,9 +40,9 @@ compileJava.options.encoding = 'UTF-8'
 
 version = '1.0.0'
 
-gitProperties {
-    dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    dateFormatTimeZone = "CET"
+springBoot  {
+    // Generates a build-info.properties file
+    buildInfo()
 }
 
 jar {
