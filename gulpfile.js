@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     gutil = require('gulp-util'),
     less = require('gulp-less'),
-    cleanCSS  = require('gulp-clean-css'),
+    minifyCSS  = require('gulp-minify-css'),
     rename = require("gulp-rename");
 
 var appSourcesDir = 'src/main/resources/static/app';
@@ -53,8 +53,8 @@ gulp.task('build-js', function() {
 gulp.task('build-css', function() {
     gulp.src(appStylesDir + '/main.less')
         .pipe(less())
-         // only minify if gulp is ran with '--buildtype prod
-        .pipe(gutil.env.buildtype === 'prod' ? cleanCSS() : gutil.noop())
+        // only minify if gulp is ran with '--buildtype prod
+        .pipe(gutil.env.buildtype === 'prod' ? minifyCSS() : gutil.noop())
         .pipe(rename('home.css'))
         .pipe(gulp.dest(buildCssDir));
 });
