@@ -24,7 +24,8 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.4.1'
+    // Stuck with this version, see https://github.com/gradle/gradle/issues/1276
+    gradleVersion = '3.3'
 }
 
 node {

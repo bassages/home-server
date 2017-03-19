@@ -13,9 +13,21 @@
         function activate() {
             $scope.selection = [Date.today()];
             $scope.sensortype = $routeParams.sensortype;
+            $scope.data = [];
 
             KlimaatSensorGrafiekService.manageChartSize($scope);
             LocalizationService.localize();
+
+            $scope.$watch('showChart', function(newValue, oldValue) {
+                if (newValue !== oldValue && newValue) {
+                    loadDataIntoChart($scope.data);
+                }
+            });
+            $scope.$watch('showTable', function(newValue, oldValue) {
+                if (newValue !== oldValue && newValue) {
+                    loadDataIntoTable($scope.data);
+                }
+            });
 
             getDataFromServer();
         }
@@ -174,6 +186,8 @@
         }
 
         function loadDataIntoTable(data) {
+            $log.debug('loadDataIntoTable', data.length);
+
             var rows = [];
             var cols = [];
 
@@ -278,11 +292,18 @@
         }
 
         function loadData(data) {
-            loadDataIntoChart(data);
-            loadDataIntoTable(data);
+            $scope.data = data;
+            if ($scope.showChart) {
+                loadDataIntoChart(data);
+            }
+            if ($scope.showTable) {
+                loadDataIntoTable(data);
+            }
         }
 
         function loadDataIntoChart(data) {
+            $log.debug('loadDataIntoChart', data.length);
+
             var chartConfig;
             if (data.length === 0) {
                 chartConfig = getEmptyChartConfig();
