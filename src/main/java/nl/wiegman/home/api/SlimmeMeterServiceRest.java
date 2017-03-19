@@ -46,7 +46,6 @@ public class SlimmeMeterServiceRest {
             LOG.warn("Failed to serialize recieved object", e);
         }
         meterstandService.save(mapToMeterStand(slimmeMeterBericht));
-        meterstandService.save(mapToMeterStand(slimmeMeterBericht));
     }
 
     private Meterstand mapToMeterStand(Dsmr42ReadingDto slimmeMeterBericht) {
