@@ -11,12 +11,21 @@ import java.util.List;
 @RequestMapping("/api/energiecontract")
 public class EnergiecontractServiceRest {
 
+    private final EnergiecontractService energiecontractService;
+
     @Autowired
-    EnergiecontractService energiecontractService;
+    public EnergiecontractServiceRest(EnergiecontractService energiecontractService) {
+        this.energiecontractService = energiecontractService;
+    }
 
     @GetMapping
     public List<Energiecontract> getAll() {
         return energiecontractService.getAll();
+    }
+
+    @GetMapping("/current")
+    public Energiecontract current() {
+        return energiecontractService.getCurrent();
     }
 
     @PostMapping

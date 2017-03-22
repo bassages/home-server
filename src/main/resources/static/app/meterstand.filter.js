@@ -10,11 +10,23 @@
     function meterstand($filter) {
         numbro.culture('nl-NL');
 
-        return function (input) {
+        return function (input, numberOfDecimals) {
             if (!input) {
                 return "";
             } else {
-                return numbro(input).format('0.000');
+                if (typeof numberOfDecimals !== 'undefined') {
+                    var decimalFormat = '';
+
+                    if (numberOfDecimals > 0) {
+                        decimalFormat += '.';
+                    }
+                    for (var i = 0; i < numberOfDecimals; i++) {
+                        decimalFormat += '0';
+                    }
+                    return numbro(input).format('0' + decimalFormat);
+                } else {
+                    return numbro(input).format('0.000');
+                }
             }
         };
     }

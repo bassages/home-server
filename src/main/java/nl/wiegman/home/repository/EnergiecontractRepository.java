@@ -16,8 +16,11 @@ public interface EnergiecontractRepository extends JpaRepository<Energiecontract
 
     // JPQL queries
     String ALL_IN_PERIOD = "SELECT e FROM Energiecontract e WHERE (:van BETWEEN e.van AND e.totEnMet) OR (:totEnMet BETWEEN e.van AND e.totEnMet) OR (e.van >= :van AND e.totEnMet <= :totEnMet) ORDER BY e.van";
+    String CURRENT = "SELECT e FROM Energiecontract e WHERE :van < CURRENT_TIMESTAMP ORDER BY e.van DESC";
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     @Query(value = ALL_IN_PERIOD)
     List<Energiecontract> findAllInInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+
+    Energiecontract findFirstByVanLessThanEqualOrderByVanDesc(@Param("van") long van);
 }

@@ -15,6 +15,7 @@
         getGemiddeldeGasVerbruikPerDagInAfgelopenWeek();
         getOudsteMeterstandVanVandaag();
         getMeestRecenteKlimaat();
+        getHuidigeEnergieContract();
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
@@ -51,6 +52,18 @@
                     vm.gasVerbruikVandaag = response.data[0].verbruik;
                     setGasVandaagLeds();
                 }
+            }, function errorCallback(response) {
+                $log.error(angular.toJson(response));
+            });
+        }
+
+        function getHuidigeEnergieContract() {
+            var url = 'api/energiecontract/current';
+
+            $http({
+                method: 'GET', url: url
+            }).then(function successCallback(response) {
+                vm.currentEnergieContract = response.data;
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
             });
@@ -146,11 +159,17 @@
                 }
 
                 vm.huidigeMeterstanden = meterstanden;
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = ((meterstanden.stroomOpgenomenVermogenInWatt * 24) * 356) / 1000;
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
                 if (vm.oudsteVanVandaag) {
                     vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
+                }
+
+                if (vm.currentEnergieContract) {
+                    vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwh;
+                    $log.debug('stroomKostenPerJaarObvHuidigeOpgenomenVermogen: ', vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen);
                 }
             }
         }

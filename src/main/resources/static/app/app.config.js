@@ -72,11 +72,6 @@
                 controller: 'ApplicationSettingsController',
                 controllerAs: 'vm'
             })
-            .when('/bedien', {
-                templateUrl: '/app/bedien/bedien.html',
-                controller: 'BedienController',
-                controllerAs: 'vm'
-            })
             .when('/', {
                 templateUrl: '/app/dashboard/dashboard.html',
                 controller: 'DashboardController',

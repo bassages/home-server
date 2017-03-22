@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,14 +15,21 @@ public class EnergiecontractService {
 
     public static final long SINT_JUTTEMIS = 7258114800000l;
 
-    @Autowired
-    EnergiecontractRepository energiecontractRepository;
+    private final EnergiecontractRepository energiecontractRepository;
+    private final CacheService cacheService;
 
     @Autowired
-    CacheService cacheService;
+    public EnergiecontractService(EnergiecontractRepository energiecontractRepository, CacheService cacheService) {
+        this.energiecontractRepository = energiecontractRepository;
+        this.cacheService = cacheService;
+    }
 
     public List<Energiecontract> getAll() {
         return energiecontractRepository.findAll();
+    }
+
+    public Energiecontract getCurrent() {
+        return energiecontractRepository.findFirstByVanLessThanEqualOrderByVanDesc((new Date()).getTime());
     }
 
     public Energiecontract save(Energiecontract energiecontract) {

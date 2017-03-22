@@ -23,6 +23,13 @@
                     </div>
                 </div>
 
+                <hr class="hidden-xs" />
+
+                <div class="p-div-small hidden-xs">
+                    <p>Per jaar</p>
+                    <span ng-if="vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen">{{vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen | meterstand : 0}} kWh <span ng-if="vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">/</span> {{vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen | currency}}
+                </div>
+
                 <hr class="hidden-xs"/>
 
                 <div class="p-div-small hidden-xs">
@@ -30,6 +37,7 @@
                     <br/>
                     Meterstand 2: <span odometer="vm.huidigeMeterstanden.stroomTarief2" nrofdecimals="3"></span>
                 </div>
+
             </div>
         </div>
     </div><!-- End stroom -->
