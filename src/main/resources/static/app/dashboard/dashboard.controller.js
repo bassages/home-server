@@ -159,7 +159,7 @@
                 }
 
                 vm.huidigeMeterstanden = meterstanden;
-                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = ((meterstanden.stroomOpgenomenVermogenInWatt * 24) * 356) / 1000;
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = ((meterstanden.stroomOpgenomenVermogenInWatt * 24) * 365) / 1000;
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 

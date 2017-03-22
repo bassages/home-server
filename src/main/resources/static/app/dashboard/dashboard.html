@@ -23,11 +23,12 @@
                     </div>
                 </div>
 
-                <hr class="hidden-xs" />
+                <hr />
 
-                <div class="p-div-small hidden-xs">
-                    <p>Per jaar</p>
-                    <span ng-if="vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen">{{vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen | meterstand : 0}} kWh <span ng-if="vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">/</span> {{vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen | currency}}
+                <div class="p-div-small">
+                    <p>Omgerekend naar jaar</p>
+                    <span ng-if="vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen">{{vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen | meterstand : 0}} kWh </span><span ng-if="vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">/</span> {{vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen | currency}}
+                    <span ng-if="!vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen && !vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">-</span>
                 </div>
 
                 <hr class="hidden-xs"/>
