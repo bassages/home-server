@@ -159,7 +159,8 @@
                 }
 
                 vm.huidigeMeterstanden = meterstanden;
-                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = ((meterstanden.stroomOpgenomenVermogenInWatt * 24) * 365) / 1000;
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((meterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
+                $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
