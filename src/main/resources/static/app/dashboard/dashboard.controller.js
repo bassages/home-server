@@ -155,7 +155,7 @@
 
         function updateYearlyUsageBasedOnCurrentUsage() {
             if (vm.currentEnergieContract && vm.huidigeMeterstanden) {
-                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((meterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((vm.huidigeMeterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
                 $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
                 vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwh;
