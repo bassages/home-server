@@ -64,6 +64,7 @@
                 method: 'GET', url: url
             }).then(function successCallback(response) {
                 vm.currentEnergieContract = response.data;
+                updateYearlyUsageBasedOnCurrentUsage();
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
             });
@@ -152,6 +153,16 @@
             }
         }
 
+        function updateYearlyUsageBasedOnCurrentUsage() {
+            if (vm.currentEnergieContract && vm.huidigeMeterstanden) {
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((meterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
+                $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
+
+                vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwh;
+                $log.debug('stroomKostenPerJaarObvHuidigeOpgenomenVermogen: ', vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen);
+            }
+        }
+
         function updateMeterstand(meterstanden) {
             if (meterstanden) {
                 if (vm.gasVerbruikVandaag === null) {
@@ -159,19 +170,13 @@
                 }
 
                 vm.huidigeMeterstanden = meterstanden;
-                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((meterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
-                $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
                 setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
 
                 if (vm.oudsteVanVandaag) {
                     vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
                 }
-
-                if (vm.currentEnergieContract) {
-                    vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwh;
-                    $log.debug('stroomKostenPerJaarObvHuidigeOpgenomenVermogen: ', vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen);
-                }
+                updateYearlyUsageBasedOnCurrentUsage();
             }
         }
     }
