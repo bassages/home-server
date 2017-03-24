@@ -5,9 +5,9 @@
         .module('app')
         .controller('DagEnergieHistorieController', DagEnergieHistorieController);
 
-    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
+    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function DagEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
+    function DagEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -22,7 +22,6 @@
             $scope.dateformat = 'MMMM yyyy';
             $scope.data = [];
 
-            LocalizationService.localize();
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {

@@ -5,9 +5,9 @@
         .module('app')
         .controller('UurEnergieHistorieController', UurEnergieHistorieController);
 
-    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
+    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function UurEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
+    function UurEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         activate();
 
         function activate() {
@@ -19,7 +19,6 @@
             $scope.dateformat = 'EEE. dd-MM-yyyy';
             $scope.data = [];
 
-            LocalizationService.localize();
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {

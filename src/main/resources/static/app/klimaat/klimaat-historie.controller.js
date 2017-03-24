@@ -5,9 +5,9 @@
         .module('app')
         .controller('KlimaatHistorieController', KlimaatHistorieController);
 
-    KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', 'LoadingIndicatorService', 'LocalizationService', 'KlimaatHistorieService', 'ErrorMessageService'];
+    KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', 'LoadingIndicatorService', 'KlimaatHistorieService', 'ErrorMessageService'];
 
-    function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, LoadingIndicatorService, LocalizationService, KlimaatSensorGrafiekService, ErrorMessageService) {
+    function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, LoadingIndicatorService, KlimaatSensorGrafiekService, ErrorMessageService) {
         activate();
 
         function activate() {
@@ -16,7 +16,6 @@
             $scope.data = [];
 
             KlimaatSensorGrafiekService.manageChartSize($scope);
-            LocalizationService.localize();
 
             $scope.$watch('showChart', function(newValue, oldValue) {
                 if (newValue !== oldValue && newValue) {

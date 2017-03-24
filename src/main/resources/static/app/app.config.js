@@ -10,15 +10,43 @@
 
     angular
         .module('app')
+        .constant('DATETIME_CONSTANTS', {
+                shortMonths : ["Jan.", "Feb.", "Maa.", "Apr.", "Mei.", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."],
+                shortDays : ["Zo.", "Ma.", "Di.", "Wo.", "Do.", "Vr.", "Za."],
+                fullMonths : ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"]
+            }
+        );
+
+    angular
+        .module('app')
         .config(Config);
 
-    Config.$inject = ['$routeProvider', '$compileProvider'];
+    Config.$inject = ['$routeProvider', '$compileProvider', 'DATETIME_CONSTANTS'];
 
-    function Config($routeProvider, $compileProvider) {
+    function Config($routeProvider, $compileProvider, DATETIME_CONSTANTS) {
         // See https://docs.angularjs.org/guide/production
         $compileProvider.debugInfoEnabled(false);
         $compileProvider.commentDirectivesEnabled(false);
         $compileProvider.cssClassDirectivesEnabled(false);
+
+        numbro.culture('nl-NL');
+
+        var d3Formatters = d3.locale({
+            "decimal": ",",
+            "thousands": ".",
+            "grouping": [3],
+            "currency": ["€", ""],
+            "dateTime": "%a %b %e %X %Y",
+            "date": "%d-%m-%Y",
+            "time": "%H:%M:%S",
+            "periods": ["AM", "PM"],
+            "days": ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+            "shortDays": DATETIME_CONSTANTS.shortDays,
+            "months": DATETIME_CONSTANTS.fullMonths,
+            "shortMonths": DATETIME_CONSTANTS.shortMonths
+        });
+        d3.time.format = d3Formatters.timeFormat;
+        d3.format = d3Formatters.numberFormat;
 
         $routeProvider
             .when('/energie/stroom/opgenomen-vermogen', {

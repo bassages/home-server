@@ -5,9 +5,9 @@
         .module('app')
         .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
+    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
         activate();
@@ -21,7 +21,6 @@
             $scope.dateformat = 'EEE. dd-MM-yyyy';
             $scope.historicDataDisplayType = 'chart';
             EnergieHistorieService.manageChartSize($scope);
-            LocalizationService.localize();
 
             getDataFromServer();
         }

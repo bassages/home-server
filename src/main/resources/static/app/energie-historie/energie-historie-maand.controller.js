@@ -5,9 +5,9 @@
         .module('app')
         .controller('MaandEnergieHistorieController', MaandEnergieHistorieController);
 
-    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'LocalizationService', 'EnergieHistorieService', 'ErrorMessageService'];
+    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function MaandEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, LocalizationService, EnergieHistorieService, ErrorMessageService) {
+    function MaandEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
         activate();
 
         function activate() {
@@ -19,7 +19,6 @@
             $scope.dateformat = 'yyyy';
             $scope.data = [];
 
-            LocalizationService.localize();
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {
@@ -99,7 +98,7 @@
             chartConfig.axis.x = {
                 tick: {
                     format: function (d) {
-                        return LocalizationService.getShortMonths()[d - 1];
+                        return DATETIME_CONSTANTS.shortMonths[d - 1];
                     },
                     values: getTicksForEveryMonthInYear(), xcentered: true
                 }, min: 0.5, max: 2.5, padding: {left: 0, right: 10}
@@ -113,7 +112,7 @@
 
             chartConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
-                    var titleFormat = function(d) { return LocalizationService.getFullMonths()[d - 1]; };
+                    var titleFormat = function(d) { return DATETIME_CONSTANTS.fullMonths[d - 1]; };
                     return EnergieHistorieService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
@@ -136,7 +135,7 @@
         function loadDataIntoTable(data) {
             $log.debug('loadDataIntoTable', data.length);
 
-            var labelFormatter = function(d) { return LocalizationService.getFullMonths()[d.maand - 1]; };
+            var labelFormatter = function(d) { return DATETIME_CONSTANTS.fullMonths[d.maand - 1]; };
             var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
             $scope.rows = table.rows;
             $scope.cols = table.cols;

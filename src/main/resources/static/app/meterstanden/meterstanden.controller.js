@@ -5,15 +5,14 @@
         .module('app')
         .controller('MeterstandenController', MeterstandenController);
 
-    MeterstandenController.$inject = ['$log', 'MeterstandenService', 'LocalizationService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    MeterstandenController.$inject = ['$log', 'MeterstandenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function MeterstandenController($log, MeterstandenService, LocalizationService, LoadingIndicatorService, ErrorMessageService) {
+    function MeterstandenController($log, MeterstandenService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
         activate();
 
         function activate() {
-            LocalizationService.localize();
             vm.selection = Date.today().clearTime().moveToFirstDayOfMonth();
             vm.dateformat = 'MMMM yyyy';
             getDataFromServer();
