@@ -5,9 +5,9 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$http', '$log', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
+    DashboardController.$inject = ['$http', '$log', '$location', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
 
-    function DashboardController($http, $log, RealtimeMeterstandenService, RealtimeKlimaatService) {
+    function DashboardController($http, $log, $location, RealtimeMeterstandenService, RealtimeKlimaatService) {
         var vm = this;
 
         getMeestRecenteMeterstand();
@@ -16,6 +16,19 @@
         getOudsteMeterstandVanVandaag();
         getMeestRecenteKlimaat();
         getHuidigeEnergieContract();
+
+        vm.stroomClick = function() {
+            $location.path('energie/verbruik/grafiek/uur');
+        };
+        vm.gasClick = function() {
+            $location.path('energie/verbruik/grafiek/uur');
+        };
+        vm.temperatuurClick = function() {
+            $location.path('klimaat/grafiek/temperatuur');
+        };
+        vm.luchtvochtigheidClick = function() {
+            $location.path('klimaat/grafiek/luchtvochtigheid');
+        };
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
