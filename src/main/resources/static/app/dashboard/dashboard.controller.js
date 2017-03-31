@@ -18,10 +18,10 @@
         getHuidigeEnergieContract();
 
         vm.stroomClick = function() {
-            $location.path('energie/verbruik/grafiek/uur');
+            $location.path('energie/verbruik/uur').search('energiesoort', ['stroom']);
         };
         vm.gasClick = function() {
-            $location.path('energie/verbruik/grafiek/uur');
+            $location.path('energie/verbruik/uur').search('energiesoort', ['gas']);
         };
         vm.temperatuurClick = function() {
             $location.path('klimaat/grafiek/temperatuur');

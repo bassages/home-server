@@ -5,17 +5,20 @@
         .module('app')
         .controller('MaandEnergieHistorieController', MaandEnergieHistorieController);
 
-    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
+    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function MaandEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
+    function MaandEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
         activate();
 
         function activate() {
             $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(Date.today().getFullYear()));
             $scope.period = 'maand';
-            $scope.soort = $routeParams.soort;
-            $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
+
+            $scope.soort = $routeParams.verbruiksoort;
             $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+
+            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+
             $scope.dateformat = 'yyyy';
             $scope.data = [];
 
@@ -35,9 +38,13 @@
             getDataFromServer();
         }
 
+        $scope.changePeriod = function(period) {
+            $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
+        };
+
         $scope.toggleEnergiesoort = function (energiesoortToToggle) {
             if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
-                getDataFromServer();
+                $location.search('energiesoort', $scope.energiesoorten);
             }
         };
 

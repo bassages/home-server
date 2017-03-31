@@ -19,14 +19,6 @@
             };
         };
 
-        this.getEnergiesoorten = function(soort) {
-            if (soort == 'kosten') {
-                return ['stroom', 'gas'];
-            } else {
-                return ['stroom'];
-            }
-        };
-
         this.getChartPadding = function() {
             return {top: 10, bottom: 25, left: 55, right: 20};
         };
@@ -68,6 +60,28 @@
                 return withoutUnitLabel + ' ' + this.getVerbruikLabel(energieSoorten[0]);
             } else if (soortData == 'kosten') {
                 return '\u20AC ' + withoutUnitLabel;
+            }
+        };
+
+        this.getEnergieSoorten = function (locationSearch, verbruiksoort) {
+            var result = null;
+            if (locationSearch.energiesoort) {
+                if (Array.isArray(locationSearch.energiesoort)) {
+                    result = locationSearch.energiesoort;
+                } else {
+                    result = [locationSearch.energiesoort];
+                }
+            } else {
+                result = this.getAllPossibleEnergiesoorten(verbruiksoort);
+            }
+            return result;
+        };
+
+        this.getAllPossibleEnergiesoorten = function(verbruiksoort) {
+            if (verbruiksoort == 'kosten') {
+                return ['stroom', 'gas'];
+            } else {
+                return ['stroom'];
             }
         };
 

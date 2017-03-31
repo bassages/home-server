@@ -5,9 +5,9 @@
     <div class="col-md-11">
         <ul class="nav nav-tabs">
 
-            <!-- Soort selection for SMALL screens -->
+            <!-- Kostensoort selection for SMALL screens -->
             <div class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
+                <a ng-repeat="supportedsoort in supportedsoorten" ng-href="/#!/energie/{{supportedsoort.code}}/{{period}}" ng-class="{'active': soort == supportedsoort.code}" class="btn btn-default">{{supportedsoort.omschrijving}}</a>
             </div>
 
             <!-- Energiesoort selection for SMALL screens -->
@@ -18,16 +18,16 @@
 
             <!-- Period selection for SMALL screens -->
             <div ng-hide="hideUur() && hideDag() && hideMaand()" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideUur()" ng-href="/#!/energie/{{soort}}/grafiek/uur" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
-                <a ng-hide="hideDag()" ng-href="/#!/energie/{{soort}}/grafiek/dag" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
-                <a ng-hide="hideMaand()" ng-href="/#!/energie/{{soort}}/grafiek/maand" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+                <a ng-hide="hideUur()" href="" ng-click="changePeriod('uur')" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag()" href="" ng-click="changePeriod('dag')" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand()" href="" ng-click="changePeriod('maand')" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
             </div>
 
             <!-- Period selection for MEDIUM/BIG screens -->
             <li ng-show="showOpgenomenVermogen()" class="hidden-xs active"><a ng-href="/#!/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
-            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a ng-href="/#!/energie/{{soort}}/grafiek/uur">Uur</a></li>
-            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a ng-href="/#!/energie/{{soort}}/grafiek/dag">Dag</a></li>
-            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a ng-href="/#!/energie/{{soort}}/grafiek/maand">Maand</a></li>
+            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a href="" ng-click="changePeriod('uur')">Uur</a></li>
+            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a href="" ng-click="changePeriod('dag')">Dag</a></li>
+            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a href="" ng-click="changePeriod('maand')">Maand</a></li>
 
             <!-- Energiesoort selection for MEDIUM/BIG screens -->
             <li>
@@ -93,7 +93,7 @@
     <div class="visible-sm col-sm-12">
         <ul class="nav nav-pills nav-justified">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a class="pill" ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}">{{supportedsoort.omschrijving}}</a>
+                <a class="pill" ng-href="/#!/energie/{{supportedsoort.code}}/{{period}}">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>
@@ -101,11 +101,11 @@
 
 <div class="row">
 
-    <!-- Energiesoort selection for MEDIUM/LARGE -->
+    <!-- Kostensoort selection for MEDIUM/LARGE -->
     <div class="hidden-xs visible-md visible-lg col-md-1">
         <ul class="nav nav-pills nav-stacked" style="margin-right:-30px;">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a class="left-pill" ng-href="/#!/energie/{{supportedsoort.code}}/grafiek/{{period}}">{{supportedsoort.omschrijving}}</a>
+                <a class="left-pill" ng-href="/#!/energie/{{supportedsoort.code}}/{{period}}">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>

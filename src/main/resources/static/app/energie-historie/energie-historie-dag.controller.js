@@ -5,9 +5,9 @@
         .module('app')
         .controller('DagEnergieHistorieController', DagEnergieHistorieController);
 
-    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function DagEnergieHistorieController($scope, $routeParams, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function DagEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -16,9 +16,12 @@
         function activate() {
             $scope.selection = Date.today().moveToFirstDayOfMonth();
             $scope.period = 'dag';
-            $scope.soort = $routeParams.soort;
-            $scope.energiesoorten = EnergieHistorieService.getEnergiesoorten($scope.soort);
+
+            $scope.soort = $routeParams.verbruiksoort;
             $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+
+            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+
             $scope.dateformat = 'MMMM yyyy';
             $scope.data = [];
 
@@ -38,9 +41,13 @@
             getDataFromServer();
         }
 
+        $scope.changePeriod = function(period) {
+            $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
+        };
+
         $scope.toggleEnergiesoort = function (energiesoortToToggle) {
             if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
-                getDataFromServer();
+                $location.search('energiesoort', $scope.energiesoorten);
             }
         };
 

@@ -67,15 +67,16 @@
                 controller: 'KlimaatAverageController',
                 controllerAs: 'vm'
             })
-            .when('/energie/:soort/grafiek/uur', {
+
+            .when('/energie/:verbruiksoort/uur', {
                 templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieHistorieController'
             })
-            .when('/energie/:soort/grafiek/dag', {
+            .when('/energie/:verbruiksoort/dag', {
                 templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'DagEnergieHistorieController'
             })
-            .when('/energie/:soort/grafiek/maand', {
+            .when('/energie/:verbruiksoort/maand', {
                 templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieHistorieController'
             })
