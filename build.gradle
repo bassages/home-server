@@ -1,10 +1,8 @@
 plugins {
     id 'org.springframework.boot' version '1.5.2.RELEASE'
     id "com.moowork.gulp" version "1.1.1"
-
-    // Generates a git.properties file and fills MANIFEST.MF with various build info.
-    // The "info" actuator endpoint will pick up the git.properties file and shows the info in it.
     id 'com.github.ksoichiro.build.info' version '0.2.0'
+    id 'com.github.ben-manes.versions' version '0.14.0'
 }
 
 if (!project.hasProperty("buildtype")) {
@@ -70,9 +68,6 @@ dependencies {
     compile("commons-collections:commons-collections:3.2.2")
     compile("org.apache.commons:commons-lang3:3.5")
     compile("org.apache.httpcomponents:httpclient:4.5.2")
-    compile("org.webjars:sockjs-client:1.0.2")
-    compile("org.webjars:stomp-websocket:2.3.3")
-    testCompile("org.assertj:assertj-core:3.6.2")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
 
