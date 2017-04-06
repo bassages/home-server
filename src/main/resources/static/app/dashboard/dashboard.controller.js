@@ -24,10 +24,10 @@
             $location.path('energie/verbruik/uur').search('energiesoort', ['gas']);
         };
         vm.temperatuurClick = function() {
-            $location.path('klimaat/grafiek/temperatuur');
+            $location.path('klimaat/historie/temperatuur');
         };
         vm.luchtvochtigheidClick = function() {
-            $location.path('klimaat/grafiek/luchtvochtigheid');
+            $location.path('klimaat/historie/luchtvochtigheid');
         };
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {

@@ -53,7 +53,7 @@
                 templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
-            .when('/klimaat/grafiek/:sensortype', {
+            .when('/klimaat/historie/:sensortype', {
                 templateUrl: '/app/klimaat/klimaat-historie.html',
                 controller: 'KlimaatHistorieController'
             })
