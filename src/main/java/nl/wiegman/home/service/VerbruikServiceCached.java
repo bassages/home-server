@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class VerbruikServiceCached {
 
-    private static final int KOSTEN_SCALE = 2;
+    private static final int KOSTEN_SCALE = 3;
 
     @Autowired
     MeterstandRepository meterstandRepository;

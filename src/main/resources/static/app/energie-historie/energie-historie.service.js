@@ -47,11 +47,7 @@
         };
 
         this.formatWithoutUnitLabel = function(soortData, value) {
-            if (soortData == 'verbruik') {
-                return numbro(value).format('0.000');
-            } else if (soortData == 'kosten') {
-                return numbro(value).format('0.00');
-            }
+            return numbro(value).format('0.000');
         };
 
         this.formatWithUnitLabel = function(soortData, energieSoorten, value) {
