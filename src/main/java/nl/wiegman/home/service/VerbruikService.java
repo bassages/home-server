@@ -1,5 +1,8 @@
 package nl.wiegman.home.service;
 
+import nl.wiegman.home.api.dto.VerbruikOpDag;
+import nl.wiegman.home.api.dto.VerbruikPerMaandInJaar;
+import nl.wiegman.home.api.dto.VerbruikPerUurOpDag;
 import nl.wiegman.home.model.*;
 import nl.wiegman.home.repository.EnergiecontractRepository;
 import nl.wiegman.home.repository.MeterstandRepository;
@@ -21,24 +24,20 @@ import java.util.stream.IntStream;
 @Service
 public class VerbruikService {
 
-    private final Logger logger = LoggerFactory.getLogger(VerbruikService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VerbruikService.class);
+
+    private final VerbruikServiceCached verbruikServiceCached;
+    private final OpgenomenVermogenService opgenomenVermogenService;
 
     @Autowired
-    private MeterstandRepository meterstandRepository;
-
-    @Autowired
-    private EnergiecontractRepository energiecontractRepository;
-
-    @Autowired
-    private VerbruikServiceCached verbruikServiceCached;
-
-    @Autowired
-    private OpgenomenVermogenService opgenomenVermogenService;
+    public VerbruikService(VerbruikServiceCached verbruikServiceCached, OpgenomenVermogenService opgenomenVermogenService) {
+        this.verbruikServiceCached = verbruikServiceCached;
+        this.opgenomenVermogenService = opgenomenVermogenService;
+    }
 
     public List<VerbruikPerUurOpDag> getVerbruikPerUurOpDag(Energiesoort energiesoort, long dag) {
         List<VerbruikPerUurOpDag> result = new ArrayList<>();
 
-        // TODO: Daylight saving....
         IntStream.rangeClosed(0, 23).forEach(
                 uur -> result.add(getVerbruikInUur(energiesoort, new Date(dag), uur))
         );
@@ -60,7 +59,7 @@ public class VerbruikService {
     }
 
     private VerbruikPerUurOpDag getVerbruikInUur(Energiesoort energiesoort, Date dag, int uur) {
-        logger.info("Get " + energiesoort.name() + " verbruik in uur " + uur + " op dag: " + new SimpleDateFormat("dd-MM-yyyy").format(dag));
+        LOGGER.info("Get " + energiesoort.name() + " verbruik in uur " + uur + " op dag: " + new SimpleDateFormat("dd-MM-yyyy").format(dag));
 
         VerbruikPerUurOpDag verbruikPerUurOpDag = new VerbruikPerUurOpDag();
         verbruikPerUurOpDag.setUur(uur);
@@ -76,8 +75,8 @@ public class VerbruikService {
         return verbruikPerUurOpDag;
     }
 
-    protected VerbruikPerMaandInJaar getVerbruikInMaand(Energiesoort energiesoort, int maand, int jaar) {
-        logger.info("Get " + energiesoort.name() + " verbruik in maand: " + maand + "/" + jaar);
+    private VerbruikPerMaandInJaar getVerbruikInMaand(Energiesoort energiesoort, int maand, int jaar) {
+        LOGGER.info("Get " + energiesoort.name() + " verbruik in maand: " + maand + "/" + jaar);
 
         Calendar van = Calendar.getInstance();
         van.set(Calendar.MONTH, maand - 1);
@@ -103,7 +102,7 @@ public class VerbruikService {
     }
 
     private VerbruikOpDag getVerbruikOpDag(Energiesoort energiesoort, Date dag) {
-        logger.info("Get " + energiesoort.name() + " verbruik op dag: " + dag);
+        LOGGER.info("Get " + energiesoort.name() + " verbruik op dag: " + dag);
 
         long vanMillis = dag.getTime();
         long totEnMetMillis = DateUtils.addDays(dag, 1).getTime() - 1;

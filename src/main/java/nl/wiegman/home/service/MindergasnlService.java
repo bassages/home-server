@@ -1,6 +1,6 @@
 package nl.wiegman.home.service;
 
-import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.api.dto.MeterstandOpDag;
 import nl.wiegman.home.model.MindergasnlSettings;
 import nl.wiegman.home.repository.MindergasnlSettingsRepository;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,16 +25,19 @@ import java.util.List;
 @Service
 public class MindergasnlService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MindergasnlService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MindergasnlService.class);
 
     private static final String METERSTAND_UPLOAD_ENDPOINT = "http://www.mindergas.nl/api/gas_meter_readings";
     private static final String THREE_AM = "0 0 3 * * *";
 
-    @Autowired
-    MindergasnlSettingsRepository mindergasnlSettingsRepository;
+    private final MindergasnlSettingsRepository mindergasnlSettingsRepository;
+    private final MeterstandService meterstandService;
 
     @Autowired
-    MeterstandService meterstandService;
+    public MindergasnlService(MindergasnlSettingsRepository mindergasnlSettingsRepository, MeterstandService meterstandService) {
+        this.mindergasnlSettingsRepository = mindergasnlSettingsRepository;
+        this.meterstandService = meterstandService;
+    }
 
     public List<MindergasnlSettings> getAllSettings() {
         return mindergasnlSettingsRepository.findAll();
@@ -57,7 +60,7 @@ public class MindergasnlService {
             List<MeterstandOpDag> yesterdaysMeterstand = meterstandService.perDag(yesterday.getTime(), yesterday.getTime());
 
             if (CollectionUtils.isEmpty(yesterdaysMeterstand)) {
-                LOG.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
+                LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
             } else {
                 BigDecimal gasStand = yesterdaysMeterstand.get(0).getMeterstand().getGas();
 
@@ -65,7 +68,7 @@ public class MindergasnlService {
                     HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
                     String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", new SimpleDateFormat("yyyy-MM-dd").format(yesterday), gasStand.toString());
-                    LOG.info("Upload to mindergas.nl: " + message);
+                    LOGGER.info("Upload to mindergas.nl: " + message);
 
                     request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
                     request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
@@ -77,10 +80,10 @@ public class MindergasnlService {
 
                     int statusCode = response.getStatusLine().getStatusCode();
                     if (statusCode != 201) {
-                        LOG.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
+                        LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
                     }
                 } catch (Exception ex) {
-                    LOG.error("Failed to upload to mindergas.nl", ex);
+                    LOGGER.error("Failed to upload to mindergas.nl", ex);
                 }
             }
         }

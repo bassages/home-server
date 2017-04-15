@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import nl.wiegman.home.api.dto.Dsmr42ReadingDto;
 import nl.wiegman.home.model.Meterstand;
+import nl.wiegman.home.model.StroomTariefIndicator;
 import nl.wiegman.home.service.MeterstandService;
 
 @RestController
@@ -52,6 +53,7 @@ public class SlimmeMeterServiceRest {
         Meterstand meterstand = new Meterstand();
         meterstand.setDatumtijd(slimmeMeterBericht.getDatumtijd());
         meterstand.setStroomOpgenomenVermogenInWatt(slimmeMeterBericht.getStroomOpgenomenVermogenInWatt());
+        meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(slimmeMeterBericht.getStroomTariefIndicator().shortValue()));
         meterstand.setGas(slimmeMeterBericht.getGas().setScale(GAS_SCALE, RoundingMode.CEILING));
         meterstand.setStroomTarief1(slimmeMeterBericht.getStroomTarief1().setScale(STROOM_SCALE, RoundingMode.CEILING));
         meterstand.setStroomTarief2(slimmeMeterBericht.getStroomTarief2().setScale(STROOM_SCALE, RoundingMode.CEILING));

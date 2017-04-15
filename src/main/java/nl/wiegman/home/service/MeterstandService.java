@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.api.dto.MeterstandOpDag;
 import nl.wiegman.home.realtime.UpdateEvent;
 import nl.wiegman.home.repository.MeterstandRepository;
 

@@ -25,6 +25,9 @@ public class Meterstand {
     @Column(nullable = false, precision = 8, scale = 3)
     private BigDecimal gas;
 
+    @Column(precision = 1)
+    private short stroomTariefIndicator;
+
     public long getDatumtijd() {
         return datumtijd;
     }
@@ -63,5 +66,13 @@ public class Meterstand {
 
     public void setGas(BigDecimal gas) {
         this.gas = gas;
+    }
+
+    public StroomTariefIndicator getStroomTariefIndicator() {
+        return StroomTariefIndicator.byId(this.stroomTariefIndicator);
+    }
+
+    public void setStroomTariefIndicator(StroomTariefIndicator stroomTariefIndicator) {
+        this.stroomTariefIndicator = stroomTariefIndicator.getId();
     }
 }

@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.MeterstandOpDag;
+import nl.wiegman.home.api.dto.MeterstandOpDag;
 import nl.wiegman.home.service.MeterstandService;
 
 @RestController

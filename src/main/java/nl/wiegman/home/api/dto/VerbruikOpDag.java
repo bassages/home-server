@@ -1,4 +1,6 @@
-package nl.wiegman.home.model;
+package nl.wiegman.home.api.dto;
+
+import nl.wiegman.home.model.Verbruik;
 
 public class VerbruikOpDag extends Verbruik {
 

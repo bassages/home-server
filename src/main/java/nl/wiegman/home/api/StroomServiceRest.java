@@ -1,9 +1,9 @@
 package nl.wiegman.home.api;
 
 import nl.wiegman.home.model.OpgenomenVermogen;
-import nl.wiegman.home.model.VerbruikOpDag;
-import nl.wiegman.home.model.VerbruikPerMaandInJaar;
-import nl.wiegman.home.model.VerbruikPerUurOpDag;
+import nl.wiegman.home.api.dto.VerbruikOpDag;
+import nl.wiegman.home.api.dto.VerbruikPerMaandInJaar;
+import nl.wiegman.home.api.dto.VerbruikPerUurOpDag;
 import nl.wiegman.home.model.Energiesoort;
 import nl.wiegman.home.service.VerbruikService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api/stroom")
 public class StroomServiceRest {
 
+    private final VerbruikService verbruikService;
+
     @Autowired
-    VerbruikService verbruikService;
+    public StroomServiceRest(VerbruikService verbruikService) {
+        this.verbruikService = verbruikService;
+    }
 
     @GetMapping(path = "verbruik-per-maand-in-jaar/{jaar}")
     public List<VerbruikPerMaandInJaar> getVerbruikPerMaandInJaar(@PathVariable("jaar") int jaar) {
