@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cache")
-public class CacheServiceRest {
+public class CacheController {
 
     @Autowired
     CacheService cacheService;

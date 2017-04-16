@@ -37,16 +37,20 @@ public class KlimaatService {
 
     private final Map<String, List<Klimaat>> receivedInLastQuarter = new ConcurrentHashMap<>();
 
-    @Autowired
-    KlimaatServiceCached klimaatServiceCached;
+    private final KlimaatServiceCached klimaatServiceCached;
+    private final KlimaatRepos klimaatRepository;
+    private final KlimaatSensorRepository klimaatSensorRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    KlimaatRepos klimaatRepository;
-    @Autowired
-    KlimaatSensorRepository klimaatSensorRepository;
+    public KlimaatService(KlimaatServiceCached klimaatServiceCached, KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
+            ApplicationEventPublisher eventPublisher) {
 
-    @Autowired
-    ApplicationEventPublisher eventPublisher;
+        this.klimaatServiceCached = klimaatServiceCached;
+        this.klimaatRepository = klimaatRepository;
+        this.klimaatSensorRepository = klimaatSensorRepository;
+        this.eventPublisher = eventPublisher;
+    }
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
     public void save() {

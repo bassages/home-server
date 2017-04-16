@@ -13,8 +13,12 @@ import java.util.Date;
 @Service
 public class MeterstandServiceCached {
 
+    private final MeterstandRepository meterstandRepository;
+
     @Autowired
-    private MeterstandRepository meterstandRepository;
+    public MeterstandServiceCached(MeterstandRepository meterstandRepository) {
+        this.meterstandRepository = meterstandRepository;
+    }
 
     @Cacheable(cacheNames = "meestRecenteMeterstandOpDag")
     public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(Date dag) {

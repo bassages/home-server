@@ -26,10 +26,14 @@ import nl.wiegman.home.service.KlimaatService;
 
 @RestController
 @RequestMapping("/api/klimaat")
-public class KlimaatServiceRest {
+public class KlimaatController {
+
+    private final KlimaatService klimaatService;
 
     @Autowired
-    private KlimaatService klimaatService;
+    public KlimaatController(KlimaatService klimaatService) {
+        this.klimaatService = klimaatService;
+    }
 
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)

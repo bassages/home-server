@@ -15,12 +15,12 @@ import nl.wiegman.home.service.MeterstandService;
 
 @RestController
 @RequestMapping("/api/meterstanden")
-public class MeterstandenServiceRest {
+public class MeterstandenController {
 
     private final MeterstandService meterstandService;
 
     @Autowired
-    public MeterstandenServiceRest(MeterstandService meterstandService) {
+    public MeterstandenController(MeterstandService meterstandService) {
         this.meterstandService = meterstandService;
     }
 

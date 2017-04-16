@@ -20,11 +20,14 @@ public class VerbruikServiceCached {
 
     private static final int KOSTEN_SCALE = 3;
 
-    @Autowired
-    MeterstandRepository meterstandRepository;
+    private final MeterstandRepository meterstandRepository;
+    private final EnergiecontractRepository energiecontractRepository;
 
     @Autowired
-    EnergiecontractRepository energiecontractRepository;
+    public VerbruikServiceCached(MeterstandRepository meterstandRepository, EnergiecontractRepository energiecontractRepository) {
+        this.meterstandRepository = meterstandRepository;
+        this.energiecontractRepository = energiecontractRepository;
+    }
 
     @Cacheable(cacheNames = "stroomVerbruikInPeriode")
     public Verbruik getPotentiallyCachedVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {

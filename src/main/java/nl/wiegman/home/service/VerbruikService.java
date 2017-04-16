@@ -1,11 +1,11 @@
 package nl.wiegman.home.service;
 
+import nl.wiegman.home.api.dto.OpgenomenVermogen;
 import nl.wiegman.home.api.dto.VerbruikOpDag;
 import nl.wiegman.home.api.dto.VerbruikPerMaandInJaar;
 import nl.wiegman.home.api.dto.VerbruikPerUurOpDag;
 import nl.wiegman.home.model.*;
-import nl.wiegman.home.repository.EnergiecontractRepository;
-import nl.wiegman.home.repository.MeterstandRepository;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

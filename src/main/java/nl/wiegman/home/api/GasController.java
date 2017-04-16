@@ -18,12 +18,12 @@ import java.util.function.Function;
 
 @RestController
 @RequestMapping("/api/gas")
-public class GasServiceRest {
+public class GasController {
 
     private final VerbruikService verbruikService;
 
     @Autowired
-    public GasServiceRest(VerbruikService verbruikService) {
+    public GasController(VerbruikService verbruikService) {
         this.verbruikService = verbruikService;
     }
 

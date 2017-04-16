@@ -1,7 +1,7 @@
 package nl.wiegman.home.service;
 
 import nl.wiegman.home.model.Meterstand;
-import nl.wiegman.home.model.OpgenomenVermogen;
+import nl.wiegman.home.api.dto.OpgenomenVermogen;
 import nl.wiegman.home.repository.MeterstandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,8 +14,12 @@ import java.util.List;
 @Service
 public class OpgenomenVermogenService {
 
+    private final MeterstandRepository meterstandRepository;
+
     @Autowired
-    MeterstandRepository meterstandRepository;
+    public OpgenomenVermogenService(MeterstandRepository meterstandRepository) {
+        this.meterstandRepository = meterstandRepository;
+    }
 
     @Cacheable(cacheNames = "opgenomenVermogenHistory")
     public List<OpgenomenVermogen> getPotentiallyCachedOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
@@ -38,7 +42,7 @@ public class OpgenomenVermogenService {
                 vermogenInPeriode.setDatumtijd(subStart);
                 result.add(vermogenInPeriode);
             } else {
-                result.add(new OpgenomenVermogen(subStart, 0));
+                result.add(new OpgenomenVermogen(subStart, 0, null));
             }
         }
         return result;
@@ -47,7 +51,7 @@ public class OpgenomenVermogenService {
     private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {
         return list.stream()
                 .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
-                .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt()))
+                .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt(), m.getStroomTariefIndicator()))
                 .max(Comparator.comparingInt(OpgenomenVermogen::getOpgenomenVermogenInWatt))
                 .orElse(null);
     }

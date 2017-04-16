@@ -9,10 +9,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/mindergasnl")
-public class MindergasnlSettingsServiceRest {
+public class MindergasnlSettingsController {
+
+    private final MindergasnlService mindergasnlService;
 
     @Autowired
-    MindergasnlService mindergasnlService;
+    public MindergasnlSettingsController(MindergasnlService mindergasnlService) {
+        this.mindergasnlService = mindergasnlService;
+    }
 
     @GetMapping
     public List<MindergasnlSettings> get() {

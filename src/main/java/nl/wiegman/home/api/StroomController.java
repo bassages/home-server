@@ -1,6 +1,6 @@
 package nl.wiegman.home.api;
 
-import nl.wiegman.home.model.OpgenomenVermogen;
+import nl.wiegman.home.api.dto.OpgenomenVermogen;
 import nl.wiegman.home.api.dto.VerbruikOpDag;
 import nl.wiegman.home.api.dto.VerbruikPerMaandInJaar;
 import nl.wiegman.home.api.dto.VerbruikPerUurOpDag;
@@ -13,12 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/stroom")
-public class StroomServiceRest {
+public class StroomController {
 
     private final VerbruikService verbruikService;
 
     @Autowired
-    public StroomServiceRest(VerbruikService verbruikService) {
+    public StroomController(VerbruikService verbruikService) {
         this.verbruikService = verbruikService;
     }
 

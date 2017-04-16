@@ -9,12 +9,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/energiecontract")
-public class EnergiecontractServiceRest {
+public class EnergiecontractController {
 
     private final EnergiecontractService energiecontractService;
 
     @Autowired
-    public EnergiecontractServiceRest(EnergiecontractService energiecontractService) {
+    public EnergiecontractController(EnergiecontractService energiecontractService) {
         this.energiecontractService = energiecontractService;
     }
 

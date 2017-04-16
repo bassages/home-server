@@ -25,7 +25,7 @@ public class Meterstand {
     @Column(nullable = false, precision = 8, scale = 3)
     private BigDecimal gas;
 
-    @Column(precision = 1)
+    @Column(nullable = false, precision = 1)
     private short stroomTariefIndicator;
 
     public long getDatumtijd() {

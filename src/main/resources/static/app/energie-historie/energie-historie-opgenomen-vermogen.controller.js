@@ -81,12 +81,31 @@
             return tickValues;
         }
 
-        function addSubPeriodEnd(data) {
+        function transformData(data) {
+            var transformedData = [];
             var length = data.length;
+            var previousTarief = null;
+
             for (var i = 0; i < length; i++) {
-                var subPeriodEnd = data[i].dt + (THREE_MINUTES_IN_MILLISECONDS - 1);
-                data.push({dt: subPeriodEnd, watt: data[i].watt});
+                var transformedDataItem = {};
+
+                var tarief = data[i].tarief;
+                transformedDataItem.dt = data[i].dt;
+                transformedDataItem['watt-' + tarief] = data[i].watt;
+
+                // Fill the "gap" between this row and the previous one
+                if (previousTarief && tarief && tarief !== previousTarief) {
+                    var obj = {};
+                    obj.dt = data[i].dt - 1;
+                    var attribute = 'watt-' + previousTarief;
+                    obj[attribute] = data[i].watt;
+                    transformedData.push(obj);
+                }
+
+                previousTarief = tarief;
+                transformedData.push(transformedDataItem);
             }
+            return transformedData;
         }
 
         function getStatistics(chartData) {
@@ -133,13 +152,14 @@
             };
         }
 
-        function getChartConfig(chartData) {
+        function getChartConfig(transformedChartData, statistics) {
             var chartConfig = {};
             var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
 
             chartConfig.bindto = '#chart';
 
-            chartConfig.data = {json: chartData, keys: {x: "dt", value: ["watt"]}, types: {"watt": "area"}};
+            chartConfig.data = {json: transformedChartData, keys: {x: 'dt', value: ['watt-1', 'watt-2']}, types: {'watt-1': 'area', 'watt-2': 'area'}};
+
             chartConfig.axis = {};
             chartConfig.axis.x = {
                 type: "timeseries",
@@ -148,30 +168,26 @@
                 padding: {left: 0, right: 10}
             };
             chartConfig.legend = {show: false};
-            chartConfig.bar = {width: {ratio: 1}};
             chartConfig.point = {show: false};
             chartConfig.transition = {duration: 0};
             chartConfig.tooltip = {show: false};
             chartConfig.padding = getChartPadding();
             chartConfig.grid = {y: {show: true}};
 
-            var statistics = getStatistics(chartData);
-
             chartConfig.grid.y.lines = EnergieHistorieService.getStatisticsChartLines(statistics, formatWithUnitLabel);
-
-            addSubPeriodEnd(chartData);
 
             return chartConfig;
         }
 
         function loadDataIntoChart(chartData) {
-            $scope.chartData = chartData;
+            var statistics = getStatistics(chartData);
+            $scope.chartData = transformData(chartData);
 
             var chartConfig;
-            if (chartData.length === 0) {
+            if ($scope.chartData.length === 0) {
                 chartConfig = getEmptyChartConfig();
             } else {
-                chartConfig = getChartConfig(chartData);
+                chartConfig = getChartConfig($scope.chartData, statistics);
             }
             $scope.chart = c3.generate(chartConfig);
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);

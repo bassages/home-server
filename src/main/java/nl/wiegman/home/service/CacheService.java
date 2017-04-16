@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CacheService {
 
+    private final CacheManager cacheManager;
+
     @Autowired
-    CacheManager cacheManager;
+    public CacheService(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     public void clearAll() {
         cacheManager.getCacheNames().forEach(this::clear);

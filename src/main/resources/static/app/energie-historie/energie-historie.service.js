@@ -14,8 +14,8 @@
             return {
                 'stroom-verbruik': '#4575B3',
                 'stroom-kosten': '#4575B3',
-                'gas-verbruik': '#BA2924',
-                'gas-kosten': '#BA2924'
+                'gas-verbruik': '#2ca02c',
+                'gas-kosten': '#2ca02c'
             };
         };
 

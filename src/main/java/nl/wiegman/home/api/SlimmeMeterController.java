@@ -22,9 +22,9 @@ import nl.wiegman.home.service.MeterstandService;
 
 @RestController
 @RequestMapping("/api/slimmemeter")
-public class SlimmeMeterServiceRest {
+public class SlimmeMeterController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SlimmeMeterServiceRest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SlimmeMeterController.class);
 
     private final MeterstandService meterstandService;
     private final ObjectMapper objectMapper;
@@ -33,7 +33,7 @@ public class SlimmeMeterServiceRest {
     private static final int STROOM_SCALE = 3;
 
     @Autowired
-    public SlimmeMeterServiceRest(MeterstandService meterstandService, ObjectMapper objectMapper) {
+    public SlimmeMeterController(MeterstandService meterstandService, ObjectMapper objectMapper) {
         this.meterstandService = meterstandService;
         this.objectMapper = objectMapper;
     }

@@ -12,8 +12,12 @@ import java.util.List;
 @Service
 public class KlimaatServiceCached {
 
+    private final KlimaatRepos klimaatRepository;
+
     @Autowired
-    KlimaatRepos klimaatRepository;
+    public KlimaatServiceCached(KlimaatRepos klimaatRepository) {
+        this.klimaatRepository = klimaatRepository;
+    }
 
     @Cacheable(cacheNames = "klimaatInPeriod")
     public List<Klimaat> getInPeriod(String klimaatSensorCode, Date from, Date to) {
