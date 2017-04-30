@@ -1,6 +1,5 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.energie.Meterstand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,14 +19,18 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     String OLDEST = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(oldest.datumtijd) FROM Meterstand oldest)";
 
     // Native queries
-    String STROOMVERBRUIK_IN_PERIOD = "SELECT (MAX(stroom_tarief1)-MIN(stroom_tarief1)) + (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
+    String STROOMVERBRUIK_NORMAAL_TARIEF_IN_PERIOD = "SELECT (MAX(stroom_tarief2)-MIN(stroom_tarief2)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
+    String STROOMVERBRUIK_LAAG_TARIEF_IN_PERIOD = "SELECT (MAX(stroom_tarief1)-MIN(stroom_tarief1)) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
     String GASVERBRUIK_IN_PERIOD = "SELECT MAX(gas)-MIN(gas) FROM meterstand WHERE datumtijd >= :van AND datumtijd < :totEnMet";
 
     @Query(value = ALL_IN_PERIOD_SORTED)
     List<Meterstand> getMeterstanden(@Param("van") long van, @Param("tot") long tot);
 
-    @Query(value = STROOMVERBRUIK_IN_PERIOD, nativeQuery = true)
-    BigDecimal getStroomVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+    @Query(value = STROOMVERBRUIK_NORMAAL_TARIEF_IN_PERIOD, nativeQuery = true)
+    BigDecimal getStroomVerbruikNormaalTariefInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+
+    @Query(value = STROOMVERBRUIK_LAAG_TARIEF_IN_PERIOD, nativeQuery = true)
+    BigDecimal getStroomVerbruikLaagTariefInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
     @Query(value = GASVERBRUIK_IN_PERIOD, nativeQuery = true)
     BigDecimal getGasVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);

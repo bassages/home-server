@@ -34,7 +34,7 @@ public class VerbruikServiceCachedTest {
         int from = 10;
         int to = 20;
 
-        Mockito.when(meterstandRepositoryMock.getStroomVerbruikInPeriod(from, to)).thenReturn(new BigDecimal(100));
+        Mockito.when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(from, to)).thenReturn(new BigDecimal(100));
 
         Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(Energiesoort.STROOM, from, to);
         assertThat(verbruik, is(notNullValue()));
@@ -55,8 +55,8 @@ public class VerbruikServiceCachedTest {
 
         when(energiecontractRepositoryMock.findAllInInPeriod(10, 20)).thenReturn(Arrays.asList(energiecontract1, energiecontract2));
 
-        when(meterstandRepositoryMock.getStroomVerbruikInPeriod(10, 14)).thenReturn(new BigDecimal(1));
-        when(meterstandRepositoryMock.getStroomVerbruikInPeriod(15, 20)).thenReturn(new BigDecimal(2));
+        when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(10, 14)).thenReturn(new BigDecimal(1));
+        when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(15, 20)).thenReturn(new BigDecimal(2));
 
         Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(Energiesoort.STROOM, 10, 20);
         assertThat(verbruik, is(notNullValue()));

@@ -27,7 +27,7 @@ public class VerbruikServiceCached {
         this.energiecontractRepository = energiecontractRepository;
     }
 
-    @Cacheable(cacheNames = "stroomVerbruikInPeriode")
+    @Cacheable(cacheNames = "energieVerbruikInPeriode")
     public Verbruik getPotentiallyCachedVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {
         return getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
     }
@@ -84,10 +84,12 @@ public class VerbruikServiceCached {
         switch (energiesoort) {
             case GAS:
                 // Gas is registered once every hour, in the hour after it actually is used.
-                // Compensate for that hour to make the query return the correct values.
+                // Compensate for that hour to make the query return the correct usages.
                 return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
             case STROOM:
-                return meterstandRepository.getStroomVerbruikInPeriod(periodeVan, periodeTotEnMet);
+                BigDecimal stroomVerbruikNormaalTariefInPeriod = meterstandRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
+                BigDecimal stroomVerbruikLaagTariefInPeriod = meterstandRepository.getStroomVerbruikLaagTariefInPeriod(periodeVan, periodeTotEnMet);
+                return stroomVerbruikNormaalTariefInPeriod.add(stroomVerbruikLaagTariefInPeriod);
             default:
                 throw new UnsupportedOperationException("Unexpected energiesoort: " + energiesoort.name());
         }
