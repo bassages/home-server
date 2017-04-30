@@ -1,8 +1,5 @@
-package nl.wiegman.home.energiecontract;
+package nl.wiegman.home.energie.energiecontract;
 
-import nl.wiegman.home.energie.energiecontract.Energiecontract;
-import nl.wiegman.home.energie.energiecontract.EnergiecontractService;
-import nl.wiegman.home.energie.energiecontract.EnergiecontractRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,10 +18,10 @@ import static org.mockito.Mockito.*;
 public class EnergiecontractServiceTest {
 
     @Mock
-    EnergiecontractRepository energiecontractRepositoryMock;
+    private EnergiecontractRepository energiecontractRepositoryMock;
 
     @InjectMocks
-    EnergiecontractService energiecontractService;
+    private EnergiecontractService energiecontractService;
 
     @Test
     public void recalculateTotEnMetWithChanges() {
