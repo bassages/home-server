@@ -1,4 +1,4 @@
-package nl.wiegman.home.energie.energiecontract;
+package nl.wiegman.home.energiecontract;
 
 import nl.wiegman.home.cache.CacheService;
 

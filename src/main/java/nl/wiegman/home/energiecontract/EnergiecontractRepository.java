@@ -1,4 +1,4 @@
-package nl.wiegman.home.energie.energiecontract;
+package nl.wiegman.home.energiecontract;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;

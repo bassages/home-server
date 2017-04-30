@@ -1,4 +1,4 @@
-package nl.wiegman.home.energie.energiecontract;
+package nl.wiegman.home.energiecontract;
 
 import java.math.BigDecimal;
 
@@ -21,15 +21,18 @@ public class Energiecontract {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false, unique = true)
     private Long van;
 
     @JsonIgnore
     @Column(nullable = false)
     private Long totEnMet;
 
+    @Column(precision = 7, scale = 6, nullable = false)
+    private BigDecimal stroomPerKwhNormaalTarief;
+
     @Column(precision = 7, scale = 6)
-    private BigDecimal stroomPerKwh;
+    private BigDecimal stroomPerKwhDalTarief;
 
     @Column(precision = 7, scale = 6)
     private BigDecimal gasPerKuub;
@@ -57,18 +60,26 @@ public class Energiecontract {
             case GAS:
                 return gasPerKuub;
             case STROOM:
-                return stroomPerKwh;
+                return stroomPerKwhNormaalTarief;
             default:
                 return BigDecimal.ZERO;
         }
     }
 
-    public BigDecimal getStroomPerKwh() {
-        return stroomPerKwh;
+    public BigDecimal getStroomPerKwhNormaalTarief() {
+        return stroomPerKwhNormaalTarief;
     }
 
-    public void setStroomPerKwh(BigDecimal stroomPerKwh) {
-        this.stroomPerKwh = stroomPerKwh;
+    public void setStroomPerKwhNormaalTarief(BigDecimal stroomPerKwhNormaalTarief) {
+        this.stroomPerKwhNormaalTarief = stroomPerKwhNormaalTarief;
+    }
+
+    public BigDecimal getStroomPerKwhDalTarief() {
+        return stroomPerKwhDalTarief;
+    }
+
+    public void setStroomPerKwhDalTarief(BigDecimal stroomPerKwhDalTarief) {
+        this.stroomPerKwhDalTarief = stroomPerKwhDalTarief;
     }
 
     public BigDecimal getGasPerKuub() {

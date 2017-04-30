@@ -1,7 +1,7 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.energie.energiecontract.Energiecontract;
-import nl.wiegman.home.energie.energiecontract.EnergiecontractRepository;
+import nl.wiegman.home.energiecontract.Energiecontract;
+import nl.wiegman.home.energiecontract.EnergiecontractRepository;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;

@@ -1,4 +1,4 @@
-package nl.wiegman.home.energie.energiecontract;
+package nl.wiegman.home.energiecontract;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

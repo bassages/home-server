@@ -1,11 +1,8 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.energie.VerbruikServiceCached;
-import nl.wiegman.home.energie.energiecontract.Energiecontract;
-import nl.wiegman.home.energie.Energiesoort;
-import nl.wiegman.home.energie.Verbruik;
-import nl.wiegman.home.energie.energiecontract.EnergiecontractRepository;
-import nl.wiegman.home.energie.MeterstandRepository;
+import nl.wiegman.home.energiecontract.Energiecontract;
+import nl.wiegman.home.energiecontract.EnergiecontractRepository;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,12 +46,12 @@ public class VerbruikServiceCachedTest {
         Energiecontract energiecontract1 = new Energiecontract();
         energiecontract1.setVan(10L);
         energiecontract1.setTotEnMet(14L);
-        energiecontract1.setStroomPerKwh(BigDecimal.valueOf(1));
+        energiecontract1.setStroomPerKwhNormaalTarief(BigDecimal.valueOf(1));
 
         Energiecontract energiecontract2 = new Energiecontract();
         energiecontract2.setVan(15L);
         energiecontract2.setTotEnMet(100L);
-        energiecontract2.setStroomPerKwh(BigDecimal.valueOf(2));
+        energiecontract2.setStroomPerKwhNormaalTarief(BigDecimal.valueOf(2));
 
         when(energiecontractRepositoryMock.findAllInInPeriod(10, 20)).thenReturn(Arrays.asList(energiecontract1, energiecontract2));
 
