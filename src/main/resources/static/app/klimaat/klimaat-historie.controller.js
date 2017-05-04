@@ -301,8 +301,6 @@
         }
 
         function loadDataIntoChart(data) {
-            $log.debug('loadDataIntoChart', data.length);
-
             var chartConfig;
             if (data.length === 0) {
                 chartConfig = getEmptyChartConfig();

@@ -3,7 +3,7 @@ package nl.wiegman.home.energie;
 import java.util.EnumSet;
 
 public enum StroomTariefIndicator {
-    LAAG((short)1),
+    DAL((short)1),
     NORMAAL((short)2);
 
     private short id;

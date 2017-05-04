@@ -149,8 +149,6 @@
         }
 
         function loadDataIntoChart(data) {
-            $log.debug('loadDataIntoChart', data.length);
-
             var chartConfig = data.length === 0 ? EnergieHistorieService.getEmptyChartConfig() : getChartConfig(data);
             $scope.chart = c3.generate(chartConfig);
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);

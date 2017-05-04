@@ -10,12 +10,16 @@
     function DashboardController($http, $log, $location, RealtimeMeterstandenService, RealtimeKlimaatService) {
         var vm = this;
 
-        getMeestRecenteMeterstand();
-        getGasVerbruikVandaag();
-        getGemiddeldeGasVerbruikPerDagInAfgelopenWeek();
-        getOudsteMeterstandVanVandaag();
-        getMeestRecenteKlimaat();
-        getHuidigeEnergieContract();
+        activate();
+
+        function activate() {
+            getMeestRecenteMeterstand();
+            getGasVerbruikVandaag();
+            getGemiddeldeGasVerbruikPerDagInAfgelopenWeek();
+            getOudsteMeterstandVanVandaag();
+            getMeestRecenteKlimaat();
+            getHuidigeEnergieContract();
+        }
 
         vm.stroomClick = function() {
             $location.path('energie/verbruik/uur').search('energiesoort', ['stroom']);
@@ -171,7 +175,12 @@
                 vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((vm.huidigeMeterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
                 $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
-                vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwh;
+                if (vm.huidigeMeterstanden.stroomTariefIndicator == 'NORMAAL' || !vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                    vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhNormaalTarief;
+                } else if (vm.huidigeMeterstanden.stroomTariefIndicator == 'DAL' && vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                    vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhDalTarief;
+                }
+
                 $log.debug('stroomKostenPerJaarObvHuidigeOpgenomenVermogen: ', vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen);
             }
         }
