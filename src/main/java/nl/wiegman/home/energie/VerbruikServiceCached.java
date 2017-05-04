@@ -89,10 +89,24 @@ public class VerbruikServiceCached {
             case STROOM:
                 BigDecimal stroomVerbruikNormaalTariefInPeriod = meterstandRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
                 BigDecimal stroomVerbruikLaagTariefInPeriod = meterstandRepository.getStroomVerbruikLaagTariefInPeriod(periodeVan, periodeTotEnMet);
-                return stroomVerbruikNormaalTariefInPeriod.add(stroomVerbruikLaagTariefInPeriod);
+
+                return nullSafeAdd(stroomVerbruikNormaalTariefInPeriod, stroomVerbruikLaagTariefInPeriod);
             default:
                 throw new UnsupportedOperationException("Unexpected energiesoort: " + energiesoort.name());
         }
+    }
 
+    private BigDecimal nullSafeAdd(BigDecimal bigDecimal1, BigDecimal bigDecimal2) {
+        BigDecimal result = null;
+
+        if (bigDecimal1 != null && bigDecimal2 != null) {
+            result = bigDecimal1.add(bigDecimal2);
+        } else if (bigDecimal2 != null) {
+            result = bigDecimal2;
+        } else if (bigDecimal1 != null) {
+            result = bigDecimal1;
+        }
+
+        return result;
     }
 }
