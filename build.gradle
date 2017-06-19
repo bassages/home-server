@@ -1,8 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.3.RELEASE'
-    id "com.moowork.gulp" version "1.1.1"
+    id 'org.springframework.boot' version '1.5.4.RELEASE'
+    id "com.moowork.gulp" version "1.2.0"
     id 'com.github.ksoichiro.build.info' version '0.2.0'
-    id 'com.github.ben-manes.versions' version '0.14.0'
+    id 'com.github.ben-manes.versions' version '0.15.0'
 }
 
 if (!project.hasProperty("buildtype")) {
@@ -27,7 +27,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '6.10.1'
+    version = '6.11.0'
     download = true
 }
 
@@ -65,7 +65,7 @@ dependencies {
     compile("javax.el:javax.el-api:2.2.4")
     compile("commons-io:commons-io:2.5")
     compile("commons-collections:commons-collections:3.2.2")
-    compile("org.apache.commons:commons-lang3:3.5")
+    compile("org.apache.commons:commons-lang3:3.6")
     compile("org.apache.httpcomponents:httpclient:4.5.2")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
