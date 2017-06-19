@@ -150,26 +150,18 @@
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
-        function transformServerdata(serverresponses) {
-            return EnergieHistorieService.transformServerdata(serverresponses, 'uur', $scope.energiesoorten, $scope.supportedsoorten);
-        }
-
         function getDataFromServer() {
             loadData([]);
 
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-                var requests = [];
 
-                for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'api/' + $scope.energiesoorten[i] + '/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
-                    requests.push( $http({method: 'GET', url: dataUrl}) );
-                }
+                    var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
 
-                $q.all(requests).then(
+                $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
-                        loadData(transformServerdata(response));
+                        loadData(EnergieHistorieService.transformServerdata(response.data, 'uur'));
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

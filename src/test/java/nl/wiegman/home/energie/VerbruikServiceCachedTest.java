@@ -36,7 +36,7 @@ public class VerbruikServiceCachedTest {
 
         Mockito.when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(from, to)).thenReturn(new BigDecimal(100));
 
-        Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(Energiesoort.STROOM, from, to);
+        Verbruik verbruik = verbruikServiceCached.getStroomVerbruikInPeriode(from, to, StroomTariefIndicator.NORMAAL);
         assertThat(verbruik, is(notNullValue()));
         assertThat(verbruik.getVerbruik(), is(equalTo(new BigDecimal(100d))));
     }
@@ -58,7 +58,7 @@ public class VerbruikServiceCachedTest {
         when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(10, 14)).thenReturn(new BigDecimal(1));
         when(meterstandRepositoryMock.getStroomVerbruikNormaalTariefInPeriod(15, 20)).thenReturn(new BigDecimal(2));
 
-        Verbruik verbruik = verbruikServiceCached.getVerbruikInPeriode(Energiesoort.STROOM, 10, 20);
+        Verbruik verbruik = verbruikServiceCached.getStroomVerbruikInPeriode(10, 20, StroomTariefIndicator.NORMAAL);
         assertThat(verbruik, is(notNullValue()));
         assertThat(verbruik.getVerbruik(), is(equalTo(new BigDecimal(3d))));
         assertThat(verbruik.getKosten().doubleValue(), is(equalTo(5.00d)));

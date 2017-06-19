@@ -122,14 +122,14 @@ public class KlimaatService {
     public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
         return klimaatList.stream()
                 .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
-                .map(klimaat -> klimaat.getLuchtvochtigheid())
+                .map(Klimaat::getLuchtvochtigheid)
                 .collect(Collectors.toList());
     }
 
     private List<BigDecimal> getValidTemperatures(List<Klimaat> klimaatList) {
         return klimaatList.stream()
                 .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
-                .map(klimaat -> klimaat.getTemperatuur())
+                .map(Klimaat::getTemperatuur)
                 .collect(Collectors.toList());
     }
 
@@ -158,14 +158,14 @@ public class KlimaatService {
     private List<Klimaat> getLowestTemperature(Date from, Date to, int limit) {
         return klimaatRepository.getPeakLowTemperatureDates(from, to, limit)
                     .stream()
-                    .map(date -> klimaatRepository.firstLowestTemperatureOnDay(date))
+                    .map(klimaatRepository::firstLowestTemperatureOnDay)
                     .collect(Collectors.toList());
     }
 
     private List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
         return klimaatRepository.getPeakLowHumidityDates(from, to, limit)
                     .stream()
-                    .map(date -> klimaatRepository.firstLowestHumidityOnDay(date))
+                    .map(klimaatRepository::firstLowestHumidityOnDay)
                     .collect(Collectors.toList());
     }
 
@@ -181,14 +181,14 @@ public class KlimaatService {
     private List<Klimaat> getHighestTemperature(Date from, Date to, int limit) {
         return klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
                 .stream()
-                .map(date -> klimaatRepository.firstHighestTemperatureOnDay(date))
+                .map(klimaatRepository::firstHighestTemperatureOnDay)
                 .collect(Collectors.toList());
     }
 
     private List<Klimaat> getHighestHumidity(Date from, Date to, int limit) {
         return klimaatRepository.getPeakHighHumidityDates(from, to, limit)
                 .stream()
-                .map(date -> klimaatRepository.firstHighestHumidityOnDay(date))
+                .map(klimaatRepository::firstHighestHumidityOnDay)
                 .collect(Collectors.toList());
     }
 }

@@ -6,6 +6,8 @@
          maxBytesLocalHeap="50M">
 
     <cache name="energiecontractenInPeriod" />
+    <cache name="gasVerbruikInPeriode" />
+    <cache name="stroomVerbruikInPeriode" />
     <cache name="energieVerbruikInPeriode" />
     <cache name="opgenomenVermogenHistory" />
     <cache name="meestRecenteMeterstandOpDag" />

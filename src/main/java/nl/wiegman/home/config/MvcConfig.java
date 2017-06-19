@@ -17,6 +17,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
                 .setCacheControl(CacheControl.noStore());
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
-                .setCachePeriod((int) TimeUnit.DAYS.toSeconds(365l));
+                .setCachePeriod((int) TimeUnit.DAYS.toSeconds(365L));
     }
 }

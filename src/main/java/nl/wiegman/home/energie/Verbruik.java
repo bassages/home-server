@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public class Verbruik {
 
     private BigDecimal verbruik;
-
     private BigDecimal kosten;
 
     public BigDecimal getVerbruik() {

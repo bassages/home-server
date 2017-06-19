@@ -44,8 +44,6 @@ public class DateTimeUtilTest {
         Date van = simpleDateFormat.parse("01-01-2015");
         Date totEnMet = simpleDateFormat.parse("31-12-2014");
 
-        assertThatThrownBy(() -> {
-            DateTimeUtil.getDagenInPeriode(van.getTime(), totEnMet.getTime());
-        }).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> DateTimeUtil.getDagenInPeriode(van.getTime(), totEnMet.getTime())).isInstanceOf(RuntimeException.class);
     }
 }

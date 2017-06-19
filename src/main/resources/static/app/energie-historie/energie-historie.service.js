@@ -145,38 +145,23 @@
             return {rows: rows, cols: cols};
         };
 
-        this.transformServerdata = function(serverresponses, key, energiesoorten, supportedsoorten) {
+        this.transformServerdata = function(serverresponses, key) {
             var result = [];
 
-            for (var i = 0; i < energiesoorten.length; i++) {
-                var energiesoort = energiesoorten[i];
-                var serverdataForEnergiesoort = serverresponses[i].data;
+            for (var i = 0; i < serverresponses.length; i++) {
+                var responseRow = serverresponses[i];
 
-                for (var j = 0; j < serverdataForEnergiesoort.length; j++) {
-                    var dataOnKey = this.getByKey(result, serverdataForEnergiesoort[j][key], key);
+                var transformedRow = {
+                    "gas-kosten": responseRow.gasKosten,
+                    "gas-verbruik": responseRow.gasVerbruik,
+                    "stroom-kosten": responseRow.stroomKostenDal + responseRow.stroomKostenNormaal,
+                    "stroom-verbruik": responseRow.stroomVerbruikDal + responseRow.stroomVerbruikNormaal
+                };
+                transformedRow[key] = responseRow[key];
 
-                    if (dataOnKey === null) {
-                        dataOnKey = {};
-                        result.push(dataOnKey);
-                    }
-                    dataOnKey[key] = serverdataForEnergiesoort[j][key];
-
-                    for (var k = 0; k < supportedsoorten.length; k++) {
-                        var soort = supportedsoorten[k].code;
-                        dataOnKey[energiesoort + '-' + soort] = serverdataForEnergiesoort[j][soort];
-                    }
-                }
+                result.push(transformedRow);
             }
             return result;
-        };
-
-        this.getByKey = function(data, keyValue, key) {
-            for (var i = 0; i < data.length; i++) {
-                if (data[i][key] == keyValue) {
-                    return data[i];
-                }
-            }
-            return null;
         };
 
         this.getTooltipContent = function(c3, d, defaultTitleFormat, defaultValueFormat, color, soort, energiesoorten) {

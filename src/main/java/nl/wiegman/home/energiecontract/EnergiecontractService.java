@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class EnergiecontractService {
 
-    public static final long SINT_JUTTEMIS = 7258114800000l;
+    public static final long SINT_JUTTEMIS = 7258114800000L;
 
     private final EnergiecontractRepository energiecontractRepository;
     private final CacheService cacheService;
@@ -34,7 +34,7 @@ public class EnergiecontractService {
 
     public Energiecontract save(Energiecontract energiecontract) {
         if (energiecontract.getTotEnMet() == null) {
-            energiecontract.setTotEnMet(0l);
+            energiecontract.setTotEnMet(0L);
         }
         Energiecontract result = energiecontractRepository.save(energiecontract);
         recalculateTotEnMet();

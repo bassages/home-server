@@ -30,7 +30,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     BigDecimal getStroomVerbruikNormaalTariefInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
     @Query(value = STROOMVERBRUIK_LAAG_TARIEF_IN_PERIOD, nativeQuery = true)
-    BigDecimal getStroomVerbruikLaagTariefInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+    BigDecimal getStroomVerbruikDalTariefInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
 
     @Query(value = GASVERBRUIK_IN_PERIOD, nativeQuery = true)
     BigDecimal getGasVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);

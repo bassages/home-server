@@ -165,10 +165,6 @@
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
-        function transformServerdata(serverresponses) {
-            return EnergieHistorieService.transformServerdata(serverresponses, 'datumtijd', $scope.energiesoorten, $scope.supportedsoorten);
-        }
-
         function getDataFromServer() {
             loadData([]);
 
@@ -178,16 +174,10 @@
                 var van = $scope.selection.getTime();
                 var totEnMet = $scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
 
-                var requests = [];
-
-                for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'api/' + $scope.energiesoorten[i] + '/verbruik-per-dag/' + van + '/' + totEnMet;
-                    requests.push( $http({method: 'GET', url: dataUrl}) );
-                }
-
-                $q.all(requests).then(
+                var dataUrl = 'api/energie/verbruik-per-dag/' + van + '/' + totEnMet;
+                $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
-                        loadData(transformServerdata(response));
+                        loadData(EnergieHistorieService.transformServerdata(response.data, 'datumtijd'));
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

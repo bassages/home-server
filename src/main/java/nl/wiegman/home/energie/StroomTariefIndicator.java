@@ -6,7 +6,7 @@ public enum StroomTariefIndicator {
     DAL((short)1),
     NORMAAL((short)2);
 
-    private short id;
+    private final short id;
 
     StroomTariefIndicator(short id) {
         this.id = id;

@@ -154,26 +154,16 @@
             EnergieHistorieService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
         }
 
-        function transformServerdata(serverresponses) {
-            return EnergieHistorieService.transformServerdata(serverresponses, 'maand', $scope.energiesoorten, $scope.supportedsoorten);
-        }
-
         function getDataFromServer() {
             loadData([]);
 
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-                var requests = [];
-
-                for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                    var dataUrl = 'api/' +  $scope.energiesoorten[i] + '/verbruik-per-maand-in-jaar/' + $scope.selection.getFullYear();
-                    requests.push( $http({method: 'GET', url: dataUrl}) );
-                }
-
-                $q.all(requests).then(
+                var dataUrl = 'api/energie/verbruik-per-maand-in-jaar/' + $scope.selection.getFullYear();
+                $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
-                        loadData(transformServerdata(response));
+                        loadData(EnergieHistorieService.transformServerdata(response.data, 'maand'));
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

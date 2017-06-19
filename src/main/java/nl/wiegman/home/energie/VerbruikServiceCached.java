@@ -27,12 +27,17 @@ public class VerbruikServiceCached {
         this.energiecontractRepository = energiecontractRepository;
     }
 
-    @Cacheable(cacheNames = "energieVerbruikInPeriode")
-    public Verbruik getPotentiallyCachedVerbruikInPeriode(Energiesoort energiesoort, long vanMillis, long totEnMetMillis) {
-        return getVerbruikInPeriode(energiesoort, vanMillis, totEnMetMillis);
+    @Cacheable(cacheNames = "gasVerbruikInPeriode")
+    public Verbruik getPotentiallyCachedGasVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
+        return getGasVerbruikInPeriode(vanMillis, totEnMetMillis);
     }
 
-    public Verbruik getVerbruikInPeriode(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
+    @Cacheable(cacheNames = "stroomVerbruikInPeriode")
+    public Verbruik getPotentiallyCachedStroomVerbruikInPeriode(long vanMillis, long totEnMetMillis, StroomTariefIndicator stroomTariefIndicator) {
+        return getStroomVerbruikInPeriode(vanMillis, totEnMetMillis, stroomTariefIndicator);
+    }
+
+    public Verbruik getGasVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
         BigDecimal totaalKosten = BigDecimal.ZERO;
         BigDecimal totaalVerbruik = null;
 
@@ -52,32 +57,80 @@ public class VerbruikServiceCached {
                         subTotEnMetMillis = periodeTotEnMet;
                     }
 
-                    BigDecimal verbruik = getVerbruik(energiesoort, subVanMillis, subTotEnMetMillis);
+                    BigDecimal verbruik = getGasVerbruik(subVanMillis, subTotEnMetMillis);
 
                     if (verbruik != null) {
                         if (totaalVerbruik == null) {
                             totaalVerbruik = BigDecimal.ZERO;
                         }
-                        totaalKosten = totaalKosten.add(energiecontract.getKosten(energiesoort).multiply(verbruik));
+                        totaalKosten = totaalKosten.add(energiecontract.getGasPerKuub().multiply(verbruik));
                         totaalVerbruik = totaalVerbruik.add(verbruik);
                     }
                 }
             } else {
-                BigDecimal verbruik = getVerbruik(energiesoort, periodeVan, periodeTotEnMet);
+                BigDecimal verbruik = getGasVerbruik(periodeVan, periodeTotEnMet);
                 if (verbruik != null) {
                     totaalVerbruik = verbruik;
                 }
             }
         }
 
-        Verbruik verbruik = new Verbruik();
-        verbruik.setVerbruik(totaalVerbruik);
+        Verbruik gasVerbruik = new Verbruik();
+        gasVerbruik.setVerbruik(totaalVerbruik);
         if (totaalVerbruik == null) {
-            verbruik.setKosten(null);
+            gasVerbruik.setKosten(null);
         } else {
-            verbruik.setKosten(totaalKosten.setScale(KOSTEN_SCALE, RoundingMode.CEILING));
+            gasVerbruik.setKosten(totaalKosten.setScale(KOSTEN_SCALE, RoundingMode.CEILING));
         }
-        return verbruik;
+        return gasVerbruik;
+    }
+
+    public Verbruik getStroomVerbruikInPeriode(long periodeVan, long periodeTotEnMet, StroomTariefIndicator stroomTariefIndicator) {
+        BigDecimal totaalKosten = BigDecimal.ZERO;
+        BigDecimal totaalVerbruik = null;
+
+        if (periodeVan < System.currentTimeMillis()) {
+
+            List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
+
+            if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
+
+                for (Energiecontract energiecontract : energiecontractInPeriod) {
+                    long subVanMillis = energiecontract.getVan();
+                    if (subVanMillis < periodeVan) {
+                        subVanMillis = periodeVan;
+                    }
+                    long subTotEnMetMillis = energiecontract.getTotEnMet();
+                    if (subTotEnMetMillis > periodeTotEnMet) {
+                        subTotEnMetMillis = periodeTotEnMet;
+                    }
+
+                    BigDecimal verbruik = getStroomVerbruik(subVanMillis, subTotEnMetMillis, stroomTariefIndicator);
+
+                    if (verbruik != null) {
+                        if (totaalVerbruik == null) {
+                            totaalVerbruik = BigDecimal.ZERO;
+                        }
+                        totaalKosten = totaalKosten.add(energiecontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik));
+                        totaalVerbruik = totaalVerbruik.add(verbruik);
+                    }
+                }
+            } else {
+                BigDecimal verbruik = getStroomVerbruik(periodeVan, periodeTotEnMet, stroomTariefIndicator);
+                if (verbruik != null) {
+                    totaalVerbruik = verbruik;
+                }
+            }
+        }
+
+        Verbruik stroomVerbruik = new Verbruik();
+        stroomVerbruik.setVerbruik(totaalVerbruik);
+        if (totaalVerbruik == null) {
+            stroomVerbruik.setKosten(null);
+        } else {
+            stroomVerbruik.setKosten(totaalKosten.setScale(KOSTEN_SCALE, RoundingMode.CEILING));
+        }
+        return stroomVerbruik;
     }
 
     private BigDecimal getVerbruik(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
@@ -88,12 +141,29 @@ public class VerbruikServiceCached {
                 return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
             case STROOM:
                 BigDecimal stroomVerbruikNormaalTariefInPeriod = meterstandRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
-                BigDecimal stroomVerbruikLaagTariefInPeriod = meterstandRepository.getStroomVerbruikLaagTariefInPeriod(periodeVan, periodeTotEnMet);
+                BigDecimal stroomVerbruikLaagTariefInPeriod = meterstandRepository.getStroomVerbruikDalTariefInPeriod(periodeVan, periodeTotEnMet);
 
                 return nullSafeAdd(stroomVerbruikNormaalTariefInPeriod, stroomVerbruikLaagTariefInPeriod);
             default:
                 throw new UnsupportedOperationException("Unexpected energiesoort: " + energiesoort.name());
         }
+    }
+
+    private BigDecimal getStroomVerbruik(long periodeVan, long periodeTotEnMet, StroomTariefIndicator stroomTariefIndicator) {
+        switch (stroomTariefIndicator) {
+            case DAL:
+                return meterstandRepository.getStroomVerbruikDalTariefInPeriod(periodeVan, periodeTotEnMet);
+            case NORMAAL:
+                return  meterstandRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
+            default:
+                throw new UnsupportedOperationException("Unexpected StroomTariefIndicator: " + stroomTariefIndicator.name());
+        }
+    }
+
+    private BigDecimal getGasVerbruik(long periodeVan, long periodeTotEnMet) {
+        // Gas is registered once every hour, in the hour after it actually is used.
+        // Compensate for that hour to make the query return the correct usages.
+        return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
     }
 
     private BigDecimal nullSafeAdd(BigDecimal bigDecimal1, BigDecimal bigDecimal2) {

@@ -12,7 +12,7 @@ public class MindergasnlSettings {
     @Column(nullable = false)
     private boolean automatischUploaden;
 
-    @Column(nullable = true)
+    @Column
     private String authenticatietoken;
 
     public long getId() {

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import nl.wiegman.home.energie.Energiesoort;
+import nl.wiegman.home.energie.StroomTariefIndicator;
 
 @Entity
 @Table
@@ -55,11 +55,15 @@ public class Energiecontract {
         this.van = van;
     }
 
-    public BigDecimal getKosten(Energiesoort energiesoort) {
-        switch (energiesoort) {
-            case GAS:
-                return gasPerKuub;
-            case STROOM:
+    public BigDecimal getStroomKosten(StroomTariefIndicator stroomTariefIndicator) {
+        switch (stroomTariefIndicator) {
+            case DAL:
+                if (stroomPerKwhDalTarief != null) {
+                    return stroomPerKwhDalTarief;
+                } else {
+                    return stroomPerKwhNormaalTarief;
+                }
+            case NORMAAL:
                 return stroomPerKwhNormaalTarief;
             default:
                 return BigDecimal.ZERO;

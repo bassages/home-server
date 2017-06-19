@@ -46,12 +46,12 @@
             var gisteren = Date.parse('yesterday').getTime();
             var weekVoorGisteren = Date.parse('yesterday').add(-6).days().getTime();
 
-            var url = 'api/gas/gemiddelde-per-dag-in-periode/' + weekVoorGisteren + '/' + gisteren;
+            var url = 'api/energie/gemiddelde-per-dag-in-periode/' + weekVoorGisteren + '/' + gisteren;
 
             $http({
                 method: 'GET', url: url
             }).then(function successCallback(response) {
-                vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek = response.data.verbruik;
+                vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek = response.data.gasVerbruik;
                 $log.debug("Gemiddelde gasverbruik per dag over afgelopen week: " + vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek);
                 setGasVandaagLeds(vm);
             }, function errorCallback(response) {
@@ -60,13 +60,13 @@
         }
 
         function getGasVerbruikVandaag() {
-            var url = 'api/gas/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
+            var url = 'api/energie/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
 
             $http({
                 method: 'GET', url: url
             }).then(function successCallback(response) {
                 if (response.data.length == 1) {
-                    vm.gasVerbruikVandaag = response.data[0].verbruik;
+                    vm.gasVerbruikVandaag = response.data[0].gasVerbruik;
                     setGasVandaagLeds();
                 }
             }, function errorCallback(response) {
