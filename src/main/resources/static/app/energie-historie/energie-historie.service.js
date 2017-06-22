@@ -151,14 +151,23 @@
             for (var i = 0; i < serverresponses.length; i++) {
                 var responseRow = serverresponses[i];
 
-                var transformedRow = {
-                    "gas-kosten": responseRow.gasKosten,
-                    "gas-verbruik": responseRow.gasVerbruik,
-                    "stroom-kosten": responseRow.stroomKostenDal + responseRow.stroomKostenNormaal,
-                    "stroom-verbruik": responseRow.stroomVerbruikDal + responseRow.stroomVerbruikNormaal
-                };
+                var transformedRow = {};
                 transformedRow[key] = responseRow[key];
 
+                transformedRow["gas-kosten"] = responseRow.gasKosten;
+                transformedRow["gas-verbruik"] = responseRow.gasVerbruik;
+
+                if (responseRow.stroomKostenDal !== null || responseRow.stroomKostenNormaal !== null) {
+                    transformedRow["stroom-kosten"] = responseRow.stroomKostenDal + responseRow.stroomKostenNormaal;
+                } else {
+                    transformedRow["stroom-kosten"] = null;
+                }
+
+                if (responseRow.stroomVerbruikDal !== null || responseRow.stroomVerbruikNormaal !== null) {
+                    transformedRow["stroom-verbruik"] = responseRow.stroomVerbruikDal + responseRow.stroomVerbruikNormaal;
+                } else {
+                    transformedRow["stroom-verbruik"] = null;
+                }
                 result.push(transformedRow);
             }
             return result;

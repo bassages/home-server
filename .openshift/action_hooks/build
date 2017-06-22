@@ -1,22 +1,23 @@
 #!/bin/bash
-export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
-export PATH=${JAVA_HOME}/bin:${PATH}
-export JAVACMD=${JAVA_HOME}/bin/java
-export GRADLE_OPTS=-Dgradle.user.home=${OPENSHIFT_DATA_DIR}.gradle
-export NPM_CONFIG_USERCONFIG=${OPENSHIFT_REPO_DIR}/.openshift/.npmrc
+#export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
+#export PATH=${JAVA_HOME}/bin:${PATH}
+#export JAVACMD=${JAVA_HOME}/bin/java
+#export GRADLE_OPTS=-Dgradle.user.home=${OPENSHIFT_DATA_DIR}.gradle
+#export NPM_CONFIG_USERCONFIG=${OPENSHIFT_REPO_DIR}/.openshift/.npmrc
+#
+## In bash, to use rm -- !(file.txt), you must enable extglob:
+#shopt -s extglob
+#
+## Build gradle project
+#cd ${OPENSHIFT_REPO_DIR}
+#sh gradlew clean build -x test -Pbuildtype=prod --no-daemon --info
+#
+## Move final artifact to repo dir
+#mv ${OPENSHIFT_REPO_DIR}build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
+#
+## Clean up to regain some diskspace
+#cd ${OPENSHIFT_REPO_DIR}
+#rm -R -- !(*.jar)
+#rm -rf ${OPENSHIFT_REPO_DIR}.gradle
 
-# In bash, to use rm -- !(file.txt), you must enable extglob:
-shopt -s extglob
-
-# Build gradle project
-cd ${OPENSHIFT_REPO_DIR}
-sh gradlew clean build -x test -Pbuildtype=prod --no-daemon --info
-
-# Move final artifact to repo dir
-mv ${OPENSHIFT_REPO_DIR}build/libs/home-server-*.jar ${OPENSHIFT_REPO_DIR}
-
-# Clean up to regain some diskspace
-cd ${OPENSHIFT_REPO_DIR}
-rm -R -- !(*.jar)
-rm -rf ${OPENSHIFT_REPO_DIR}.gradle
-
+echo "Please run manualbuild"
