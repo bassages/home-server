@@ -10,7 +10,6 @@ shopt -s extglob
 
 # Build gradle project
 cd ${OPENSHIFT_REPO_DIR}
-sh gradlew compilejava -x test -Pbuildtype=prod --no-daemon --info
 sh gradlew build -x test -Pbuildtype=prod --no-daemon --info
 
 # Move final artifact to repo dir
