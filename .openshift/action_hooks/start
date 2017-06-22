@@ -2,12 +2,10 @@
 # The logic to start up your application should be put in this
 # script. The application will work only if it binds to
 # $OPENSHIFT_DIY_IP:$OPENSHIFT_DIY_IP
-#export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
-#export PATH=${JAVA_HOME}/bin:${PATH}
-#echo "JAVA_HOME=$JAVA_HOME"
-#cd ${OPENSHIFT_REPO_DIR}
-#cmd='nohup java -Duser.timezone=Europe/Amsterdam -Xms416m -Xmx480m -jar *.jar --server.port=${OPENSHIFT_DIY_PORT} --server.address=${OPENSHIFT_DIY_IP} --spring.config.location=${OPENSHIFT_DATA_DIR}/configuration/application-openshift.properties &'
-#echo "Excecuting: $cmd"
-#eval $cmd
-
-echo "Please run manualstart"
+export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
+export PATH=${JAVA_HOME}/bin:${PATH}
+echo "JAVA_HOME=$JAVA_HOME"
+cd ${OPENSHIFT_REPO_DIR}
+cmd='nohup java -Duser.timezone=Europe/Amsterdam -Xms416m -Xmx480m -jar *.jar --server.port=${OPENSHIFT_DIY_PORT} --server.address=${OPENSHIFT_DIY_IP} --spring.config.location=${OPENSHIFT_DATA_DIR}/configuration/application-openshift.properties &'
+echo "Excecuting: $cmd"
+eval $cmd
