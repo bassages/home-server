@@ -101,5 +101,8 @@ task buildGulpFromGradle(type: GulpTask) {
     dependsOn = [ npmInstall ]
 
     args = ['build', "--buildtype=${project.buildtype}" ]
+
+    // limit memory usage to be able to build in OpenShift container
+    options = ['--max-old-space-size=512']
 }
 

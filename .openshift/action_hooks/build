@@ -2,6 +2,8 @@
 export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
 export PATH=${JAVA_HOME}/bin:${PATH}
 export JAVACMD=${JAVA_HOME}/bin/java
+
+# limit memory usage to be able to build in OpenShift container
 export GRADLE_OPTS="-Dgradle.user.home=${OPENSHIFT_DATA_DIR}.gradle -Xmx512m"
 export NPM_CONFIG_USERCONFIG=${OPENSHIFT_REPO_DIR}/.openshift/.npmrc
 

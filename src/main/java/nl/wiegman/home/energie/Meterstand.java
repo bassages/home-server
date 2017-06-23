@@ -2,6 +2,7 @@ package nl.wiegman.home.energie;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 public class Meterstand {
@@ -30,6 +31,10 @@ public class Meterstand {
 
     public long getDatumtijd() {
         return datumtijd;
+    }
+
+    public Date getDatumtijdAsDate() {
+        return new Date(datumtijd);
     }
 
     public void setDatumtijd(long datumtijd) {
