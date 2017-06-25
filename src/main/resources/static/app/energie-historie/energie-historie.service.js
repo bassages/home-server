@@ -5,15 +5,19 @@
         .module('app')
         .service('EnergieHistorieService', EnergieHistorieService);
 
-    EnergieHistorieService.$inject = ['BaseHistorieService'];
+    EnergieHistorieService.$inject = ['BaseHistorieService', 'ApplicationSettingsService', '_'];
 
-    function EnergieHistorieService(BaseHistorieService) {
+    function EnergieHistorieService(BaseHistorieService, ApplicationSettingsService, _) {
         angular.extend(EnergieHistorieService.prototype, BaseHistorieService);
 
         this.getDataColors = function() {
             return {
-                'stroom-verbruik': '#4575B3',
-                'stroom-kosten': '#4575B3',
+                'stroom-verbruik-dal': '#4575b3',
+                'stroom-verbruik-normaal': '#f4b649',
+                'stroom-kosten-dal': '#4575b3',
+                'stroom-kosten-normaal': '#f4b649',
+                'stroom-verbruik': '#4575b3',
+                'stroom-kosten': '#4575b3',
                 'gas-verbruik': '#2ca02c',
                 'gas-kosten': '#2ca02c'
             };
@@ -30,6 +34,20 @@
                 axis: {x: {tick: {values: []}}, y: {tick: {values: []}}},
                 padding: this.getChartPadding()
             };
+        };
+
+        this.getKeysGroups = function (energiesoorten, soort) {
+            var keysGroups = [];
+            for (var i = 0; i < energiesoorten.length; i++) {
+                var energiesoort = energiesoorten[i];
+                if (energiesoort == 'stroom' && ApplicationSettingsService.displayStroomDalNormaal == 'apart') {
+                    keysGroups.push(energiesoort + '-' + soort + '-dal');
+                    keysGroups.push(energiesoort + '-' + soort + '-normaal');
+                } else {
+                    keysGroups.push(energiesoort + '-' + soort);
+                }
+            }
+            return keysGroups;
         };
 
         this.getSupportedSoorten = function() {
@@ -156,6 +174,10 @@
 
                 transformedRow["gas-kosten"] = responseRow.gasKosten;
                 transformedRow["gas-verbruik"] = responseRow.gasVerbruik;
+                transformedRow["stroom-kosten-dal"] = responseRow.stroomKostenDal;
+                transformedRow["stroom-verbruik-dal"] = responseRow.stroomVerbruikDal;
+                transformedRow["stroom-kosten-normaal"] = responseRow.stroomKostenNormaal;
+                transformedRow["stroom-verbruik-normaal"] = responseRow.stroomVerbruikNormaal;
 
                 if (responseRow.stroomKostenDal !== null || responseRow.stroomKostenNormaal !== null) {
                     transformedRow["stroom-kosten"] = responseRow.stroomKostenDal + responseRow.stroomKostenNormaal;
@@ -173,52 +195,48 @@
             return result;
         };
 
-        this.getTooltipContent = function(c3, d, defaultTitleFormat, defaultValueFormat, color, soort, energiesoorten) {
+        function getTooltipLabelForKey(key) {
+            if (_.endsWith(key, 'dal')) {
+                return 'Stroom - Daltarief';
+            } else if (_.endsWith(key, 'normaal')) {
+                return 'Stroom - Normaaltarief';
+            } else if (_.startsWith(key, 'stroom')) {
+                return 'Stroom';
+            } else if (_.startsWith(key, 'gas')) {
+                return 'Gas';
+            }
+        }
+
+        this.getTooltipContent = function(c3, data, defaultTitleFormat, defaultValueFormat, color, soort, energiesoorten) {
             var $$ = c3;
             var config = $$.config;
             var CLASS = $$.CLASS;
             var tooltipContents;
             var total = 0;
 
-            var orderAsc = false;
-            if (config.data_groups.length === 0) {
-                d.sort(function(a,b){
-                    return orderAsc ? a.value - b.value : b.value - a.value;
-                });
-            } else {
-                var ids = $$.orderTargets($$.data.targets).map(function (i) {
-                    return i.id;
-                });
-                d.sort(function(a, b) {
-                    if (a.value > 0 && b.value > 0) {
-                        return orderAsc ? ids.indexOf(a.id) - ids.indexOf(b.id) : ids.indexOf(b.id) - ids.indexOf(a.id);
-                    } else {
-                        return orderAsc ? a.value - b.value : b.value - a.value;
-                    }
-                });
-            }
+            data = _.sortBy(data, [function(o) { return o.name; }]);
 
-            for (var i = 0; i < d.length; i++) {
-                if (!(d[i] && (d[i].value || d[i].value === 0))) { continue; }
+            for (var i = 0; i < data.length; i++) {
+                if (!(data[i] && (data[i].value || data[i].value === 0))) { continue; }
 
                 if (!tooltipContents) {
-                    var title = defaultTitleFormat(d[i].x);
+                    var title = defaultTitleFormat(data[i].x);
                     tooltipContents = "<table class='" + $$.CLASS.tooltip + "'>" + "<tr><th colspan='2'>" + title + "</th></tr>";
                 }
 
-                var formattedName = (d[i].name.charAt(0).toUpperCase() + d[i].name.slice(1)).replace('-verbruik', '').replace('-kosten', '');
-                var formattedValue = this.formatWithUnitLabel(soort, energiesoorten, d[i].value);
-                var bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+                var formattedLabel = getTooltipLabelForKey(data[i].name);
+                var formattedValue = this.formatWithUnitLabel(soort, energiesoorten, data[i].value);
+                var bgcolor = $$.levelColor ? $$.levelColor(data[i].value) : color(data[i].id);
 
-                tooltipContents += "<tr class='" + CLASS.tooltipName + "-" + d[i].id + "'>";
-                tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + ";'></span>" + formattedName + "</td>";
+                tooltipContents += "<tr class='" + CLASS.tooltipName + "-" + data[i].id + "'>";
+                tooltipContents += "<td class='name'><span style='background-color:" + bgcolor + ";'></span>" + formattedLabel + "</td>";
                 tooltipContents += "<td class='value'>" + formattedValue + "</td>";
                 tooltipContents += "</tr>";
 
-                total += d[i].value;
+                total += data[i].value;
             }
 
-            if (d.length > 1) {
+            if (data.length > 1) {
                 tooltipContents += "<tr class='" + CLASS.tooltipName + "'>";
                 tooltipContents += "<td class='name'><strong>Totaal</strong></td>";
                 tooltipContents += "<td class='value'><strong>" + this.formatWithUnitLabel(soort, energiesoorten, total) + "</strong></td>";

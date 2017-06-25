@@ -6,6 +6,8 @@
         .service('ApplicationSettingsService', ApplicationSettingsService);
 
     function ApplicationSettingsService() {
+        // Default values...
         this.displayChartOrTable = 'auto';
+        this.displayStroomDalNormaal = 'apart';
     }
 })();

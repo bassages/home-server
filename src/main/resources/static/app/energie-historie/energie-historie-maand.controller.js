@@ -91,13 +91,10 @@
             chartConfig.data = {};
             chartConfig.data.json = data;
             chartConfig.data.type = 'bar';
-            chartConfig.data.order = null;
+            chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
 
-            var keysGroups = [];
-            for (var i = 0; i < $scope.energiesoorten.length; i++) {
-                keysGroups.push($scope.energiesoorten[i] + "-" + $scope.soort);
-            }
+            var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
             chartConfig.data.keys = {x: 'maand', value: keysGroups};
 
