@@ -21,10 +21,13 @@
     angular.module('app')
         // allow DI for use in controllers, unit tests
         .constant('_', window._)
+
+        // FAILES AFTER UGLIFY / MINIFY:
         // use in views, ng-repeat="x in _.range(3)"
-        .run(function ($rootScope) {
-            $rootScope._ = window._;
-        });
+        // .run(function ($rootScope) {
+        //     $rootScope._ = window._;
+        // })
+    ;
 
     angular
         .module('app')
