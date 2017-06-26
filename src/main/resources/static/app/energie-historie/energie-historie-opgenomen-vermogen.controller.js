@@ -97,7 +97,7 @@
         }
 
         function getStatistics(chartData) {
-            var nonZero = _.filter(chartData, function(o) { return o.watt !== null && o.watt > 0 } );
+            var nonZero = _.filter(chartData, function(o) { return o.watt !== null && o.watt > 0; } );
 
             var mean = _.meanBy(nonZero, 'watt');
             var min = _.minBy(nonZero, 'watt');
