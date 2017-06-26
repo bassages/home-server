@@ -20,30 +20,18 @@
             $scope.soort = 'stroom';
             $scope.dateformat = 'EEE. dd-MM-yyyy';
             $scope.historicDataDisplayType = 'chart';
+
+            $scope.hideUur = true;
+            $scope.hideDag = true;
+            $scope.hideMaand = true;
+            $scope.hideJaar = true;
+            $scope.hideEnergieSoorten = true;
+            $scope.showOpgenomenVermogen = true;
+
             EnergieHistorieService.manageChartSize($scope);
 
             getDataFromServer();
         }
-
-        $scope.hideEnergieSoorten = function() {
-            return true;
-        };
-
-        $scope.showOpgenomenVermogen = function() {
-            return true;
-        };
-
-        $scope.hideUur = function() {
-            return true;
-        };
-
-        $scope.hideDag = function() {
-            return true;
-        };
-
-        $scope.hideMaand = function() {
-            return true;
-        };
 
         $scope.isMaxSelected = function() {
             return Date.today().getTime() == $scope.selection.getTime();

@@ -47,6 +47,11 @@ public class EnergieController {
         return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), BigDecimal.ROUND_CEILING).setScale(scale, BigDecimal.ROUND_CEILING);
     }
 
+    @GetMapping(path = "verbruik-per-jaar")
+    public List<VerbruikInJaarDto> getVerbruikPerJaar() {
+        return verbruikService.getVerbruikPerJaar();
+    }
+
     @GetMapping(path = "verbruik-per-maand-in-jaar/{jaar}")
     public List<VerbruikInMaandVanJaarDto> getVerbruikPerMaandInJaar(@PathVariable("jaar") int jaar) {
         return verbruikService.getVerbruikPerMaandInJaar(jaar);

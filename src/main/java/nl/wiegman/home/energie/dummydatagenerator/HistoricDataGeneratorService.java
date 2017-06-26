@@ -3,6 +3,8 @@ package nl.wiegman.home.energie.dummydatagenerator;
 import nl.wiegman.home.energie.Meterstand;
 import nl.wiegman.home.energie.MeterstandRepository;
 import nl.wiegman.home.energie.MeterstandService;
+import nl.wiegman.home.energie.StroomTariefIndicator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,6 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     @Autowired
     private MeterstandService meterstandService;
-
     @Autowired
     private MeterstandRepository meterstandRepository;
 
@@ -96,6 +97,7 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
             meterstand.setGas(lastGeneratedGas.setScale(3, RoundingMode.CEILING));
             meterstand.setStroomTarief1(lastGeneratedStroomTarief2.setScale(3, RoundingMode.CEILING));
             meterstand.setStroomTarief2(lastGeneratedStroomTarief1.setScale(3, RoundingMode.CEILING));
+            meterstand.setStroomTariefIndicator(StroomTariefIndicator.NORMAAL);
 
             logger.info("Add historic data for " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(lastGeneratedTimestamp)));
             meterstandRepository.save(meterstand);

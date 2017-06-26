@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import antlr.collections.impl.IntRange;
 import nl.wiegman.home.DateTimeUtil;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,11 +26,13 @@ public class VerbruikService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VerbruikService.class);
 
+    private final MeterstandService meterstandService;
     private final VerbruikServiceCached verbruikServiceCached;
     private final OpgenomenVermogenService opgenomenVermogenService;
 
     @Autowired
-    public VerbruikService(VerbruikServiceCached verbruikServiceCached, OpgenomenVermogenService opgenomenVermogenService) {
+    public VerbruikService(MeterstandService meterstandService, VerbruikServiceCached verbruikServiceCached, OpgenomenVermogenService opgenomenVermogenService) {
+        this.meterstandService = meterstandService;
         this.verbruikServiceCached = verbruikServiceCached;
         this.opgenomenVermogenService = opgenomenVermogenService;
     }
@@ -46,6 +53,34 @@ public class VerbruikService {
         return DateTimeUtil.getDagenInPeriode(van, totEnMet).stream()
                 .map(this::getVerbruikOpDag)
                 .collect(Collectors.toList());
+    }
+
+    public List<VerbruikInJaarDto> getVerbruikPerJaar() {
+        Meterstand oudste = meterstandService.getOudste();
+        Meterstand nieuwste = meterstandService.getMeestRecente();
+
+        if (oudste == null) {
+            return Collections.EMPTY_LIST;
+        } else {
+            int jaarVan = oudste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(ChronoField.YEAR);
+            int jaarTotEnMet = nieuwste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(ChronoField.YEAR);
+            return IntStream.rangeClosed(jaarVan, jaarTotEnMet).mapToObj(this::getVerbruikInJaar).collect(Collectors.toList());
+        }
+    }
+
+    private VerbruikInJaarDto getVerbruikInJaar(int jaar) {
+        VerbruikInJaarDto verbruikInJaarDto = new VerbruikInJaarDto();
+        verbruikInJaarDto.setJaar(jaar);
+
+        try {
+            long vanMillis = DateUtils.parseDate("01-01-" + jaar, "dd-MM-yyyy").getTime();
+            long totEnMetMillis = DateUtils.parseDate("31-12-" + jaar, "dd-MM-yyyy").getTime() - 1;
+            setVerbruik(vanMillis, totEnMetMillis, verbruikInJaarDto);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return verbruikInJaarDto;
     }
 
     private VerbruikInUurOpDagDto getVerbruikInUur(Date dag, int uur) {

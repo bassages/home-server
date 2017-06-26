@@ -20,14 +20,7 @@
     // Init Lodash
     angular.module('app')
         // allow DI for use in controllers, unit tests
-        .constant('_', window._)
-
-        // FAILES AFTER UGLIFY / MINIFY:
-        // use in views, ng-repeat="x in _.range(3)"
-        // .run(function ($rootScope) {
-        //     $rootScope._ = window._;
-        // })
-    ;
+        .constant('_', window._);
 
     angular
         .module('app')
@@ -91,6 +84,10 @@
             .when('/energie/:verbruiksoort/maand', {
                 templateUrl: '/app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieHistorieController'
+            })
+            .when('/energie/:verbruiksoort/jaar', {
+                templateUrl: '/app/energie-historie/energie-historie.html',
+                controller: 'JaarEnergieHistorieController'
             })
 
             .when('/energie/meterstanden', {

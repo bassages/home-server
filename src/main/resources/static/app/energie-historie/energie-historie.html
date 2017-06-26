@@ -17,21 +17,23 @@
             </div>
 
             <!-- Period selection for SMALL screens -->
-            <div ng-hide="hideUur() && hideDag() && hideMaand()" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
-                <a ng-hide="hideUur()" href="" ng-click="changePeriod('uur')" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
-                <a ng-hide="hideDag()" href="" ng-click="changePeriod('dag')" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
-                <a ng-hide="hideMaand()" href="" ng-click="changePeriod('maand')" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+            <div ng-hide="hideUur && hideDag && hideMaand && hideJaar" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+                <a ng-hide="hideUur" href="" ng-click="changePeriod('uur')" class="btn btn-default" ng-class="{'active': period=='uur'}" role="button" active="">Uur</a>
+                <a ng-hide="hideDag" href="" ng-click="changePeriod('dag')" class="btn btn-default" ng-class="{'active': period=='dag'}" role="button">Dag</a>
+                <a ng-hide="hideMaand" href="" ng-click="changePeriod('maand')" class="btn btn-default" ng-class="{'active': period=='maand'}" role="button">Maand</a>
+                <a ng-hide="hideJaar" href="" ng-click="changePeriod('jaar')" class="btn btn-default" ng-class="{'active': period=='jaar'}" role="button">Jaar</a>
             </div>
 
             <!-- Period selection for MEDIUM/BIG screens -->
-            <li ng-show="showOpgenomenVermogen()" class="hidden-xs active"><a ng-href="/#!/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
-            <li ng-hide="hideUur()" class="hidden-xs" ng-class="{'active': period=='uur'}"><a href="" ng-click="changePeriod('uur')">Uur</a></li>
-            <li ng-hide="hideDag()" class="hidden-xs" ng-class="{'active': period=='dag'}"><a href="" ng-click="changePeriod('dag')">Dag</a></li>
-            <li ng-hide="hideMaand()" class="hidden-xs" ng-class="{'active': period=='maand'}"><a href="" ng-click="changePeriod('maand')">Maand</a></li>
+            <li ng-show="showOpgenomenVermogen" class="hidden-xs active"><a ng-href="/#!/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+            <li ng-hide="hideUur" class="hidden-xs" ng-class="{'active': period=='uur'}"><a href="" ng-click="changePeriod('uur')">Uur</a></li>
+            <li ng-hide="hideDag" class="hidden-xs" ng-class="{'active': period=='dag'}"><a href="" ng-click="changePeriod('dag')">Dag</a></li>
+            <li ng-hide="hideMaand" class="hidden-xs" ng-class="{'active': period=='maand'}"><a href="" ng-click="changePeriod('maand')">Maand</a></li>
+            <li ng-hide="hideJaar" class="hidden-xs" ng-class="{'active': period=='jaar'}"><a href="" ng-click="changePeriod('jaar')">Jaar</a></li>
 
             <!-- Energiesoort selection for MEDIUM/BIG screens -->
             <li>
-                <div ng-hide="hideEnergieSoorten()" class="hidden-xs" style="margin-left: 70px; margin-top: 10px;">
+                <div ng-hide="hideEnergieSoorten" class="hidden-xs" style="margin-left: 70px; margin-top: 10px;">
                     <div ng-hide="allowMultpleEnergiesoorten()">
                         <label class="radio-inline"><input type="radio" ng-checked="energiesoorten.indexOf('stroom') >= 0" ng-click="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom</label>
                         <label class="radio-inline"><input type="radio" ng-checked="energiesoorten.indexOf('gas') >= 0" ng-click="toggleEnergiesoort('gas')"><i class="fa fa-fire"></i> Gas</label>
@@ -44,7 +46,7 @@
             </li>
 
             <!-- Period selection for MEDIUM/BIG screens -->
-            <li class="pull-right hidden-xs">
+            <li ng-hide="hideDateSelection" class="pull-right hidden-xs">
                 <form class="form-inline without-margin-padding">
                     <div class="form-group">
                         <div class="input-group date-selector">
@@ -65,7 +67,7 @@
             </li>
 
             <!-- Period selection for SMALL screens -->
-            <li class="pull-right hidden-sm hidden-md hidden-lg">
+            <li ng-hide="hideDateSelection" class="pull-right hidden-sm hidden-md hidden-lg">
                 <form class="form-inline without-margin-padding">
                     <div class="form-group">
                         <div class="input-group date-selector">
