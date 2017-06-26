@@ -11,7 +11,7 @@
             </div>
 
             <!-- Energiesoort selection for SMALL screens -->
-            <div ng-hide="hideEnergieSoorten()" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
+            <div ng-hide="hideEnergieSoorten" class="btn-group-sm btn-group-justified hidden-sm hidden-md hidden-lg" style="margin-bottom: 10px;" role="group">
                 <a ng-click="toggleEnergiesoort('stroom')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('stroom') >= 0}" role="button" active=""><i class="fa fa-bolt"></i> Stroom</a>
                 <a ng-click="toggleEnergiesoort('gas')" class="btn btn-default" ng-class="{'active': energiesoorten.indexOf('gas') >= 0}" role="button"><i class="fa fa-fire"></i> Gas</a>
             </div>

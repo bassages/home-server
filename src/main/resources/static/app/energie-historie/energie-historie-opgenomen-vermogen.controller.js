@@ -97,30 +97,17 @@
         }
 
         function getStatistics(chartData) {
-            var min, max, avg;
+            var nonZero = _.filter(chartData, function(o) { return o.watt !== null && o.watt > 0 } );
 
-            var total = 0;
-            var nrofdata = 0;
+            var mean = _.meanBy(nonZero, 'watt');
+            var min = _.minBy(nonZero, 'watt');
+            var max = _.maxBy(chartData, 'watt');
 
-            for (var i = 0; i < chartData.length; i++) {
-                var data = chartData[i].watt;
-
-                if (data !== null && (typeof max=='undefined' || data > max)) {
-                    max = data;
-                }
-                if (data !== null && data > 0 && (typeof min=='undefined' || data < min)) {
-                    min = data;
-                }
-                if (data !== null && data > 0) {
-                    total += data;
-                    nrofdata += 1;
-                }
-            }
-
-            if (nrofdata > 0) {
-                avg = total / nrofdata;
-            }
-            return {avg: avg, min: min, max: max};
+            return {
+                avg: mean,
+                min: _.isUndefined(min) ? undefined : min.watt,
+                max: _.isUndefined(max) ? undefined : max.watt
+            };
         }
 
         function formatWithUnitLabel(value) {

@@ -13,6 +13,7 @@
         function activate() {
             $scope.selection = [Date.today()];
             $scope.sensortype = $routeParams.sensortype;
+            $scope.getMultidateSeparator = ', ';
             $scope.data = [];
 
             KlimaatSensorGrafiekService.manageChartSize($scope);
@@ -39,13 +40,9 @@
             return true;
         };
 
-        $scope.getMultidateSeparator = function() {
-            return ', ';
-        };
-
         var datepicker = $('.datepicker');
         datepicker.datepicker({
-            autoclose: false, todayBtn: "true", clearBtn: true, calendarWeeks: true, todayHighlight: true, endDate: "0d", language:"nl", daysOfWeekHighlighted: "0,6", multidate: true, multidateSeparator: $scope.getMultidateSeparator(),
+            autoclose: false, todayBtn: "true", clearBtn: true, calendarWeeks: true, todayHighlight: true, endDate: "0d", language:"nl", daysOfWeekHighlighted: "0,6", multidate: true, multidateSeparator: $scope.multidateSeparator,
             format: {
                 toDisplay: function (date, format, language) {
                     return d3.time.format($scope.getD3DateFormat())(date);
@@ -159,7 +156,10 @@
             if (nrOfKlimaatValues > 0) {
                 avg = sumOfAllKlimaatValues / nrOfKlimaatValues;
             }
-            return {avg: avg, min: min, max: max};
+
+            return {
+                avg: avg, min: min, max: max
+            };
         }
 
         function removeItemFromList(list, itemToRemove) {
