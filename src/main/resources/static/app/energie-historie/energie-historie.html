@@ -25,7 +25,7 @@
             </div>
 
             <!-- Period selection for MEDIUM/BIG screens -->
-            <li ng-show="showOpgenomenVermogen" class="hidden-xs active"><a ng-href="/#!/grafiek/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
+            <li ng-show="showOpgenomenVermogen" class="hidden-xs active"><a ng-href="/#!/energie/{{energiesoort}}/opgenomen-vermogen">Uur</a></li>
             <li ng-hide="hideUur" class="hidden-xs" ng-class="{'active': period=='uur'}"><a href="" ng-click="changePeriod('uur')">Uur</a></li>
             <li ng-hide="hideDag" class="hidden-xs" ng-class="{'active': period=='dag'}"><a href="" ng-click="changePeriod('dag')">Dag</a></li>
             <li ng-hide="hideMaand" class="hidden-xs" ng-class="{'active': period=='maand'}"><a href="" ng-click="changePeriod('maand')">Maand</a></li>
