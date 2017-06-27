@@ -25,27 +25,18 @@
         }
 
         this.getStatisticsChartLines = function(statistics, valueFormatFunction) {
-            var lines = [];
-            if (statistics.avg) {
-                lines.push({
-                    value: statistics.avg, class: 'avg', position: 'middle',
-                    text: 'Gemiddelde: ' + valueFormatFunction(statistics.avg)
-                });
-            }
-            if (statistics.min) {
-                lines.push({
-                    value: statistics.min, class: 'min', position: 'start',
-                    text: 'Laagste: ' + valueFormatFunction(statistics.min)
-                });
-            }
-            if (statistics.max) {
-                lines.push({
-                    value: statistics.max, class: 'max',
-                    text: 'Hoogste: ' + valueFormatFunction(statistics.max)
-                });
-            }
-            return lines;
+            return _.filter( [
+                                createStatisticChartLine(statistics.avg, 'avg', 'middle', 'Gemiddelde: ', valueFormatFunction),
+                                createStatisticChartLine(statistics.min, 'min', 'start', 'Laagste: ', valueFormatFunction),
+                                createStatisticChartLine(statistics.max, 'max', 'end', 'Hoogste: ', valueFormatFunction)
+                             ], _.isObject);
         };
+
+        function createStatisticChartLine(value, clazz, position, textPrefix, valueFormatFunction) {
+            if (value) {
+                return { value: value, class: clazz, position: position, text: textPrefix + valueFormatFunction(value) };
+            }
+        }
 
         this.setChartHeightMatchingWithAvailableWindowHeight = function(chart) {
             setChartHeightMatchingWithAvailableWindowHeight(chart);
