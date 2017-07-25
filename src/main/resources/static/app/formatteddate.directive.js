@@ -12,7 +12,7 @@
             link: function(scope, element, attr, ngModel) {
 
                 function toDate(text) {
-                    if (typeof scope.isMultidateAllowed == 'function' && scope.isMultidateAllowed()) {
+                    if (scope.multipleDatesAllowed) {
                         return toMultipleDates(text);
                     } else {
                         return toSingleDate(text);
@@ -21,7 +21,7 @@
 
                 function toMultipleDates(text) {
                     var result = [];
-                    var dates = text.split(scope.getMultidateSeparator());
+                    var dates = text.split(scope.multipleDatesSeparator);
                     for (var i = 0; i < dates.length; i++) {
                         if (dates[i] !== '') {
                             result.push(d3.time.format(scope.getD3DateFormat()).parse(dates[i]));
@@ -51,7 +51,7 @@
 
                     for (var i = 0; i < dates.length; i++) {
                         if (result !== '') {
-                            result = result + scope.getMultidateSeparator();
+                            result = result + scope.multipleDatesSeparator;
                         }
                         result = result + formatter(dates[i]);
                     }

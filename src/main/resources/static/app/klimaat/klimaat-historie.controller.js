@@ -13,22 +13,23 @@
         function activate() {
             $scope.selection = [Date.today()];
             $scope.sensortype = $routeParams.sensortype;
-            $scope.getMultidateSeparator = ', ';
+            $scope.multipleDatesAllowed = true;
+            $scope.multipleDatesSeparator = ', ';
+
             $scope.data = [];
 
             KlimaatSensorGrafiekService.manageChartSize($scope);
-
             $scope.$watch('showChart', function(newValue, oldValue) {
                 if (newValue !== oldValue && newValue) {
                     loadDataIntoChart($scope.data);
                 }
             });
+
             $scope.$watch('showTable', function(newValue, oldValue) {
                 if (newValue !== oldValue && newValue) {
                     loadDataIntoTable($scope.data);
                 }
             });
-
             getDataFromServer();
         }
 
@@ -36,13 +37,10 @@
             return '%a %d-%m-%Y';
         };
 
-        $scope.isMultidateAllowed = function() {
-            return true;
-        };
-
         var datepicker = $('.datepicker');
         datepicker.datepicker({
-            autoclose: false, todayBtn: "true", clearBtn: true, calendarWeeks: true, todayHighlight: true, endDate: "0d", language:"nl", daysOfWeekHighlighted: "0,6", multidate: true, multidateSeparator: $scope.multidateSeparator,
+            autoclose: false, todayBtn: "true", clearBtn: true, calendarWeeks: true, todayHighlight: true, endDate: "0d",
+            language:"nl", daysOfWeekHighlighted: "0,6", multidate: $scope.multipleDatesAllowed, multidateSeparator: $scope.multipleDatesSeparator,
             format: {
                 toDisplay: function (date, format, language) {
                     return d3.time.format($scope.getD3DateFormat())(date);
