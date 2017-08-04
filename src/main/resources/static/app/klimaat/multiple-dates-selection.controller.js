@@ -23,7 +23,7 @@
 
         vm.addDate = function () {
             vm.selectedDates.push(vm.selectedDate);
-            vm.selectedDates.sort(function(a,b){return a.getTime() - b.getTime()});
+            vm.selectedDates.sort(function(a,b){return a.getTime() - b.getTime();});
             vm.selectedDate = null;
         };
 
