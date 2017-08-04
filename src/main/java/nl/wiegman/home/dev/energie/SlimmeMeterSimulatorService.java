@@ -1,4 +1,4 @@
-package nl.wiegman.home.energie.dummydatagenerator;
+package nl.wiegman.home.dev.energie;
 
 import nl.wiegman.home.energie.Meterstand;
 import nl.wiegman.home.energie.StroomTariefIndicator;
@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,12 +18,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@RestController(SlimmeMeterSimulatorService.SERVICE_PATH)
+@Service
 public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
 
     private final Logger logger = LoggerFactory.getLogger(SlimmeMeterSimulatorService.class);
-
-    public static final String SERVICE_PATH = "slimmemetersimulator";
 
     private final ScheduledExecutorService slimmeMeterSimulatorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> slimmeMeterSimulator = null;
@@ -56,15 +55,13 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             startSlimmeMeterSimulator();
         }
     }
-    
-    @PostMapping(path = "startSlimmeMeterSimulator")
+
     public void startSlimmeMeterSimulator() {
         if (slimmeMeterSimulator == null) {
             slimmeMeterSimulator = slimmeMeterSimulatorScheduler.scheduleAtFixedRate(this::simulateUpdateFromSlimmeMeter, initialDelaySeconds, SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
-    @PostMapping(path = "stopSlimmeMeterSimulator")
     public void stopSlimmeMeterSimulator() {
         if (slimmeMeterSimulator != null) {
             slimmeMeterSimulator.cancel(false);

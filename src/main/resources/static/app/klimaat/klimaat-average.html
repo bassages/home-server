@@ -11,15 +11,12 @@
 <div class="row">
     <div class="col-md-2"></div>
 
-    <div class="col-md-2">
-        <label for="selection">Jaar:</label>
+    <div class="col-md-6">
+        <label for="selection">Jaren:</label>
         <p class="input-group">
-            <input id="selection" class="form-control"
-                   ng-model="vm.selection" ng-readonly="true" ng-click="vm.toggleDatepickerPopup()" ng-change="vm.datepickerChange()"
-                   uib-datepicker-popup="{{vm.dateformat}}" is-open="vm.datepickerPopup.opened"
-                   datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" datepicker-options="vm.datepickerPopupOptions" />
+            <input id="selection" class="form-control" ng-value="vm.getFormattedSelectedYears()" ng-readonly="true" ng-click="vm.openMultipleYearsSelectionDialog()" />
             <span class="input-group-btn">
-                <button type="button" class="btn btn-default" ng-click="vm.toggleDatepickerPopup()"><i class="fa fa-calendar"></i></button>
+                <button type="button" class="btn btn-default" ng-click="vm.openMultipleYearsSelectionDialog()"><i class="fa fa-calendar"></i></button>
             </span>
         </p>
     </div>
@@ -28,18 +25,18 @@
 <div class="row">
     <div class="col-md-2"></div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
         <table class="table table-bordered table-striped table-condensed">
             <thead>
             <tr>
                 <th class="text-right">Maand</th>
-                <th class="text-right">Gemiddelde</th>
+                <th ng-repeat="year in vm.averagePerMonthInYear" class="text-right">{{year[0].maand | date : 'yyyy'}}</th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="month in vm.averagePerMonthInYear">
-                <td class="text-right">{{month.date | date : 'MMMM'}}</td>
-                <td class="text-right">{{month.average | number : 2}}{{month.average ? vm.unitlabel : ''}}</td>
+            <tr ng-repeat="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]">
+                <td class="text-right">{{vm.getMonthName(i)}}</td>
+                <td ng-repeat="year in vm.averagePerMonthInYear" class="text-right">{{year[i].gemiddelde | number : 2}}{{year[i].gemiddelde ? unitlabel : ''}}</td>
             </tr>
             </tbody>
         </table>

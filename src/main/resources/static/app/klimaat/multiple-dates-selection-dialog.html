@@ -1,0 +1,27 @@
+    <div class="modal-header modal-header-primary">
+        <h4 class="modal-title"><i class="fa fa-question-circle-o"></i> Selectie</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-5">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="selectedDate in vm.selectedDates">
+                        <span><strong>{{ selectedDate | date: 'yyyy'}}</strong></span> <span class="pull-right"><i class="fa fa-times" style="cursor:pointer;" aria-hidden="true" ng-click="vm.removeDate(selectedDate)"></i></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-7">
+                <table>
+                    <tr>
+                        <td style="vertical-align: top;"><button type="button" class="btn btn-success" ng-click="vm.addDate()" ng-disabled="vm.isAddDateDisabled()"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+                        <td><div uib-datepicker class="well" ng-model="vm.selectedDate" datepicker-options="vm.datepickerOptions"></div></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="vm.cancel()">Annuleren</button>
+        <button type="button" class="btn btn-default" ng-click="vm.ok()">OK</button>
+    </div>

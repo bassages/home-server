@@ -133,22 +133,6 @@ public class VerbruikServiceCached {
         return stroomVerbruik;
     }
 
-    private BigDecimal getVerbruik(Energiesoort energiesoort, long periodeVan, long periodeTotEnMet) {
-        switch (energiesoort) {
-            case GAS:
-                // Gas is registered once every hour, in the hour after it actually is used.
-                // Compensate for that hour to make the query return the correct usages.
-                return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
-            case STROOM:
-                BigDecimal stroomVerbruikNormaalTariefInPeriod = meterstandRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
-                BigDecimal stroomVerbruikLaagTariefInPeriod = meterstandRepository.getStroomVerbruikDalTariefInPeriod(periodeVan, periodeTotEnMet);
-
-                return nullSafeAdd(stroomVerbruikNormaalTariefInPeriod, stroomVerbruikLaagTariefInPeriod);
-            default:
-                throw new UnsupportedOperationException("Unexpected energiesoort: " + energiesoort.name());
-        }
-    }
-
     private BigDecimal getStroomVerbruik(long periodeVan, long periodeTotEnMet, StroomTariefIndicator stroomTariefIndicator) {
         switch (stroomTariefIndicator) {
             case DAL:
@@ -164,19 +148,5 @@ public class VerbruikServiceCached {
         // Gas is registered once every hour, in the hour after it actually is used.
         // Compensate for that hour to make the query return the correct usages.
         return meterstandRepository.getGasVerbruikInPeriod(periodeVan + DateUtils.MILLIS_PER_HOUR, periodeTotEnMet + DateUtils.MILLIS_PER_HOUR);
-    }
-
-    private BigDecimal nullSafeAdd(BigDecimal bigDecimal1, BigDecimal bigDecimal2) {
-        BigDecimal result = null;
-
-        if (bigDecimal1 != null && bigDecimal2 != null) {
-            result = bigDecimal1.add(bigDecimal2);
-        } else if (bigDecimal2 != null) {
-            result = bigDecimal2;
-        } else if (bigDecimal1 != null) {
-            result = bigDecimal1;
-        }
-
-        return result;
     }
 }

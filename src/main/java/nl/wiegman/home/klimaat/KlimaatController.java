@@ -2,8 +2,11 @@ package nl.wiegman.home.klimaat;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import nl.wiegman.home.DateTimeUtil;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -65,6 +70,24 @@ public class KlimaatController {
     @GetMapping(path = "gemiddelde")
     public BigDecimal getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("from") long from, @RequestParam("to") long to) {
         return klimaatService.getAverage(SensorType.fromString(sensortype), new Date(from), new Date(to));
+    }
+
+    @GetMapping(path = "gemiddeld-per-maand-in-jaar")
+    public List<List<GemiddeldeKlimaatPerMaandDto>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
+        return IntStream.of(jaren).mapToObj(jaar ->
+                IntStream.rangeClosed(1, 12)
+                    .mapToObj(maand -> getAverageInMonthOfYear(sensortype, maand, jaar))
+                    .collect(Collectors.toList())).collect(Collectors.toList());
+    }
+
+    private GemiddeldeKlimaatPerMaandDto getAverageInMonthOfYear(String sensortype, int maand, int jaar) {
+        LocalDate from = LocalDate.of(jaar, maand, 1);
+        LocalDate to = from.plusMonths(1);
+
+        GemiddeldeKlimaatPerMaandDto gemiddeldeKlimaatPerMaandDto = new GemiddeldeKlimaatPerMaandDto();
+        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.asDate(from));
+        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.asDate(from), DateTimeUtil.asDate(to)));
+        return gemiddeldeKlimaatPerMaandDto;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

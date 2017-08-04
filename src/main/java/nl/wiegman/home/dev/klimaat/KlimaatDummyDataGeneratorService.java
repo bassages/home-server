@@ -1,6 +1,9 @@
-package nl.wiegman.home.klimaat;
+package nl.wiegman.home.dev.klimaat;
 
-import nl.wiegman.home.energie.dummydatagenerator.AbstractDataGeneratorService;
+import nl.wiegman.home.dev.energie.AbstractDataGeneratorService;
+import nl.wiegman.home.klimaat.Klimaat;
+import nl.wiegman.home.klimaat.KlimaatService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

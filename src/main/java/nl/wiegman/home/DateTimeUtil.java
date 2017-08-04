@@ -2,6 +2,8 @@ package nl.wiegman.home;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,6 +57,10 @@ public class DateTimeUtil {
         endOfDay.set(Calendar.MILLISECOND, 0);
 
         return endOfDay.getTimeInMillis();
+    }
+
+    public static Date asDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public static boolean isAfterToday(Date dag) {

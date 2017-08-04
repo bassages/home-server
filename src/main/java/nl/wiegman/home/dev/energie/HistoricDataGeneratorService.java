@@ -1,18 +1,5 @@
-package nl.wiegman.home.energie.dummydatagenerator;
+package nl.wiegman.home.dev.energie;
 
-import nl.wiegman.home.energie.Meterstand;
-import nl.wiegman.home.energie.MeterstandRepository;
-import nl.wiegman.home.energie.MeterstandService;
-import nl.wiegman.home.energie.StroomTariefIndicator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -22,12 +9,21 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-@RestController(HistoricDataGeneratorService.SERVICE_PATH)
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import nl.wiegman.home.energie.Meterstand;
+import nl.wiegman.home.energie.MeterstandRepository;
+import nl.wiegman.home.energie.MeterstandService;
+import nl.wiegman.home.energie.StroomTariefIndicator;
+
 public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
 
     private final Logger logger = LoggerFactory.getLogger(HistoricDataGeneratorService.class);
-
-    public static final String SERVICE_PATH = "historicdatagenerator";
 
     public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 1;
 
@@ -69,14 +65,12 @@ public class HistoricDataGeneratorService extends AbstractDataGeneratorService {
         }
     }
 
-    @PostMapping(path = "startGeneratingHistoricData")
     public void startGeneratingHistoricData() {
         if (historischeDataGenerator == null) {
             historischeDataGenerator = historischeDataGeneratorScheduler.scheduleAtFixedRate(this::generateHistoricData, initialDelaySeconds, GENERATOR_RUN_INTERVAL_IN_SECONDS, TimeUnit.SECONDS);
         }
     }
 
-    @PostMapping("stopGeneratingHistoricData")
     public void stopGeneratingHistoricData() {
         if (historischeDataGenerator != null) {
             historischeDataGenerator.cancel(false);

@@ -1,12 +1,13 @@
 package nl.wiegman.home.energie;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class OpgenomenVermogenService {
@@ -24,32 +25,35 @@ public class OpgenomenVermogenService {
     }
 
     public List<OpgenomenVermogen> getOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
-        List<OpgenomenVermogen> result = new ArrayList<>();
-
-        List<Meterstand> list = meterstandRepository.getMeterstanden(from, to);
+        List<Meterstand> meterstandenInPeriod = meterstandRepository.getMeterstanden(from, to);
 
         long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
 
-        for (int i = 0; i <= nrOfSubPeriodsInPeriod; i++) {
-            long subStart = from + (i * subPeriodLength);
-            long subEnd = subStart + subPeriodLength;
-
-            OpgenomenVermogen vermogenInPeriode = getMaximumOpgenomenVermogenInPeriode(list, subStart, subEnd);
-            if (vermogenInPeriode != null) {
-                vermogenInPeriode.setDatumtijd(subStart);
-                result.add(vermogenInPeriode);
-            } else {
-                result.add(new OpgenomenVermogen(subStart, 0, null));
-            }
-        }
-        return result;
+        return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod).boxed()
+                .map(periodNumber -> this.toSubPeriod(periodNumber, from, subPeriodLength))
+                .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(meterstandenInPeriod, subPeriod))
+                .collect(Collectors.toList());
     }
 
-    private OpgenomenVermogen getMaximumOpgenomenVermogenInPeriode(List<Meterstand> list, long start, long end) {
-        return list.stream()
-                .filter(ov -> ov.getDatumtijd() >= start && ov.getDatumtijd() < end)
-                .map(m -> new OpgenomenVermogen(m.getDatumtijd(), m.getStroomOpgenomenVermogenInWatt(), m.getStroomTariefIndicator()))
-                .max(Comparator.comparingInt(OpgenomenVermogen::getOpgenomenVermogenInWatt))
-                .orElse(null);
+    private Period toSubPeriod(long periodNumber, long start, long subPeriodLength) {
+        long subStart = start + (periodNumber * subPeriodLength);
+        long subEnd = subStart + subPeriodLength;
+        return new Period(subStart, subEnd);
+    }
+
+    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<Meterstand> meterstanden, Period period) {
+        return meterstanden.stream()
+                .filter(meterstand -> meterstand.getDatumtijd() >= period.from && meterstand.getDatumtijd() < period.to)
+                .max(Comparator.comparingInt(Meterstand::getStroomOpgenomenVermogenInWatt))
+                .map(meterstand1 -> new OpgenomenVermogen(period.from, meterstand1.getStroomOpgenomenVermogenInWatt(), meterstand1.getStroomTariefIndicator()))
+                .orElse(new OpgenomenVermogen(period.from, 0, null));
+    }
+
+    private static class Period {
+        private long from, to;
+        private Period(long from , long to) {
+            this.from = from;
+            this.to = to;
+        }
     }
 }
