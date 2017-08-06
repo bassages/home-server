@@ -13,8 +13,7 @@
             <div class="col-sm-7">
                 <table>
                     <tr>
-                        <td style="vertical-align: top;"><button type="button" class="btn btn-success" ng-click="vm.addDate()" ng-disabled="vm.isAddDateDisabled()"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
-                        <td><div uib-datepicker class="well" ng-model="vm.selectedDate" datepicker-options="vm.datepickerOptions"></div></td>
+                        <td><div uib-datepicker class="well" ng-model="vm.selectedDate" ng-change="vm.datepickerChange()" datepicker-options="vm.datepickerOptions"></div></td>
                     </tr>
                 </table>
             </div>

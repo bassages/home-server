@@ -20,7 +20,7 @@
             vm.openMultipleYearsSelectionDialog = function() {
                 var modalInstance = $uibModal.open({
                     animation: false,
-                    templateUrl: 'app/klimaat/multiple-dates-selection-dialog.html',
+                    templateUrl: 'app/multiple-dates-selection-dialog.html',
                     backdrop: 'static',
                     controller: 'MultipleDateSelectionController',
                     controllerAs: 'vm',

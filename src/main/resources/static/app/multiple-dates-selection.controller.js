@@ -9,8 +9,8 @@
 
     function MultipleDateSelectionController($uibModalInstance, datepickerOptions, selectedDates) {
         var vm = this;
-        vm.selectedDates = _.clone(selectedDates);
 
+        vm.selectedDates = _.clone(selectedDates);
         vm.datepickerOptions = datepickerOptions;
 
         vm.ok = function () {
@@ -21,19 +21,21 @@
             $uibModalInstance.dismiss('cancel');
         };
 
-        vm.addDate = function () {
-            vm.selectedDates.push(vm.selectedDate);
-            vm.selectedDates.sort(function(a,b){return a.getTime() - b.getTime();});
-            vm.selectedDate = null;
-        };
-
         vm.removeDate = function(dateToRemove) {
             _.pull(vm.selectedDates, dateToRemove);
         };
 
-        vm.isAddDateDisabled = function() {
-            return !_.isDate(vm.selectedDate) || containsDate(vm.selectedDates, vm.selectedDate);
+        vm.datepickerChange = function() {
+            if (_.isDate(vm.selectedDate) && !containsDate(vm.selectedDates, vm.selectedDate)) {
+                addSelectedDateToSelectedDates();
+                vm.selectedDate = null;
+            }
         };
+
+        function addSelectedDateToSelectedDates() {
+            vm.selectedDates.push(vm.selectedDate);
+            vm.selectedDates.sort(function(a,b){return a.getTime() - b.getTime();});
+        }
 
         function containsDate(selectedDates, date) {
             return _.isDate(_.find(selectedDates, function (o) {
