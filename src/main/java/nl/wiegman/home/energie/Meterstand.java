@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Meterstand {
 
@@ -33,6 +35,7 @@ public class Meterstand {
         return datumtijd;
     }
 
+    @JsonIgnore
     public Date getDatumtijdAsDate() {
         return new Date(datumtijd);
     }
