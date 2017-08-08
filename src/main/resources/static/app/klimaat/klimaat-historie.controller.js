@@ -5,17 +5,14 @@
         .module('app')
         .controller('KlimaatHistorieController', KlimaatHistorieController);
 
-    KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', 'LoadingIndicatorService', 'KlimaatHistorieService', 'ErrorMessageService'];
+    KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', '$uibModal', 'LoadingIndicatorService', 'KlimaatHistorieService', 'ErrorMessageService'];
 
-    function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, LoadingIndicatorService, KlimaatSensorGrafiekService, ErrorMessageService) {
+    function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, $uibModal, LoadingIndicatorService, KlimaatSensorGrafiekService, ErrorMessageService) {
         activate();
 
         function activate() {
             $scope.selection = [Date.today()];
             $scope.sensortype = $routeParams.sensortype;
-            $scope.multipleDatesAllowed = true;
-            $scope.multipleDatesSeparator = ', ';
-
             $scope.data = [];
 
             KlimaatSensorGrafiekService.manageChartSize($scope);
@@ -30,6 +27,29 @@
                     loadDataIntoTable($scope.data);
                 }
             });
+
+            $scope.openDateSelectionDialog = function() {
+                var modalInstance = $uibModal.open({
+                    animation: false,
+                    templateUrl: 'app/multiple-dates-selection-dialog.html',
+                    backdrop: 'static',
+                    controller: 'MultipleDateSelectionController',
+                    controllerAs: 'vm',
+                    size: 'md',
+                    resolve: {
+                        selectedDates: function() { return $scope.selection; },
+                        datepickerOptions: function() { return { maxDate: Date.today(), datepickerMode: 'day', minMode: 'day' }; },
+                        selectedDateFormat: function() { return 'EEE. dd-MM-yyyy'; }
+                    }
+                });
+                modalInstance.result.then(function(selectedDates) {
+                    $scope.selection = selectedDates;
+                    getDataFromServer();
+                }, function() {
+                    $log.info('Multiple Date Selection dialog was closed');
+                });
+            };
+
             getDataFromServer();
         }
 
@@ -37,60 +57,9 @@
             return '%a %d-%m-%Y';
         };
 
-        var datepicker = $('.datepicker');
-        datepicker.datepicker({
-            autoclose: false, todayBtn: "true", clearBtn: true, calendarWeeks: true, todayHighlight: true, endDate: "0d",
-            language:"nl", daysOfWeekHighlighted: "0,6", multidate: $scope.multipleDatesAllowed, multidateSeparator: $scope.multipleDatesSeparator,
-            format: {
-                toDisplay: function (date, format, language) {
-                    return d3.time.format($scope.getD3DateFormat())(date);
-                },
-                toValue: function (date, format, language) {
-                    return (date == '0d' ? new Date() : d3.time.format($scope.getD3DateFormat()).parse(date));
-                }
-            }
-        });
-
-        datepicker.datepicker('setDates', $scope.selection);
-
-        datepicker.on('changeDate', function(e) {
-            if (!isSelectionEqual(e.dates, $scope.selection)) {
-                $scope.$apply(function() {
-                    $scope.selection = e.dates;
-                    getDataFromServer();
-                });
-            }
-        });
-        datepicker.on('clearDate', function(e) {
-            $scope.$apply(function() {
-                $scope.selection = [];
-                getDataFromServer();
-            });
-        });
-
-        function isSelectionEqual(oldSelection, newSelection) {
-            var result = true;
-            if (oldSelection.length == newSelection.length) {
-                for (var i = 0; i < oldSelection.length; i++) {
-                    if (!containsDate(newSelection, oldSelection[i])) {
-                        result = false;
-                        break;
-                    }
-                }
-            } else {
-                result = false;
-            }
-            return result;
-        }
-
-        function containsDate(dates, date) {
-            for (var i = 0; i < dates.length; i++) {
-                if (dates[i].equals(date)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        $scope.getFormattedSelectedDates = function() {
+            return _.map($scope.selection, function(date) { return d3.time.format($scope.getD3DateFormat())(date); }).join(', ');
+        };
 
         $scope.isMaxSelected = function() {
             return $scope.selection.length == 1 && Date.today().getTime() == $scope.selection[0].getTime();
@@ -102,7 +71,6 @@
 
         $scope.navigate = function(numberOfPeriods) {
             $scope.selection[0].setDate($scope.selection[0].getDate() + numberOfPeriods);
-            datepicker.datepicker('setDates', $scope.selection);
             getDataFromServer();
         };
 

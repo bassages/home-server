@@ -10,12 +10,21 @@
     function EnergieContractenController($log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        vm.startEdit = startEdit;
+        vm.startAdd = startAdd;
+        vm.toggleDatepickerPopup = toggleDatepickerPopup;
+        vm.save = save;
+        vm.cancelEdit = cancelEdit;
+        vm.remove = remove;
+
+        vm.dateformat = 'EEEE dd-MM-yyyy';
+        vm.datepickerPopupOptions = { };
+        vm.datepickerPopup = { opened: false };
+
         activate();
 
         function activate() {
             LoadingIndicatorService.startLoading();
-
-            vm.dateformat = 'EEEE dd-MM-yyyy';
 
             EnergieContractenService.query(
                 function(data) {
@@ -29,31 +38,24 @@
             );
         }
 
-        vm.startEdit = function(energiecontract) {
+        function startEdit(energiecontract) {
             vm.item = angular.copy(energiecontract);
             vm.vanaf = new Date(energiecontract.van);
             vm.selectedId = vm.item.id;
             vm.detailsmode = 'edit';
             vm.showDetails = true;
-        };
+        }
 
-        vm.startAdd = function() {
+        function startAdd() {
             vm.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             vm.vanaf = vm.item.van;
             vm.detailsmode = 'add';
             vm.showDetails = true;
-        };
+        }
 
-        vm.datepickerPopupOptions = {
-        };
-
-        vm.datepickerPopup = {
-            opened: false
-        };
-
-        vm.toggleDatepickerPopup = function() {
+        function toggleDatepickerPopup() {
             vm.datepickerPopup.opened = !vm.datepickerPopup.opened;
-        };
+        }
 
         function saveAdd() {
             vm.item.$save(
@@ -85,7 +87,7 @@
             );
         }
 
-        vm.save = function() {
+        function save() {
             LoadingIndicatorService.startLoading();
 
             vm.item.van = new Date(vm.vanaf).getTime();
@@ -99,14 +101,14 @@
             } else {
                 handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + vm.detailsmode);
             }
-        };
+        }
 
-        vm.cancelEdit = function() {
+        function cancelEdit() {
             vm.selectedId = null;
             vm.showDetails = false;
-        };
+        }
 
-        vm.delete = function() {
+        function remove() {
             LoadingIndicatorService.startLoading();
 
             $log.info('Delete energiecontract: ' + angular.toJson(vm.item));
@@ -124,7 +126,7 @@
                     handleServiceError('Verwijderen is niet gelukt.', errorResult);
                 }
             );
-        };
+        }
 
         function getIndexOfItemWithId(id, items) {
             var result = null;

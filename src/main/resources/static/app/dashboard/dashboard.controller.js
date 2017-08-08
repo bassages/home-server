@@ -10,6 +10,11 @@
     function DashboardController($http, $log, $location, RealtimeMeterstandenService, RealtimeKlimaatService) {
         var vm = this;
 
+        vm.stroomClick = stroomClick;
+        vm.gasClick = gasClick;
+        vm.temperatuurClick = temperatuurClick;
+        vm.luchtvochtigheidClick = luchtvochtigheidClick;
+
         activate();
 
         function activate() {
@@ -21,18 +26,18 @@
             getHuidigeEnergieContract();
         }
 
-        vm.stroomClick = function() {
+        function stroomClick() {
             $location.path('energie/verbruik/uur').search('energiesoort', ['stroom']);
-        };
-        vm.gasClick = function() {
+        }
+        function gasClick() {
             $location.path('energie/verbruik/uur').search('energiesoort', ['gas']);
-        };
-        vm.temperatuurClick = function() {
+        }
+        function temperatuurClick() {
             $location.path('klimaat/historie/temperatuur');
-        };
-        vm.luchtvochtigheidClick = function() {
+        }
+        function luchtvochtigheidClick() {
             $location.path('klimaat/historie/luchtvochtigheid');
-        };
+        }
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);

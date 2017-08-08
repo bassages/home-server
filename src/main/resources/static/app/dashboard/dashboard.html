@@ -27,7 +27,7 @@
 
                 <div class="p-div-small">
                     <p>Op jaarbasis</p>
-                    <span ng-if="vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen">{{vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen | number:2 }}</span> kWh </span><span ng-if="vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">/ &euro; {{vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen | number:2}}</span>
+                    <span ng-if="vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen">{{vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen | number:0 }}</span> kWh </span><span ng-if="vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">/ &euro; {{vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen | number:2}}</span>
                     <span ng-if="!vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen && !vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen">-</span>
                 </div>
 

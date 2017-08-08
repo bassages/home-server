@@ -5,32 +5,42 @@
         .module('app')
         .controller('MultipleDateSelectionController', MultipleDateSelectionController);
 
-    MultipleDateSelectionController.$inject = ['$uibModalInstance', 'datepickerOptions', 'selectedDates'];
+    MultipleDateSelectionController.$inject = ['$filter', '$uibModalInstance', 'datepickerOptions', 'selectedDates', 'selectedDateFormat'];
 
-    function MultipleDateSelectionController($uibModalInstance, datepickerOptions, selectedDates) {
+    function MultipleDateSelectionController($filter, $uibModalInstance, datepickerOptions, selectedDates, selectedDateFormat) {
         var vm = this;
+
+        vm.ok = ok;
+        vm.cancel = cancel;
+        vm.removeDate = removedate;
+        vm.datepickerChange = datepickerChange;
+        vm.formatSelectedDate = formatSelectedDate;
 
         vm.selectedDates = _.clone(selectedDates);
         vm.datepickerOptions = datepickerOptions;
 
-        vm.ok = function () {
+        function ok() {
             $uibModalInstance.close(vm.selectedDates);
-        };
+        }
 
-        vm.cancel = function () {
+        function cancel() {
             $uibModalInstance.dismiss('cancel');
-        };
+        }
 
-        vm.removeDate = function(dateToRemove) {
+        function removedate(dateToRemove) {
             _.pull(vm.selectedDates, dateToRemove);
-        };
+        }
 
-        vm.datepickerChange = function() {
+        function datepickerChange() {
             if (_.isDate(vm.selectedDate) && !containsDate(vm.selectedDates, vm.selectedDate)) {
                 addSelectedDateToSelectedDates();
                 vm.selectedDate = null;
             }
-        };
+        }
+
+        function formatSelectedDate(selectedDate) {
+            return $filter('date')(selectedDate, selectedDateFormat);
+        }
 
         function addSelectedDateToSelectedDates() {
             vm.selectedDates.push(vm.selectedDate);

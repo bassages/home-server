@@ -8,17 +8,22 @@
     JaarEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
 
     function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
+
+        $scope.changePeriod = changePeriod;
+        $scope.toggleEnergiesoort = toggleEnergiesoort;
+        $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
+
+        $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(Date.today().getFullYear()));
+        $scope.period = 'jaar';
+        $scope.soort = $routeParams.verbruiksoort;
+        $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+        $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+        $scope.hideDateSelection = true;
+        $scope.data = [];
+
         activate();
 
         function activate() {
-            $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(Date.today().getFullYear()));
-            $scope.period = 'jaar';
-            $scope.soort = $routeParams.verbruiksoort;
-            $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-            $scope.hideDateSelection = true;
-            $scope.data = [];
-
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {
@@ -31,23 +36,22 @@
                     loadDataIntoTable($scope.data);
                 }
             });
-
             getDataFromServer();
         }
 
-        $scope.changePeriod = function(period) {
+        function changePeriod(period) {
             $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
-        };
+        }
 
-        $scope.toggleEnergiesoort = function (energiesoortToToggle) {
+        function toggleEnergiesoort(energiesoortToToggle) {
             if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 $location.search('energiesoort', $scope.energiesoorten);
             }
-        };
+        }
 
-        $scope.allowMultpleEnergiesoorten = function() {
+        function allowMultpleEnergiesoorten() {
             return $scope.soort == 'kosten';
-        };
+        }
 
         function getTicksForEveryYearInResponse(data) {
             return _.map(data, 'jaar').sort();

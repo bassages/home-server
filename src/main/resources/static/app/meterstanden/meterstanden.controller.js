@@ -10,40 +10,33 @@
     function MeterstandenController($log, MeterstandenService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        vm.isMaxSelected = isMaxSelected;
+        vm.navigate = navigate;
+        vm.toggleDatepickerPopup = toggleDatepickerPopup;
+
+        vm.selection = Date.today().clearTime().moveToFirstDayOfMonth();
+        vm.dateformat = 'MMMM yyyy';
+        vm.datepickerPopupOptions = { datepickerMode: 'month', minMode: 'month', maxDate: Date.today() };
+        vm.datepickerPopup = { opened: false };
+
         activate();
 
         function activate() {
-            vm.selection = Date.today().clearTime().moveToFirstDayOfMonth();
-            vm.dateformat = 'MMMM yyyy';
             getDataFromServer();
         }
 
-        vm.isMaxSelected = function() {
+        function isMaxSelected() {
             return Date.today().getMonth() == vm.selection.getMonth() && Date.today().getFullYear() == vm.selection.getFullYear();
-        };
+        }
 
-        vm.navigate = function(numberOfPeriods) {
+        function navigate(numberOfPeriods) {
             vm.selection = vm.selection.clone().add(numberOfPeriods).months();
             getDataFromServer();
-        };
+        }
 
-        vm.datepickerPopupOptions = {
-            datepickerMode: 'month',
-            minMode: 'month',
-            maxDate: Date.today()
-        };
-
-        vm.datepickerPopup = {
-            opened: false
-        };
-
-        vm.toggleDatepickerPopup = function() {
+        function toggleDatepickerPopup() {
             vm.datepickerPopup.opened = !vm.datepickerPopup.opened;
-        };
-
-        vm.selectionChange = function() {
-            getDataFromServer();
-        };
+        }
 
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();

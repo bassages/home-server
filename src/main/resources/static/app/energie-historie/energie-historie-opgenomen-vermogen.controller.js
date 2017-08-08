@@ -10,26 +10,25 @@
     function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
+        $scope.selection = Date.today();
+        $scope.energiesoort = 'stroom';
+        $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
+        $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
+        $scope.soort = 'stroom';
+        $scope.dateformat = 'EEE. dd-MM-yyyy';
+        $scope.historicDataDisplayType = 'chart';
+
+        $scope.hideUur = true;
+        $scope.hideDag = true;
+        $scope.hideMaand = true;
+        $scope.hideJaar = true;
+        $scope.hideEnergieSoorten = true;
+        $scope.showOpgenomenVermogen = true;
+
         activate();
 
         function activate() {
-            $scope.selection = Date.today();
-            $scope.energiesoort = 'stroom';
-            $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
-            $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
-            $scope.soort = 'stroom';
-            $scope.dateformat = 'EEE. dd-MM-yyyy';
-            $scope.historicDataDisplayType = 'chart';
-
-            $scope.hideUur = true;
-            $scope.hideDag = true;
-            $scope.hideMaand = true;
-            $scope.hideJaar = true;
-            $scope.hideEnergieSoorten = true;
-            $scope.showOpgenomenVermogen = true;
-
             EnergieHistorieService.manageChartSize($scope);
-
             getDataFromServer();
         }
 

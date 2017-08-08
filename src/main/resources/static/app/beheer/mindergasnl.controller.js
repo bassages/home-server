@@ -10,6 +10,8 @@
     function MindergasnlController($log, MindergasnlService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        vm.save = save;
+
         activate();
 
         function activate() {
@@ -31,7 +33,7 @@
             );
         }
 
-        vm.save = function() {
+        function save() {
             LoadingIndicatorService.startLoading();
 
             $log.info('Save Mindergas.nl settings: ' + angular.toJson(vm.settings));
@@ -46,8 +48,7 @@
                     handleServiceError('Opslaan is niet gelukt.', errorResult);
                 }
             );
-
-        };
+        }
 
         function handleServiceError(message, errorResult) {
             $log.error(message + ' Cause=' + angular.toJson(errorResult));

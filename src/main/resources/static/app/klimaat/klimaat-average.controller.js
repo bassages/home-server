@@ -10,41 +10,17 @@
     function KlimaatAverageController($http, $log, $routeParams, KlimaatService, LoadingIndicatorService, ErrorMessageService, DATETIME_CONSTANTS, $uibModal) {
         var vm = this;
 
+        vm.openMultipleYearsSelectionDialog = openMultipleYearsSelectionDialog;
+        vm.getMonthName = getMonthName;
+        vm.getFormattedSelectedYears = getFormattedSelectedYears;
+
+        vm.sensortype = $routeParams.sensortype;
+        vm.unitlabel = KlimaatService.getUnitlabel(vm.sensortype);
+        vm.selection = [Date.january().first()];
+
         activate();
 
         function activate() {
-            vm.sensortype = $routeParams.sensortype;
-            vm.unitlabel = KlimaatService.getUnitlabel(vm.sensortype);
-            vm.selection = [Date.january().first()];
-
-            vm.openMultipleYearsSelectionDialog = function() {
-                var modalInstance = $uibModal.open({
-                    animation: false,
-                    templateUrl: 'app/multiple-dates-selection-dialog.html',
-                    backdrop: 'static',
-                    controller: 'MultipleDateSelectionController',
-                    controllerAs: 'vm',
-                    size: 'md',
-                    resolve: {
-                        selectedDates: function() {
-                            return vm.selection;
-                        },
-                        datepickerOptions: function() {
-                            return {
-                                maxDate: Date.today(), datepickerMode: 'year', minMode: 'year', yearRows: 4, yearColumns: 4
-                            };
-                        }
-                    }
-                });
-                modalInstance.result.then(function(selectedYears) {
-                    vm.selection = selectedYears;
-                    getDataFromServer();
-                }, function() {
-                    $log.info('Multiple Date Selection dialog was closed');
-                });
-
-            };
-
             getDataFromServer();
         }
 
@@ -52,13 +28,41 @@
             vm.averagePerMonthInYear = response.data;
         }
 
-        vm.getMonthName = function(monthNumber) {
+        function getMonthName(monthNumber) {
             return DATETIME_CONSTANTS.fullMonths[monthNumber];
-        };
+        }
 
-        vm.getFormattedSelectedYears = function() {
-            return _.map(vm.selection, function(date) { return new Date(date).getFullYear(); }).join(', ');
-        };
+        function getFormattedSelectedYears() {
+            return _.map(vm.selection, function(date) { return date.getFullYear(); }).join(', ');
+        }
+
+        function openMultipleYearsSelectionDialog () {
+            var modalInstance = $uibModal.open({
+                animation: false,
+                templateUrl: 'app/multiple-dates-selection-dialog.html',
+                backdrop: 'static',
+                controller: 'MultipleDateSelectionController',
+                controllerAs: 'vm',
+                size: 'md',
+                resolve: {
+                    selectedDates: function() {
+                        return vm.selection;
+                    },
+                    datepickerOptions: function() {
+                        return {
+                            maxDate: Date.today(), datepickerMode: 'year', minMode: 'year', yearRows: 4, yearColumns: 4
+                        };
+                    },
+                    selectedDateFormat: function() { return 'yyyy'; }
+                }
+            });
+            modalInstance.result.then(function(selectedYears) {
+                vm.selection = selectedYears;
+                getDataFromServer();
+            }, function() {
+                $log.info('Multiple Date Selection dialog was closed');
+            });
+        }
 
         function getDataFromServer() {
 

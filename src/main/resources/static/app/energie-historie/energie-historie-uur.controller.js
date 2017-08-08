@@ -8,20 +8,33 @@
     UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
     function UurEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+
+        $scope.selectionChange = selectionChange;
+        $scope.changePeriod = changePeriod;
+        $scope.toggleEnergiesoort = toggleEnergiesoort;
+        $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
+        $scope.isMaxSelected = isMaxSelected;
+        $scope.navigate = navigate;
+        $scope.toggleDatepickerPopup = toggleDatepickerPopup;
+        $scope.selectionChange = selectionChange;
+
+        $scope.selection = Date.today();
+        $scope.period = 'uur';
+
+        $scope.soort = $routeParams.verbruiksoort;
+        $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+
+        $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+
+        $scope.dateformat = 'EEE. dd-MM-yyyy';
+        $scope.datepickerPopupOptions = { maxDate: Date.today() };
+        $scope.datepickerPopup = { opened: false };
+
+        $scope.data = [];
+
         activate();
 
         function activate() {
-            $scope.selection = Date.today();
-            $scope.period = 'uur';
-
-            $scope.soort = $routeParams.verbruiksoort;
-            $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-
-            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-
-            $scope.dateformat = 'EEE. dd-MM-yyyy';
-            $scope.data = [];
-
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {
@@ -34,48 +47,39 @@
                     loadDataIntoTable($scope.data);
                 }
             });
-
             getDataFromServer();
         }
 
-        $scope.changePeriod = function(period) {
+        function changePeriod(period) {
             $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
-        };
+        }
 
-        $scope.toggleEnergiesoort = function (energiesoortToToggle) {
+         function toggleEnergiesoort(energiesoortToToggle) {
             if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 $location.search('energiesoort', $scope.energiesoorten);
             }
-        };
+        }
 
-        $scope.allowMultpleEnergiesoorten = function() {
+        function allowMultpleEnergiesoorten() {
             return $scope.soort == 'kosten';
-        };
+        }
 
-        $scope.isMaxSelected = function() {
+        function isMaxSelected() {
             return Date.today().getTime() == $scope.selection.getTime();
-        };
+        }
 
-        $scope.navigate = function(numberOfPeriods) {
+        function navigate(numberOfPeriods) {
             $scope.selection = $scope.selection.clone().add(numberOfPeriods).days();
             getDataFromServer();
-        };
+        }
 
-        $scope.datepickerPopupOptions = {
-            maxDate: Date.today()
-        };
-
-        $scope.datepickerPopup = {
-            opened: false
-        };
-
-        $scope.toggleDatepickerPopup = function() {
+        function toggleDatepickerPopup() {
             $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
-        };
+        }
 
-        $scope.selectionChange = function() {
+        function selectionChange() {
             getDataFromServer();
-        };
+        }
 
         function getChartConfig(data) {
             var chartConfig = {};

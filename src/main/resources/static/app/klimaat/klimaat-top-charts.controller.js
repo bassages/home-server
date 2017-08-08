@@ -10,20 +10,20 @@
     function KlimaatTopChartsController($http, $q, $log, $routeParams, KlimaatService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
+        vm.sensortype = $routeParams.sensortype;
+        vm.unitlabel = KlimaatService.getUnitlabel(vm.sensortype);
+
+        vm.limits = [5, 10, 25, 50, 100];
+        vm.limit = 10;
+
+        vm.from = Date.january().first();
+        vm.to = Date.today();
+
+        vm.dateformat = 'EEEE. dd-MM-yyyy';
+
         activate();
 
         function activate() {
-            vm.sensortype = $routeParams.sensortype;
-            vm.unitlabel = KlimaatService.getUnitlabel(vm.sensortype);
-
-            vm.limits = [5, 10, 25, 50, 100];
-            vm.limit = 10;
-
-            vm.from = Date.january().first();
-            vm.to = Date.today();
-
-            vm.dateformat = 'EEEE. dd-MM-yyyy';
-
             getDataFromServer();
         }
 
