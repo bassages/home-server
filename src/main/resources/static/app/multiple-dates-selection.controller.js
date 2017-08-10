@@ -12,12 +12,22 @@
 
         vm.ok = ok;
         vm.cancel = cancel;
-        vm.removeDate = removedate;
+        vm.removeDate = removeDate;
         vm.datepickerChange = datepickerChange;
         vm.formatSelectedDate = formatSelectedDate;
 
         vm.selectedDates = _.clone(selectedDates);
         vm.datepickerOptions = datepickerOptions;
+        vm.datepickerOptions.customClass = getCustomDayClass;
+        vm.selectedDate = null;
+
+        function getCustomDayClass(data) {
+            if (containsDate(vm.selectedDates, data.date)) {
+                return 'datepicker-selected-date';
+            } else {
+                return 'datepicker-not-selected-date';
+            }
+        }
 
         function ok() {
             $uibModalInstance.close(vm.selectedDates);
@@ -27,29 +37,34 @@
             $uibModalInstance.dismiss('cancel');
         }
 
-        function removedate(dateToRemove) {
-            _.pull(vm.selectedDates, dateToRemove);
-        }
-
         function datepickerChange() {
-            if (_.isDate(vm.selectedDate) && !containsDate(vm.selectedDates, vm.selectedDate)) {
-                addSelectedDateToSelectedDates();
+            if (_.isDate(vm.selectedDate)) {
+                if (containsDate(vm.selectedDates, vm.selectedDate)) {
+                    removeDate(vm.selectedDate);
+                } else {
+                    addDate(vm.selectedDate);
+                }
                 vm.selectedDate = null;
             }
         }
-
         function formatSelectedDate(selectedDate) {
             return $filter('date')(selectedDate, selectedDateFormat);
         }
 
-        function addSelectedDateToSelectedDates() {
-            vm.selectedDates.push(vm.selectedDate);
+        function addDate(dateToAdd) {
+            vm.selectedDates.push(dateToAdd);
             vm.selectedDates.sort(function(a,b){return a.getTime() - b.getTime();});
+        }
+
+        function removeDate(dateToRemove) {
+            _.remove(vm.selectedDates, function(date) {
+                return date.getTime() === dateToRemove.getTime();
+            });
         }
 
         function containsDate(selectedDates, date) {
             return _.isDate(_.find(selectedDates, function (o) {
-                return o.getTime() === date.getTime();
+                return o.getDate() === date.getDate() && o.getMonth() === date.getMonth() && o.getFullYear() === date.getFullYear();
             }));
         }
     }
