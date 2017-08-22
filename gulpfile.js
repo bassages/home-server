@@ -8,15 +8,18 @@ var gulp = require('gulp'),
     cleanCSS  = require('gulp-clean-css'),
     rename = require("gulp-rename");
 
-var appSourcesDir = 'src/main/resources/static/app';
-var appStylesDir = 'src/main/resources/static/styles';
+var appSourcesRoot = 'src/main/resources/static';
+var appJsDir = appSourcesRoot + '/app';
+var appStylesDir = appSourcesRoot + '/styles';
 
-var buildJsDir = 'build/resources/main/static/app';
-var buildCssDir = 'build/resources/main/static/css';
+var buildDir = gutil.env.buildtype === 'prod' ? 'build/resources/main/static' : 'out/production/resources/static';
+
+var buildJsDir = buildDir + '/app';
+var buildCssDir = buildDir + '/css';
 
 // configure the jshint task
 gulp.task('jshint', function() {
-    return gulp.src(appSourcesDir + '/**/*.js')
+    return gulp.src(appJsDir + '/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(jshint.reporter('fail'));
@@ -32,7 +35,7 @@ gulp.task('watch-styles', function() {
 
 // Task to watch js changes
 gulp.task('watch-js', function() {
-    gulp.watch(appSourcesDir + '/**/*.js', ['jshint', 'build-js']);
+    gulp.watch(appJsDir + '/**/*.js', ['jshint', 'build-js']);
 });
 
 // Task to build all frontend artifacts
@@ -40,7 +43,7 @@ gulp.task('build', ['jshint', 'build-js', 'build-css']);
 
 // Task to build js file
 gulp.task('build-js', function() {
-    return gulp.src(appSourcesDir + '/**/*.js')
+    return gulp.src(appJsDir + '/**/*.js')
         .pipe(sourcemaps.init())
         .pipe(concat('home.js'))
         // only uglify if gulp is ran with '--buildtype prod

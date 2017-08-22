@@ -1,6 +1,5 @@
 package nl.wiegman.home.energie;
 
-import antlr.collections.impl.IntRange;
 import nl.wiegman.home.DateTimeUtil;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -13,7 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAccessor;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -174,14 +172,6 @@ public class VerbruikService {
             return verbruikServiceCached.getPotentiallyCachedStroomVerbruikInPeriode(vanMillis, totEnMetMillis, stroomTariefIndicator);
         } else {
             return verbruikServiceCached.getStroomVerbruikInPeriode(vanMillis, totEnMetMillis, stroomTariefIndicator);
-        }
-    }
-
-    public List<OpgenomenVermogen> getOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
-        if (to < System.currentTimeMillis()) {
-            return opgenomenVermogenService.getPotentiallyCachedOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
-        } else {
-            return opgenomenVermogenService.getOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
         }
     }
 }

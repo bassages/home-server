@@ -76,14 +76,14 @@
             for (var i = 0; i < length; i++) {
                 var transformedDataItem = {};
 
-                var tarief = data[i].tarief;
-                transformedDataItem.dt = data[i].dt;
+                var tarief = data[i].tariefIndicator.toLowerCase();
+                transformedDataItem.datumtijd = data[i].datumtijd;
                 transformedDataItem['watt-' + tarief] = data[i].watt;
 
                 // Fill the "gap" between this row and the previous one
                 if (previousTarief && tarief && tarief !== previousTarief) {
                     var obj = {};
-                    obj.dt = data[i].dt - 1;
+                    obj.datumtijd = data[i].datumtijd - 1;
                     var attribute = 'watt-' + previousTarief;
                     obj[attribute] = data[i].watt;
                     transformedData.push(obj);
@@ -132,7 +132,7 @@
 
             chartConfig.bindto = '#chart';
 
-            chartConfig.data = {json: transformedChartData, keys: {x: 'dt', value: ['watt-1', 'watt-2']}, types: {'watt-1': 'area', 'watt-2': 'area'}};
+            chartConfig.data = {json: transformedChartData, keys: {x: 'datumtijd', value: ['watt-dal', 'watt-normaal']}, types: {'watt-dal': 'area', 'watt-normaal': 'area'}};
 
             chartConfig.axis = {};
             chartConfig.axis.x = {
@@ -175,7 +175,7 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoChart([]);
 
-            var dataUrl = 'api/energie/opgenomen-vermogen-historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
+            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
 
             $http({method: 'GET', url: dataUrl})
                 .then(

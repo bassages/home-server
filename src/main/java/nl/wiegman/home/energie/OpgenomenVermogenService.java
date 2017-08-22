@@ -1,6 +1,7 @@
 package nl.wiegman.home.energie;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -12,26 +13,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpgenomenVermogenService {
 
-    private final MeterstandRepository meterstandRepository;
+    private final OpgenomenVermogenRepository opgenomenVermogenRepository;
 
     @Autowired
-    public OpgenomenVermogenService(MeterstandRepository meterstandRepository) {
-        this.meterstandRepository = meterstandRepository;
+    public OpgenomenVermogenService(OpgenomenVermogenRepository opgenomenVermogenRepository) {
+        this.opgenomenVermogenRepository = opgenomenVermogenRepository;
+    }
+
+    public OpgenomenVermogen save(OpgenomenVermogen opgenomenVermogen) {
+        return opgenomenVermogenRepository.save(opgenomenVermogen);
+    }
+
+    public OpgenomenVermogen getMeestRecente() {
+        return opgenomenVermogenRepository.getMeestRecente();
     }
 
     @Cacheable(cacheNames = "opgenomenVermogenHistory")
-    public List<OpgenomenVermogen> getPotentiallyCachedOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
-        return getOpgenomenStroomVermogenHistory(from, to, subPeriodLength);
+    public List<OpgenomenVermogen> getPotentiallyCachedHistory(Date from, Date to, long subPeriodLength) {
+        return getHistory(from, to, subPeriodLength);
     }
 
-    public List<OpgenomenVermogen> getOpgenomenStroomVermogenHistory(long from, long to, long subPeriodLength) {
-        List<Meterstand> meterstandenInPeriod = meterstandRepository.getMeterstanden(from, to);
+    public List<OpgenomenVermogen> getHistory(Date from, Date to, long subPeriodLength) {
+        List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
 
-        long nrOfSubPeriodsInPeriod = (to-from)/subPeriodLength;
+        long nrOfSubPeriodsInPeriod = (to.getTime()-from.getTime())/subPeriodLength;
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod).boxed()
-                .map(periodNumber -> this.toSubPeriod(periodNumber, from, subPeriodLength))
-                .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(meterstandenInPeriod, subPeriod))
+                .map(periodNumber -> this.toSubPeriod(periodNumber, from.getTime(), subPeriodLength))
+                .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
                 .collect(Collectors.toList());
     }
 
@@ -41,12 +50,28 @@ public class OpgenomenVermogenService {
         return new Period(subStart, subEnd);
     }
 
-    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<Meterstand> meterstanden, Period period) {
-        return meterstanden.stream()
-                .filter(meterstand -> meterstand.getDatumtijd() >= period.from && meterstand.getDatumtijd() < period.to)
-                .max(Comparator.comparingInt(Meterstand::getStroomOpgenomenVermogenInWatt))
-                .map(meterstand1 -> new OpgenomenVermogen(period.from, meterstand1.getStroomOpgenomenVermogenInWatt(), meterstand1.getStroomTariefIndicator()))
-                .orElse(new OpgenomenVermogen(period.from, 0, null));
+    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, Period period) {
+        return opgenomenVermogens.stream()
+                .filter(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getTime() >= period.from && opgenomenVermogen.getDatumtijd().getTime() < period.to)
+                .max(Comparator.comparingInt(OpgenomenVermogen::getWatt))
+                .map(o -> this.mapToOpgenomenVermogen(o, period))
+                .orElse(this.mapToEmptyOpgenomenVermogen(period.from));
+    }
+
+    private OpgenomenVermogen mapToOpgenomenVermogen(OpgenomenVermogen opgenomenVermogen, Period period) {
+        OpgenomenVermogen result = new OpgenomenVermogen();
+        result.setTariefIndicator(opgenomenVermogen.getTariefIndicator());
+        result.setDatumtijd(new Date(period.from));
+        result.setWatt(opgenomenVermogen.getWatt());
+        return result;
+    }
+
+    private OpgenomenVermogen mapToEmptyOpgenomenVermogen(long datumtijd) {
+        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
+        opgenomenVermogen.setDatumtijd(new Date(datumtijd));
+        opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
+        opgenomenVermogen.setWatt(0);
+        return opgenomenVermogen;
     }
 
     private static class Period {

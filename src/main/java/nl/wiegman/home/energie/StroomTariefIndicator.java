@@ -4,7 +4,8 @@ import java.util.EnumSet;
 
 public enum StroomTariefIndicator {
     DAL((short)1),
-    NORMAAL((short)2);
+    NORMAAL((short)2),
+    ONBEKEND((short)9);
 
     private final short id;
 

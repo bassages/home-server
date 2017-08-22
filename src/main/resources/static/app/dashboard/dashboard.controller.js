@@ -5,9 +5,9 @@
         .module('app')
         .controller('DashboardController', DashboardController);
 
-    DashboardController.$inject = ['$http', '$log', '$location', 'RealtimeMeterstandenService', 'RealtimeKlimaatService'];
+    DashboardController.$inject = ['$http', '$log', '$location', 'RealtimeMeterstandenService', 'RealtimeKlimaatService', 'RealtimeOpgenomenVermogenService'];
 
-    function DashboardController($http, $log, $location, RealtimeMeterstandenService, RealtimeKlimaatService) {
+    function DashboardController($http, $log, $location, RealtimeMeterstandenService, RealtimeKlimaatService, RealtimeOpgenomenVermogenService) {
         var vm = this;
 
         vm.stroomClick = stroomClick;
@@ -19,6 +19,7 @@
 
         function activate() {
             getMeestRecenteMeterstand();
+            getMeestRecenteOpgenomenVermogen();
             getGasVerbruikVandaag();
             getGemiddeldeGasVerbruikPerDagInAfgelopenWeek();
             getOudsteMeterstandVanVandaag();
@@ -41,6 +42,10 @@
 
         RealtimeMeterstandenService.receive().then(null, null, function(jsonData) {
             updateMeterstand(jsonData);
+        });
+
+        RealtimeOpgenomenVermogenService.receive().then(null, null, function(jsonData) {
+            updateOpgenomenVermogen(jsonData);
         });
 
         RealtimeKlimaatService.receive().then(null, null, function(jsonData) {
@@ -97,6 +102,16 @@
                 method: 'GET', url: 'api/meterstanden/meest-recente'
             }).then(function successCallback(response) {
                 updateMeterstand(response.data);
+            }, function errorCallback(response) {
+                $log.error(angular.toJson(response));
+            });
+        }
+
+        function getMeestRecenteOpgenomenVermogen() {
+            $http({
+                method: 'GET', url: 'api/opgenomen-vermogen/meest-recente'
+            }).then(function successCallback(response) {
+                updateOpgenomenVermogen(response.data);
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
             });
@@ -176,13 +191,13 @@
         }
 
         function updateYearlyUsageBasedOnCurrentUsage() {
-            if (vm.currentEnergieContract && vm.huidigeMeterstanden) {
-                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((vm.huidigeMeterstanden.stroomOpgenomenVermogenInWatt * 24 * 365) / 1000);
+            if (vm.currentEnergieContract && vm.opgenomenVermogen) {
+                vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((vm.opgenomenVermogen.watt * 24 * 365) / 1000);
                 $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
-                if (vm.huidigeMeterstanden.stroomTariefIndicator == 'NORMAAL' || !vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                if (vm.opgenomenVermogen.tariefIndicator == 'NORMAAL' || !vm.currentEnergieContract.stroomPerKwhDalTarief) {
                     vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhNormaalTarief;
-                } else if (vm.huidigeMeterstanden.stroomTariefIndicator == 'DAL' && vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                } else if (vm.opgenomenVermogen.tariefIndicator == 'DAL' && vm.currentEnergieContract.stroomPerKwhDalTarief) {
                     vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhDalTarief;
                 }
 
@@ -190,20 +205,23 @@
             }
         }
 
-        function updateMeterstand(meterstanden) {
-            if (meterstanden) {
+        function updateOpgenomenVermogen(opgenomenVermogen) {
+            vm.opgenomenVermogen = opgenomenVermogen;
+            setOpgenomenVermogenLeds(opgenomenVermogen.watt);
+            updateYearlyUsageBasedOnCurrentUsage();
+        }
+
+        function updateMeterstand(meterstand) {
+            if (meterstand) {
                 if (vm.gasVerbruikVandaag === null) {
                     getGasVerbruikVandaag();
                 }
 
-                vm.huidigeMeterstanden = meterstanden;
-
-                setOpgenomenVermogenLeds(meterstanden.stroomOpgenomenVermogenInWatt);
+                vm.meterstand = meterstand;
 
                 if (vm.oudsteVanVandaag) {
-                    vm.gasVerbruikVandaag = meterstanden.gas - vm.oudsteVanVandaag.gas;
+                    vm.gasVerbruikVandaag = meterstand.gas - vm.oudsteVanVandaag.gas;
                 }
-                updateYearlyUsageBasedOnCurrentUsage();
             }
         }
     }

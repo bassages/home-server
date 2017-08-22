@@ -19,7 +19,7 @@
 
                     <p>Op dit moment</p>
                     <div class="p-div">
-                        {{vm.huidigeMeterstanden.stroomOpgenomenVermogenInWatt | number:0}} Watt
+                        {{vm.opgenomenVermogen.watt | number:0}} Watt
                     </div>
                 </div>
 
@@ -34,9 +34,9 @@
                 <hr class="hidden-xs"/>
 
                 <div class="p-div-small hidden-xs">
-                    Meterstand 1: {{vm.huidigeMeterstanden.stroomTarief1 | number:3}}
+                    Meterstand 1: {{vm.meterstand.stroomTarief1 | number:3}}
                     <br/>
-                    Meterstand 2: {{vm.huidigeMeterstanden.stroomTarief2 | number:3}}
+                    Meterstand 2: {{vm.meterstand.stroomTarief2 | number:3}}
                 </div>
 
             </div>
@@ -63,7 +63,7 @@
                 <hr class="hidden-xs"/>
 
                 <div class="p-div-small hidden-xs">
-                    Meterstand: {{vm.huidigeMeterstanden.gas | number:3}}
+                    Meterstand: {{vm.meterstand.gas | number:3}}
                     <br/>
                     &nbsp;
                 </div>

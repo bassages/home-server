@@ -105,4 +105,3 @@ task buildGulpFromGradle(type: GulpTask) {
     // limit memory usage to be able to build in OpenShift container
     options = ['--max-old-space-size=512']
 }
-

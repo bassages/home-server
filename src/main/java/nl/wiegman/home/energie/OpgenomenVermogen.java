@@ -1,39 +1,66 @@
 package nl.wiegman.home.energie;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Bevat het opgenomen vermogen op een bepaald moment in tijd.
  */
+@Entity
 public class OpgenomenVermogen {
 
-    @JsonProperty
-    private long dt;
-    @JsonProperty
+    @JsonIgnore
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(nullable = false, unique = true)
+    private Date datumtijd;
+
+    @NotNull
     private int watt;
-    @JsonProperty
-    private Short tarief;
 
-    public OpgenomenVermogen(long datumtijd, int stroomOpgenomenVermogenInWatt, StroomTariefIndicator stroomTariefIndicator) {
-        this.dt = datumtijd;
-        this.watt = stroomOpgenomenVermogenInWatt;
-        if (stroomTariefIndicator != null) {
-            this.tarief = stroomTariefIndicator.getId();
-        }
+    @NotNull
+    private short tariefIndicator;
+
+    public long getId() {
+        return id;
     }
 
-    @JsonIgnore
-    public void setDatumtijd(long datumtijd) {
-        this.dt = datumtijd;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setOpgenomenVermogenInWatt(int opgenomenVermogenInWatt) {
-        this.watt = opgenomenVermogenInWatt;
+    public Date getDatumtijd() {
+        return datumtijd;
     }
 
-    @JsonIgnore
-    public int getOpgenomenVermogenInWatt() {
+    public void setDatumtijd(Date datumTijd) {
+        this.datumtijd = datumTijd;
+    }
+
+    public void setWatt(int watt) {
+        this.watt = watt;
+    }
+
+    public int getWatt() {
         return watt;
     }
+
+    public StroomTariefIndicator getTariefIndicator() {
+        return StroomTariefIndicator.byId(this.tariefIndicator);
+    }
+
+    public void setTariefIndicator(StroomTariefIndicator tariefIndicator) {
+        this.tariefIndicator = tariefIndicator.getId();
+    }
+
 }

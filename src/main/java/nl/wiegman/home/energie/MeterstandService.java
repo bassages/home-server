@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import nl.wiegman.home.DateTimeUtil;
-import nl.wiegman.home.UpdateEvent;
 
 @Service
 public class MeterstandService {
@@ -22,7 +21,6 @@ public class MeterstandService {
 
     private final MeterstandRepository meterstandRepository;
     private final MeterstandServiceCached meterstandServiceCached;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached,
@@ -30,13 +28,10 @@ public class MeterstandService {
 
         this.meterstandRepository = meterstandRepository;
         this.meterstandServiceCached = meterstandServiceCached;
-        this.eventPublisher = eventPublisher;
     }
 
     public Meterstand save(Meterstand meterstand) {
-        Meterstand savedMeterstand = meterstandRepository.save(meterstand);
-        eventPublisher.publishEvent(new UpdateEvent(savedMeterstand));
-        return savedMeterstand;
+        return meterstandRepository.save(meterstand);
     }
 
     public Meterstand getMeestRecente() {

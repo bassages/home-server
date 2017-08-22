@@ -1,19 +1,23 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.UpdateEvent;
-import nl.wiegman.home.energie.Meterstand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import nl.wiegman.home.UpdateEvent;
 
 @Controller
 public class RealtimeMeterstandController {
 
     public static final String TOPIC = "/topic/meterstand";
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     @Autowired
-    SimpMessagingTemplate messagingTemplate;
+    public RealtimeMeterstandController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @EventListener
     public void onApplicationEvent(UpdateEvent event) {

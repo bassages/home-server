@@ -1,6 +1,8 @@
 package nl.wiegman.home.dev.energie;
 
+import nl.wiegman.home.energie.Dsmr42ReadingDto;
 import nl.wiegman.home.energie.Meterstand;
+import nl.wiegman.home.energie.SlimmeMeterController;
 import nl.wiegman.home.energie.StroomTariefIndicator;
 import nl.wiegman.home.energie.MeterstandService;
 import org.slf4j.Logger;
@@ -31,13 +33,15 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private BigDecimal lastGeneratedGas = null;
 
     @Value("${slimmeMeterSimulator.autostart}")
-    boolean autoStart;
+    private boolean autoStart;
 
     @Value("${slimmeMeterSimulator.initialDelaySeconds}")
-    int initialDelaySeconds;
+    private int initialDelaySeconds;
 
     @Autowired
     private MeterstandService meterstandService;
+    @Autowired
+    private SlimmeMeterController slimmeMeterController;
 
     @PostConstruct
     public void init() {
@@ -73,15 +77,16 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         try {
             long datumtijd = System.currentTimeMillis();
 
-            Meterstand meterstand = new Meterstand();
-            meterstand.setDatumtijd(datumtijd);
-            meterstand.setStroomTarief1(getStroomTarief1(datumtijd));
-            meterstand.setStroomTarief2(getStroomTarief2(datumtijd));
-            meterstand.setGas(getGas(datumtijd));
-            meterstand.setStroomTariefIndicator(StroomTariefIndicator.NORMAAL);
-            meterstand.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
+            Dsmr42ReadingDto dsmr42ReadingDto = new Dsmr42ReadingDto();
 
-            meterstandService.save(meterstand);
+            dsmr42ReadingDto.setDatumtijd(datumtijd);
+            dsmr42ReadingDto.setStroomTarief1(getStroomTarief1(datumtijd));
+            dsmr42ReadingDto.setStroomTarief2(getStroomTarief2(datumtijd));
+            dsmr42ReadingDto.setGas(getGas(datumtijd));
+            dsmr42ReadingDto.setStroomTariefIndicator((int)StroomTariefIndicator.NORMAAL.getId());
+            dsmr42ReadingDto.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
+            slimmeMeterController.save(dsmr42ReadingDto);
+
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);
         }

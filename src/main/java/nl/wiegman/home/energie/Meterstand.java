@@ -1,23 +1,26 @@
 package nl.wiegman.home.energie;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Meterstand {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(nullable = false, unique = true)
     private long datumtijd;
-
-    @Column(nullable = false)
-    private int stroomOpgenomenVermogenInWatt;
 
     @Column(nullable = false, precision = 8, scale = 3)
     private BigDecimal stroomTarief1;
@@ -42,14 +45,6 @@ public class Meterstand {
 
     public void setDatumtijd(long datumtijd) {
         this.datumtijd = datumtijd;
-    }
-
-    public int getStroomOpgenomenVermogenInWatt() {
-        return stroomOpgenomenVermogenInWatt;
-    }
-
-    public void setStroomOpgenomenVermogenInWatt(int stroomOpgenomenVermogenInWatt) {
-        this.stroomOpgenomenVermogenInWatt = stroomOpgenomenVermogenInWatt;
     }
 
     public BigDecimal getStroomTarief1() {
