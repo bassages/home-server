@@ -44,21 +44,21 @@ public class OpgenomenVermogenController {
     }
 
 
-//    @GetMapping(path = "cleanup")
-//    public void cleanup() {
-//        try {
-//            Date twoDaysAgo = DateUtils.addDays(new Date(), -2);
-//
-//            Date date = DateUtils.parseDate("26-02-2017", "dd-MM-yyyy");
-//
-//            while (date.before(twoDaysAgo)) {
-//                opgenomenVermogenService.cleanup(date);
-//                date = DateUtils.addDays(date, 1);
-//            }
-//
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @GetMapping(path = "cleanup")
+    public void cleanup() {
+        try {
+            Date twoDaysAgo = DateUtils.addDays(new Date(), -2);
+
+            Date date = DateUtils.parseDate("26-02-2017", "dd-MM-yyyy");
+
+            while (date.before(twoDaysAgo)) {
+                opgenomenVermogenService.cleanup(date);
+                date = DateUtils.addDays(date, 1);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
