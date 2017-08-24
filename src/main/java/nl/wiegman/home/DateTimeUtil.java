@@ -36,28 +36,46 @@ public class DateTimeUtil {
     }
 
     public static long getStartOfDay(Date day) {
-        Calendar startOfDay = Calendar.getInstance();
-        startOfDay.setTime(day);
-
-        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
-        startOfDay.set(Calendar.MINUTE, 0);
-        startOfDay.set(Calendar.SECOND, 0);
-        startOfDay.set(Calendar.MILLISECOND, 0);
+        Calendar startOfDay = getStartOfDayAsCalendar(day);
 
         return startOfDay.getTimeInMillis();
     }
 
+    public static Date getStartOfDayAsDate(Date day) {
+        Calendar startOfDay = getStartOfDayAsCalendar(day);
+        return startOfDay.getTime();
+    }
+
+    private static Calendar getStartOfDayAsCalendar(Date day) {
+        Calendar startOfDay = Calendar.getInstance();
+        startOfDay.setTime(day);
+        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
+        startOfDay.set(Calendar.MINUTE, 0);
+        startOfDay.set(Calendar.SECOND, 0);
+        startOfDay.set(Calendar.MILLISECOND, 0);
+        return startOfDay;
+    }
+
     public static long getEndOfDay(Date day) {
+        Calendar endOfDay = getEndOfDayAsCalendar(day);
+        return endOfDay.getTimeInMillis();
+    }
+
+    private static Calendar getEndOfDayAsCalendar(Date day) {
         Calendar endOfDay = Calendar.getInstance();
         endOfDay.setTime(day);
-
         endOfDay.set(Calendar.HOUR_OF_DAY, 23);
         endOfDay.set(Calendar.MINUTE, 59);
         endOfDay.set(Calendar.SECOND, 59);
         endOfDay.set(Calendar.MILLISECOND, 0);
-
-        return endOfDay.getTimeInMillis();
+        return endOfDay;
     }
+
+    public static Date getEndOfDayAsDate(Date day) {
+        Calendar startOfDay = getStartOfDayAsCalendar(day);
+        return startOfDay.getTime();
+    }
+
 
     public static Date asDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
