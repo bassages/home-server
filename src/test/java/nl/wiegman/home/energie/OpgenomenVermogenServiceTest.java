@@ -2,6 +2,7 @@ package nl.wiegman.home.energie;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -37,6 +38,12 @@ public class OpgenomenVermogenServiceTest {
 
     @Captor
     private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
+
+    @Test
+    public void shouldClearCacheOnCleanup() {
+        opgenomenVermogenService.cleanup(mock(Date.class));
+        verify(cacheService).clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
+    }
 
     @Test
     public void shouldCleanupOneDay() throws Exception {

@@ -23,7 +23,7 @@ import nl.wiegman.home.UpdateEvent;
 
 @Service
 public class KlimaatService {
-    private static final Logger LOG = LoggerFactory.getLogger(KlimaatService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
 
     private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/15 * * * ?";
 
@@ -49,7 +49,7 @@ public class KlimaatService {
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
     public void save() {
-        LOG.debug("Running " + this.getClass().getSimpleName() + ".save()");
+        LOGGER.debug("Running " + this.getClass().getSimpleName() + ".save()");
 
         Date now = new Date();
         now = DateUtils.truncate(now, Calendar.MINUTE);
@@ -106,12 +106,12 @@ public class KlimaatService {
     }
 
     public Klimaat getMostRecent() {
-        LOG.info("getMostRecent()");
+        LOGGER.info("getMostRecent()");
         return klimaatRepository.getMostRecent();
     }
 
     public void add(Klimaat klimaat) {
-        LOG.info("Recieved klimaat");
+        LOGGER.info("Recieved klimaat");
         if (!receivedInLastQuarter.containsKey(klimaat.getKlimaatSensor().getCode())) {
             receivedInLastQuarter.put(klimaat.getKlimaatSensor().getCode(), new ArrayList<>());
         }

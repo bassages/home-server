@@ -1,13 +1,11 @@
 package nl.wiegman.home.klimaat;
 
-import nl.wiegman.home.klimaat.Klimaat;
-import nl.wiegman.home.klimaat.KlimaatRepos;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class KlimaatServiceCached {

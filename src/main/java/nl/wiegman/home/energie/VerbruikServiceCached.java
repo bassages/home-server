@@ -1,7 +1,8 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.energiecontract.Energiecontract;
-import nl.wiegman.home.energiecontract.EnergiecontractRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -9,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
+import nl.wiegman.home.energiecontract.Energiecontract;
+import nl.wiegman.home.energiecontract.EnergiecontractRepository;
 
 @Service
 public class VerbruikServiceCached {
+
+    public static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
+    public static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
 
     private static final int KOSTEN_SCALE = 3;
 
@@ -27,12 +30,12 @@ public class VerbruikServiceCached {
         this.energiecontractRepository = energiecontractRepository;
     }
 
-    @Cacheable(cacheNames = "gasVerbruikInPeriode")
+    @Cacheable(cacheNames = CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)
     public Verbruik getPotentiallyCachedGasVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
         return getGasVerbruikInPeriode(vanMillis, totEnMetMillis);
     }
 
-    @Cacheable(cacheNames = "stroomVerbruikInPeriode")
+    @Cacheable(cacheNames = CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)
     public Verbruik getPotentiallyCachedStroomVerbruikInPeriode(long vanMillis, long totEnMetMillis, StroomTariefIndicator stroomTariefIndicator) {
         return getStroomVerbruikInPeriode(vanMillis, totEnMetMillis, stroomTariefIndicator);
     }

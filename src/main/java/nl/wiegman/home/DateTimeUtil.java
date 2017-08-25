@@ -1,13 +1,13 @@
 package nl.wiegman.home;
 
-import org.apache.commons.lang3.time.DateUtils;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 public class DateTimeUtil {
 

@@ -1,13 +1,5 @@
 package nl.wiegman.home.energie;
 
-import nl.wiegman.home.DateTimeUtil;
-
-import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -19,6 +11,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import nl.wiegman.home.DateTimeUtil;
+
 @Service
 public class VerbruikService {
 
@@ -26,13 +26,11 @@ public class VerbruikService {
 
     private final MeterstandService meterstandService;
     private final VerbruikServiceCached verbruikServiceCached;
-    private final OpgenomenVermogenService opgenomenVermogenService;
 
     @Autowired
-    public VerbruikService(MeterstandService meterstandService, VerbruikServiceCached verbruikServiceCached, OpgenomenVermogenService opgenomenVermogenService) {
+    public VerbruikService(MeterstandService meterstandService, VerbruikServiceCached verbruikServiceCached) {
         this.meterstandService = meterstandService;
         this.verbruikServiceCached = verbruikServiceCached;
-        this.opgenomenVermogenService = opgenomenVermogenService;
     }
 
     public List<VerbruikInUurOpDagDto> getVerbruikPerUurOpDag(long dag) {

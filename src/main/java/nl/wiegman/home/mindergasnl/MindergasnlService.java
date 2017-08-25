@@ -1,7 +1,9 @@
 package nl.wiegman.home.mindergasnl;
 
-import nl.wiegman.home.energie.MeterstandOpDag;
-import nl.wiegman.home.energie.MeterstandService;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -17,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import nl.wiegman.home.energie.MeterstandOpDag;
+import nl.wiegman.home.energie.MeterstandService;
 
 @Service
 public class MindergasnlService {

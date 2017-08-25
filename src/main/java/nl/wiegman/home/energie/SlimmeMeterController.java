@@ -23,7 +23,7 @@ import nl.wiegman.home.UpdateEvent;
 @RequestMapping("/api/slimmemeter")
 public class SlimmeMeterController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SlimmeMeterController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlimmeMeterController.class);
 
     private final OpgenomenVermogenService opgenomenVermogenService;
     private final MeterstandService meterstandService;
@@ -47,9 +47,9 @@ public class SlimmeMeterController {
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@RequestBody Dsmr42ReadingDto dsmr42ReadingDto) {
         try {
-            LOG.info(objectMapper.writeValueAsString(dsmr42ReadingDto));
+            LOGGER.info(objectMapper.writeValueAsString(dsmr42ReadingDto));
         } catch (JsonProcessingException e) {
-            LOG.warn("Failed to serialize recieved object", e);
+            LOGGER.warn("Failed to serialize recieved object", e);
         }
 
         Meterstand meterstand = mapToMeterStand(dsmr42ReadingDto);

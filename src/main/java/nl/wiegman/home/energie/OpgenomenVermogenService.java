@@ -1,6 +1,7 @@
 package nl.wiegman.home.energie;
 
-import static org.apache.commons.collections.CollectionUtils.*;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -24,9 +25,10 @@ import nl.wiegman.home.cache.CacheService;
 @Service
 public class OpgenomenVermogenService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpgenomenVermogenService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenService.class);
 
-    private static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
+    public static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
+
     private static final String ONE_AM = "0 0 1 * * *";
 
     private final CacheService cacheService;
@@ -122,8 +124,8 @@ public class OpgenomenVermogenService {
 
         opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
 
-        opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOG.info("Keep: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE    )));
-        opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOG.info("Delete: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE)));
+        opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE    )));
+        opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE)));
 
         if (isNotEmpty(opgenomenVermogensInOneHour)) {
             opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensInOneHour);
