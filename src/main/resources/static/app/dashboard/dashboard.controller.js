@@ -75,7 +75,7 @@
             $http({
                 method: 'GET', url: url
             }).then(function successCallback(response) {
-                if (response.data.length == 1) {
+                if (response.data.length === 1) {
                     vm.gasVerbruikVandaag = response.data[0].gasVerbruik;
                     setGasVandaagLeds();
                 }
@@ -174,7 +174,7 @@
         }
 
         function setGasVandaagLeds() {
-            if (vm.gasVerbruikVandaag && vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) {
+            if (_.isNumber(vm.gasVerbruikVandaag) && _.isNumber(vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek)) {
                 var procentueleVeranderingTovAfgelopenWeek = ((vm.gasVerbruikVandaag - vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) / vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek) * 100;
                 $log.debug("Procentuele verandering gas dagverbruik t.o.v. gemiddelde in afgelopen week: " + procentueleVeranderingTovAfgelopenWeek);
                 vm.gasVandaagLed9 = procentueleVeranderingTovAfgelopenWeek >= 50;
@@ -195,9 +195,9 @@
                 vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen = Math.round((vm.opgenomenVermogen.watt * 24 * 365) / 1000);
                 $log.debug('stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen: ', vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen);
 
-                if (vm.opgenomenVermogen.tariefIndicator == 'NORMAAL' || !vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                if (vm.opgenomenVermogen.tariefIndicator === 'NORMAAL' || !vm.currentEnergieContract.stroomPerKwhDalTarief) {
                     vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhNormaalTarief;
-                } else if (vm.opgenomenVermogen.tariefIndicator == 'DAL' && vm.currentEnergieContract.stroomPerKwhDalTarief) {
+                } else if (vm.opgenomenVermogen.tariefIndicator === 'DAL' && vm.currentEnergieContract.stroomPerKwhDalTarief) {
                     vm.stroomKostenPerJaarObvHuidigeOpgenomenVermogen = vm.stroomVerbruikPerJaarInKwhObvHuidigeOpgenomenVermogen * vm.currentEnergieContract.stroomPerKwhDalTarief;
                 }
 
