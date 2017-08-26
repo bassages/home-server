@@ -27,7 +27,7 @@ public class MeterstandService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandService.class);
 
-    private static final String THREE_AM = "0 0 3 * * *";
+    private static final String TWO_AM = "0 0 2 * * *";
 
     private final MeterstandRepository meterstandRepository;
     private final MeterstandServiceCached meterstandServiceCached;
@@ -46,7 +46,7 @@ public class MeterstandService {
         return meterstandRepository.save(meterstand);
     }
 
-    @Scheduled(cron = THREE_AM)
+    @Scheduled(cron = TWO_AM)
     public void dailyCleanup() {
         Date today = new Date();
         cleanup(DateUtils.addDays(today, -1));
