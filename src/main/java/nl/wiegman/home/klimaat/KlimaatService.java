@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +48,16 @@ public class KlimaatService {
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
         this.eventPublisher = eventPublisher;
+    }
+
+    @PostConstruct
+    public void createSensor() {
+        if (CollectionUtils.isEmpty(klimaatSensorRepository.findAll())) {
+            KlimaatSensor klimaatSensor = new KlimaatSensor();
+            klimaatSensor.setCode("WOONKAMER");
+            klimaatSensor.setOmschrijving("Huiskamer");
+            klimaatSensorRepository.save(klimaatSensor);
+        }
     }
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
