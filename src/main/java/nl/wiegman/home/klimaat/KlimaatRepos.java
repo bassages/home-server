@@ -16,6 +16,9 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     // JPQL queries
     String MOST_RECENT = "SELECT k FROM Klimaat k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Klimaat mostrecent)";
 
+    String AVERAGE_LUCHTVOCHTIGHEID_BETWEEN = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
+    String AVERAGE_TEMPERATUUR_BETWEEEN = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
+
     // Native queries
     String PEAK_HIGH_TEMPERATURE_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MAX(temperatuur) AS temperatuur FROM klimaat GROUP BY date(datumtijd) HAVING datum >= :van AND datum < :tot ORDER BY temperatuur DESC LIMIT :limit) datums";
     String FIRST_HIGHEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE date(datumtijd) = :date ORDER BY temperatuur DESC, datumtijd ASC LIMIT 1";
@@ -29,7 +32,7 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT date(datumtijd) AS datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY date(datumtijd) HAVING luchtvochtigheid IS NOT NULL AND datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE luchtvochtigheid IS NOT NULL AND date(datumtijd) = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
-    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode, @Param("van") Date van, @Param("tot") Date tot);
+    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(String klimaatSensorCode, Date van, Date tot);
 
     @Query(value = MOST_RECENT)
     Klimaat getMostRecent();
@@ -58,9 +61,9 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     @Query(value = FIRST_LOWEST_HUMIDITY_ON_DAY, nativeQuery = true)
     Klimaat firstLowestHumidityOnDay(@Param("date") Date day);
 
-    @Query(value = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot")
+    @Query(value = AVERAGE_TEMPERATUUR_BETWEEEN)
     BigDecimal getAverageTemperatuur(@Param("van") Date van, @Param("tot") Date tot);
 
-    @Query(value = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot")
+    @Query(value = AVERAGE_LUCHTVOCHTIGHEID_BETWEEN)
     BigDecimal getAverageLuchtvochtigheid(@Param("van") Date van, @Param("tot") Date tot);
 }
