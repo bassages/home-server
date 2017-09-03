@@ -13,8 +13,8 @@ SERVICE_NAME=home-server
 SCRIPT=start-home-server.sh
 RUNAS=pi
 
-PIDFILE=$WORKING_DIR/home-server.pid
-LOGFILE=$WORKING_DIR/home-server.log
+PIDFILE=$WORKING_DIR/$SERVICE_NAME.pid
+LOGFILE=$WORKING_DIR/$SERVICE_NAME.log
 
 start() {
   if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
