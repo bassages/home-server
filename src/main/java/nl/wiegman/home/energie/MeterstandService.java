@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,13 +63,13 @@ public class MeterstandService {
         Map<Integer, List<Meterstand>> byHour = meterstandenOnDay.stream()
                 .collect(Collectors.groupingBy(item -> item.getDatumtijdAsDate().getHours()));
 
-        byHour.values().forEach(this::cleanupHour);
+        byHour.values().forEach(this::cleanupMeterStandenInOneHour);
 
         cacheService.clear(VerbruikServiceCached.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
         cacheService.clear(VerbruikServiceCached.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
 
-    private void cleanupHour(List<Meterstand> meterstandenInOneHour) {
+    private void cleanupMeterStandenInOneHour(List<Meterstand> meterstandenInOneHour) {
         meterstandenInOneHour.sort(Comparator.comparing(Meterstand::getDatumtijd));
 
         if (meterstandenInOneHour.size() >= 2) {

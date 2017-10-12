@@ -1,5 +1,7 @@
 package nl.wiegman.home.klimaat;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -77,7 +79,7 @@ public class KlimaatController {
         return IntStream.of(jaren).mapToObj(jaar ->
                 IntStream.rangeClosed(1, 12)
                     .mapToObj(maand -> getAverageInMonthOfYear(sensortype, maand, jaar))
-                    .collect(Collectors.toList())).collect(Collectors.toList());
+                    .collect(toList())).collect(toList());
     }
 
     private GemiddeldeKlimaatPerMaandDto getAverageInMonthOfYear(String sensortype, int maand, int jaar) {

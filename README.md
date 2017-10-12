@@ -12,24 +12,24 @@
 - AngularJS (NPM, Gulp, Less)
 - Bootstrap
 - C3.js voor grafieken
-- Runtime: OpenShift DIY en MySQL Cartridges
+- Runtime: Raspberry PI 3
 
 # Screenshots
 
 ## Actueel
-![Alt text](screenshots/actueel-xl.png?raw=true "Actueel")
+![Alt text](documentation/screenshots/actueel-xl.png?raw=true "Actueel")
 
 ## Kosten per maand in jaar
-![Alt text](screenshots/kosten-maand-xl.png?raw=true "Kosten per maand in jaar")
+![Alt text](documentation/screenshots/kosten-maand-xl.png?raw=true "Kosten per maand in jaar")
 
 ## Verbruik per dag in maand
-![Alt text](screenshots/verbruik-dag-xl.png?raw=true "Verbruik per dag in maand")
+![Alt text](documentation/screenshots/verbruik-dag-xl.png?raw=true "Verbruik per dag in maand")
 
 ## Meterstanden per dag
-![Alt text](screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
+![Alt text](documentation/screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
 ## Temperatuur
-![Alt text](screenshots/temperatuur.png?raw=true "Temperatuur")
+![Alt text](documentation/screenshots/temperatuur.png?raw=true "Temperatuur")
 
 ## Kosten per maand in jaar
-<img src="https://raw.githubusercontent.com/bassages/home-server/master/screenshots/kosten-maand-xs.png" width="400">
+<img src="https://raw.githubusercontent.com/bassages/home-server/master/documentation/screenshots/kosten-maand-xs.png" width="400">

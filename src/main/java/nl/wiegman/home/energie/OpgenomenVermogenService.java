@@ -1,12 +1,13 @@
 package nl.wiegman.home.energie;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -69,7 +70,7 @@ public class OpgenomenVermogenService {
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod).boxed()
                 .map(periodNumber -> this.toSubPeriod(periodNumber, from.getTime(), subPeriodLength))
                 .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private Period toSubPeriod(long periodNumber, long start, long subPeriodLength) {
@@ -109,7 +110,7 @@ public class OpgenomenVermogenService {
         List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
 
         Map<Integer, List<OpgenomenVermogen>> byHour = opgenomenVermogensOnDay.stream()
-                .collect(Collectors.groupingBy(item -> item.getDatumtijd().getHours()));
+                .collect(groupingBy(item -> item.getDatumtijd().getHours()));
 
         byHour.values().forEach(this::cleanupHour);
 
@@ -118,9 +119,9 @@ public class OpgenomenVermogenService {
 
     private void cleanupHour(List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
         Map<Integer, List<OpgenomenVermogen>> byMinute = opgenomenVermogensInOneHour.stream()
-                .collect(Collectors.groupingBy(item -> item.getDatumtijd().getMinutes()));
+                .collect(groupingBy(item -> item.getDatumtijd().getMinutes()));
 
-        List<OpgenomenVermogen> opgenomenVermogensToKeep = byMinute.values().stream().map(this::getOpgenomenVermogenToKeepInMinute).collect(Collectors.toList());
+        List<OpgenomenVermogen> opgenomenVermogensToKeep = byMinute.values().stream().map(this::getOpgenomenVermogenToKeepInMinute).collect(toList());
 
         opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
 

@@ -1,5 +1,9 @@
 package nl.wiegman.home.klimaat;
 
+import static java.math.BigDecimal.ZERO;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -13,7 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,16 +138,16 @@ public class KlimaatService {
 
     public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !BigDecimal.ZERO.equals(klimaat.getLuchtvochtigheid()))
+                .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !ZERO.equals(klimaat.getLuchtvochtigheid()))
                 .map(Klimaat::getLuchtvochtigheid)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private List<BigDecimal> getValidTemperatures(List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                .filter(klimaat -> klimaat.getTemperatuur() != null && !BigDecimal.ZERO.equals(klimaat.getTemperatuur()))
+                .filter(klimaat -> klimaat.getTemperatuur() != null && !ZERO.equals(klimaat.getTemperatuur()))
                 .map(Klimaat::getTemperatuur)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<Klimaat> getHighest(SensorType sensortype, Date from, Date to, int limit) {
@@ -153,7 +157,7 @@ public class KlimaatService {
             case LUCHTVOCHTIGHEID:
                 return getHighestHumidity(from, to, limit);
             default:
-                return Collections.emptyList();
+                return emptyList();
         }
     }
 
@@ -172,20 +176,20 @@ public class KlimaatService {
         return klimaatRepository.getPeakLowTemperatureDates(from, to, limit)
                     .stream()
                     .map(klimaatRepository::firstLowestTemperatureOnDay)
-                    .collect(Collectors.toList());
+                    .collect(toList());
     }
 
     private List<Klimaat> getLowestHumidity(Date from, Date to, int limit) {
         return klimaatRepository.getPeakLowHumidityDates(from, to, limit)
                     .stream()
                     .map(klimaatRepository::firstLowestHumidityOnDay)
-                    .collect(Collectors.toList());
+                    .collect(toList());
     }
 
     private BigDecimal getAverage(List<BigDecimal> decimals) {
         BigDecimal average = null;
         if (!decimals.isEmpty()) {
-            BigDecimal total = decimals.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal total = decimals.stream().reduce(ZERO, BigDecimal::add);
             average = total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.CEILING);
         }
         return average;
@@ -195,13 +199,13 @@ public class KlimaatService {
         return klimaatRepository.getPeakHighTemperatureDates(from, to, limit)
                 .stream()
                 .map(klimaatRepository::firstHighestTemperatureOnDay)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private List<Klimaat> getHighestHumidity(Date from, Date to, int limit) {
         return klimaatRepository.getPeakHighHumidityDates(from, to, limit)
                 .stream()
                 .map(klimaatRepository::firstHighestHumidityOnDay)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }

@@ -1,10 +1,12 @@
 package nl.wiegman.home.energie;
 
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -41,14 +43,14 @@ public class VerbruikServiceCached {
     }
 
     public Verbruik getGasVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
-        BigDecimal totaalKosten = BigDecimal.ZERO;
+        BigDecimal totaalKosten = ZERO;
         BigDecimal totaalVerbruik = null;
 
         if (periodeVan < System.currentTimeMillis()) {
 
             List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
-            if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
+            if (isNotEmpty(energiecontractInPeriod)) {
 
                 for (Energiecontract energiecontract : energiecontractInPeriod) {
                     long subVanMillis = energiecontract.getVan();
@@ -64,7 +66,7 @@ public class VerbruikServiceCached {
 
                     if (verbruik != null) {
                         if (totaalVerbruik == null) {
-                            totaalVerbruik = BigDecimal.ZERO;
+                            totaalVerbruik = ZERO;
                         }
                         totaalKosten = totaalKosten.add(energiecontract.getGasPerKuub().multiply(verbruik));
                         totaalVerbruik = totaalVerbruik.add(verbruik);
@@ -89,14 +91,14 @@ public class VerbruikServiceCached {
     }
 
     public Verbruik getStroomVerbruikInPeriode(long periodeVan, long periodeTotEnMet, StroomTariefIndicator stroomTariefIndicator) {
-        BigDecimal totaalKosten = BigDecimal.ZERO;
+        BigDecimal totaalKosten = ZERO;
         BigDecimal totaalVerbruik = null;
 
         if (periodeVan < System.currentTimeMillis()) {
 
             List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
-            if (CollectionUtils.isNotEmpty(energiecontractInPeriod)) {
+            if (isNotEmpty(energiecontractInPeriod)) {
 
                 for (Energiecontract energiecontract : energiecontractInPeriod) {
                     long subVanMillis = energiecontract.getVan();
@@ -112,7 +114,7 @@ public class VerbruikServiceCached {
 
                     if (verbruik != null) {
                         if (totaalVerbruik == null) {
-                            totaalVerbruik = BigDecimal.ZERO;
+                            totaalVerbruik = ZERO;
                         }
                         totaalKosten = totaalKosten.add(energiecontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik));
                         totaalVerbruik = totaalVerbruik.add(verbruik);

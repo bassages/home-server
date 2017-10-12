@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -32,6 +35,7 @@ public class Klimaat {
     private BigDecimal luchtvochtigheid;
 
     @JsonIgnore
+    @Fetch(FetchMode.JOIN)
     @ManyToOne(optional = false)
     private KlimaatSensor klimaatSensor;
 

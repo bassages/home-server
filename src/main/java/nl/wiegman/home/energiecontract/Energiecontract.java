@@ -1,5 +1,7 @@
 package nl.wiegman.home.energiecontract;
 
+import static java.math.BigDecimal.ZERO;
+
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -66,7 +68,7 @@ public class Energiecontract {
             case NORMAAL:
                 return stroomPerKwhNormaalTarief;
             default:
-                return BigDecimal.ZERO;
+                return ZERO;
         }
     }
 

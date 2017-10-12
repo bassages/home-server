@@ -1,5 +1,7 @@
 package nl.wiegman.home.energie;
 
+import static java.util.stream.Collectors.toList;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -36,19 +38,19 @@ public class VerbruikService {
     public List<VerbruikInUurOpDagDto> getVerbruikPerUurOpDag(long dag) {
         return IntStream.rangeClosed(0, 23)
                 .mapToObj(uur -> getVerbruikInUur(new Date(dag), uur))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<VerbruikInMaandVanJaarDto> getVerbruikPerMaandInJaar(int jaar) {
         return IntStream.rangeClosed(1, 12)
                  .mapToObj(maand -> getVerbruikInMaand(maand, jaar))
-                 .collect(Collectors.toList());
+                 .collect(toList());
     }
 
     public List<VerbruikOpDagDto> getVerbruikPerDag(long van, long totEnMet) {
         return DateTimeUtil.getDagenInPeriode(van, totEnMet).stream()
                 .map(this::getVerbruikOpDag)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<VerbruikInJaarDto> getVerbruikPerJaar() {
@@ -60,7 +62,7 @@ public class VerbruikService {
         } else {
             int jaarVan = oudste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(ChronoField.YEAR);
             int jaarTotEnMet = nieuwste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(ChronoField.YEAR);
-            return IntStream.rangeClosed(jaarVan, jaarTotEnMet).mapToObj(this::getVerbruikInJaar).collect(Collectors.toList());
+            return IntStream.rangeClosed(jaarVan, jaarTotEnMet).mapToObj(this::getVerbruikInJaar).collect(toList());
         }
     }
 

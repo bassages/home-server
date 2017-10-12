@@ -9,8 +9,7 @@ import nl.wiegman.home.UpdateEvent;
 
 @Controller
 public class RealtimeKlimaatController {
-
-    public static final String TOPIC = "/topic/klimaat";
+    private static final String TOPIC = "/topic/klimaat";
 
     private final SimpMessagingTemplate messagingTemplate;
 

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.6.RELEASE'
+    id 'org.springframework.boot' version '1.5.7.RELEASE'
     id "com.moowork.gulp" version "1.2.0"
     id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.15.0'
@@ -22,12 +22,12 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.5'
+    gradleVersion = '4.2.1'
 }
 
 node {
     // Version of node to use.
-    version = '6.11.0'
+    version = '6.11.3'
     download = true
 }
 
@@ -64,7 +64,7 @@ dependencies {
     compile("net.sf.ehcache:ehcache")
     compile("javax.el:javax.el-api:2.2.4")
     compile("commons-io:commons-io:2.5")
-    compile("commons-collections:commons-collections:3.2.2")
+    compile("org.apache.commons:commons-collections4:4.1")
     compile("org.apache.commons:commons-lang3:3.6")
     compile("org.apache.httpcomponents:httpclient:4.5.2")
 

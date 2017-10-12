@@ -1,11 +1,12 @@
 package nl.wiegman.home.mindergasnl;
 
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -59,7 +60,7 @@ public class MindergasnlService {
 
             List<MeterstandOpDag> yesterdaysMeterstand = meterstandService.perDag(yesterday.getTime(), yesterday.getTime());
 
-            if (CollectionUtils.isEmpty(yesterdaysMeterstand)) {
+            if (isEmpty(yesterdaysMeterstand)) {
                 LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
             } else {
                 BigDecimal gasStand = yesterdaysMeterstand.get(0).getMeterstand().getGas();
