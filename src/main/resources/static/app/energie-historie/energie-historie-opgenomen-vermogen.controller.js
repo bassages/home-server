@@ -29,7 +29,7 @@
         function activate() {
             EnergieHistorieService.manageChartSize($scope);
 
-            var dateProvidedByLocation = Date.parse($location.search().datum);
+            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
             if (dateProvidedByLocation) {
                 $scope.selection = dateProvidedByLocation;
             } else {
