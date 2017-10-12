@@ -5,9 +5,9 @@
         .module('app')
         .controller('UurEnergieHistorieController', UurEnergieHistorieController);
 
-    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
         $scope.selectionChange = selectionChange;
         $scope.changePeriod = changePeriod;
@@ -61,11 +61,11 @@
         }
 
         function allowMultpleEnergiesoorten() {
-            return $scope.soort == 'kosten';
+            return $scope.soort === 'kosten';
         }
 
         function isMaxSelected() {
-            return Date.today().getTime() == $scope.selection.getTime();
+            return Date.today().getTime() === $scope.selection.getTime();
         }
 
         function navigate(numberOfPeriods) {
@@ -91,6 +91,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
+            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfDay($scope.selection); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -172,6 +173,11 @@
                     }
                 );
             }
+        }
+
+        function navigateToDetailsOfDay(dateOfDay) {
+            $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', $filter('date')(dateOfDay, 'dd-MM-yyyy'));
+            $scope.$apply();
         }
     }
 })();

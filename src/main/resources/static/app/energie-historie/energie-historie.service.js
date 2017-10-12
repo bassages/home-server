@@ -40,7 +40,7 @@
             var keysGroups = [];
             for (var i = 0; i < energiesoorten.length; i++) {
                 var energiesoort = energiesoorten[i];
-                if (energiesoort == 'stroom' && ApplicationSettingsService.displayStroomDalNormaal == 'apart') {
+                if (energiesoort === 'stroom' && ApplicationSettingsService.displayStroomDalNormaal === 'apart') {
                     keysGroups.push(energiesoort + '-' + soort + '-dal');
                     keysGroups.push(energiesoort + '-' + soort + '-normaal');
                 } else {
@@ -55,9 +55,9 @@
         };
 
         this.getVerbruikLabel = function(energiesoort) {
-            if (energiesoort == 'stroom') {
+            if (energiesoort === 'stroom') {
                 return 'kWh';
-            } else if (energiesoort == 'gas') {
+            } else if (energiesoort === 'gas') {
                 return 'm\u00B3';
             } else {
                 return '?';
@@ -70,9 +70,9 @@
 
         this.formatWithUnitLabel = function(soortData, energieSoorten, value) {
             var withoutUnitLabel = this.formatWithoutUnitLabel(soortData, value);
-            if (soortData == 'verbruik') {
+            if (soortData === 'verbruik') {
                 return withoutUnitLabel + ' ' + this.getVerbruikLabel(energieSoorten[0]);
-            } else if (soortData == 'kosten') {
+            } else if (soortData === 'kosten') {
                 return '\u20AC ' + withoutUnitLabel;
             }
         };
@@ -92,7 +92,7 @@
         };
 
         this.getAllPossibleEnergiesoorten = function(verbruiksoort) {
-            if (verbruiksoort == 'kosten') {
+            if (verbruiksoort === 'kosten') {
                 return ['stroom', 'gas'];
             } else {
                 return ['stroom'];
@@ -109,7 +109,7 @@
                 }
                 return true;
             } else {
-                if (energiesoorten[0] != energiesoortToToggle) {
+                if (energiesoorten[0] !== energiesoortToToggle) {
                     energiesoorten.splice(0, energiesoorten.length);
                     energiesoorten.push(energiesoortToToggle);
                     return true;

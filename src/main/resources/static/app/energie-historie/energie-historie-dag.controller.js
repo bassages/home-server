@@ -5,9 +5,9 @@
         .module('app')
         .controller('DagEnergieHistorieController', DagEnergieHistorieController);
 
-    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    DagEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function DagEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function DagEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
@@ -19,7 +19,6 @@
         $scope.toggleDatepickerPopup = toggleDatepickerPopup;
         $scope.selectionChange = selectionChange;
 
-        $scope.selection = Date.today().moveToFirstDayOfMonth();
         $scope.period = 'dag';
 
         $scope.soort = $routeParams.verbruiksoort;
@@ -36,6 +35,13 @@
         activate();
 
         function activate() {
+            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
+            if (dateProvidedByLocation) {
+                $scope.selection = dateProvidedByLocation.moveToFirstDayOfMonth();
+            } else {
+                $scope.selection = Date.today().moveToFirstDayOfMonth();
+            }
+
             EnergieHistorieService.manageChartSize($scope);
 
             $scope.$watch('showChart', function(newValue, oldValue) {
@@ -62,11 +68,11 @@
         }
 
         function allowMultpleEnergiesoorten() {
-            return $scope.soort == 'kosten';
+            return $scope.soort === 'kosten';
         }
 
         function isMaxSelected() {
-            return Date.today().getMonth() == $scope.selection.getMonth() && Date.today().getFullYear() == $scope.selection.getFullYear();
+            return Date.today().getMonth() === $scope.selection.getMonth() && Date.today().getFullYear() === $scope.selection.getFullYear();
         }
 
         function navigate(numberOfPeriods) {
@@ -102,6 +108,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = chartConfig.data.colors = EnergieHistorieService.getDataColors();
+            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfDay(data.x); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -184,6 +191,11 @@
                     }
                 );
             }
+        }
+
+        function navigateToDetailsOfDay(dateOfDay) {
+            $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', $filter('date')(dateOfDay, 'dd-MM-yyyy'));
+            $scope.$apply();
         }
     }
 })();

@@ -5,9 +5,9 @@
         .module('app')
         .controller('JaarEnergieHistorieController', JaarEnergieHistorieController);
 
-    JaarEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$q', '$log', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
+    JaarEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $q, $log, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
+    function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
@@ -50,7 +50,7 @@
         }
 
         function allowMultpleEnergiesoorten() {
-            return $scope.soort == 'kosten';
+            return $scope.soort === 'kosten';
         }
 
         function getTicksForEveryYearInResponse(data) {
@@ -67,6 +67,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
+            chartConfig.data.onclick = function (data, element) { navigateToMonthsInYear(Date.parseExact('1-1-' + data.x, 'd-M-yyyy')); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -142,6 +143,11 @@
                     }
                 );
             }
+        }
+
+        function navigateToMonthsInYear(dateOfYear) {
+            $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(dateOfYear, "dd-MM-yyyy")});
+            $scope.$apply();
         }
     }
 })();

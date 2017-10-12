@@ -5,12 +5,11 @@
         .module('app')
         .controller('OpgenomenVermogenGrafiekController', OpgenomenVermogenGrafiekController);
 
-    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', '$location', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function OpgenomenVermogenGrafiekController($scope, $http, $log, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function OpgenomenVermogenGrafiekController($scope, $http, $log, $location, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
-        $scope.selection = Date.today();
         $scope.energiesoort = 'stroom';
         $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
         $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
@@ -29,11 +28,19 @@
 
         function activate() {
             EnergieHistorieService.manageChartSize($scope);
+
+            var dateProvidedByLocation = Date.parse($location.search().datum);
+            if (dateProvidedByLocation) {
+                $scope.selection = dateProvidedByLocation;
+            } else {
+                $scope.selection = Date.today();
+            }
+
             getDataFromServer();
         }
 
         $scope.isMaxSelected = function() {
-            return Date.today().getTime() == $scope.selection.getTime();
+            return Date.today().getTime() === $scope.selection.getTime();
         };
 
         $scope.navigate = function(numberOfPeriods) {
