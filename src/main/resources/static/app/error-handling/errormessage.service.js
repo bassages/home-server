@@ -8,27 +8,19 @@
     ErrorMessageService.$inject = ['$uibModal'];
 
     function ErrorMessageService($uibModal) {
-        var modalDialogInstance = null;
 
         this.showMessage = function(message) {
 
-            $uibModal.open({
-                animation: false,
-                templateUrl: 'app/error-handling/errormessage-dialog.html',
-                backdrop: 'static',
-                controller: function($scope, message) {
-                    $scope.message = message;
-
-                    $scope.confirm = function () {
-                        $scope.$close();
-                    };
-                },
-                resolve: {
-                    message: function () {
-                        return message;
-                    }
+            $uibModal.open(
+                {
+                    animation: false,
+                    templateUrl: 'app/error-handling/errormessage-dialog.html',
+                    backdrop: 'static',
+                    controllerAs: 'vm',
+                    controller: 'ErrorMessageController',
+                    resolve: { message: function () { return message; } }
                 }
-            });
+            );
         };
     }
 })();

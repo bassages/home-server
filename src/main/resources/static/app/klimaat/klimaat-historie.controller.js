@@ -62,11 +62,11 @@
         };
 
         $scope.isMaxSelected = function() {
-            return $scope.selection.length == 1 && Date.today().getTime() == $scope.selection[0].getTime();
+            return $scope.selection.length === 1 && Date.today().getTime() === $scope.selection[0].getTime();
         };
 
         $scope.isSelectionNavigationPossible = function() {
-            return $scope.selection.length == 1;
+            return $scope.selection.length === 1;
         };
 
         $scope.navigate = function(numberOfPeriods) {
@@ -107,10 +107,10 @@
 
                     var klimaatValue = klimaatValuesOnSameTimeOfMultipleDays[formattedDate];
 
-                    if (klimaatValue !== null && (typeof max=='undefined' || klimaatValue > max)) {
+                    if (klimaatValue !== null && (typeof max === 'undefined' || klimaatValue > max)) {
                         max = klimaatValue;
                     }
-                    if (klimaatValue !== null && klimaatValue > 0 && (typeof min=='undefined' || klimaatValue < min)) {
+                    if (klimaatValue !== null && klimaatValue > 0 && (typeof min === 'undefined' || klimaatValue < min)) {
                         min = klimaatValue;
                     }
                     if (klimaatValue !== null && klimaatValue > 0) {
@@ -199,9 +199,9 @@
         function formatWithUnitLabel(value) {
             var result = null;
             if (value !== null) {
-                if ($scope.sensortype == 'temperatuur') {
+                if ($scope.sensortype === 'temperatuur') {
                     result = numbro(value).format('0.00') + '\u2103';
-                } else if ($scope.sensortype == 'luchtvochtigheid') {
+                } else if ($scope.sensortype === 'luchtvochtigheid') {
                     result = numbro(value).format('0.0') + '%';
                 } else {
                     $log.warn('Unexpected sensortype: ' + $scope.sensortype);
