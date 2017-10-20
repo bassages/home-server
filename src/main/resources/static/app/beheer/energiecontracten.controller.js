@@ -21,6 +21,9 @@
         vm.datepickerPopupOptions = { };
         vm.datepickerPopup = { opened: false };
 
+        vm.tariffPattern = /^[0-9]{1}\,[0-9]{2}[0-9]{0,4}$/;
+        vm.tariffPlaceholder = '0,000000';
+
         activate();
 
         function activate() {
@@ -28,7 +31,7 @@
 
             EnergieContractenService.query(
                 function(data) {
-                    vm.kosten = data;
+                    vm.energieContracten = data;
                     LoadingIndicatorService.stopLoading();
                 },
                 function(errorResponse) {
@@ -38,18 +41,19 @@
             );
         }
 
-        function startEdit(energiecontract) {
-            vm.item = angular.copy(energiecontract);
-            vm.vanaf = new Date(energiecontract.van);
-            vm.selectedId = vm.item.id;
-            vm.detailsmode = 'edit';
+        function startAdd() {
+            vm.energieContract = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            vm.vanaf = vm.energieContract.van;
+            vm.selectedId = null;
+            vm.detailsmode = 'add';
             vm.showDetails = true;
         }
 
-        function startAdd() {
-            vm.item = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
-            vm.vanaf = vm.item.van;
-            vm.detailsmode = 'add';
+        function startEdit(energiecontract) {
+            vm.energieContract = angular.copy(energiecontract);
+            vm.vanaf = new Date(energiecontract.van);
+            vm.selectedId = vm.energieContract.id;
+            vm.detailsmode = 'edit';
             vm.showDetails = true;
         }
 
@@ -58,10 +62,10 @@
         }
 
         function saveAdd() {
-            vm.item.$save(
+            vm.energieContract.$save(
                 function(successResult) {
-                    vm.item.id = successResult.id;
-                    vm.kosten.push(vm.item);
+                    vm.energieContract.id = successResult.id;
+                    vm.energieContracten.push(vm.energieContract);
                     vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
@@ -73,10 +77,10 @@
         }
 
         function saveEdit() {
-            vm.item.$save(
+            vm.energieContract.$save(
                 function(successResult) {
-                    var index = getIndexOfItemWithId(vm.item.id, vm.kosten);
-                    angular.copy(vm.item, vm.kosten[index]);
+                    var indexOfEnergieContractToEdit = _.findIndex(vm.energieContracten, {id: vm.energieContract.id});
+                    angular.copy(vm.energieContract, vm.energieContracten[indexOfEnergieContractToEdit]);
                     vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
@@ -90,13 +94,13 @@
         function save() {
             LoadingIndicatorService.startLoading();
 
-            vm.item.van = new Date(vm.vanaf).getTime();
+            vm.energieContract.van = new Date(vm.vanaf).getTime();
 
-            $log.info('Save kosten: ' + angular.toJson(vm.item));
+            $log.info('Save energieContract: ' + angular.toJson(vm.energieContract));
 
-            if (vm.detailsmode == 'add') {
+            if (vm.detailsmode === 'add') {
                 saveAdd();
-            } else if (vm.detailsmode == 'edit') {
+            } else if (vm.detailsmode === 'edit') {
                 saveEdit();
             } else {
                 handleTechnicalError('Onverwachte waarde voor attribuut detailsmode: ' + vm.detailsmode);
@@ -111,13 +115,13 @@
         function remove() {
             LoadingIndicatorService.startLoading();
 
-            $log.info('Delete energiecontract: ' + angular.toJson(vm.item));
+            $log.info('Delete energiecontract: ' + angular.toJson(vm.energieContract));
 
-            var index = getIndexOfItemWithId(vm.item.id, vm.kosten);
+            var indexOfEnergieContractToDelete = _.findIndex(vm.energieContracten, {id: vm.energieContract.id});
 
-            EnergieContractenService.delete({id: vm.item.id},
+            EnergieContractenService.delete({id: vm.energieContract.id},
                 function(successResult) {
-                    vm.kosten.splice(index, 1);
+                    vm.energieContracten.splice(indexOfEnergieContractToDelete, 1);
                     vm.cancelEdit();
                     LoadingIndicatorService.stopLoading();
                 },
@@ -128,18 +132,8 @@
             );
         }
 
-        function getIndexOfItemWithId(id, items) {
-            var result = null;
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].id == id) {
-                    result = i;
-                }
-            }
-            return result;
-        }
-
         function handleServiceError(message, errorResult) {
-            if (errorResult.data && errorResult.data.code == 'UNIQUE_KEY_CONSTRAINT_VIOLATION') {
+            if (errorResult.data && errorResult.data.code === 'UNIQUE_KEY_CONSTRAINT_VIOLATION') {
                 var userMessage = 'Er bestaat al een rij met dezelfde vanaf datum. Kies een andere datum a.u.b.';
                 ErrorMessageService.showMessage(userMessage);
             } else {
