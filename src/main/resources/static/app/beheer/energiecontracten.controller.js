@@ -134,7 +134,7 @@
 
         function handleServiceError(message, errorResult) {
             if (errorResult.data && errorResult.data.code === 'UNIQUE_KEY_CONSTRAINT_VIOLATION') {
-                var userMessage = 'Er bestaat al een rij met dezelfde vanaf datum. Kies een andere datum a.u.b.';
+                var userMessage = 'Er bestaat al een energiecontract met dezelfde vanaf datum';
                 ErrorMessageService.showMessage(userMessage);
             } else {
                 $log.error(message + ' Cause=' + angular.toJson(errorResult));
