@@ -10,12 +10,14 @@
     function OpgenomenVermogenGrafiekController($scope, $http, $log, $location, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
+        $scope.data = [];
         $scope.energiesoort = 'stroom';
         $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
         $scope.supportedsoorten = [{'code': 'stroom', 'omschrijving': 'Watt'}];
         $scope.soort = 'stroom';
         $scope.dateformat = 'EEE. dd-MM-yyyy';
         $scope.historicDataDisplayType = 'chart';
+        $scope.showChart = true; // This controller always shows data in chart, never in table
 
         $scope.hideUur = true;
         $scope.hideDag = true;
@@ -27,7 +29,7 @@
         activate();
 
         function activate() {
-            EnergieHistorieService.manageChartSize($scope);
+            EnergieHistorieService.manageChartSize($scope, doNothing, doNothing);
 
             var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
             if (dateProvidedByLocation) {
@@ -37,6 +39,10 @@
             }
 
             getDataFromServer();
+        }
+
+        function doNothing() {
+            // Does nothing
         }
 
         $scope.isMaxSelected = function() {

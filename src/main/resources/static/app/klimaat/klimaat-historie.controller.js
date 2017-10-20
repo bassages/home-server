@@ -8,71 +8,86 @@
     KlimaatHistorieController.$inject = ['$scope', '$http', '$q', '$routeParams', '$log', '$uibModal', 'LoadingIndicatorService', 'KlimaatHistorieService', 'ErrorMessageService'];
 
     function KlimaatHistorieController($scope, $http, $q, $routeParams, $log, $uibModal, LoadingIndicatorService, KlimaatSensorGrafiekService, ErrorMessageService) {
+        var vm = this;
+
+        vm.navigate = navigate;
+        vm.getD3DateFormat = getD3DateFormat;
+        vm.getFormattedSelectedDates = getFormattedSelectedDates;
+        vm.isMaxSelected = isMaxSelected;
+        vm.isSelectionNavigationPossible = isSelectionNavigationPossible;
+        vm.openDateSelectionDialog = openDateSelectionDialog;
+
         activate();
 
         function activate() {
-            $scope.selection = [Date.today()];
-            $scope.sensortype = $routeParams.sensortype;
-            $scope.data = [];
+            vm.selection = [Date.today()];
+            vm.sensortype = $routeParams.sensortype;
+            vm.data = [];
 
-            KlimaatSensorGrafiekService.manageChartSize($scope);
-            $scope.$watch('showChart', function(newValue, oldValue) {
-                if (newValue !== oldValue && newValue) {
-                    loadDataIntoChart($scope.data);
-                }
-            });
-
-            $scope.$watch('showTable', function(newValue, oldValue) {
-                if (newValue !== oldValue && newValue) {
-                    loadDataIntoTable($scope.data);
-                }
-            });
-
-            $scope.openDateSelectionDialog = function() {
-                var modalInstance = $uibModal.open({
-                    animation: false,
-                    templateUrl: 'app/multiple-dates-selection-dialog.html',
-                    backdrop: 'static',
-                    controller: 'MultipleDateSelectionController',
-                    controllerAs: 'vm',
-                    size: 'md',
-                    resolve: {
-                        selectedDates: function() { return $scope.selection; },
-                        datepickerOptions: function() { return { maxDate: Date.today(), datepickerMode: 'day', minMode: 'day' }; },
-                        selectedDateFormat: function() { return 'EEE. dd-MM-yyyy'; }
-                    }
-                });
-                modalInstance.result.then(function(selectedDates) {
-                    $scope.selection = selectedDates;
-                    getDataFromServer();
-                }, function() {
-                    $log.info('Multiple Date Selection dialog was closed');
-                });
-            };
+            KlimaatSensorGrafiekService.manageChartSize($scope, showChart, showTable);
 
             getDataFromServer();
         }
 
-        $scope.getD3DateFormat = function() {
+        function showChart() {
+            if (!vm.showChart) {
+                vm.showTable = false;
+                vm.showChart = true;
+                loadDataIntoChart(vm.data);
+            }
+        }
+
+        function showTable() {
+            if (!vm.showTable) {
+                vm.showChart = false;
+                vm.showTable = true;
+                loadDataIntoTable(vm.data);
+            }
+        }
+
+        function getD3DateFormat() {
             return '%a %d-%m-%Y';
-        };
+        }
 
-        $scope.getFormattedSelectedDates = function() {
-            return _.map($scope.selection, function(date) { return d3.time.format($scope.getD3DateFormat())(date); }).join(', ');
-        };
+        function getFormattedSelectedDates() {
+            return _.map(vm.selection, function(date) { return d3.time.format(vm.getD3DateFormat())(date); }).join(', ');
+        }
 
-        $scope.isMaxSelected = function() {
-            return $scope.selection.length === 1 && Date.today().getTime() === $scope.selection[0].getTime();
-        };
+        function isMaxSelected() {
+            return vm.selection.length === 1 && Date.today().getTime() === vm.selection[0].getTime();
+        }
 
-        $scope.isSelectionNavigationPossible = function() {
-            return $scope.selection.length === 1;
-        };
+        function isSelectionNavigationPossible() {
+            return vm.selection.length === 1;
+        }
 
-        $scope.navigate = function(numberOfPeriods) {
-            $scope.selection[0].setDate($scope.selection[0].getDate() + numberOfPeriods);
+        function navigate(numberOfPeriods) {
+            vm.selection[0].setDate(vm.selection[0].getDate() + numberOfPeriods);
             getDataFromServer();
-        };
+        }
+
+        function openDateSelectionDialog() {
+            var modalInstance = $uibModal.open({
+                animation: false,
+                templateUrl: 'app/multiple-dates-selection-dialog.html',
+                backdrop: 'static',
+                controller: 'MultipleDateSelectionController',
+                controllerAs: 'vm',
+                size: 'md',
+                resolve: {
+                    selectedDates: function() { return vm.selection; },
+                    datepickerOptions: function() { return { maxDate: Date.today(), datepickerMode: 'day', minMode: 'day' }; },
+                    selectedDateFormat: function() { return 'EEE. dd-MM-yyyy'; }
+                }
+            });
+            modalInstance.result.then(
+            function(selectedDates) {
+                vm.selection = selectedDates;
+                getDataFromServer();
+            }, function() {
+                $log.info('Multiple Date Selection dialog was closed');
+            });
+        }
 
         function getTicksForEveryHourInDay() {
             var from = getFixedDate();
@@ -178,13 +193,13 @@
 
             cols.sort(sortTableColumns);
 
-            $scope.rows = rows;
-            $scope.cols = cols;
+            vm.rows = rows;
+            vm.cols = cols;
         }
 
         function sortTableColumns(a, b) {
             var result = 0;
-            if (a != b) {
+            if (a !== b) {
                 if (a === '') {
                     result = -1;
                 } else {
@@ -199,12 +214,12 @@
         function formatWithUnitLabel(value) {
             var result = null;
             if (value !== null) {
-                if ($scope.sensortype === 'temperatuur') {
+                if (vm.sensortype === 'temperatuur') {
                     result = numbro(value).format('0.00') + '\u2103';
-                } else if ($scope.sensortype === 'luchtvochtigheid') {
+                } else if (vm.sensortype === 'luchtvochtigheid') {
                     result = numbro(value).format('0.0') + '%';
                 } else {
-                    $log.warn('Unexpected sensortype: ' + $scope.sensortype);
+                    $log.warn('Unexpected sensortype: ' + vm.sensortype);
                     result = value;
                 }
             }
@@ -218,8 +233,8 @@
             chartConfig.bindto = '#chart';
 
             var value  = [];
-            for (var i = 0; i < $scope.selection.length; i++) {
-                value.push(d3.time.format('%d-%m-%Y')($scope.selection[i]));
+            for (var i = 0; i < vm.selection.length; i++) {
+                value.push(d3.time.format('%d-%m-%Y')(vm.selection[i]));
             }
 
             chartConfig.data = {type: 'spline', json: chartData, keys: {x: "datumtijd", value: value}};
@@ -245,7 +260,7 @@
                 format: {
                     name: function (name, ratio, id, index) {
                         var theDate = d3.time.format('%d-%m-%Y').parse(name);
-                        return d3.time.format($scope.getD3DateFormat())(theDate);
+                        return d3.time.format(vm.getD3DateFormat())(theDate);
                     }
                 }
             };
@@ -257,11 +272,11 @@
         }
 
         function loadData(data) {
-            $scope.data = data;
-            if ($scope.showChart) {
+            vm.data = data;
+            if (vm.showChart) {
                 loadDataIntoChart(data);
             }
-            if ($scope.showTable) {
+            if (vm.showTable) {
                 loadDataIntoTable(data);
             }
         }
@@ -273,8 +288,8 @@
             } else {
                 chartConfig = getChartConfig(data);
             }
-            $scope.chart = c3.generate(chartConfig);
-            KlimaatSensorGrafiekService.setChartHeightMatchingWithAvailableWindowHeight($scope.chart);
+            vm.chart = c3.generate(chartConfig);
+            KlimaatSensorGrafiekService.setChartHeightMatchingWithAvailableWindowHeight(vm.chart);
         }
 
         function getTo(from) {
@@ -291,7 +306,7 @@
                     var datumtijd = new Date(serverresponse.data[j].datumtijd);
 
                     var datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
-                    var datumtijdValue = serverresponse.data[j][$scope.sensortype];
+                    var datumtijdValue = serverresponse.data[j][vm.sensortype];
 
                     var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getFixedDate().getDate(), month: getFixedDate().getMonth(), year: getFixedDate().getFullYear()}));
                     row[datumtijdKey] = datumtijdValue;
@@ -304,7 +319,7 @@
             var row = null;
 
             for (var i = 0; i < currentRows.length; i++) {
-                if (currentRows[i].datumtijd.getTime() == datumtijd.getTime()) {
+                if (currentRows[i].datumtijd.getTime() === datumtijd.getTime()) {
                     row = currentRows[i];
                     break;
                 }
@@ -319,14 +334,15 @@
 
         function getDataFromServer() {
             loadData([]);
-            if ($scope.selection.length > 0) {
+
+            if (vm.selection.length > 0) {
 
                 LoadingIndicatorService.startLoading();
 
                 var requests = [];
 
-                for (var i = 0; i < $scope.selection.length; i++) {
-                    var dataUrl = 'api/klimaat?from=' + $scope.selection[i].getTime() + '&to=' + (getTo($scope.selection[i]).getTime() - 1);
+                for (var i = 0; i < vm.selection.length; i++) {
+                    var dataUrl = 'api/klimaat?from=' + vm.selection[i].getTime() + '&to=' + (getTo(vm.selection[i]).getTime() - 1);
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }
 

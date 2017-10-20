@@ -24,19 +24,24 @@
         activate();
 
         function activate() {
-            EnergieHistorieService.manageChartSize($scope);
-
-            $scope.$watch('showChart', function(newValue, oldValue) {
-                if (newValue !== oldValue && newValue) {
-                    loadDataIntoChart($scope.data);
-                }
-            });
-            $scope.$watch('showTable', function(newValue, oldValue) {
-                if (newValue !== oldValue && newValue) {
-                    loadDataIntoTable($scope.data);
-                }
-            });
+            EnergieHistorieService.manageChartSize($scope, showChart, showTable);
             getDataFromServer();
+        }
+
+        function showChart() {
+            if (!$scope.showChart) {
+                $scope.showTable = false;
+                $scope.showChart = true;
+                loadDataIntoChart($scope.data);
+            }
+        }
+
+        function showTable() {
+            if (!$scope.showTable) {
+                $scope.showChart = false;
+                $scope.showTable = true;
+                loadDataIntoTable($scope.data);
+            }
         }
 
         function changePeriod(period) {

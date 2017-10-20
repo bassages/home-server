@@ -60,7 +60,8 @@
             })
             .when('/klimaat/historie/:sensortype', {
                 templateUrl: '/app/klimaat/klimaat-historie.html',
-                controller: 'KlimaatHistorieController'
+                controller: 'KlimaatHistorieController',
+                controllerAs: 'vm'
             })
             .when('/klimaat/top-charts/:sensortype', {
                 templateUrl: '/app/klimaat/klimaat-top-charts.html',

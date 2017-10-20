@@ -42,30 +42,26 @@
             setChartHeightMatchingWithAvailableWindowHeight(chart);
         };
 
-        function autoChartOrTable(theScope) {
-            if (theScope.historicDataDisplayType === 'chart') {
-                theScope.showChart = true;
-                theScope.showTable = false;
-            } else if (theScope.historicDataDisplayType === 'table') {
-                theScope.showChart = false;
-                theScope.showTable = true;
-            } else if (ApplicationSettingsService.displayChartOrTable === 'chart') {
-                theScope.showChart = true;
-                theScope.showTable = false;
+        function showChartOrTableCallback(showChartCallBackFunction, showTableCallBackFunction) {
+            if (ApplicationSettingsService.displayChartOrTable === 'chart') {
+                showChartCallBackFunction();
             } else if (ApplicationSettingsService.displayChartOrTable === 'table') {
-                theScope.showChart = false;
-                theScope.showTable = true;
+                showTableCallBackFunction();
             } else {
-                theScope.showChart = window.innerWidth >= AUTO_TABLE_CHART_THRESHOLD;
-                theScope.showTable = !theScope.showChart;
+                if (window.innerWidth >= AUTO_TABLE_CHART_THRESHOLD) {
+                    showChartCallBackFunction();
+                } else {
+                    showTableCallBackFunction();
+                }
             }
         }
 
-        this.manageChartSize = function(theScope) {
-            autoChartOrTable(theScope);
+        this.manageChartSize = function(theScope, showChartCallBackFunction, showTableCallBackFunction) {
+
+            showChartOrTableCallback(showChartCallBackFunction, showTableCallBackFunction);
 
             $(window).on("resize.doResize", function () {
-                autoChartOrTable(theScope);
+                showChartOrTableCallback(showChartCallBackFunction, showTableCallBackFunction);
                 theScope.$apply();
 
                 if (typeof theScope.chart !== 'undefined') {
