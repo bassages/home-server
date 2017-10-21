@@ -92,12 +92,10 @@ public class MeterstandService {
     }
 
     public Meterstand getMeestRecente() {
-        LOGGER.info("getMeestRecente()");
         return meterstandRepository.getMeestRecente();
     }
 
     public Meterstand getOudste() {
-        LOGGER.info("getOudste()");
         return meterstandRepository.getOudste();
     }
 

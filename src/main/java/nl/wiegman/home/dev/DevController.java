@@ -36,6 +36,7 @@ public class DevController {
         klimaatRepos.deleteAll();
 
         klimaatSensorRepository.deleteAll();
+
         KlimaatSensor klimaatSensor = new KlimaatSensor();
         klimaatSensor.setCode("WOONKAMER");
         klimaatSensor.setOmschrijving("Huiskamer");

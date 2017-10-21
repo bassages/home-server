@@ -1,6 +1,7 @@
 package nl.wiegman.home.energie;
 
-import java.math.RoundingMode;
+import static java.math.RoundingMode.HALF_UP;
+
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -65,9 +66,9 @@ public class SlimmeMeterController {
         Meterstand meterstand = new Meterstand();
         meterstand.setDatumtijd(dsmr42ReadingDto.getDatumtijd());
         meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42ReadingDto.getStroomTariefIndicator().shortValue()));
-        meterstand.setGas(dsmr42ReadingDto.getGas().setScale(GAS_SCALE, RoundingMode.CEILING));
-        meterstand.setStroomTarief1(dsmr42ReadingDto.getStroomTarief1().setScale(STROOM_SCALE, RoundingMode.CEILING));
-        meterstand.setStroomTarief2(dsmr42ReadingDto.getStroomTarief2().setScale(STROOM_SCALE, RoundingMode.CEILING));
+        meterstand.setGas(dsmr42ReadingDto.getGas().setScale(GAS_SCALE, HALF_UP));
+        meterstand.setStroomTarief1(dsmr42ReadingDto.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
+        meterstand.setStroomTarief2(dsmr42ReadingDto.getStroomTarief2().setScale(STROOM_SCALE, HALF_UP));
         return meterstand;
     }
 

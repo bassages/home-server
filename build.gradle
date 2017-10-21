@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.7.RELEASE'
+    id 'org.springframework.boot' version '1.5.8.RELEASE'
     id "com.moowork.gulp" version "1.2.0"
     id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.15.0'
@@ -62,16 +62,14 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools")
 
     compile("net.sf.ehcache:ehcache")
-    compile("javax.el:javax.el-api:2.2.4")
-    compile("commons-io:commons-io:2.5")
+    compile("commons-io:commons-io:2.6")
     compile("org.apache.commons:commons-collections4:4.1")
     compile("org.apache.commons:commons-lang3:3.6")
-    compile("org.apache.httpcomponents:httpclient:4.5.2")
+    compile("org.apache.httpcomponents:httpclient:4.5.3")
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
 
     runtime("com.h2database:h2")
-    runtime("mysql:mysql-connector-java")
 }
 
 // Take over system properties.

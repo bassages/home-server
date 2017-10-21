@@ -8,12 +8,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -79,12 +77,12 @@ public class KlimaatService {
 
             BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
             if (averageTemperature != null) {
-                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.CEILING);
+                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.HALF_UP);
             }
 
             BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
             if (averageHumidity != null) {
-                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.CEILING);
+                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.HALF_UP);
             }
 
             if (averageTemperature != null || averageHumidity != null) {
@@ -190,7 +188,7 @@ public class KlimaatService {
         BigDecimal average = null;
         if (!decimals.isEmpty()) {
             BigDecimal total = decimals.stream().reduce(ZERO, BigDecimal::add);
-            average = total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.CEILING);
+            average = total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.HALF_UP);
         }
         return average;
     }

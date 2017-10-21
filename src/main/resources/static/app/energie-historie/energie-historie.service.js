@@ -36,7 +36,7 @@
             };
         };
 
-        this.getKeysGroups = function (energiesoorten, soort) {
+        this.getKeysGroups = function(energiesoorten, soort) {
             var keysGroups = [];
             for (var i = 0; i < energiesoorten.length; i++) {
                 var energiesoort = energiesoorten[i];

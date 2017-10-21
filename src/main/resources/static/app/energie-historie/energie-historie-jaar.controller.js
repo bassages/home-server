@@ -14,7 +14,7 @@
         $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
 
-        $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(Date.today().getFullYear()));
+        $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-' + (Date.today().getFullYear()));
         $scope.period = 'jaar';
         $scope.soort = $routeParams.verbruiksoort;
         $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
@@ -154,7 +154,7 @@
         function navigateToDetailsOfSelection(year) {
             $timeout(function() {
                 var date = Date.parseExact('1-1-' + year, 'd-M-yyyy');
-                $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(dateOfYear, "dd-MM-yyyy")});
+                $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(date, "dd-MM-yyyy")});
             });
         }
     }

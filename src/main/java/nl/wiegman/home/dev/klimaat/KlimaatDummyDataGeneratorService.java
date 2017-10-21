@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import nl.wiegman.home.dev.energie.AbstractDataGeneratorService;
 import nl.wiegman.home.klimaat.Klimaat;
+import nl.wiegman.home.klimaat.KlimaatSensorRepository;
 import nl.wiegman.home.klimaat.KlimaatService;
 
 @Service
@@ -52,6 +53,9 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
     @Autowired
     private KlimaatService klimaatService;
 
+    @Autowired
+    private KlimaatSensorRepository klimaatSensorRepository;
+
     @PostConstruct
     public void init() {
         if (autoStart) {
@@ -71,6 +75,7 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
             klimaat.setLuchtvochtigheid(getNextLuchtVochtigheid());
             klimaat.setTemperatuur(getNextTemperatuur());
             klimaat.setDatumtijd(new Date());
+            klimaat.setKlimaatSensor(klimaatSensorRepository.findAll().get(0));
             klimaatService.add(klimaat);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             LOG.error("Caught exception in ScheduledExecutorService.", t);
