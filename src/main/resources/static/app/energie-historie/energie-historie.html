@@ -120,15 +120,15 @@
     <!-- Table -->
     <div ng-show="showTable" class="col-xs-12 col-md-11">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-condensed">
+            <table class="table table-bordered table-striped table-condensed table-hover">
                 <thead>
                 <tr>
-                    <th class="text-right" ng-repeat="column in cols">{{column}}</th>
+                    <th class="text-right" ng-repeat="column in cols" ng-if="column != 'selectionKey'">{{column}}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="row in rows">
-                    <td class="text-right" ng-repeat="column in cols">{{row[column]}}</td>
+                <tr ng-repeat="row in rows" ng-click="navigateToDetailsOfSelection(row.selectionKey)">
+                    <td class="text-right" ng-repeat="column in cols" ng-if="column != 'selectionKey'">{{row[column]}}</td>
                 </tr>
                 </tbody>
             </table>

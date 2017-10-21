@@ -5,9 +5,9 @@
         .module('app')
         .controller('UurEnergieHistorieController', UurEnergieHistorieController);
 
-    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', '$timeout', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
         $scope.selectionChange = selectionChange;
         $scope.changePeriod = changePeriod;
@@ -17,25 +17,22 @@
         $scope.navigate = navigate;
         $scope.toggleDatepickerPopup = toggleDatepickerPopup;
         $scope.selectionChange = selectionChange;
+        $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
 
-        $scope.selection = Date.today();
         $scope.period = 'uur';
-
         $scope.soort = $routeParams.verbruiksoort;
         $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-
         $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-
         $scope.dateformat = 'EEE. dd-MM-yyyy';
         $scope.datepickerPopupOptions = { maxDate: Date.today() };
         $scope.datepickerPopup = { opened: false };
-
         $scope.data = [];
 
         activate();
 
         function activate() {
             EnergieHistorieService.manageChartSize($scope, showChart, showTable);
+            setSelection();
             getDataFromServer();
         }
 
@@ -52,6 +49,16 @@
                 $scope.showChart = false;
                 $scope.showTable = true;
                 loadDataIntoTable($scope.data);
+            }
+        }
+
+        function setSelection() {
+            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
+            if (dateProvidedByLocation) {
+                $scope.selection = dateProvidedByLocation;
+            } else {
+                $scope.selection = Date.today();
+
             }
         }
 
@@ -96,7 +103,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
-            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfDay($scope.selection); };
+            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection($scope.selection); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -146,7 +153,7 @@
             $log.debug('loadDataIntoTable', data.length);
 
             var labelFormatter = function(d) { return formatAsHourPeriodLabel(d.uur); };
-            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter, 'uur');
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -163,8 +170,7 @@
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-
-                    var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
+                var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
 
                 $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
@@ -180,9 +186,10 @@
             }
         }
 
-        function navigateToDetailsOfDay(dateOfDay) {
-            $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', $filter('date')(dateOfDay, 'dd-MM-yyyy'));
-            $scope.$apply();
+        function navigateToDetailsOfSelection() {
+            $timeout(function() {
+                $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', $filter('date')($scope.selection, 'dd-MM-yyyy'));
+            });
         }
     }
 })();

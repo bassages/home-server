@@ -5,12 +5,13 @@
         .module('app')
         .controller('JaarEnergieHistorieController', JaarEnergieHistorieController);
 
-    JaarEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    JaarEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', '$timeout', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
+        $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
 
         $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-'+(Date.today().getFullYear()));
@@ -72,7 +73,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
-            chartConfig.data.onclick = function (data, element) { navigateToMonthsInYear(Date.parseExact('1-1-' + data.x, 'd-M-yyyy')); };
+            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -150,9 +151,11 @@
             }
         }
 
-        function navigateToMonthsInYear(dateOfYear) {
-            $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(dateOfYear, "dd-MM-yyyy")});
-            $scope.$apply();
+        function navigateToDetailsOfSelection(year) {
+            $timeout(function() {
+                var date = Date.parseExact('1-1-' + year, 'd-M-yyyy');
+                $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(dateOfYear, "dd-MM-yyyy")});
+            });
         }
     }
 })();

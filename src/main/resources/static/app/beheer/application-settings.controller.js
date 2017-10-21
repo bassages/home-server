@@ -9,6 +9,7 @@
 
     function ApplicationSettingsController(ApplicationSettingsService) {
         var vm = this;
+
         vm.settings = ApplicationSettingsService;
     }
 })();

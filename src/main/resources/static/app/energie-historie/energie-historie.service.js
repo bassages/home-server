@@ -117,7 +117,7 @@
             }
         };
 
-        this.getTableData = function(data, energiesoorten, soort, labelFormatter) {
+        this.getTableData = function(data, energiesoorten, soort, labelFormatter, selectionKeyAttributeName) {
             var rows = [];
             var cols = [];
 
@@ -127,6 +127,7 @@
                     var row = {};
 
                     row[""] = labelFormatter(data[i]);
+                    row.selectionKey = data[i][selectionKeyAttributeName];
 
                     var rowTotal = null;
 
@@ -152,6 +153,7 @@
                             row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
                         }
                     }
+
                     rows.push(row);
                 }
             }

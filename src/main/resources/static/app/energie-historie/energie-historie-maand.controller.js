@@ -5,9 +5,9 @@
         .module('app')
         .controller('MaandEnergieHistorieController', MaandEnergieHistorieController);
 
-    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
+    MaandEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', '$timeout', 'LoadingIndicatorService', 'DATETIME_CONSTANTS', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function MaandEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
+    function MaandEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
 
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
@@ -16,35 +16,22 @@
         $scope.navigate = navigate;
         $scope.toggleDatepickerPopup = toggleDatepickerPopup;
         $scope.selectionChange = selectionChange;
+        $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
 
         $scope.period = 'maand';
-
         $scope.soort = $routeParams.verbruiksoort;
         $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-
         $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-
         $scope.datepickerPopupOptions = { datepickerMode: 'year', minMode: 'year', maxDate: Date.today() };
         $scope.datepickerPopup = { opened: false };
         $scope.dateformat = 'yyyy';
-
         $scope.data = [];
 
         activate();
 
         function activate() {
             EnergieHistorieService.manageChartSize($scope, showChart, showTable);
-
-            var year;
-            var dateProvidedByLocation = Date.parse($location.search().datum);
-            if (dateProvidedByLocation) {
-                year = dateProvidedByLocation.getFullYear();
-            } else {
-                year = Date.today().getFullYear();
-            }
-
-            $scope.selection = Date.parseExact('1-1-' + year, 'd-M-yyyy');
-
+            setSelection();
             getDataFromServer();
         }
 
@@ -62,6 +49,17 @@
                 $scope.showTable = true;
                 loadDataIntoTable($scope.data);
             }
+        }
+
+        function setSelection() {
+            var year;
+            var dateProvidedByLocation = Date.parse($location.search().datum);
+            if (dateProvidedByLocation) {
+                year = dateProvidedByLocation.getFullYear();
+            } else {
+                year = Date.today().getFullYear();
+            }
+            $scope.selection = Date.parseExact('1-1-' + year, 'd-M-yyyy');
         }
 
         function changePeriod(period) {
@@ -109,7 +107,7 @@
             chartConfig.data.type = 'bar';
             chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
             chartConfig.data.colors = EnergieHistorieService.getDataColors();
-            chartConfig.data.onclick = function (data, element) { navigateToDaysInMonth(Date.parseExact('1-' + data.x + '-' + $scope.selection.getFullYear(), 'd-M-yyyy')); };
+            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
@@ -157,7 +155,7 @@
             $log.debug('loadDataIntoTable', data.length);
 
             var labelFormatter = function(d) { return DATETIME_CONSTANTS.fullMonths[d.maand - 1]; };
-            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter, 'maand');
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -189,9 +187,11 @@
             }
         }
 
-        function navigateToDaysInMonth(dateOfMonth) {
-            $location.path('/energie/' + $scope.soort + '/dag').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(dateOfMonth, "dd-MM-yyyy")});
-            $scope.$apply();
+        function navigateToDetailsOfSelection(monthNumber) {
+            $timeout(function() {
+                var date = Date.parseExact('1-' + monthNumber + '-' + $scope.selection.getFullYear(), 'd-M-yyyy');
+                $location.path('/energie/' + $scope.soort + '/dag').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(date, "dd-MM-yyyy")});
+            });
         }
     }
 })();

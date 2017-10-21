@@ -10,6 +10,11 @@
     function OpgenomenVermogenGrafiekController($scope, $http, $log, $location, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
         var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
+        $scope.isMaxSelected = isMaxSelected;
+        $scope.navigate = navigate;
+        $scope.toggleDatepickerPopup = toggleDatepickerPopup;
+        $scope.selectionChange = selectionChange;
+
         $scope.data = [];
         $scope.energiesoort = 'stroom';
         $scope.period = 'opgenomen-vermogen'; // Strange but true for this controller :-o
@@ -17,8 +22,9 @@
         $scope.soort = 'stroom';
         $scope.dateformat = 'EEE. dd-MM-yyyy';
         $scope.historicDataDisplayType = 'chart';
+        $scope.datepickerPopupOptions = { maxDate: Date.today() };
+        $scope.datepickerPopup = { opened: false };
         $scope.showChart = true; // This controller always shows data in chart, never in table
-
         $scope.hideUur = true;
         $scope.hideDag = true;
         $scope.hideMaand = true;
@@ -30,14 +36,7 @@
 
         function activate() {
             EnergieHistorieService.manageChartSize($scope, doNothing, doNothing);
-
-            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
-            if (dateProvidedByLocation) {
-                $scope.selection = dateProvidedByLocation;
-            } else {
-                $scope.selection = Date.today();
-            }
-
+            setSelection();
             getDataFromServer();
         }
 
@@ -45,30 +44,31 @@
             // Does nothing
         }
 
-        $scope.isMaxSelected = function() {
-            return Date.today().getTime() === $scope.selection.getTime();
-        };
+        function setSelection() {
+            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
+            if (dateProvidedByLocation) {
+                $scope.selection = dateProvidedByLocation;
+            } else {
+                $scope.selection = Date.today();
+            }
+        }
 
-        $scope.navigate = function(numberOfPeriods) {
+        function isMaxSelected() {
+            return Date.today().getTime() === $scope.selection.getTime();
+        }
+
+        function navigate(numberOfPeriods) {
             $scope.selection = $scope.selection.clone().add(numberOfPeriods).days();
             getDataFromServer();
-        };
+        }
 
-        $scope.datepickerPopupOptions = {
-            maxDate: Date.today()
-        };
-
-        $scope.datepickerPopup = {
-            opened: false
-        };
-
-        $scope.toggleDatepickerPopup = function() {
+        function toggleDatepickerPopup() {
             $scope.datepickerPopup.opened = !$scope.datepickerPopup.opened;
-        };
+        }
 
-        $scope.selectionChange = function() {
+        function selectionChange() {
             getDataFromServer();
-        };
+        }
 
         function getTicksForEveryHourInPeriod(from, to) {
             var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
