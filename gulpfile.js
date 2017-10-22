@@ -6,14 +6,16 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     less = require('gulp-less'),
     cleanCSS  = require('gulp-clean-css'),
-    rename = require("gulp-rename");
+    rename = require("gulp-rename"),
+    templateCache = require('gulp-angular-templatecache'),
+    htmlmin = require('gulp-htmlmin'),
+    runSequence = require('run-sequence');
 
 var appSourcesRoot = 'src/main/resources/static';
 var appJsDir = appSourcesRoot + '/app';
 var appStylesDir = appSourcesRoot + '/styles';
 
 var buildDir = gutil.env.buildtype === 'prod' ? 'build/resources/main/static' : 'out/production/resources/static';
-
 var buildJsDir = buildDir + '/app';
 var buildCssDir = buildDir + '/css';
 
@@ -25,39 +27,46 @@ gulp.task('jshint', function() {
         .pipe(jshint.reporter('fail'));
 });
 
-// Task to watch resource changes
-gulp.task('watch', ['build', 'watch-js', 'watch-styles']);
+// Task to watch resource changes, and if a resource changes the build is triggered
+gulp.task('watch', ['build']);
 
-// Task to watch style changes
-gulp.task('watch-styles', function() {
-    gulp.watch(appStylesDir + '/**/*.less', ['build-css']);
+gulp.task('build', function(callback) {
+    runSequence('jshint',
+                'build-templatecache',
+                'build-js',
+                'build-css',
+        callback);
 });
-
-// Task to watch js changes
-gulp.task('watch-js', function() {
-    gulp.watch(appJsDir + '/**/*.js', ['jshint', 'build-js']);
-});
-
-// Task to build all frontend artifacts
-gulp.task('build', ['jshint', 'build-js', 'build-css']);
 
 // Task to build js file
 gulp.task('build-js', function() {
-    return gulp.src(appJsDir + '/**/*.js')
-        .pipe(sourcemaps.init())
-        .pipe(concat('home.js'))
-        // only uglify if gulp is ran with '--buildtype prod
-        .pipe(gutil.env.buildtype === 'prod' ? uglify() : gutil.noop())
-        .pipe(sourcemaps.write())
+    return gulp.src([appJsDir + '/**/*.js', buildDir + '/generated/**/*.js'])
+        .pipe(gutil.env.buildtype !== 'prod' ? sourcemaps.init() : gutil.noop())
+        .pipe(concat('home-min.js'))
+        .pipe(uglify())
+        .pipe(gutil.env.buildtype !== 'prod' ? sourcemaps.write() : gutil.noop())
         .pipe(gulp.dest(buildJsDir));
+});
+
+gulp.task('build-templatecache', function () {
+    return gulp.src(appSourcesRoot + '/**/*.html')
+        .pipe(htmlmin({
+                        collapseWhitespace: true,
+                        removeComments: true,
+                        collapseBooleanAttributes: true,
+                        removeAttributeQuotes: true,
+                        removeRedundantAttributes: true,
+                        removeEmptyAttributes: true
+                       }))
+        .pipe(templateCache('templatecache.js'))
+        .pipe(gulp.dest(buildDir + '/generated'));
 });
 
 // Task to build css file
 gulp.task('build-css', function() {
-    gulp.src(appStylesDir + '/main.less')
+    return gulp.src(appStylesDir + '/main.less')
         .pipe(less())
-         // only minify if gulp is ran with '--buildtype prod
-        .pipe(gutil.env.buildtype === 'prod' ? cleanCSS() : gutil.noop())
+        .pipe(cleanCSS())
         .pipe(rename('home.css'))
         .pipe(gulp.dest(buildCssDir));
 });

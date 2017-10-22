@@ -26,7 +26,7 @@
         }
 
         function isMaxSelected() {
-            return Date.today().getMonth() == vm.selection.getMonth() && Date.today().getFullYear() == vm.selection.getFullYear();
+            return Date.today().getMonth() === vm.selection.getMonth() && Date.today().getFullYear() === vm.selection.getFullYear();
         }
 
         function navigate(numberOfPeriods) {

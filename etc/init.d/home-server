@@ -13,17 +13,17 @@ SERVICE_NAME=home-server
 SCRIPT=start-home-server.sh
 RUNAS=pi
 
-PIDFILE=$WORKING_DIR/$SERVICE_NAME.pid
-LOGFILE=$WORKING_DIR/$SERVICE_NAME.log
+PIDFILE=${WORKING_DIR}/${SERVICE_NAME}.pid
+LOGFILE=${WORKING_DIR}/${SERVICE_NAME}.log
 
 start() {
-  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+  if [ -f ${PIDFILE} ] && kill -0 $(cat ${PIDFILE}); then
     echo "Service $SERVICE_NAME already running" >&2
     return 1
   fi
   echo "Starting service $SERVICE_NAME" >&2
   local CMD="$WORKING_DIR/$SCRIPT &> \"$LOGFILE\" & echo \$!"
-  su -c "$CMD" $RUNAS > "$PIDFILE"
+  su -c "$CMD" ${RUNAS} > "$PIDFILE"
   echo "Service $SERVICE_NAME started" >&2
 }
 

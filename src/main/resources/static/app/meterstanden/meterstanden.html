@@ -15,7 +15,7 @@
                 <input class="form-control text-center text-capitalize"
                        ng-model="vm.selection" ng-readonly="true" ng-click="vm.toggleDatepickerPopup()" ng-change="vm.getDataFromServer()"
                        uib-datepicker-popup="{{vm.dateformat}}" is-open="vm.datepickerPopup.opened"
-                       datepicker-popup-template-url="/app/uib-datepicker-popup-without-clear-button.html" datepicker-options="vm.datepickerPopupOptions" />
+                       datepicker-popup-template-url="app/uib-datepicker-popup-without-clear-button.html" datepicker-options="vm.datepickerPopupOptions" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-disabled="vm.isMaxSelected()" ng-class="{'disabled': vm.isMaxSelected()}" ng-click="vm.navigate(+1)">
                         <i class="fa fa-chevron-right"></i>

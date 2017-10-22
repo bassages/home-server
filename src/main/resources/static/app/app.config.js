@@ -1,11 +1,14 @@
 (function() {
     'use strict';
 
+    angular.module('templates', []);
+
     angular.module('app', [
         'ngRoute',
         'ngResource',
         'ngAnimate',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'templates'
     ]);
 
     angular
@@ -55,67 +58,67 @@
 
         $routeProvider
             .when('/energie/stroom/opgenomen-vermogen', {
-                templateUrl: '/app/energie-historie/energie-historie.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'OpgenomenVermogenGrafiekController'
             })
             .when('/klimaat/historie/:sensortype', {
-                templateUrl: '/app/klimaat/klimaat-historie.html',
+                templateUrl: 'app/klimaat/klimaat-historie.html',
                 controller: 'KlimaatHistorieController',
                 controllerAs: 'vm'
             })
             .when('/klimaat/top-charts/:sensortype', {
-                templateUrl: '/app/klimaat/klimaat-top-charts.html',
+                templateUrl: 'app/klimaat/klimaat-top-charts.html',
                 controller: 'KlimaatTopChartsController',
                 controllerAs: 'vm'
             })
             .when('/klimaat/average/:sensortype', {
-                templateUrl: '/app/klimaat/klimaat-average.html',
+                templateUrl: 'app/klimaat/klimaat-average.html',
                 controller: 'KlimaatAverageController',
                 controllerAs: 'vm'
             })
 
             .when('/energie/:verbruiksoort/uur', {
-                templateUrl: '/app/energie-historie/energie-historie.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'UurEnergieHistorieController'
             })
             .when('/energie/:verbruiksoort/dag', {
-                templateUrl: '/app/energie-historie/energie-historie.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'DagEnergieHistorieController'
             })
             .when('/energie/:verbruiksoort/maand', {
-                templateUrl: '/app/energie-historie/energie-historie.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'MaandEnergieHistorieController'
             })
             .when('/energie/:verbruiksoort/jaar', {
-                templateUrl: '/app/energie-historie/energie-historie.html',
+                templateUrl: 'app/energie-historie/energie-historie.html',
                 controller: 'JaarEnergieHistorieController'
             })
 
             .when('/energie/meterstanden', {
-                templateUrl: '/app/meterstanden/meterstanden.html',
+                templateUrl: 'app/meterstanden/meterstanden.html',
                 controller: 'MeterstandenController',
                 controllerAs: 'vm'
             })
             .when('/energiecontracten', {
-                templateUrl: '/app/energiecontract/energiecontract.html',
+                templateUrl: 'app/energiecontract/energiecontract.html',
                 controller: 'EnergieContractController',
                 controllerAs: 'vm'
             })
             .when('/mindergasnl', {
-                templateUrl: '/app/mindergasnl/mindergasnl.html',
+                templateUrl: 'app/mindergasnl/mindergasnl.html',
                 controller: 'MindergasnlController',
                 controllerAs: 'vm'
             })
             .when('/application-settings', {
-                templateUrl: '/app/application-settings/application-settings.html',
+                templateUrl: 'app/application-settings/application-settings.html',
                 controller: 'ApplicationSettingsController',
                 controllerAs: 'vm'
             })
             .when('/', {
-                templateUrl: '/app/dashboard/dashboard.html',
+                templateUrl: 'app/dashboard/dashboard.html',
                 controller: 'DashboardController',
                 controllerAs: 'vm'
             })
-            .otherwise({redirectTo: '/index.html'});
+            .otherwise({redirectTo: 'index.html'});
     }
 })();
