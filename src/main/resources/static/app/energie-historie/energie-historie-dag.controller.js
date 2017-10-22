@@ -11,6 +11,7 @@
         var ONE_DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
         var HALF_DAY_IN_MILLISECONDS = 12 * 60 * 60 * 1000;
 
+        $scope.changeSoort = changeSoort;
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
@@ -63,8 +64,12 @@
             }
         }
 
-        function changePeriod(newPeriod) {
-            $location.path('energie/' + $scope.soort + '/' + newPeriod).search('energiesoort', $scope.energiesoorten);
+        function changeSoort(soort) {
+            $location.path('energie/' + soort + '/' + $scope.period).search('energiesoort', null);
+        }
+
+        function changePeriod(period) {
+            $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
         }
 
         function toggleEnergiesoort(energiesoortToToggle) {
@@ -82,8 +87,9 @@
         }
 
         function navigate(numberOfPeriods) {
-            $scope.selection = $scope.selection.clone().add(numberOfPeriods).months();
-            getDataFromServer();
+            var date = $scope.selection.clone().add(numberOfPeriods).months();
+            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+            $location.search('datum', formattedDate);
         }
 
         function toggleDatepickerPopup() {
@@ -201,7 +207,8 @@
 
         function navigateToDetailsOfSelection(datumtijd) {
             $timeout(function() {
-                $location.path('/energie/' + $scope.soort + '/uur').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(datumtijd, "dd-MM-yyyy")});
+                var formattedDate = EnergieHistorieService.formatDateForLocationSearch(datumtijd);
+                $location.path('/energie/' + $scope.soort + '/uur').search({energiesoort: $scope.energiesoorten, datum: formattedDate});
             });
         }
     }

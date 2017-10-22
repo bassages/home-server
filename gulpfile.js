@@ -27,8 +27,10 @@ gulp.task('jshint', function() {
         .pipe(jshint.reporter('fail'));
 });
 
-// Task to watch resource changes, and if a resource changes the build is triggered
-gulp.task('watch', ['build']);
+// Task to watch resource changes. If a resource changes, the build is triggered
+gulp.task('watch', function() {
+    gulp.watch(appSourcesRoot + '/**/*.*', ['build']);
+});
 
 gulp.task('build', function(callback) {
     runSequence('jshint',

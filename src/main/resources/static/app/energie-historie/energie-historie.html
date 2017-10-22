@@ -91,11 +91,11 @@
 </div>
 
 <div class="row">
-    <!-- Energiesoort selection for SMALL -->
+    <!-- Kostensoort selection for SMALL -->
     <div class="visible-sm col-sm-12">
         <ul class="nav nav-pills nav-justified">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a class="pill" ng-href="/#!/energie/{{supportedsoort.code}}/{{period}}">{{supportedsoort.omschrijving}}</a>
+                <a class="pill"  ng-click="changeSoort(supportedsoort.code)">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>
@@ -107,7 +107,7 @@
     <div class="hidden-xs visible-md visible-lg col-md-1">
         <ul class="nav nav-pills nav-stacked" style="margin-right:-30px;">
             <li ng-repeat="supportedsoort in supportedsoorten" ng-class="{'active': soort == supportedsoort.code}">
-                <a class="left-pill" ng-href="/#!/energie/{{supportedsoort.code}}/{{period}}">{{supportedsoort.omschrijving}}</a>
+                <a class="left-pill" ng-click="changeSoort(supportedsoort.code)">{{supportedsoort.omschrijving}}</a>
             </li>
         </ul>
     </div>

@@ -5,9 +5,9 @@
         .module('app')
         .service('EnergieHistorieService', EnergieHistorieService);
 
-    EnergieHistorieService.$inject = ['BaseHistorieService', 'ApplicationSettingsService', '_'];
+    EnergieHistorieService.$inject = ['$filter', 'BaseHistorieService', 'ApplicationSettingsService', '_'];
 
-    function EnergieHistorieService(BaseHistorieService, ApplicationSettingsService, _) {
+    function EnergieHistorieService($filter, BaseHistorieService, ApplicationSettingsService, _) {
         angular.extend(EnergieHistorieService.prototype, BaseHistorieService);
 
         this.getDataColors = function() {
@@ -21,6 +21,10 @@
                 'gas-verbruik': '#2ca02c',
                 'gas-kosten': '#2ca02c'
             };
+        };
+
+        this.formatDateForLocationSearch = function(date) {
+            return $filter('date')(date, "dd-MM-yyyy");
         };
 
         this.getChartPadding = function() {
@@ -164,6 +168,8 @@
 
             return {rows: rows, cols: cols};
         };
+
+
 
         this.transformServerdata = function(serverresponses, key) {
             var result = [];

@@ -9,6 +9,7 @@
 
     function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
+        $scope.changeSoort = changeSoort;
         $scope.selectionChange = selectionChange;
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
@@ -62,6 +63,10 @@
             }
         }
 
+        function changeSoort(soort) {
+            $location.path('energie/' + soort + '/' + $scope.period).search('energiesoort', null);
+        }
+
         function changePeriod(period) {
             $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
         }
@@ -81,8 +86,9 @@
         }
 
         function navigate(numberOfPeriods) {
-            $scope.selection = $scope.selection.clone().add(numberOfPeriods).days();
-            getDataFromServer();
+            var date = $scope.selection.clone().add(numberOfPeriods).days();
+            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+            $location.search('datum', formattedDate);
         }
 
         function toggleDatepickerPopup() {
@@ -188,7 +194,8 @@
 
         function navigateToDetailsOfSelection() {
             $timeout(function() {
-                $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', $filter('date')($scope.selection, 'dd-MM-yyyy'));
+                var formattedDate = EnergieHistorieService.formatDateForLocationSearch($scope.selection);
+                $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', formattedDate);
             });
         }
     }

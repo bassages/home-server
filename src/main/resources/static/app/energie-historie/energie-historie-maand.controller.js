@@ -9,6 +9,7 @@
 
     function MaandEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, DATETIME_CONSTANTS, EnergieHistorieService, ErrorMessageService) {
 
+        $scope.changeSoort = changeSoort;
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
@@ -62,11 +63,15 @@
             $scope.selection = Date.parseExact('1-1-' + year, 'd-M-yyyy');
         }
 
+        function changeSoort(soort) {
+            $location.path('energie/' + soort + '/' + $scope.period).search('energiesoort', null);
+        }
+
         function changePeriod(period) {
             $location.path('energie/' + $scope.soort + '/' + period).search('energiesoort', $scope.energiesoorten);
         }
 
-        function toggleEnergiesoort (energiesoortToToggle) {
+        function toggleEnergiesoort(energiesoortToToggle) {
             if (EnergieHistorieService.toggleEnergiesoort($scope.energiesoorten, energiesoortToToggle, $scope.allowMultpleEnergiesoorten())) {
                 $location.search('energiesoort', $scope.energiesoorten);
             }
@@ -81,8 +86,9 @@
         }
 
         function navigate(numberOfPeriods) {
-            $scope.selection = $scope.selection.clone().add(numberOfPeriods).years();
-            getDataFromServer();
+            var date = $scope.selection.clone().add(numberOfPeriods).years();
+            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+            $location.search('datum', formattedDate);
         }
 
         function toggleDatepickerPopup() {
@@ -190,7 +196,8 @@
         function navigateToDetailsOfSelection(monthNumber) {
             $timeout(function() {
                 var date = Date.parseExact('1-' + monthNumber + '-' + $scope.selection.getFullYear(), 'd-M-yyyy');
-                $location.path('/energie/' + $scope.soort + '/dag').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(date, "dd-MM-yyyy")});
+                var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+                $location.path('/energie/' + $scope.soort + '/dag').search({energiesoort: $scope.energiesoorten, datum: formattedDate});
             });
         }
     }

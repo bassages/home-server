@@ -9,6 +9,7 @@
 
     function JaarEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
+        $scope.changeSoort = changeSoort;
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
         $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
@@ -43,6 +44,10 @@
                 $scope.showTable = true;
                 loadDataIntoTable($scope.data);
             }
+        }
+
+        function changeSoort(soort) {
+            $location.path('energie/' + soort + '/' + $scope.period).search('energiesoort', null);
         }
 
         function changePeriod(period) {
