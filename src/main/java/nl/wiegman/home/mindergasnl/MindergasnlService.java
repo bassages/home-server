@@ -58,12 +58,12 @@ public class MindergasnlService {
             Date today = new Date();
             Date yesterday = DateUtils.addDays(today, -1);
 
-            List<MeterstandOpDag> yesterdaysMeterstand = meterstandService.perDag(yesterday.getTime(), yesterday.getTime());
+            List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.perDag(yesterday.getTime(), yesterday.getTime());
 
-            if (isEmpty(yesterdaysMeterstand)) {
-                LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for yesterday");
+            if (isEmpty(yesterdaysLastMeterstand)) {
+                LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterday);
             } else {
-                BigDecimal gasStand = yesterdaysMeterstand.get(0).getMeterstand().getGas();
+                BigDecimal gasStand = yesterdaysLastMeterstand.get(0).getMeterstand().getGas();
 
                 try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
                     HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);

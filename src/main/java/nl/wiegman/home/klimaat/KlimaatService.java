@@ -1,11 +1,11 @@
 package nl.wiegman.home.klimaat;
 
 import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,12 +77,12 @@ public class KlimaatService {
 
             BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
             if (averageTemperature != null) {
-                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, RoundingMode.HALF_UP);
+                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, HALF_UP);
             }
 
             BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
             if (averageHumidity != null) {
-                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, RoundingMode.HALF_UP);
+                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, HALF_UP);
             }
 
             if (averageTemperature != null || averageHumidity != null) {
@@ -188,7 +188,7 @@ public class KlimaatService {
         BigDecimal average = null;
         if (!decimals.isEmpty()) {
             BigDecimal total = decimals.stream().reduce(ZERO, BigDecimal::add);
-            average = total.divide(BigDecimal.valueOf(decimals.size()), RoundingMode.HALF_UP);
+            average = total.divide(BigDecimal.valueOf(decimals.size()), HALF_UP);
         }
         return average;
     }

@@ -1,5 +1,7 @@
 package nl.wiegman.home.energie;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
@@ -43,7 +45,7 @@ public class EnergieController {
                 .filter(attributeValue -> attributeToAverageGetter.apply(attributeValue) != null)
                 .map(attributeToAverageGetter)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), BigDecimal.ROUND_CEILING).setScale(scale, BigDecimal.ROUND_CEILING);
+        return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
     }
 
     @GetMapping(path = "verbruik-per-jaar")
