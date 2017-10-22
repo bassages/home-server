@@ -1,14 +1,14 @@
 package nl.wiegman.home.energie;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -61,7 +61,7 @@ public class MeterstandService {
         List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(from.getTime(), to.getTime()-1);
 
         Map<Integer, List<Meterstand>> byHour = meterstandenOnDay.stream()
-                .collect(Collectors.groupingBy(item -> item.getDatumtijdAsDate().getHours()));
+                .collect(groupingBy(item -> item.getDatumtijdAsLocalDateTime().getHour()));
 
         byHour.values().forEach(this::cleanupMeterStandenInOneHour);
 
@@ -70,17 +70,17 @@ public class MeterstandService {
     }
 
     private void cleanupMeterStandenInOneHour(List<Meterstand> meterstandenInOneHour) {
-        meterstandenInOneHour.sort(Comparator.comparing(Meterstand::getDatumtijd));
+        meterstandenInOneHour.sort(comparing(Meterstand::getDatumtijd));
 
         if (meterstandenInOneHour.size() >= 2) {
 
             Meterstand firstInHour = meterstandenInOneHour.get(0);
-            LOGGER.info("Keep first: " + firstInHour.getDatumtijdAsDate() + " - " + ReflectionToStringBuilder.toString(
+            LOGGER.info("Keep first: " + firstInHour.getDatumtijdAsLocalDateTime() + " - " + ReflectionToStringBuilder.toString(
                     firstInHour, ToStringStyle.SHORT_PREFIX_STYLE));
             meterstandenInOneHour.remove(firstInHour);
 
             Meterstand lastInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
-            LOGGER.info("Keep last: " + lastInHour.getDatumtijdAsDate() + " - " + ReflectionToStringBuilder.toString(
+            LOGGER.info("Keep last: " + lastInHour.getDatumtijdAsLocalDateTime() + " - " + ReflectionToStringBuilder.toString(
                     lastInHour, ToStringStyle.SHORT_PREFIX_STYLE));
             meterstandenInOneHour.remove(lastInHour);
 

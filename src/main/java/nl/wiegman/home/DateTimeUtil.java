@@ -1,6 +1,7 @@
 package nl.wiegman.home;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,9 +77,16 @@ public class DateTimeUtil {
         return startOfDay.getTime();
     }
 
-
-    public static Date asDate(LocalDate localDate) {
+    public static Date toDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static LocalDateTime toLocalDateTime(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     public static boolean isAfterToday(Date dag) {

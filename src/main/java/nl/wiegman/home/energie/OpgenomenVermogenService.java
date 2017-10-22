@@ -1,10 +1,12 @@
 package nl.wiegman.home.energie;
 
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class OpgenomenVermogenService {
     private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, Period period) {
         return opgenomenVermogens.stream()
                 .filter(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getTime() >= period.from && opgenomenVermogen.getDatumtijd().getTime() < period.to)
-                .max(Comparator.comparingInt(OpgenomenVermogen::getWatt))
+                .max(comparingInt(OpgenomenVermogen::getWatt))
                 .map(o -> this.mapToOpgenomenVermogen(o, period))
                 .orElse(this.mapToEmptyOpgenomenVermogen(period.from));
     }
@@ -110,7 +112,7 @@ public class OpgenomenVermogenService {
         List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
 
         Map<Integer, List<OpgenomenVermogen>> byHour = opgenomenVermogensOnDay.stream()
-                .collect(groupingBy(item -> item.getDatumtijd().getHours()));
+                .collect(groupingBy(item -> toLocalDateTime(item.getDatumtijd()).getHour()));
 
         byHour.values().forEach(this::cleanupHour);
 
@@ -119,7 +121,7 @@ public class OpgenomenVermogenService {
 
     private void cleanupHour(List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
         Map<Integer, List<OpgenomenVermogen>> byMinute = opgenomenVermogensInOneHour.stream()
-                .collect(groupingBy(item -> item.getDatumtijd().getMinutes()));
+                .collect(groupingBy(item -> toLocalDateTime(item.getDatumtijd()).getMinute()));
 
         List<OpgenomenVermogen> opgenomenVermogensToKeep = byMinute.values().stream().map(this::getOpgenomenVermogenToKeepInMinute).collect(toList());
 
@@ -135,7 +137,7 @@ public class OpgenomenVermogenService {
 
     private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
         return opgenomenVermogenInOneMinute.stream()
-                .max(Comparator.comparingInt(OpgenomenVermogen::getWatt).thenComparing(Comparator.comparing(OpgenomenVermogen::getDatumtijd))).get();
+                .max(comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd))).get();
     }
 
     private static class Period {

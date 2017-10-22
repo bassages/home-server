@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -87,8 +86,8 @@ public class KlimaatController {
         LocalDate to = from.plusMonths(1);
 
         GemiddeldeKlimaatPerMaandDto gemiddeldeKlimaatPerMaandDto = new GemiddeldeKlimaatPerMaandDto();
-        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.asDate(from));
-        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.asDate(from), DateTimeUtil.asDate(to)));
+        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.toDate(from));
+        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDate(from), DateTimeUtil.toDate(to)));
         return gemiddeldeKlimaatPerMaandDto;
     }
 

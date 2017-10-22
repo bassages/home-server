@@ -1,7 +1,9 @@
 package nl.wiegman.home.energie;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -10,8 +12,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class MeterstandServiceTest {
 
         ArgumentCaptor<Long> fromDateCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<Long> toDateCaptor = ArgumentCaptor.forClass(Long.class);
-        when(meterstandRepository.findByDatumtijdBetween(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(Collections.EMPTY_LIST);
+        when(meterstandRepository.findByDatumtijdBetween(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(emptyList());
 
         meterstandService.cleanup(date);
 
@@ -79,7 +79,7 @@ public class MeterstandServiceTest {
         Meterstand m5 = new Meterstand();
         m5.setDatumtijd(toDate("12:59:00").getTime());
 
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(Arrays.asList(m1, m2, m3, m4, m5));
+        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(asList(m1, m2, m3, m4, m5));
 
         meterstandService.cleanup(date);
 
@@ -95,7 +95,7 @@ public class MeterstandServiceTest {
         Meterstand m1 = new Meterstand();
         m1.setDatumtijd(toDate("12:00:00").getTime());
 
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(Collections.singletonList(m1));
+        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(singletonList(m1));
 
         meterstandService.cleanup(date);
 
@@ -121,7 +121,7 @@ public class MeterstandServiceTest {
         Meterstand m6 = new Meterstand();
         m6.setDatumtijd(toDate("13:30:00").getTime());
 
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(Arrays.asList(m1, m2, m3, m4, m5, m6));
+        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(asList(m1, m2, m3, m4, m5, m6));
 
         meterstandService.cleanup(date);
 

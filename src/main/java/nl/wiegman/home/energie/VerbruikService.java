@@ -1,12 +1,10 @@
 package nl.wiegman.home.energie;
 
-import static java.time.temporal.ChronoField.YEAR;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +53,8 @@ public class VerbruikService {
         if (oudste == null) {
             return emptyList();
         } else {
-            int jaarVan = oudste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(YEAR);
-            int jaarTotEnMet = nieuwste.getDatumtijdAsDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().get(YEAR);
+            int jaarVan = oudste.getDatumtijdAsLocalDateTime().getYear();
+            int jaarTotEnMet = nieuwste.getDatumtijdAsLocalDateTime().getYear();
             return IntStream.rangeClosed(jaarVan, jaarTotEnMet).mapToObj(this::getVerbruikInJaar).collect(toList());
         }
     }

@@ -1,5 +1,7 @@
 package nl.wiegman.home.energie;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -9,8 +11,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class OpgenomenVermogenServiceTest {
 
         ArgumentCaptor<Date> fromDateCaptor = ArgumentCaptor.forClass(Date.class);
         ArgumentCaptor<Date> toDateCaptor = ArgumentCaptor.forClass(Date.class);
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(Collections.EMPTY_LIST);
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(emptyList());
 
         opgenomenVermogenService.cleanup(date);
 
@@ -76,7 +76,7 @@ public class OpgenomenVermogenServiceTest {
         ov3.setDatumtijd(toDate("12:00:20"));
         ov3.setWatt(1);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(Arrays.asList(ov1, ov2, ov3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3));
 
         opgenomenVermogenService.cleanup(date);
 
@@ -99,7 +99,7 @@ public class OpgenomenVermogenServiceTest {
         ov3.setDatumtijd(toDate("12:00:20"));
         ov3.setWatt(1);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(Arrays.asList(ov1, ov2, ov3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3));
 
         opgenomenVermogenService.cleanup(date);
 
@@ -127,7 +127,7 @@ public class OpgenomenVermogenServiceTest {
         OpgenomenVermogen ov6 = new OpgenomenVermogen();
         ov6.setDatumtijd(toDate("13:01:10"));
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(Arrays.asList(ov1, ov2, ov3, ov4, ov5, ov6));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3, ov4, ov5, ov6));
 
         opgenomenVermogenService.cleanup(date);
 

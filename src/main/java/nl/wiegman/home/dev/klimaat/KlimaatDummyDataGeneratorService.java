@@ -50,11 +50,14 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
     @Value("${klimaatDataGenerator.initialDelaySeconds}")
     int initialDelaySeconds;
 
-    @Autowired
-    private KlimaatService klimaatService;
+    private final KlimaatService klimaatService;
+    private final KlimaatSensorRepository klimaatSensorRepository;
 
     @Autowired
-    private KlimaatSensorRepository klimaatSensorRepository;
+    public KlimaatDummyDataGeneratorService(KlimaatService klimaatService, KlimaatSensorRepository klimaatSensorRepository) {
+        this.klimaatService = klimaatService;
+        this.klimaatSensorRepository = klimaatSensorRepository;
+    }
 
     @PostConstruct
     public void init() {

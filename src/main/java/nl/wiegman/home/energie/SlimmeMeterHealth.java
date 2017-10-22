@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +27,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
 
         Meterstand mostRecent = meterstandService.getMeestRecente();
 
-        String formattedDateTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(mostRecent.getDatumtijdAsDate());
+        String formattedDateTime = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(mostRecent.getDatumtijdAsLocalDateTime());
 
         if (mostRecent.getDatumtijd() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
             return Health.down()

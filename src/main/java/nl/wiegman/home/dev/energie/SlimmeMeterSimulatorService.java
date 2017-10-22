@@ -38,10 +38,14 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     @Value("${slimmeMeterSimulator.initialDelaySeconds}")
     private int initialDelaySeconds;
 
+    private final MeterstandService meterstandService;
+    private final SlimmeMeterController slimmeMeterController;
+
     @Autowired
-    private MeterstandService meterstandService;
-    @Autowired
-    private SlimmeMeterController slimmeMeterController;
+    public SlimmeMeterSimulatorService(MeterstandService meterstandService, SlimmeMeterController slimmeMeterController) {
+        this.meterstandService = meterstandService;
+        this.slimmeMeterController = slimmeMeterController;
+    }
 
     @PostConstruct
     public void init() {

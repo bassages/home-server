@@ -1,6 +1,7 @@
 package nl.wiegman.home.energie;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import nl.wiegman.home.DateTimeUtil;
 
 @Entity
 public class Meterstand {
@@ -39,8 +42,8 @@ public class Meterstand {
     }
 
     @JsonIgnore
-    public Date getDatumtijdAsDate() {
-        return new Date(datumtijd);
+    public LocalDateTime getDatumtijdAsLocalDateTime() {
+        return DateTimeUtil.toLocalDateTime(new Date(datumtijd));
     }
 
     public void setDatumtijd(long datumtijd) {
