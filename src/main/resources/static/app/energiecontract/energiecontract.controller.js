@@ -3,11 +3,11 @@
 
     angular
         .module('app')
-        .controller('EnergieContractenController', EnergieContractenController);
+        .controller('EnergieContractController', EnergieContractController);
 
-    EnergieContractenController.$inject = ['$log', 'EnergieContractenService', 'LoadingIndicatorService', 'ErrorMessageService'];
+    EnergieContractController.$inject = ['$log', 'EnergieContractService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
-    function EnergieContractenController($log, EnergieContractenService, LoadingIndicatorService, ErrorMessageService) {
+    function EnergieContractController($log, EnergieContractService, LoadingIndicatorService, ErrorMessageService) {
         var vm = this;
 
         vm.startEdit = startEdit;
@@ -29,7 +29,7 @@
         function activate() {
             LoadingIndicatorService.startLoading();
 
-            EnergieContractenService.query(
+            EnergieContractService.query(
                 function(data) {
                     vm.energieContracten = data;
                     LoadingIndicatorService.stopLoading();
@@ -42,7 +42,7 @@
         }
 
         function startAdd() {
-            vm.energieContract = new EnergieContractenService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            vm.energieContract = new EnergieContractService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
             vm.vanaf = vm.energieContract.van;
             vm.selectedId = null;
             vm.detailsmode = 'add';
@@ -119,7 +119,7 @@
 
             var indexOfEnergieContractToDelete = _.findIndex(vm.energieContracten, {id: vm.energieContract.id});
 
-            EnergieContractenService.delete({id: vm.energieContract.id},
+            EnergieContractService.delete({id: vm.energieContract.id},
                 function(successResult) {
                     vm.energieContracten.splice(indexOfEnergieContractToDelete, 1);
                     vm.cancelEdit();

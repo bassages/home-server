@@ -97,17 +97,17 @@
                 controllerAs: 'vm'
             })
             .when('/energiecontracten', {
-                templateUrl: '/app/beheer/energiecontracten.html',
-                controller: 'EnergieContractenController',
+                templateUrl: '/app/energiecontract/energiecontract.html',
+                controller: 'EnergieContractController',
                 controllerAs: 'vm'
             })
             .when('/mindergasnl', {
-                templateUrl: '/app/beheer/mindergasnl.html',
+                templateUrl: '/app/mindergasnl/mindergasnl.html',
                 controller: 'MindergasnlController',
                 controllerAs: 'vm'
             })
             .when('/application-settings', {
-                templateUrl: '/app/beheer/application-settings.html',
+                templateUrl: '/app/application-settings/application-settings.html',
                 controller: 'ApplicationSettingsController',
                 controllerAs: 'vm'
             })
