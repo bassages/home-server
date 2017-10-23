@@ -15,17 +15,17 @@
         $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
 
-        $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-' + (Date.today().getFullYear()));
-        $scope.period = 'jaar';
-        $scope.soort = $routeParams.verbruiksoort;
-        $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-        $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-        $scope.hideDateSelection = true;
-        $scope.data = [];
-
         activate();
 
         function activate() {
+            $scope.selection = d3.time.format('%d-%m-%Y').parse('01-01-' + (Date.today().getFullYear()));
+            $scope.period = 'jaar';
+            $scope.soort = $routeParams.verbruiksoort;
+            $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+            $scope.hideDateSelection = true;
+            $scope.data = [];
+
             EnergieHistorieService.manageChartSize($scope, showChart, showTable);
             getDataFromServer();
         }
@@ -69,15 +69,8 @@
         }
 
         function getChartConfig(data) {
-            var chartConfig = {};
+            var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.bindto = '#chart';
-
-            chartConfig.data = {};
-            chartConfig.data.json = data;
-            chartConfig.data.type = 'bar';
-            chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
-            chartConfig.data.colors = EnergieHistorieService.getDataColors();
             chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
@@ -94,9 +87,6 @@
 
             var yAxisFormat = function (value) { return EnergieHistorieService.formatWithoutUnitLabel($scope.soort, value); };
             chartConfig.axis.y = {tick: {format: yAxisFormat }};
-            chartConfig.legend = {show: false};
-            chartConfig.bar = {width: {ratio: 0.8}};
-            chartConfig.transition = {duration: 0};
 
             chartConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
@@ -104,8 +94,6 @@
                     return EnergieHistorieService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
-            chartConfig.padding = EnergieHistorieService.getChartPadding();
-            chartConfig.grid = {y: {show: true}};
 
             return chartConfig;
         }

@@ -5,12 +5,11 @@
         .module('app')
         .controller('UurEnergieHistorieController', UurEnergieHistorieController);
 
-    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$filter', '$timeout', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
+    UurEnergieHistorieController.$inject = ['$scope', '$routeParams', '$location', '$http', '$log', '$timeout', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
-    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $filter, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
+    function UurEnergieHistorieController($scope, $routeParams, $location, $http, $log, $timeout, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
 
         $scope.changeSoort = changeSoort;
-        $scope.selectionChange = selectionChange;
         $scope.changePeriod = changePeriod;
         $scope.toggleEnergiesoort = toggleEnergiesoort;
         $scope.allowMultpleEnergiesoorten = allowMultpleEnergiesoorten;
@@ -20,20 +19,25 @@
         $scope.selectionChange = selectionChange;
         $scope.navigateToDetailsOfSelection = navigateToDetailsOfSelection;
 
-        $scope.period = 'uur';
-        $scope.soort = $routeParams.verbruiksoort;
-        $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
-        $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
-        $scope.dateformat = 'EEE. dd-MM-yyyy';
-        $scope.datepickerPopupOptions = { maxDate: Date.today() };
-        $scope.datepickerPopup = { opened: false };
-        $scope.data = [];
-
         activate();
 
         function activate() {
+            if (!getDateFromLocationSearch()) {
+                changeDate(Date.today());
+                return;
+            }
+
+            $scope.selection = getDateFromLocationSearch();
+            $scope.period = 'uur';
+            $scope.soort = $routeParams.verbruiksoort;
+            $scope.supportedsoorten = EnergieHistorieService.getSupportedSoorten();
+            $scope.energiesoorten = EnergieHistorieService.getEnergieSoorten($location.search(), $scope.soort);
+            $scope.dateformat = 'EEE. dd-MM-yyyy';
+            $scope.datepickerPopupOptions = { maxDate: Date.today() };
+            $scope.datepickerPopup = { opened: false };
+            $scope.data = [];
+
             EnergieHistorieService.manageChartSize($scope, showChart, showTable);
-            setSelection();
             getDataFromServer();
         }
 
@@ -53,14 +57,13 @@
             }
         }
 
-        function setSelection() {
-            var dateProvidedByLocation = Date.parseExact($location.search().datum, 'dd-MM-yyyy');
-            if (dateProvidedByLocation) {
-                $scope.selection = dateProvidedByLocation;
-            } else {
-                $scope.selection = Date.today();
+        function getDateFromLocationSearch() {
+            return Date.parseExact($location.search().datum, 'dd-MM-yyyy');
+        }
 
-            }
+        function changeDate(date) {
+            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+            $location.search('datum', formattedDate);
         }
 
         function changeSoort(soort) {
@@ -82,13 +85,12 @@
         }
 
         function isMaxSelected() {
-            return Date.today().getTime() === $scope.selection.getTime();
+            return $scope.selection && Date.today().getTime() === $scope.selection.getTime();
         }
 
         function navigate(numberOfPeriods) {
             var date = $scope.selection.clone().add(numberOfPeriods).days();
-            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
-            $location.search('datum', formattedDate);
+            changeDate(date);
         }
 
         function toggleDatepickerPopup() {
@@ -96,19 +98,12 @@
         }
 
         function selectionChange() {
-            getDataFromServer();
+            changeDate($scope.selection);
         }
 
         function getChartConfig(data) {
-            var chartConfig = {};
+            var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.bindto = '#chart';
-
-            chartConfig.data = {};
-            chartConfig.data.json = data;
-            chartConfig.data.type = 'bar';
-            chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
-            chartConfig.data.colors = EnergieHistorieService.getDataColors();
             chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection($scope.selection); };
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
@@ -125,18 +120,12 @@
 
             var yAxisFormat = function (value) { return EnergieHistorieService.formatWithoutUnitLabel($scope.soort, value); };
             chartConfig.axis.y = {tick: {format: yAxisFormat }};
-            chartConfig.legend = {show: false};
-            chartConfig.bar = {width: {ratio: 0.8}};
-            chartConfig.transition = {duration: 0};
 
             chartConfig.tooltip = {
                 contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
                     return EnergieHistorieService.getTooltipContent(this, d, defaultTitleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
-
-            chartConfig.padding = EnergieHistorieService.getChartPadding();
-            chartConfig.grid = {y: {show: true}};
 
             return chartConfig;
         }

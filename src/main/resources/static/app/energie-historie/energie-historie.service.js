@@ -10,6 +10,28 @@
     function EnergieHistorieService($filter, BaseHistorieService, ApplicationSettingsService, _) {
         angular.extend(EnergieHistorieService.prototype, BaseHistorieService);
 
+        this.getDefaultBarChartConfig = function(data) {
+            var chartConfig = {};
+
+            chartConfig.bindto = '#chart';
+
+            chartConfig.data = {};
+            chartConfig.data.type = 'bar';
+            chartConfig.data.json = data;
+            chartConfig.data.colors = this.getDataColors();
+
+            chartConfig.data.order = function(data1, data2) { return data2.id.localeCompare(data1.id); };
+            chartConfig.legend = {show: false};
+            chartConfig.bar = {width: {ratio: 0.8}};
+
+            chartConfig.transition = {duration: 0};
+            chartConfig.padding = this.getChartPadding();
+
+            chartConfig.grid = {y: {show: true}};
+
+            return chartConfig;
+        };
+
         this.getDataColors = function() {
             return {
                 'stroom-verbruik-dal': '#4575b3',
