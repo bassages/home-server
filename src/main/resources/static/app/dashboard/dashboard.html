@@ -91,7 +91,7 @@
 
                 <p>Op dit moment</p>
                 <div class="p-div">
-                    {{vm.huidigKlimaat.temperatuur | number:2}}&#8451;
+                    {{vm.huidigKlimaat.temperatuur | number:2}}&#8451;&nbsp;<i ng-if="vm.huidigKlimaat.temperatuurTrend=='UP'" class="fa fa-arrow-up"></i><i ng-if="vm.huidigKlimaat.temperatuurTrend=='DOWN'" class="fa fa-arrow-down"></i><i ng-if="vm.huidigKlimaat.temperatuurTrend==='STABLE'" class="fa fa-arrows-h"></i>
                 </div>
             </div>
         </div>

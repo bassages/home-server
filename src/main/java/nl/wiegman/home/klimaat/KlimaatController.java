@@ -29,6 +29,8 @@ import nl.wiegman.home.DateTimeUtil;
 @RequestMapping("/api/klimaat")
 public class KlimaatController {
 
+    private static final String DEFAULT_KLIMAAT_SENSOR_CODE = "WOONKAMER";
+
     private final KlimaatService klimaatService;
 
     @Autowired
@@ -65,7 +67,7 @@ public class KlimaatController {
 
     @GetMapping
     public List<Klimaat> findAllInPeriod(@RequestParam("from") long from, @RequestParam("to") long to) {
-        return klimaatService.getInPeriod("WOONKAMER", new Date(from), new Date(to));
+        return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, new Date(from), new Date(to));
     }
 
     @GetMapping(path = "gemiddelde")
