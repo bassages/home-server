@@ -29,7 +29,7 @@ import nl.wiegman.home.DateTimeUtil;
 @RequestMapping("/api/klimaat")
 public class KlimaatController {
 
-    private static final String DEFAULT_KLIMAAT_SENSOR_CODE = "WOONKAMER";
+    public static final String DEFAULT_KLIMAAT_SENSOR_CODE = "WOONKAMER";
 
     private final KlimaatService klimaatService;
 
@@ -51,8 +51,8 @@ public class KlimaatController {
     }
 
     @GetMapping(path = "meest-recente")
-    public Klimaat getMostRecent() {
-        return klimaatService.getMostRecent();
+    public RealtimeKlimaat getMostRecent() {
+        return klimaatService.getMostRecent(DEFAULT_KLIMAAT_SENSOR_CODE);
     }
 
     @GetMapping(path = "hoogste")

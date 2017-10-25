@@ -91,7 +91,7 @@
 
                 <p>Op dit moment</p>
                 <div class="p-div">
-                    {{vm.huidigKlimaat.temperatuur | number:2}}&#8451;&nbsp;<i ng-if="vm.huidigKlimaat.temperatuurTrend=='UP'" class="fa fa-arrow-up"></i><i ng-if="vm.huidigKlimaat.temperatuurTrend=='DOWN'" class="fa fa-arrow-down"></i><i ng-if="vm.huidigKlimaat.temperatuurTrend==='STABLE'" class="fa fa-arrows-h"></i>
+                    {{vm.huidigKlimaat.temperatuur | number:2}}&#8451;&nbsp;<i ng-if="vm.huidigKlimaat.temperatuurTrend=='UP'" class="fa fa-arrow-up upward-trend"></i><i ng-if="vm.huidigKlimaat.temperatuurTrend=='DOWN'" class="fa fa-arrow-down downward-trend"></i><span ng-if="vm.huidigKlimaat.temperatuurTrend==='STABLE'" class="stable-trend"><strong>=</strong></span>
                 </div>
             </div>
         </div>
@@ -111,7 +111,7 @@
 
                 <p>Op dit moment</p>
                 <div class="p-div">
-                    {{vm.huidigKlimaat.luchtvochtigheid | number:1}}%
+                    {{vm.huidigKlimaat.luchtvochtigheid | number:1}}%&nbsp;<i ng-if="vm.huidigKlimaat.luchtvochtigheidTrend=='UP'" class="fa fa-arrow-up upward-trend"></i><i ng-if="vm.huidigKlimaat.luchtvochtigheidTrend=='DOWN'" class="fa fa-arrow-down downward-trend"></i><span ng-if="vm.huidigKlimaat.luchtvochtigheidTrend==='STABLE'" class="stable-trend"><strong>=</strong></span>
                 </div>
             </div>
         </div>

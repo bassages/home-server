@@ -4,6 +4,8 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,50 +13,54 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import nl.wiegman.home.UpdateEvent;
 
 @Service
 public class KlimaatService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
+
+    private static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
     private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/15 * * * ?";
 
     private static final int TEMPERATURE_SCALE = 2;
     private static final int HUMIDITY_SCALE = 1;
 
-    private final Map<String, List<Klimaat>> receivedInLastQuarter = new ConcurrentHashMap<>();
+    private final Map<String, List<Klimaat>> mostRecentKlimaatsPerKlimaatSensorCode = new ConcurrentHashMap<>();
 
     private final KlimaatServiceCached klimaatServiceCached;
     private final KlimaatRepos klimaatRepository;
     private final KlimaatSensorRepository klimaatSensorRepository;
-    private final ApplicationEventPublisher eventPublisher;
+
+    private final KlimaatSensorValueTrendService klimaatSensorValueTrendService;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     public KlimaatService(KlimaatServiceCached klimaatServiceCached, KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
-            ApplicationEventPublisher eventPublisher) {
+            KlimaatSensorValueTrendService klimaatSensorValueTrendService, SimpMessagingTemplate messagingTemplate) {
 
         this.klimaatServiceCached = klimaatServiceCached;
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
-        this.eventPublisher = eventPublisher;
+        this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostConstruct
-    public void createSensor() {
-        if (CollectionUtils.isEmpty(klimaatSensorRepository.findAll())) {
+    public void createDefaultSensor() {
+        if (isEmpty(klimaatSensorRepository.findAll())) {
             KlimaatSensor klimaatSensor = new KlimaatSensor();
             klimaatSensor.setCode("WOONKAMER");
             klimaatSensor.setOmschrijving("Huiskamer");
@@ -64,37 +70,35 @@ public class KlimaatService {
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
     public void save() {
-        LOGGER.debug("Running " + this.getClass().getSimpleName() + ".save()");
+        final Date now = DateUtils.truncate(new Date(), Calendar.MINUTE);
+        mostRecentKlimaatsPerKlimaatSensorCode.forEach((klimaatSensorCode, klimaats) -> this.saveWhenValid(now, klimaatSensorCode, klimaats));
+        mostRecentKlimaatsPerKlimaatSensorCode.clear();
+    }
 
-        Date now = new Date();
-        now = DateUtils.truncate(now, Calendar.MINUTE);
+    private void saveWhenValid(Date date, String klimaatSensorCode, List<Klimaat> klimaats) {
+        List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(klimaats);
+        List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(klimaats);
 
-        for (Map.Entry<String, List<Klimaat>> receivedItem : receivedInLastQuarter.entrySet()) {
-            List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(receivedItem.getValue());
-            List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(receivedItem.getValue());
+        KlimaatSensor klimaatSensor = klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
 
-            KlimaatSensor klimaatSensor = receivedItem.getValue().get(0).getKlimaatSensor();
-
-            BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
-            if (averageTemperature != null) {
-                averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, HALF_UP);
-            }
-
-            BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
-            if (averageHumidity != null) {
-                averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, HALF_UP);
-            }
-
-            if (averageTemperature != null || averageHumidity != null) {
-                Klimaat klimaatToSave = new Klimaat();
-                klimaatToSave.setDatumtijd(now);
-                klimaatToSave.setTemperatuur(averageTemperature);
-                klimaatToSave.setLuchtvochtigheid(averageHumidity);
-                klimaatToSave.setKlimaatSensor(klimaatSensor);
-                klimaatRepository.save(klimaatToSave);
-            }
+        BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
+        if (averageTemperature != null) {
+            averageTemperature = averageTemperature.setScale(TEMPERATURE_SCALE, HALF_UP);
         }
-        receivedInLastQuarter.clear();
+
+        BigDecimal averageHumidity = getAverage(validHumiditiesFromLastQuarter);
+        if (averageHumidity != null) {
+            averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, HALF_UP);
+        }
+
+        if (averageTemperature != null || averageHumidity != null) {
+            Klimaat klimaatToSave = new Klimaat();
+            klimaatToSave.setDatumtijd(date);
+            klimaatToSave.setTemperatuur(averageTemperature);
+            klimaatToSave.setLuchtvochtigheid(averageHumidity);
+            klimaatToSave.setKlimaatSensor(klimaatSensor);
+            klimaatRepository.save(klimaatToSave);
+        }
     }
 
     public KlimaatSensor getKlimaatSensorByCode(String klimaatSensorCode) {
@@ -120,18 +124,25 @@ public class KlimaatService {
         }
     }
 
-    public Klimaat getMostRecent() {
+    public RealtimeKlimaat getMostRecent(String klimaatSensorCode) {
         LOGGER.info("getMostRecent()");
-        return klimaatRepository.getMostRecent();
+        return getLast(mostRecentKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode))
+                .map(this::mapToRealtimeKlimaat)
+                .orElse(null);
+    }
+
+    private Optional<Klimaat> getLast(List<Klimaat> klimaats) {
+        if (isNotEmpty(klimaats)) {
+            return Optional.of(klimaats.get(klimaats.size() - 1));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public void add(Klimaat klimaat) {
-        LOGGER.info("Recieved klimaat");
-        if (!receivedInLastQuarter.containsKey(klimaat.getKlimaatSensor().getCode())) {
-            receivedInLastQuarter.put(klimaat.getKlimaatSensor().getCode(), new ArrayList<>());
-        }
-        receivedInLastQuarter.get(klimaat.getKlimaatSensor().getCode()).add(klimaat);
-        eventPublisher.publishEvent(new UpdateEvent(klimaat));
+        LOGGER.info("Received klimaat");
+        mostRecentKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
+        publishEvent(klimaat);
     }
 
     public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
@@ -205,5 +216,24 @@ public class KlimaatService {
                 .stream()
                 .map(klimaatRepository::firstHighestHumidityOnDay)
                 .collect(toList());
+    }
+
+    private void publishEvent(Klimaat klimaat) {
+        RealtimeKlimaat realtimeKlimaat = mapToRealtimeKlimaat(klimaat);
+        messagingTemplate.convertAndSend(REALTIME_KLIMAAT_TOPIC, realtimeKlimaat);
+    }
+
+    private RealtimeKlimaat mapToRealtimeKlimaat(Klimaat klimaat) {
+        RealtimeKlimaat realtimeKlimaat = new RealtimeKlimaat();
+        realtimeKlimaat.setDatumtijd(klimaat.getDatumtijd());
+        realtimeKlimaat.setLuchtvochtigheid(klimaat.getLuchtvochtigheid());
+        realtimeKlimaat.setTemperatuur(klimaat.getTemperatuur());
+
+        List<Klimaat> mostRecentKlimaatsWithSameKlimaatSensorCode = mostRecentKlimaatsPerKlimaatSensorCode.get(klimaat.getKlimaatSensor().getCode());
+
+        realtimeKlimaat.setTemperatuurTrend(klimaatSensorValueTrendService.determineValueTrend(mostRecentKlimaatsWithSameKlimaatSensorCode, Klimaat::getTemperatuur));
+        realtimeKlimaat.setLuchtvochtigheidTrend(klimaatSensorValueTrendService.determineValueTrend(mostRecentKlimaatsWithSameKlimaatSensorCode, Klimaat::getLuchtvochtigheid));
+
+        return realtimeKlimaat;
     }
 }

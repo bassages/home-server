@@ -14,8 +14,6 @@ import org.springframework.data.repository.query.Param;
 public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     // JPQL queries
-    String MOST_RECENT = "SELECT k FROM Klimaat k WHERE k.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Klimaat mostrecent)";
-
     String AVERAGE_LUCHTVOCHTIGHEID_BETWEEN = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
     String AVERAGE_TEMPERATUUR_BETWEEEN = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
 
@@ -33,9 +31,6 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE luchtvochtigheid IS NOT NULL AND date(datumtijd) = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
     List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(String klimaatSensorCode, Date van, Date tot);
-
-    @Query(value = MOST_RECENT)
-    Klimaat getMostRecent();
 
     @Query(value = PEAK_HIGH_TEMPERATURE_DATES, nativeQuery = true)
     List<Date> getPeakHighTemperatureDates(@Param("van") Date van, @Param("tot") Date tot, @Param("limit") int limit);

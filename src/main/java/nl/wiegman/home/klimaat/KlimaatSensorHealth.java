@@ -26,19 +26,25 @@ public class KlimaatSensorHealth implements HealthIndicator {
 
         Date now = new Date();
 
-        Klimaat mostRecent = klimaatService.getMostRecent();
+        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(KlimaatController.DEFAULT_KLIMAAT_SENSOR_CODE);
 
-        String formattedDateTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(mostRecent.getDatumtijd());
-
-        if (mostRecent.getDatumtijd().getTime() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
+        if (mostRecent == null) {
+            return Health.unknown()
+                    .withDetail("message", "No valid klimaat received since application startup")
+                    .build();
+        } else if (mostRecent.getDatumtijd().getTime() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
             return Health.down()
-                    .withDetail("message", "Most recent valid klimaat was saved at " + formattedDateTime + ". Which is more than " + MAXIMUM_KLIMAAT_AGE_IN_MINUTES + " minutes ago.")
+                    .withDetail("message", "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent) + ". Which is more than " + MAXIMUM_KLIMAAT_AGE_IN_MINUTES + " minutes ago.")
                     .build();
         } else {
             return Health.up()
-                    .withDetail("message", "Most recent valid klimaat was saved at " + formattedDateTime)
+                    .withDetail("message", "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent))
                     .build();
         }
+    }
+
+    private String formatDatumtijd(RealtimeKlimaat mostRecent) {
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(mostRecent.getDatumtijd());
     }
 
 }
