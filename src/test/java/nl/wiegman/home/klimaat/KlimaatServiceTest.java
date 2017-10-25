@@ -1,9 +1,11 @@
 package nl.wiegman.home.klimaat;
 
-import nl.wiegman.home.klimaat.Klimaat;
-import nl.wiegman.home.klimaat.KlimaatSensor;
-import nl.wiegman.home.klimaat.KlimaatRepos;
-import nl.wiegman.home.klimaat.KlimaatService;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,21 +14,19 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.ApplicationEventPublisher;
-
-import java.math.BigDecimal;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {
 
     @Mock
-    private KlimaatRepos klimaatRepositoryMock;
+    private KlimaatRepos klimaatRepository;
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private KlimaatSensorRepository klimaatSensorRepository;
+    @Mock
+    private KlimaatSensorValueTrendService klimaatSensorValueTrendService;
+    @Mock
+    private SimpMessagingTemplate messagingTemplate;
 
     @InjectMocks
     private KlimaatService klimaatService;
@@ -36,8 +36,11 @@ public class KlimaatServiceTest {
 
     @Test
     public void testHappyFlow() {
+        String klimaatSensorCode = "LIVINGROOM";
         KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode("LIVINGROOM");
+        klimaatSensor.setCode(klimaatSensorCode);
+
+        when(klimaatSensorRepository.findFirstByCode(klimaatSensorCode)).thenReturn(klimaatSensor);
 
         Klimaat klimaat = new Klimaat();
         klimaat.setTemperatuur(new BigDecimal(20.0));
@@ -59,7 +62,7 @@ public class KlimaatServiceTest {
 
         klimaatService.save();
 
-        verify(klimaatRepositoryMock, times(1)).save(klimaatArgumentCaptor.capture());
+        verify(klimaatRepository, times(1)).save(klimaatArgumentCaptor.capture());
 
         Klimaat savedKlimaat = klimaatArgumentCaptor.getValue();
         assertThat(savedKlimaat.getTemperatuur().doubleValue()).isEqualTo(21.0d);
