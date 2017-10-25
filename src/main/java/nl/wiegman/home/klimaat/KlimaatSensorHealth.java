@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KlimaatSensorHealth implements HealthIndicator {
 
-    private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 20;
+    private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 10;
 
     private final KlimaatService klimaatService;
 
