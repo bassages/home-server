@@ -3,7 +3,6 @@ package nl.wiegman.home.klimaat;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -61,20 +60,6 @@ public class KlimaatSensorValueTrendServiceTest {
             getKlimaat(toDate("01-01-2016 14:00:00"), new BigDecimal("20.00")),
             getKlimaat(toDate("01-01-2016 14:04:00"), new BigDecimal("20.00")),
             getKlimaat(toDate("01-01-2016 14:08:00"), new BigDecimal("20.00"))
-        );
-
-        assertThat(klimaatSensorValueTrendService.determineValueTrend(klimaats, Klimaat::getTemperatuur)).isEqualTo(Trend.STABLE);
-    }
-
-    @Test
-    public void whenDetermineTrendThenOnlyLastXItemsAreExamined() throws Exception {
-        List<Klimaat> klimaats = asList(
-                getKlimaat(toDate("01-01-2016 14:00:00"), new BigDecimal("25")),
-                getKlimaat(toDate("01-01-2016 14:04:00"), new BigDecimal("50")),
-                getKlimaat(toDate("01-01-2016 14:08:00"), new BigDecimal("99")),
-                getKlimaat(toDate("01-01-2016 14:10:00"), new BigDecimal("20.00")),
-                getKlimaat(toDate("01-01-2016 14:12:00"), new BigDecimal("20.00")),
-                getKlimaat(toDate("01-01-2016 14:14:00"), new BigDecimal("20.00"))
         );
 
         assertThat(klimaatSensorValueTrendService.determineValueTrend(klimaats, Klimaat::getTemperatuur)).isEqualTo(Trend.STABLE);

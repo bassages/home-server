@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class KlimaatSensorValueTrendService {
 
-    private static final int NUMBER_OF_ITEMS_TO_DETERMINE_TREND_FOR = 3;
+    private static final int MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND = 3;
 
     private static final Map<Integer, Trend> SIGNUM_OF_SLOPE_TO_TREND_MAPPING = new HashMap<Integer, Trend>() {
         {
@@ -34,9 +34,8 @@ public class KlimaatSensorValueTrendService {
                 .map(klimaat -> Pair.of(klimaat.getDatumtijd(), sensorValueGetter.apply(klimaat)))
                 .collect(toList());
 
-        if (isNotEmpty(validSensorValues) && validSensorValues.size() >= NUMBER_OF_ITEMS_TO_DETERMINE_TREND_FOR) {
-            BigDecimal slope = calculateSlope(
-                    validSensorValues.subList(validSensorValues.size() - NUMBER_OF_ITEMS_TO_DETERMINE_TREND_FOR, validSensorValues.size()));
+        if (isNotEmpty(validSensorValues) && validSensorValues.size() >= MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {
+            BigDecimal slope = calculateSlope(validSensorValues);
             return SIGNUM_OF_SLOPE_TO_TREND_MAPPING.get(slope.signum());
         }
         return null;

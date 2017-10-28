@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
 
@@ -28,16 +29,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KlimaatService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
 
     private static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
-    private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/15 * * * ?";
+    private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 10;
+    private static final int NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR = 15;
+
+    private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/" + NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR + " * * * ?";
 
     private static final int TEMPERATURE_SCALE = 2;
     private static final int HUMIDITY_SCALE = 1;
 
-    private final Map<String, List<Klimaat>> mostRecentKlimaatsPerKlimaatSensorCode = new ConcurrentHashMap<>();
+    private final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = new ConcurrentHashMap<>();
 
     private final KlimaatServiceCached klimaatServiceCached;
     private final KlimaatRepos klimaatRepository;
@@ -68,16 +73,33 @@ public class KlimaatService {
         }
     }
 
-    @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
-    public void save() {
-        final Date now = DateUtils.truncate(new Date(), Calendar.MINUTE);
-        mostRecentKlimaatsPerKlimaatSensorCode.forEach((klimaatSensorCode, klimaats) -> this.saveWhenValid(now, klimaatSensorCode, klimaats));
-        mostRecentKlimaatsPerKlimaatSensorCode.clear();
+    private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
+        int maxNrOfMinutes = IntStream.of(NR_OF_MINUTES_TO_DETERMINE_TREND_FOR, NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR).max().getAsInt();
+        Date cleanUpAllBefore = DateUtils.addMinutes(new Date(), -maxNrOfMinutes);
+        LOGGER.info("cleanUpRecentlyReceivedKlimaats before {}", cleanUpAllBefore);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.values().forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().before(cleanUpAllBefore)));
     }
 
-    private void saveWhenValid(Date date, String klimaatSensorCode, List<Klimaat> klimaats) {
-        List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(klimaats);
-        List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(klimaats);
+    @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
+    public void save() {
+        final Date referenceDate = DateUtils.truncate(new Date(), Calendar.MINUTE);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode
+                .forEach((klimaatSensorCode, klimaats) -> this.saveKlimaatWithAveragedRecentSensorValues(referenceDate, klimaatSensorCode));
+    }
+
+    private List<Klimaat> getKlimaatsReceivedInLastNumberOfMinutes(String klimaatSensorCode, int nrOfMinutes) {
+        Date from = DateUtils.addMinutes(new Date(), -nrOfMinutes);
+        return recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode).stream()
+                .filter(klimaat -> klimaat.getDatumtijd().after(from))
+                .collect(toList());
+    }
+
+    private void saveKlimaatWithAveragedRecentSensorValues(Date referenceDate, String klimaatSensorCode) {
+        List<Klimaat> klimaatsReceivedInLastNumberOfMinutes = getKlimaatsReceivedInLastNumberOfMinutes(klimaatSensorCode,
+                NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR);
+
+        List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(klimaatsReceivedInLastNumberOfMinutes);
+        List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(klimaatsReceivedInLastNumberOfMinutes);
 
         KlimaatSensor klimaatSensor = klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
 
@@ -93,7 +115,7 @@ public class KlimaatService {
 
         if (averageTemperature != null || averageHumidity != null) {
             Klimaat klimaatToSave = new Klimaat();
-            klimaatToSave.setDatumtijd(date);
+            klimaatToSave.setDatumtijd(referenceDate);
             klimaatToSave.setTemperatuur(averageTemperature);
             klimaatToSave.setLuchtvochtigheid(averageHumidity);
             klimaatToSave.setKlimaatSensor(klimaatSensor);
@@ -126,7 +148,7 @@ public class KlimaatService {
 
     public RealtimeKlimaat getMostRecent(String klimaatSensorCode) {
         LOGGER.info("getMostRecent()");
-        return getLast(mostRecentKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode))
+        return getLast(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode))
                 .map(this::mapToRealtimeKlimaat)
                 .orElse(null);
     }
@@ -141,8 +163,9 @@ public class KlimaatService {
 
     public void add(Klimaat klimaat) {
         LOGGER.info("Received klimaat");
-        mostRecentKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         publishEvent(klimaat);
+        cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
     public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
@@ -229,10 +252,10 @@ public class KlimaatService {
         realtimeKlimaat.setLuchtvochtigheid(klimaat.getLuchtvochtigheid());
         realtimeKlimaat.setTemperatuur(klimaat.getTemperatuur());
 
-        List<Klimaat> mostRecentKlimaatsWithSameKlimaatSensorCode = mostRecentKlimaatsPerKlimaatSensorCode.get(klimaat.getKlimaatSensor().getCode());
-
-        realtimeKlimaat.setTemperatuurTrend(klimaatSensorValueTrendService.determineValueTrend(mostRecentKlimaatsWithSameKlimaatSensorCode, Klimaat::getTemperatuur));
-        realtimeKlimaat.setLuchtvochtigheidTrend(klimaatSensorValueTrendService.determineValueTrend(mostRecentKlimaatsWithSameKlimaatSensorCode, Klimaat::getLuchtvochtigheid));
+        List<Klimaat> klimaatsToDetermineTrendFor = getKlimaatsReceivedInLastNumberOfMinutes(klimaat.getKlimaatSensor().getCode(),
+                NR_OF_MINUTES_TO_DETERMINE_TREND_FOR);
+        realtimeKlimaat.setTemperatuurTrend(klimaatSensorValueTrendService.determineValueTrend(klimaatsToDetermineTrendFor, Klimaat::getTemperatuur));
+        realtimeKlimaat.setLuchtvochtigheidTrend(klimaatSensorValueTrendService.determineValueTrend(klimaatsToDetermineTrendFor, Klimaat::getLuchtvochtigheid));
 
         return realtimeKlimaat;
     }
