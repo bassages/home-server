@@ -24,11 +24,11 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_TEMPERATURE_DATES = "SELECT datum FROM (SELECT datum, MIN(temperatuur) AS temperatuur FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY temperatuur ASC LIMIT :limit) datums";
     String FIRST_LOWEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY temperatuur ASC, datumtijd ASC LIMIT 1";
 
-    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MAX(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING luchtvochtigheid IS NOT NULL AND datum >= :van AND datum < :tot ORDER BY luchtvochtigheid DESC LIMIT :limit) datums";
-    String FIRST_HIGHEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE luchtvochtigheid IS NOT NULL AND datum = :date ORDER BY luchtvochtigheid DESC, datumtijd ASC LIMIT 1";
+    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MAX(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid DESC LIMIT :limit) datums";
+    String FIRST_HIGHEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid DESC, datumtijd ASC LIMIT 1";
 
-    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING luchtvochtigheid IS NOT NULL AND datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
-    String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE luchtvochtigheid IS NOT NULL AND datum = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
+    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
+    String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
     List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(String klimaatSensorCode, Date van, Date tot);
 
