@@ -33,6 +33,8 @@ public class MeterstandService {
     private final MeterstandServiceCached meterstandServiceCached;
     private final CacheService cacheService;
 
+    private Meterstand mostRecentlySavedMeterstand = null;
+
     @Autowired
     public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached,
             CacheService cacheService) {
@@ -43,7 +45,9 @@ public class MeterstandService {
     }
 
     public Meterstand save(Meterstand meterstand) {
-        return meterstandRepository.save(meterstand);
+        Meterstand savedMeterStand = meterstandRepository.save(meterstand);
+        mostRecentlySavedMeterstand = savedMeterStand;
+        return savedMeterStand;
     }
 
     @Scheduled(cron = TWO_AM)
@@ -92,7 +96,7 @@ public class MeterstandService {
     }
 
     public Meterstand getMeestRecente() {
-        return meterstandRepository.getMeestRecente();
+        return mostRecentlySavedMeterstand;
     }
 
     public Meterstand getOudste() {

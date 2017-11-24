@@ -15,7 +15,6 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     // JPQL queries
     String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
     String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
-    String MOST_RECENT = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Meterstand mostrecent)";
     String OLDEST = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(oldest.datumtijd) FROM Meterstand oldest)";
 
     // Native queries
@@ -31,9 +30,6 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
     @Query(value = GASVERBRUIK_IN_PERIOD, nativeQuery = true)
     BigDecimal getGasVerbruikInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
-
-    @Query(value = MOST_RECENT)
-    Meterstand getMeestRecente();
 
     @Query(value = OLDEST)
     Meterstand getOudste();

@@ -14,6 +14,8 @@ public class KlimaatSensorHealth implements HealthIndicator {
 
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 10;
 
+    private static final String DETAIL_KEY_OF_MESSAGE = "message";
+
     private final KlimaatService klimaatService;
 
     @Autowired
@@ -30,15 +32,15 @@ public class KlimaatSensorHealth implements HealthIndicator {
 
         if (mostRecent == null) {
             return Health.unknown()
-                    .withDetail("message", "No valid klimaat received since application startup")
+                    .withDetail(DETAIL_KEY_OF_MESSAGE, "No valid klimaat received since application startup")
                     .build();
         } else if (mostRecent.getDatumtijd().getTime() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
             return Health.down()
-                    .withDetail("message", "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent) + ". Which is more than " + MAXIMUM_KLIMAAT_AGE_IN_MINUTES + " minutes ago.")
+                    .withDetail(DETAIL_KEY_OF_MESSAGE, "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent) + ". Which is more than " + MAXIMUM_KLIMAAT_AGE_IN_MINUTES + " minutes ago.")
                     .build();
         } else {
             return Health.up()
-                    .withDetail("message", "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent))
+                    .withDetail(DETAIL_KEY_OF_MESSAGE, "Most recent valid klimaat was saved at " + formatDatumtijd(mostRecent))
                     .build();
         }
     }

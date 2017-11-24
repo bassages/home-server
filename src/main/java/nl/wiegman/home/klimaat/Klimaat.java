@@ -24,6 +24,10 @@ public class Klimaat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Temporal(TemporalType.DATE)
+    @Column
+    private Date datum;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, unique = true)
     private Date datumtijd;
@@ -69,6 +73,7 @@ public class Klimaat {
 
     public void setDatumtijd(Date datumtijd) {
         this.datumtijd = datumtijd;
+        this.datum = datumtijd;
     }
 
     public KlimaatSensor getKlimaatSensor() {

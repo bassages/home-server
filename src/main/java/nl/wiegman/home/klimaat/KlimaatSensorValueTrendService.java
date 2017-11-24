@@ -5,13 +5,11 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.stereotype.Service;
 
@@ -29,25 +27,20 @@ public class KlimaatSensorValueTrendService {
     };
 
     public Trend determineValueTrend(List<Klimaat> klimaats, Function<Klimaat, BigDecimal> sensorValueGetter) {
-        List<Pair<Date, BigDecimal>> validSensorValues = klimaats.stream()
+        List<Klimaat> validklimaats = klimaats.stream()
                 .filter(klimaat -> nonNull(sensorValueGetter.apply(klimaat)))
-                .map(klimaat -> Pair.of(klimaat.getDatumtijd(), sensorValueGetter.apply(klimaat)))
                 .collect(toList());
 
-        if (isNotEmpty(validSensorValues) && validSensorValues.size() >= MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {
-            BigDecimal slope = calculateSlope(validSensorValues);
-            return SIGNUM_OF_SLOPE_TO_TREND_MAPPING.get(slope.signum());
+        if (isNotEmpty(validklimaats) && validklimaats.size() >= MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {
+            BigDecimal slopeOfSensorValue = calculateSlopeOfSensorValue(validklimaats, sensorValueGetter);
+            return SIGNUM_OF_SLOPE_TO_TREND_MAPPING.get(slopeOfSensorValue.signum());
         }
         return null;
     }
 
-    private BigDecimal calculateSlope(List<Pair<Date, BigDecimal>> sensorValues) {
+    private BigDecimal calculateSlopeOfSensorValue(List<Klimaat> klimaats, Function<Klimaat, BigDecimal> sensorValueGetter) {
         SimpleRegression simpleRegression = new SimpleRegression();
-
-        sensorValues.forEach(sensorValue -> {
-            simpleRegression.addData(sensorValue.getKey().getTime(), sensorValue.getValue().doubleValue());
-        });
-
+        klimaats.forEach(klimaat -> simpleRegression.addData(klimaat.getDatumtijd().getTime(), sensorValueGetter.apply(klimaat).doubleValue()));
         return new BigDecimal(simpleRegression.getSlope());
     }
 }

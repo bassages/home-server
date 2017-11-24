@@ -25,15 +25,15 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
 
     private static final Logger LOG = LoggerFactory.getLogger(KlimaatDummyDataGeneratorService.class);
 
-    public static final BigDecimal TEMPERATUUR_STEP = new BigDecimal(0.75d);
-    public static final BigDecimal TEMPERATUUR_MINIMUM = new BigDecimal(10.0d);
-    public static final BigDecimal TEMPERATUUR_MAXIMUM = new BigDecimal(32.0d);
+    private static final BigDecimal TEMPERATUUR_STEP = new BigDecimal(0.75d);
+    private static final BigDecimal TEMPERATUUR_MINIMUM = new BigDecimal(10.0d);
+    private static final BigDecimal TEMPERATUUR_MAXIMUM = new BigDecimal(32.0d);
 
-    public static final BigDecimal LUCHTVOCHTIGHEID_STEP = new BigDecimal(0.75d);
-    public static final BigDecimal LUCHTVOCHTIGHEID_MINIMUM = new BigDecimal(20.0d);
-    public static final BigDecimal LUCHTVOCHTIGHEID_MAXIMUM = new BigDecimal(90.0d);
+    private static final BigDecimal LUCHTVOCHTIGHEID_STEP = new BigDecimal(0.75d);
+    private static final BigDecimal LUCHTVOCHTIGHEID_MINIMUM = new BigDecimal(20.0d);
+    private static final BigDecimal LUCHTVOCHTIGHEID_MAXIMUM = new BigDecimal(90.0d);
 
-    public static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 10;
+    private static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 10;
 
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> dataGeneratorScheduler = null;

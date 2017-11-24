@@ -4,7 +4,6 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -16,8 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -34,7 +31,7 @@ public class KlimaatService {
 
     private static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
-    private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 10;
+    private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 18;
     private static final int NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR = 15;
 
     private static final String EVERY_15_MINUTES_PAST_THE_HOUR = "0 0/" + NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR + " * * * ?";
@@ -61,16 +58,6 @@ public class KlimaatService {
         this.klimaatSensorRepository = klimaatSensorRepository;
         this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
         this.messagingTemplate = messagingTemplate;
-    }
-
-    @PostConstruct
-    public void createDefaultSensor() {
-        if (isEmpty(klimaatSensorRepository.findAll())) {
-            KlimaatSensor klimaatSensor = new KlimaatSensor();
-            klimaatSensor.setCode("WOONKAMER");
-            klimaatSensor.setOmschrijving("Huiskamer");
-            klimaatSensorRepository.save(klimaatSensor);
-        }
     }
 
     private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
@@ -101,7 +88,7 @@ public class KlimaatService {
         List<BigDecimal> validTemperaturesFromLastQuarter = getValidTemperatures(klimaatsReceivedInLastNumberOfMinutes);
         List<BigDecimal> validHumiditiesFromLastQuarter = getValidHumidities(klimaatsReceivedInLastNumberOfMinutes);
 
-        KlimaatSensor klimaatSensor = klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
+        KlimaatSensor klimaatSensor = getOrCreateIfNonExists(klimaatSensorCode);
 
         BigDecimal averageTemperature = getAverage(validTemperaturesFromLastQuarter);
         if (averageTemperature != null) {
@@ -121,6 +108,16 @@ public class KlimaatService {
             klimaatToSave.setKlimaatSensor(klimaatSensor);
             klimaatRepository.save(klimaatToSave);
         }
+    }
+
+    private KlimaatSensor getOrCreateIfNonExists(String klimaatSensorCode) {
+        KlimaatSensor klimaatSensor = klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
+        if (klimaatSensor == null) {
+            klimaatSensor = new KlimaatSensor();
+            klimaatSensor.setCode(klimaatSensorCode);
+            klimaatSensor = klimaatSensorRepository.save(klimaatSensor);
+        }
+        return klimaatSensor;
     }
 
     public KlimaatSensor getKlimaatSensorByCode(String klimaatSensorCode) {
@@ -147,7 +144,6 @@ public class KlimaatService {
     }
 
     public RealtimeKlimaat getMostRecent(String klimaatSensorCode) {
-        LOGGER.info("getMostRecent()");
         return getLast(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode))
                 .map(this::mapToRealtimeKlimaat)
                 .orElse(null);
@@ -162,7 +158,6 @@ public class KlimaatService {
     }
 
     public void add(Klimaat klimaat) {
-        LOGGER.info("Received klimaat");
         recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         publishEvent(klimaat);
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
