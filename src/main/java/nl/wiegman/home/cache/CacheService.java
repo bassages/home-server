@@ -18,7 +18,7 @@ public class CacheService {
         cacheManager.getCacheNames().forEach(this::clear);
     }
 
-    public void clear(String cacheName) {
-        cacheManager.getCache(cacheName).clear();
+    public void clear(String nameOfCacheToClear) {
+        cacheManager.getCache(nameOfCacheToClear).clear();
     }
 }
