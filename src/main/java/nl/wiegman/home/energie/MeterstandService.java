@@ -2,9 +2,11 @@ package nl.wiegman.home.energie;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
+import static nl.wiegman.home.DateTimeUtil.toDateAtStartOfDay;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
-import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import nl.wiegman.home.DateTimePeriod;
 import nl.wiegman.home.DateTimeUtil;
 import nl.wiegman.home.cache.CacheService;
 
@@ -32,16 +35,16 @@ public class MeterstandService {
     private final MeterstandRepository meterstandRepository;
     private final MeterstandServiceCached meterstandServiceCached;
     private final CacheService cacheService;
+    private final Clock clock;
 
     private Meterstand mostRecentlySavedMeterstand = null;
 
     @Autowired
-    public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached,
-            CacheService cacheService) {
-
+    public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached, CacheService cacheService, Clock clock) {
         this.meterstandRepository = meterstandRepository;
         this.meterstandServiceCached = meterstandServiceCached;
         this.cacheService = cacheService;
+        this.clock = clock;
     }
 
     public Meterstand save(Meterstand meterstand) {
@@ -103,34 +106,33 @@ public class MeterstandService {
         return meterstandRepository.getOudste();
     }
 
-    public List<MeterstandOpDag> perDag(long van, long totEnMet) {
+    public List<MeterstandOpDag> perDag(DateTimePeriod period) {
         List<MeterstandOpDag> result = new ArrayList<>();
 
-        List<Date> dagenInPeriode = DateTimeUtil.getDagenInPeriode(van, totEnMet);
+        List<LocalDate> dagenInPeriode = DateTimeUtil.getDagenInPeriode(period);
         dagenInPeriode.forEach(dag -> {
-            LOGGER.info("Ophalen laatste meterstand op dag: " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(dag));
-
             Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
-            result.add(new MeterstandOpDag(dag.getTime(), meterstandOpDag));
+            result.add(new MeterstandOpDag(toDateAtStartOfDay(dag).getTime(), meterstandOpDag));
         });
         return result;
     }
 
-    public Meterstand getOudsteMeterstandOpDag(Date dag) {
-        if (DateTimeUtil.isAfterToday(dag)) {
+    public Meterstand getOudsteMeterstandOpDag(LocalDate day) {
+        if (day.isAfter(LocalDate.now(clock))) {
             return null;
         } else {
-            return meterstandServiceCached.getOudsteMeterstandOpDag(dag);
+            return meterstandServiceCached.getOudsteMeterstandOpDag(DateTimeUtil.toDateAtStartOfDay(day));
         }
     }
 
-    private Meterstand getMeesteRecenteMeterstandOpDag(Date dag) {
-        if (DateTimeUtil.isAfterToday(dag)) {
+    private Meterstand getMeesteRecenteMeterstandOpDag(LocalDate day) {
+        LocalDate now = LocalDate.now(clock);
+        if (day.isAfter(now)) {
             return null;
-        } else if (DateUtils.isSameDay(new Date(), dag)) {
-            return meterstandServiceCached.getMeestRecenteMeterstandOpDag(dag);
+        } else if (day.isEqual(now)) {
+            return meterstandServiceCached.getMeestRecenteMeterstandOpDag(toDateAtStartOfDay(day));
         } else {
-            return meterstandServiceCached.getPotentiallyCachedMeestRecenteMeterstandOpDag(dag);
+            return meterstandServiceCached.getPotentiallyCachedMeestRecenteMeterstandOpDag(toDateAtStartOfDay(day));
         }
     }
 }

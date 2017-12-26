@@ -88,8 +88,8 @@ public class KlimaatController {
         LocalDate to = from.plusMonths(1);
 
         GemiddeldeKlimaatPerMaandDto gemiddeldeKlimaatPerMaandDto = new GemiddeldeKlimaatPerMaandDto();
-        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.toDate(from));
-        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDate(from), DateTimeUtil.toDate(to)));
+        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.toDateAtStartOfDay(from));
+        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDateAtStartOfDay(from), DateTimeUtil.toDateAtStartOfDay(to)));
         return gemiddeldeKlimaatPerMaandDto;
     }
 

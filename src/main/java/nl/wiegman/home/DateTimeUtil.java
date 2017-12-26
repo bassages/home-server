@@ -1,44 +1,38 @@
 package nl.wiegman.home;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.Validate;
 
 public class DateTimeUtil {
 
-    public static List<Date> getDagenInPeriode(long van, long totEnMet) {
-        List<Date> dagenInPeriode = new ArrayList<>();
+    public static List<LocalDate> getDagenInPeriode(DateTimePeriod period) {
+        Validate.notNull(period.getEndDateTime(), "DateTimePeriod must must be ending at some point of time");
 
-        Date datumVan = DateUtils.truncate(new Date(van), Calendar.DATE);
-        Date datumTotEnMet = DateUtils.truncate(new Date(totEnMet), Calendar.DATE);
+        LocalDate datumVan = period.getStartDateTime().toLocalDate();
+        LocalDate datumTot = period.getEndDateTime().toLocalDate().plusDays(1);
 
-        if (datumVan.after(datumTotEnMet)) {
-            throw new RuntimeException("van must be smaller or equal to totEnMet");
-        }
+        return Stream.iterate(datumVan, date -> date.plusDays(1))
+                .limit(DAYS.between(datumVan, datumTot))
+                .collect(Collectors.toList());
+    }
 
-        Date datum = datumVan;
-
-        while (true) {
-            dagenInPeriode.add(datum);
-
-            if (DateUtils.isSameDay(datum, datumTotEnMet)) {
-                break;
-            } else {
-                datum = DateUtils.addDays(datum, 1);
-            }
-        }
-        return dagenInPeriode;
+    public static List<LocalDate> getDagenInPeriode(DatePeriod period) {
+        return getDagenInPeriode(period.toDateTimePeriod());
     }
 
     public static long getStartOfDay(Date day) {
         Calendar startOfDay = getStartOfDayAsCalendar(day);
-
         return startOfDay.getTimeInMillis();
     }
 
@@ -72,24 +66,31 @@ public class DateTimeUtil {
         return endOfDay;
     }
 
-    public static Date getEndOfDayAsDate(Date day) {
-        Calendar startOfDay = getStartOfDayAsCalendar(day);
-        return startOfDay.getTime();
+    public static Date toDateAtStartOfDay(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static Date toDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    public static long toMillisSinceEpochAtStartOfDay(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()).getTime();
+    }
+
+    public static long toMillisSinceEpochAtStartOfDay(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
     public static LocalDateTime toLocalDateTime(Date date) {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    public static LocalDate toLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    public static Date toDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static boolean isAfterToday(Date dag) {
-        return getStartOfDay(dag) > getEndOfDay(new Date());
+    public static LocalDateTime toLocalDateTime(long millisSinceEpoch) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millisSinceEpoch), ZoneId.systemDefault());
+    }
+
+    public static LocalDate toLocalDate(long millisSinceEpoch) {
+        return toLocalDateTime(millisSinceEpoch).toLocalDate();
     }
 }

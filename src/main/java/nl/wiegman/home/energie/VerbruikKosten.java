@@ -5,7 +5,7 @@ import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 
-public class Verbruik {
+public class VerbruikKosten {
 
     private static final int KOSTEN_SCALE = 3;
 

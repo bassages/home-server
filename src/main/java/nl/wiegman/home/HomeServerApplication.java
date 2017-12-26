@@ -1,5 +1,6 @@
 package nl.wiegman.home;
 
+import java.time.Clock;
 import java.util.concurrent.Executor;
 
 import org.springframework.boot.SpringApplication;
@@ -23,4 +24,8 @@ public class HomeServerApplication {
         return new SimpleAsyncTaskExecutor();
     }
 
+    @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
+    }
 }

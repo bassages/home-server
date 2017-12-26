@@ -131,7 +131,6 @@ public class MeterstandServiceTest {
         assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsOnly(m5);
     }
 
-
     private Date toDate(String timeString) throws ParseException {
         return DateUtils.parseDate("2016-01-01 " + timeString, "yyyy-MM-dd HH:mm:ss");
     }

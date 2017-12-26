@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import nl.wiegman.home.DateTimePeriod;
 import nl.wiegman.home.energiecontract.Energiecontract;
 import nl.wiegman.home.energiecontract.EnergiecontractRepository;
 
@@ -29,34 +31,37 @@ public class VerbruikServiceCached {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)
-    public Verbruik getPotentiallyCachedGasVerbruikInPeriode(long vanMillis, long totEnMetMillis) {
-        return getGasVerbruikInPeriode(vanMillis, totEnMetMillis);
+    public VerbruikKosten getPotentiallyCachedGasVerbruikInPeriode(DateTimePeriod period) {
+        return getGasVerbruikInPeriode(period);
     }
 
     @Cacheable(cacheNames = CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)
-    public Verbruik getPotentiallyCachedStroomVerbruikInPeriode(long vanMillis, long totEnMetMillis, StroomTariefIndicator stroomTariefIndicator) {
-        return getStroomVerbruikInPeriode(vanMillis, totEnMetMillis, stroomTariefIndicator);
+    public VerbruikKosten getPotentiallyCachedStroomVerbruikInPeriode(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
+        return getStroomVerbruikInPeriode(period, stroomTariefIndicator);
     }
 
-    public Verbruik getGasVerbruikInPeriode(long periodeVan, long periodeTotEnMet) {
-        Verbruik gasVerbruik = new Verbruik();
+    public VerbruikKosten getGasVerbruikInPeriode(DateTimePeriod period) {
+        VerbruikKosten gasVerbruikKosten = new VerbruikKosten();
+
+        long periodeVan = toMillisSinceEpochAtStartOfDay(period.getStartDateTime());
+        long periodeTotEnMet = toMillisSinceEpochAtStartOfDay(period.getEndDateTime());
 
         List<Energiecontract> energiecontractsInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
         if (isNotEmpty(energiecontractsInPeriod)) {
             for (Energiecontract energiecontract : energiecontractsInPeriod) {
-                addGasVerbruik(gasVerbruik, energiecontract, periodeVan, periodeTotEnMet);
+                addGasVerbruik(gasVerbruikKosten, energiecontract, periodeVan, periodeTotEnMet);
             }
         } else {
             BigDecimal verbruik = getGasVerbruik(periodeVan, periodeTotEnMet);
             if (verbruik != null) {
-                gasVerbruik.addVerbruik(verbruik);
+                gasVerbruikKosten.addVerbruik(verbruik);
             }
         }
-        return gasVerbruik;
+        return gasVerbruikKosten;
     }
 
-    private void addGasVerbruik(Verbruik gasVerbruik, Energiecontract energiecontract, long periodeVan, long periodeTotEnMet) {
+    private void addGasVerbruik(VerbruikKosten gasVerbruikKosten, Energiecontract energiecontract, long periodeVan, long periodeTotEnMet) {
         long subVanMillis = energiecontract.getVan();
         if (subVanMillis < periodeVan) {
             subVanMillis = periodeVan;
@@ -68,31 +73,34 @@ public class VerbruikServiceCached {
 
         BigDecimal verbruik = getGasVerbruik(subVanMillis, subTotEnMetMillis);
         if (verbruik != null) {
-            gasVerbruik.addVerbruik(verbruik);
-            gasVerbruik.addKosten(energiecontract.getGasPerKuub().multiply(verbruik));
+            gasVerbruikKosten.addVerbruik(verbruik);
+            gasVerbruikKosten.addKosten(energiecontract.getGasPerKuub().multiply(verbruik));
         }
     }
 
-    public Verbruik getStroomVerbruikInPeriode(long periodeVan, long periodeTotEnMet, StroomTariefIndicator stroomTariefIndicator) {
-        Verbruik stroomVerbruik = new Verbruik();
+    public VerbruikKosten getStroomVerbruikInPeriode(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
+        VerbruikKosten stroomVerbruikKosten = new VerbruikKosten();
+
+        long periodeVan = toMillisSinceEpochAtStartOfDay(period.getStartDateTime());
+        long periodeTotEnMet = toMillisSinceEpochAtStartOfDay(period.getEndDateTime());
 
         List<Energiecontract> energiecontractInPeriod = energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
 
         if (isNotEmpty(energiecontractInPeriod)) {
             for (Energiecontract energiecontract : energiecontractInPeriod) {
-                addStroomVerbruik(stroomVerbruik, energiecontract, stroomTariefIndicator, periodeVan, periodeTotEnMet);
+                addStroomVerbruik(stroomVerbruikKosten, energiecontract, stroomTariefIndicator, periodeVan, periodeTotEnMet);
             }
         } else {
             BigDecimal verbruik = getStroomVerbruik(periodeVan, periodeTotEnMet, stroomTariefIndicator);
             if (verbruik != null) {
-                stroomVerbruik.addVerbruik(verbruik);
+                stroomVerbruikKosten.addVerbruik(verbruik);
             }
         }
 
-        return stroomVerbruik;
+        return stroomVerbruikKosten;
     }
 
-    private void addStroomVerbruik(Verbruik stroomVerbruik, Energiecontract energiecontract, StroomTariefIndicator stroomTariefIndicator,
+    private void addStroomVerbruik(VerbruikKosten stroomVerbruikKosten, Energiecontract energiecontract, StroomTariefIndicator stroomTariefIndicator,
             long periodeVan, long periodeTotEnMet) {
 
         long subVanMillis = energiecontract.getVan();
@@ -107,8 +115,8 @@ public class VerbruikServiceCached {
         BigDecimal verbruik = getStroomVerbruik(subVanMillis, subTotEnMetMillis, stroomTariefIndicator);
 
         if (verbruik != null) {
-            stroomVerbruik.addVerbruik(verbruik);
-            stroomVerbruik.addKosten(energiecontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik));
+            stroomVerbruikKosten.addVerbruik(verbruik);
+            stroomVerbruikKosten.addKosten(energiecontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik));
         }
     }
 
