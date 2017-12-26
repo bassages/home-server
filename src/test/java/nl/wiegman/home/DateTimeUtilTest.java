@@ -1,14 +1,11 @@
 package nl.wiegman.home;
 
 import static java.time.Month.JANUARY;
-import static nl.wiegman.home.DateTimePeriod.aPeriodWhichNeverEnds;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 
 import org.junit.Test;
@@ -35,15 +32,5 @@ public class DateTimeUtilTest {
         List<LocalDate> dagenInPeriode = DateTimeUtil.getDagenInPeriode(period);
 
         assertThat(dagenInPeriode).hasSize(10);
-    }
-
-    @Test
-    public void givenPeriodWithoutEndDateWhenGetDaysInPeriodThenException() {
-        LocalDateTime someNonNullFromDateTime = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
-        DateTimePeriod period = aPeriodWhichNeverEnds(someNonNullFromDateTime);
-
-        assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> DateTimeUtil.getDagenInPeriode(period))
-                .withMessage("DateTimePeriod must must be ending at some point of time");
     }
 }

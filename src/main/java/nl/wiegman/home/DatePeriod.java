@@ -1,9 +1,6 @@
 package nl.wiegman.home;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import javax.validation.constraints.NotNull;
 
 public class DatePeriod {
 
@@ -25,12 +22,8 @@ public class DatePeriod {
         return dateTimePeriod.getEndDateTime().toLocalDate();
     }
 
-    public static DatePeriod aPeriodWhichNeverEnds(LocalDate startDate) {
-        return new DatePeriod(DateTimePeriod.aPeriodWhichNeverEnds(startDate.atStartOfDay()));
-    }
-
     public static DatePeriod aPeriodWithEndDate(LocalDate startDate, LocalDate endDate) {
-        return new DatePeriod(DateTimePeriod.aPeriodWithEndDateTime(startDate.atStartOfDay(), endDate.atStartOfDay()));
+        return new DatePeriod(DateTimePeriod.aPeriodWithEndDateTime(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay().minusNanos(1)));
     }
 
     public static DatePeriod aPeriodWithToDate(LocalDate startDate, LocalDate toDate) {
