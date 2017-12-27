@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-public class VerbruikOpDagDto extends VerbruikDto {
+public class VerbruikOpDag extends VerbruikDto {
 
     private long datumtijd;
 

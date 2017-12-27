@@ -18,7 +18,7 @@ public class DateTimeUtilTest {
         LocalDateTime end = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
         DateTimePeriod period = aPeriodWithEndDateTime(start, end);
 
-        List<LocalDate> dagenInPeriode = DateTimeUtil.getDagenInPeriode(period);
+        List<LocalDate> dagenInPeriode = DateTimeUtil.getDaysInPeriod(period);
 
         assertThat(dagenInPeriode).hasSize(1);
     }
@@ -29,7 +29,7 @@ public class DateTimeUtilTest {
         LocalDateTime end = LocalDate.of(2015, JANUARY, 10).atStartOfDay();
         DateTimePeriod period = aPeriodWithEndDateTime(start, end);
 
-        List<LocalDate> dagenInPeriode = DateTimeUtil.getDagenInPeriode(period);
+        List<LocalDate> dagenInPeriode = DateTimeUtil.getDaysInPeriod(period);
 
         assertThat(dagenInPeriode).hasSize(10);
     }

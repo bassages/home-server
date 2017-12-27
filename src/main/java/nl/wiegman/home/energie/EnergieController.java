@@ -32,7 +32,7 @@ public class EnergieController {
     public VerbruikDto getGemiddeldeVerbruikPerDagInPeriode(@PathVariable("van") long startDateTimeInMillisSinceEpoch, @PathVariable("totEnMet") long endDateTimeInMillisSinceEpoch) {
         DatePeriod period = DatePeriod.aPeriodWithEndDate(toLocalDate(startDateTimeInMillisSinceEpoch), toLocalDate(endDateTimeInMillisSinceEpoch));
 
-        List<VerbruikOpDagDto> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
         VerbruikDto verbruik = new VerbruikDto();
 
@@ -47,7 +47,7 @@ public class EnergieController {
         return verbruik;
     }
 
-    private BigDecimal berekenGemiddelde(List<VerbruikOpDagDto> verbruikPerDag, Function<VerbruikOpDagDto, BigDecimal> attributeToAverageGetter, int scale) {
+    private BigDecimal berekenGemiddelde(List<VerbruikOpDag> verbruikPerDag, Function<VerbruikOpDag, BigDecimal> attributeToAverageGetter, int scale) {
         BigDecimal sumVerbruik = verbruikPerDag.stream()
                 .filter(attributeValue -> attributeToAverageGetter.apply(attributeValue) != null)
                 .map(attributeToAverageGetter)
@@ -56,23 +56,23 @@ public class EnergieController {
     }
 
     @GetMapping(path = "verbruik-per-jaar")
-    public List<VerbruikInJaarDto> getVerbruikPerJaar() {
+    public List<VerbruikInJaar> getVerbruikPerJaar() {
         return verbruikService.getVerbruikPerJaar();
     }
 
     @GetMapping(path = "verbruik-per-maand-in-jaar/{jaar}")
-    public List<VerbruikInMaandVanJaarDto> getVerbruikPerMaandInJaar(@PathVariable("jaar") int jaar) {
+    public List<VerbruikInMaandVanJaar> getVerbruikPerMaandInJaar(@PathVariable("jaar") int jaar) {
         return verbruikService.getVerbruikPerMaandInJaar(Year.of(jaar));
     }
 
     @GetMapping(path = "verbruik-per-dag/{van}/{totEnMet}")
-    public List<VerbruikOpDagDto> getVerbruikPerDag(@PathVariable("van") long startDateTimeInMillisSinceEpoch, @PathVariable("totEnMet") long endDateTimeInMillisSinceEpoch) {
+    public List<VerbruikOpDag> getVerbruikPerDag(@PathVariable("van") long startDateTimeInMillisSinceEpoch, @PathVariable("totEnMet") long endDateTimeInMillisSinceEpoch) {
         DatePeriod period = DatePeriod.aPeriodWithEndDate(toLocalDate(startDateTimeInMillisSinceEpoch), toLocalDate(endDateTimeInMillisSinceEpoch));
         return verbruikService.getVerbruikPerDag(period);
     }
 
     @GetMapping(path = "verbruik-per-uur-op-dag/{dag}")
-    public List<VerbruikInUurOpDagDto> getVerbruikPerUurOpDag(@PathVariable("dag") long dateTimeOfDayInMillisSinceEpoch) {
+    public List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(@PathVariable("dag") long dateTimeOfDayInMillisSinceEpoch) {
         LocalDate day = toLocalDate(dateTimeOfDayInMillisSinceEpoch);
         return verbruikService.getVerbruikPerUurOpDag(day);
     }

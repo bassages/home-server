@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import nl.wiegman.home.Trend;
+
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatSensorValueTrendServiceTest {
 

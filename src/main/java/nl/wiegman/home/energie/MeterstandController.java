@@ -30,7 +30,7 @@ public class MeterstandController {
 
     @GetMapping("meest-recente")
     public Meterstand getMeestRecente() {
-        return meterstandService.getMeestRecente();
+        return meterstandService.getMostRecent();
     }
 
     @GetMapping("oudste-vandaag")

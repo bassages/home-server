@@ -1,4 +1,4 @@
-package nl.wiegman.home.klimaat;
+package nl.wiegman.home;
 
 public enum Trend {
     STABLE,

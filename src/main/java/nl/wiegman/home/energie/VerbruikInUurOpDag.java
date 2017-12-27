@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-public class VerbruikInUurOpDagDto extends VerbruikDto {
+public class VerbruikInUurOpDag extends VerbruikDto {
 
     private int uur; // Range: 0 - 23
 

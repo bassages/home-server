@@ -28,7 +28,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
     public Health health() {
         Date now = new Date();
 
-        Meterstand mostRecent = meterstandService.getMeestRecente();
+        Meterstand mostRecent = meterstandService.getMostRecent();
 
         if (mostRecent == null) {
 

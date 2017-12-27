@@ -3,7 +3,7 @@ package nl.wiegman.home.energie;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class Dsmr42ReadingDto {
+public class Dsmr42Reading {
 
     private long datumtijd;
     private int stroomOpgenomenVermogenInWatt;

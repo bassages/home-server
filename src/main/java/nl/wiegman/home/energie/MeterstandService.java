@@ -72,8 +72,8 @@ public class MeterstandService {
 
         byHour.values().forEach(this::cleanupMeterStandenInOneHour);
 
-        cacheService.clear(VerbruikServiceCached.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
-        cacheService.clear(VerbruikServiceCached.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        cacheService.clear(VerbruikService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        cacheService.clear(VerbruikService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
 
     private void cleanupMeterStandenInOneHour(List<Meterstand> meterstandenInOneHour) {
@@ -98,18 +98,18 @@ public class MeterstandService {
         }
     }
 
-    public Meterstand getMeestRecente() {
+    public Meterstand getMostRecent() {
         return mostRecentlySavedMeterstand;
     }
 
-    public Meterstand getOudste() {
+    public Meterstand getOldest() {
         return meterstandRepository.getOudste();
     }
 
     public List<MeterstandOpDag> perDag(DateTimePeriod period) {
         List<MeterstandOpDag> result = new ArrayList<>();
 
-        List<LocalDate> dagenInPeriode = DateTimeUtil.getDagenInPeriode(period);
+        List<LocalDate> dagenInPeriode = DateTimeUtil.getDaysInPeriod(period);
         dagenInPeriode.forEach(dag -> {
             Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
             result.add(new MeterstandOpDag(toDateAtStartOfDay(dag).getTime(), meterstandOpDag));

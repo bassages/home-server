@@ -76,21 +76,21 @@ public class KlimaatController {
     }
 
     @GetMapping(path = "gemiddeld-per-maand-in-jaar")
-    public List<List<GemiddeldeKlimaatPerMaandDto>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
+    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
         return IntStream.of(jaren).mapToObj(jaar ->
                 IntStream.rangeClosed(1, 12)
                     .mapToObj(maand -> getAverageInMonthOfYear(sensortype, maand, jaar))
                     .collect(toList())).collect(toList());
     }
 
-    private GemiddeldeKlimaatPerMaandDto getAverageInMonthOfYear(String sensortype, int maand, int jaar) {
+    private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(String sensortype, int maand, int jaar) {
         LocalDate from = LocalDate.of(jaar, maand, 1);
         LocalDate to = from.plusMonths(1);
 
-        GemiddeldeKlimaatPerMaandDto gemiddeldeKlimaatPerMaandDto = new GemiddeldeKlimaatPerMaandDto();
-        gemiddeldeKlimaatPerMaandDto.setMaand(DateTimeUtil.toDateAtStartOfDay(from));
-        gemiddeldeKlimaatPerMaandDto.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDateAtStartOfDay(from), DateTimeUtil.toDateAtStartOfDay(to)));
-        return gemiddeldeKlimaatPerMaandDto;
+        GemiddeldeKlimaatPerMaand gemiddeldeKlimaatPerMaand = new GemiddeldeKlimaatPerMaand();
+        gemiddeldeKlimaatPerMaand.setMaand(DateTimeUtil.toDateAtStartOfDay(from));
+        gemiddeldeKlimaatPerMaand.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDateAtStartOfDay(from), DateTimeUtil.toDateAtStartOfDay(to)));
+        return gemiddeldeKlimaatPerMaand;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

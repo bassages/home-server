@@ -3,6 +3,8 @@ package nl.wiegman.home.klimaat;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import nl.wiegman.home.Trend;
+
 public class RealtimeKlimaat {
 
     private Date datumtijd;

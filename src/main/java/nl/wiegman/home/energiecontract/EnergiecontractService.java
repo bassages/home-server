@@ -1,6 +1,7 @@
 package nl.wiegman.home.energiecontract;
 
 import static nl.wiegman.home.DateTimeUtil.toDate;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import nl.wiegman.home.DateTimePeriod;
 import nl.wiegman.home.cache.CacheService;
 
 @Service
@@ -78,5 +80,11 @@ public class EnergiecontractService {
             }
             previousEnergiecontract = currentEnergiecontract;
         }
+    }
+
+    public List<Energiecontract> findAllInInPeriod(DateTimePeriod period) {
+        long periodeVan = toMillisSinceEpoch(period.getStartDateTime());
+        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
+        return energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
     }
 }

@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-public class VerbruikInJaarDto extends VerbruikDto {
+public class VerbruikInJaar extends VerbruikDto {
 
     private int jaar;
 

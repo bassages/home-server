@@ -3,7 +3,7 @@ package nl.wiegman.home.klimaat;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class GemiddeldeKlimaatPerMaandDto {
+public class GemiddeldeKlimaatPerMaand {
 
     private Date maand;
     private BigDecimal gemiddelde;

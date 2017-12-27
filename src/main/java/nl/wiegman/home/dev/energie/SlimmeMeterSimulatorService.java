@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import nl.wiegman.home.energie.Dsmr42ReadingDto;
+import nl.wiegman.home.energie.Dsmr42Reading;
 import nl.wiegman.home.energie.Meterstand;
 import nl.wiegman.home.energie.MeterstandService;
 import nl.wiegman.home.energie.SlimmeMeterController;
@@ -50,7 +50,7 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     @PostConstruct
     public void init() {
         if (autoStart) {
-            Meterstand mostRecent = meterstandService.getMeestRecente();
+            Meterstand mostRecent = meterstandService.getMostRecent();
             if (mostRecent == null) {
                 lastGeneratedStroomTarief1 = INITIAL_GENERATOR_VALUE_STROOM;
                 lastGeneratedStroomTarief2 = INITIAL_GENERATOR_VALUE_STROOM;
@@ -81,15 +81,15 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         try {
             long datumtijd = System.currentTimeMillis();
 
-            Dsmr42ReadingDto dsmr42ReadingDto = new Dsmr42ReadingDto();
+            Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
 
-            dsmr42ReadingDto.setDatumtijd(datumtijd);
-            dsmr42ReadingDto.setStroomTarief1(getStroomTarief1(datumtijd));
-            dsmr42ReadingDto.setStroomTarief2(getStroomTarief2(datumtijd));
-            dsmr42ReadingDto.setGas(getGas(datumtijd));
-            dsmr42ReadingDto.setStroomTariefIndicator((int)StroomTariefIndicator.NORMAAL.getId());
-            dsmr42ReadingDto.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
-            slimmeMeterController.save(dsmr42ReadingDto);
+            dsmr42Reading.setDatumtijd(datumtijd);
+            dsmr42Reading.setStroomTarief1(getStroomTarief1(datumtijd));
+            dsmr42Reading.setStroomTarief2(getStroomTarief2(datumtijd));
+            dsmr42Reading.setGas(getGas(datumtijd));
+            dsmr42Reading.setStroomTariefIndicator((int)StroomTariefIndicator.NORMAAL.getId());
+            dsmr42Reading.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
+            slimmeMeterController.save(dsmr42Reading);
 
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
             logger.error("Caught exception in ScheduledExecutorService.", t);

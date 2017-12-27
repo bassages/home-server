@@ -46,37 +46,37 @@ public class SlimmeMeterController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody Dsmr42ReadingDto dsmr42ReadingDto) {
+    public void save(@RequestBody Dsmr42Reading dsmr42Reading) {
         try {
-            LOGGER.info(objectMapper.writeValueAsString(dsmr42ReadingDto));
+            LOGGER.info(objectMapper.writeValueAsString(dsmr42Reading));
         } catch (JsonProcessingException e) {
             LOGGER.warn("Failed to serialize recieved object", e);
         }
 
-        Meterstand meterstand = mapToMeterStand(dsmr42ReadingDto);
+        Meterstand meterstand = mapToMeterStand(dsmr42Reading);
         meterstandService.save(meterstand);
         eventPublisher.publishEvent(new UpdateEvent(meterstand));
 
-        OpgenomenVermogen opgenomenVermogen = mapToOpgenomenVermogen(dsmr42ReadingDto);
+        OpgenomenVermogen opgenomenVermogen = mapToOpgenomenVermogen(dsmr42Reading);
         opgenomenVermogenService.save(opgenomenVermogen);
         eventPublisher.publishEvent(new UpdateEvent(opgenomenVermogen));
     }
 
-    private Meterstand mapToMeterStand(Dsmr42ReadingDto dsmr42ReadingDto) {
+    private Meterstand mapToMeterStand(Dsmr42Reading dsmr42Reading) {
         Meterstand meterstand = new Meterstand();
-        meterstand.setDatumtijd(dsmr42ReadingDto.getDatumtijd());
-        meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42ReadingDto.getStroomTariefIndicator().shortValue()));
-        meterstand.setGas(dsmr42ReadingDto.getGas().setScale(GAS_SCALE, HALF_UP));
-        meterstand.setStroomTarief1(dsmr42ReadingDto.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
-        meterstand.setStroomTarief2(dsmr42ReadingDto.getStroomTarief2().setScale(STROOM_SCALE, HALF_UP));
+        meterstand.setDatumtijd(dsmr42Reading.getDatumtijd());
+        meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
+        meterstand.setGas(dsmr42Reading.getGas().setScale(GAS_SCALE, HALF_UP));
+        meterstand.setStroomTarief1(dsmr42Reading.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
+        meterstand.setStroomTarief2(dsmr42Reading.getStroomTarief2().setScale(STROOM_SCALE, HALF_UP));
         return meterstand;
     }
 
-    private OpgenomenVermogen mapToOpgenomenVermogen(Dsmr42ReadingDto dsmr42ReadingDto) {
+    private OpgenomenVermogen mapToOpgenomenVermogen(Dsmr42Reading dsmr42Reading) {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(new Date(dsmr42ReadingDto.getDatumtijd()));
-        opgenomenVermogen.setWatt(dsmr42ReadingDto.getStroomOpgenomenVermogenInWatt());
-        opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmr42ReadingDto.getStroomTariefIndicator().shortValue()));
+        opgenomenVermogen.setDatumtijd(new Date(dsmr42Reading.getDatumtijd()));
+        opgenomenVermogen.setWatt(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
+        opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;
     }
 }

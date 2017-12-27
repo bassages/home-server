@@ -13,6 +13,8 @@ import java.util.function.Function;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.stereotype.Service;
 
+import nl.wiegman.home.Trend;
+
 @Service
 public class KlimaatSensorValueTrendService {
 

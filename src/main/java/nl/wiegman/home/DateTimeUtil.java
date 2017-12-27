@@ -5,10 +5,13 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,7 +19,7 @@ import org.apache.commons.lang3.Validate;
 
 public class DateTimeUtil {
 
-    public static List<LocalDate> getDagenInPeriode(DateTimePeriod period) {
+    public static List<LocalDate> getDaysInPeriod(DateTimePeriod period) {
         Validate.notNull(period.getEndDateTime(), "DateTimePeriod must must be ending at some point of time");
 
         LocalDate datumVan = period.getStartDateTime().toLocalDate();
@@ -27,9 +30,14 @@ public class DateTimeUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<LocalDate> getDagenInPeriode(DatePeriod period) {
-        return getDagenInPeriode(period.toDateTimePeriod());
+    public static List<LocalDate> getDaysInPeriod(DatePeriod period) {
+        return getDaysInPeriod(period.toDateTimePeriod());
     }
+
+    public static Set<Month> getAllMonths() {
+        return EnumSet.allOf(Month.class);
+    }
+
 
     public static long getStartOfDay(Date day) {
         Calendar startOfDay = getStartOfDayAsCalendar(day);
@@ -74,7 +82,7 @@ public class DateTimeUtil {
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
-    public static long toMillisSinceEpochAtStartOfDay(LocalDateTime localDateTime) {
+    public static long toMillisSinceEpoch(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
