@@ -1,14 +1,18 @@
 package nl.wiegman.home.energie;
 
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
+
+import java.time.LocalDate;
+
 public class MeterstandOpDag {
 
     private long datumtijd;
 
     private Meterstand meterstand;
 
-    public MeterstandOpDag(long datumtijd, Meterstand meterstand) {
-        this.datumtijd = datumtijd;
+    public MeterstandOpDag(LocalDate dag, Meterstand meterstand) {
         this.meterstand = meterstand;
+        this.datumtijd = toMillisSinceEpochAtStartOfDay(dag);
     }
 
     public long getDatumtijd() {

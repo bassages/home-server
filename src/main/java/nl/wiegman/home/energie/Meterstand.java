@@ -46,6 +46,10 @@ public class Meterstand {
         return DateTimeUtil.toLocalDateTime(new Date(datumtijd));
     }
 
+    public void setDatumtijd(LocalDateTime datumtijd) {
+        this.datumtijd = DateTimeUtil.toMillisSinceEpoch(datumtijd);
+    }
+
     public void setDatumtijd(long datumtijd) {
         this.datumtijd = datumtijd;
     }

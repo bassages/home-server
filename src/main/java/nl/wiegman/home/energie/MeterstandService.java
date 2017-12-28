@@ -2,27 +2,30 @@ package nl.wiegman.home.energie;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
-import static nl.wiegman.home.DateTimeUtil.toDateAtStartOfDay;
+import static java.util.stream.Collectors.toList;
+import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import nl.wiegman.home.DateTimePeriod;
-import nl.wiegman.home.DateTimeUtil;
 import nl.wiegman.home.cache.CacheService;
 
 @Service
@@ -31,18 +34,20 @@ public class MeterstandService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandService.class);
 
     private static final String TWO_AM = "0 0 2 * * *";
+    private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
+
+    @Autowired
+    private MeterstandService meterstandServiceProxyWithEnabledCaching; // Needed to make use of use caching annotations
 
     private final MeterstandRepository meterstandRepository;
-    private final MeterstandServiceCached meterstandServiceCached;
     private final CacheService cacheService;
     private final Clock clock;
 
     private Meterstand mostRecentlySavedMeterstand = null;
 
     @Autowired
-    public MeterstandService(MeterstandRepository meterstandRepository, MeterstandServiceCached meterstandServiceCached, CacheService cacheService, Clock clock) {
+    public MeterstandService(MeterstandRepository meterstandRepository, CacheService cacheService, Clock clock) {
         this.meterstandRepository = meterstandRepository;
-        this.meterstandServiceCached = meterstandServiceCached;
         this.cacheService = cacheService;
         this.clock = clock;
     }
@@ -55,23 +60,25 @@ public class MeterstandService {
 
     @Scheduled(cron = TWO_AM)
     public void dailyCleanup() {
-        Date today = new Date();
-        cleanup(DateUtils.addDays(today, -1));
-        cleanup(DateUtils.addDays(today, -2));
-        cleanup(DateUtils.addDays(today, -3));
+        LocalDate today = LocalDate.now(clock);
+        IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
+                 .forEach(i -> cleanup(today.minusDays(i)));
+        clearCachesThatUsesPossibleDeletedMeterstanden();
     }
 
-    public void cleanup(Date date) {
-        Date from = DateTimeUtil.getStartOfDayAsDate(date);
-        Date to = DateUtils.addDays(from, 1);
+    private void cleanup(LocalDate day) {
+        LocalDateTime start = day.atStartOfDay();
+        LocalDateTime end = start.plusDays(1).minusNanos(1);
 
-        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(from.getTime(), to.getTime()-1);
+        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(toMillisSinceEpoch(start), toMillisSinceEpoch(end));
 
         Map<Integer, List<Meterstand>> byHour = meterstandenOnDay.stream()
                 .collect(groupingBy(item -> item.getDatumtijdAsLocalDateTime().getHour()));
 
         byHour.values().forEach(this::cleanupMeterStandenInOneHour);
+    }
 
+    private void clearCachesThatUsesPossibleDeletedMeterstanden() {
         cacheService.clear(VerbruikService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
         cacheService.clear(VerbruikService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
@@ -81,18 +88,16 @@ public class MeterstandService {
 
         if (meterstandenInOneHour.size() >= 2) {
 
-            Meterstand firstInHour = meterstandenInOneHour.get(0);
-            LOGGER.info("Keep first: " + firstInHour.getDatumtijdAsLocalDateTime() + " - " + ReflectionToStringBuilder.toString(
-                    firstInHour, ToStringStyle.SHORT_PREFIX_STYLE));
-            meterstandenInOneHour.remove(firstInHour);
+            Meterstand firstMeterstandInHour = meterstandenInOneHour.get(0);
+            LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDatumtijdAsLocalDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+            meterstandenInOneHour.remove(firstMeterstandInHour);
 
-            Meterstand lastInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
-            LOGGER.info("Keep last: " + lastInHour.getDatumtijdAsLocalDateTime() + " - " + ReflectionToStringBuilder.toString(
-                    lastInHour, ToStringStyle.SHORT_PREFIX_STYLE));
-            meterstandenInOneHour.remove(lastInHour);
+            Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
+            LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDatumtijdAsLocalDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+            meterstandenInOneHour.remove(lastMeterstandInHour);
 
             if (isNotEmpty(meterstandenInOneHour)) {
-                meterstandenInOneHour.forEach(meterstand -> LOGGER.info("Delete: " + ReflectionToStringBuilder.toString(meterstand, ToStringStyle.SHORT_PREFIX_STYLE)));
+                meterstandenInOneHour.forEach(meterstand -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
                 meterstandRepository.deleteInBatch(meterstandenInOneHour);
             }
         }
@@ -106,33 +111,56 @@ public class MeterstandService {
         return meterstandRepository.getOudste();
     }
 
-    public List<MeterstandOpDag> perDag(DateTimePeriod period) {
-        List<MeterstandOpDag> result = new ArrayList<>();
+    public Meterstand getOldestOfToday() {
+        LocalDate today = LocalDate.now(clock);
 
-        List<LocalDate> dagenInPeriode = DateTimeUtil.getDaysInPeriod(period);
-        dagenInPeriode.forEach(dag -> {
-            Meterstand meterstandOpDag = getMeesteRecenteMeterstandOpDag(dag);
-            result.add(new MeterstandOpDag(toDateAtStartOfDay(dag).getTime(), meterstandOpDag));
-        });
-        return result;
+        long van = toMillisSinceEpochAtStartOfDay(today);
+        long totEnMet = toMillisSinceEpochAtStartOfDay(today.plusDays(1)) - 1;
+
+        Meterstand oudsteStroomStandOpDag = meterstandRepository.getOudsteInPeriode(van, totEnMet);
+
+        if (oudsteStroomStandOpDag != null) {
+            // Gas is registered once every hour, in the hour AFTER it actually is used.
+            // Compensate for that hour
+
+            Meterstand oudsteGasStandOpDag = meterstandRepository.getOudsteInPeriode(van + MILLIS_PER_HOUR, totEnMet + MILLIS_PER_HOUR);
+
+            if (oudsteGasStandOpDag != null) {
+                oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
+            }
+        }
+        return oudsteStroomStandOpDag;
     }
 
-    public Meterstand getOudsteMeterstandOpDag(LocalDate day) {
-        if (day.isAfter(LocalDate.now(clock))) {
-            return null;
-        } else {
-            return meterstandServiceCached.getOudsteMeterstandOpDag(DateTimeUtil.toDateAtStartOfDay(day));
-        }
+    public List<MeterstandOpDag> perDag(DateTimePeriod period) {
+        return getDaysInPeriod(period).stream()
+                .map(this::getMeterstandOpDag)
+                .collect(toList());
+    }
+
+    private MeterstandOpDag getMeterstandOpDag(LocalDate day) {
+        return new MeterstandOpDag(day, getMeesteRecenteMeterstandOpDag(day));
     }
 
     private Meterstand getMeesteRecenteMeterstandOpDag(LocalDate day) {
-        LocalDate now = LocalDate.now(clock);
-        if (day.isAfter(now)) {
+        LocalDate today = LocalDate.now(clock);
+        if (day.isAfter(today)) {
             return null;
-        } else if (day.isEqual(now)) {
-            return meterstandServiceCached.getMeestRecenteMeterstandOpDag(toDateAtStartOfDay(day));
+        } else if (day.isEqual(today)) {
+            return getNonCachedMeestRecenteMeterstandOpDag(day);
         } else {
-            return meterstandServiceCached.getPotentiallyCachedMeestRecenteMeterstandOpDag(toDateAtStartOfDay(day));
+            return meterstandServiceProxyWithEnabledCaching.getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
         }
+    }
+
+    @Cacheable(cacheNames = "meestRecenteMeterstandOpDag")
+    public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(LocalDate day) {
+        return getNonCachedMeestRecenteMeterstandOpDag(day);
+    }
+
+    private Meterstand getNonCachedMeestRecenteMeterstandOpDag(LocalDate day) {
+        long van = toMillisSinceEpochAtStartOfDay(day);
+        long totEnMet = toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1;
+        return meterstandRepository.getMeestRecenteInPeriode(van, totEnMet);
     }
 }

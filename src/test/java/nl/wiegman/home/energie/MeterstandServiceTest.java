@@ -1,21 +1,24 @@
 package nl.wiegman.home.energie;
 
+import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
+import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
+import static nl.wiegman.home.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -23,116 +26,132 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import nl.wiegman.home.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeterstandServiceTest {
 
+    @InjectMocks
+    private MeterstandService meterstandService;
+
     @Mock
     private CacheService cacheService;
     @Mock
     private MeterstandRepository meterstandRepository;
 
-    @InjectMocks
-    private MeterstandService meterstandService;
-
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
 
+    @Before
+    public void setup() {
+        Clock clock = Clock.systemDefaultZone();
+        createMeterstandService(clock);
+    }
+
+    private void createMeterstandService(Clock clock) {
+        meterstandService = new MeterstandService(meterstandRepository, cacheService, clock);
+        ReflectionTestUtils.setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", meterstandService);
+    }
+
     @Test
     public void shouldClearCacheOnCleanup() {
-        meterstandService.cleanup(mock(Date.class));
-        verify(cacheService).clear(VerbruikServiceCached.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
-        verify(cacheService).clear(VerbruikServiceCached.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        meterstandService.dailyCleanup();
+        verify(cacheService).clear(VerbruikService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        verify(cacheService).clear(VerbruikService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
     }
 
     @Test
-    public void shouldCleanupOneDay() throws Exception {
-        Date date = toDate("14:46:30");
+    public void givenOnlyASingleMeterstandExistsWhenCleanupThenNoneDeleted() {
+        LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        ArgumentCaptor<Long> fromDateCaptor = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<Long> toDateCaptor = ArgumentCaptor.forClass(Long.class);
-        when(meterstandRepository.findByDatumtijdBetween(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(emptyList());
+        createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
 
-        meterstandService.cleanup(date);
+        Meterstand meterstand = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
 
-        assertThat(new Date(fromDateCaptor.getValue())).withDateFormat("yyyy-MM-dd HH:mm:ss.SSS").isEqualTo("2016-01-01 00:00:00.000");
-        assertThat(new Date(toDateCaptor.getValue())).withDateFormat("yyyy-MM-dd HH:mm:ss.SSS").isEqualTo("2016-01-01 23:59:59.999");
+        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(singletonList(meterstand));
 
-        verify(meterstandRepository).findByDatumtijdBetween(anyLong(), anyLong());
+        meterstandService.dailyCleanup();
+
+        verify(meterstandRepository, times(3)).findByDatumtijdBetween(anyLong(), anyLong());
         verifyNoMoreInteractions(meterstandRepository);
     }
 
     @Test
-    public void shouldKeepFirstAndLastInOneHour() throws Exception {
-        Date date = toDate("14:46:30");
+    public void whenCleanupThenAllButFirstAndLastMeterstandPerHourAreDeleted() {
+        LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        Meterstand m1 = new Meterstand();
-        m1.setDatumtijd(toDate("12:00:00").getTime());
-        Meterstand m2 = new Meterstand();
-        m2.setDatumtijd(toDate("12:15:00").getTime());
-        Meterstand m3 = new Meterstand();
-        m3.setDatumtijd(toDate("12:30:00").getTime());
-        Meterstand m4 = new Meterstand();
-        m4.setDatumtijd(toDate("12:45:00").getTime());
-        Meterstand m5 = new Meterstand();
-        m5.setDatumtijd(toDate("12:59:00").getTime());
+        createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
 
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(asList(m1, m2, m3, m4, m5));
+        Meterstand meterstand1 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
+        Meterstand meterstand2 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 15, 0)).build();
+        Meterstand meterstand3 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 30, 0)).build();
+        Meterstand meterstand4 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 45, 0)).build();
 
-        meterstandService.cleanup(date);
+        Meterstand meterstand5 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 0, 0)).build();
+        Meterstand meterstand6 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 15, 0)).build();
+        Meterstand meterstand7 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 30, 0)).build();
+        Meterstand meterstand8 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 45, 0)).build();
 
-        verify(meterstandRepository).deleteInBatch(deletedMeterstandCaptor.capture());
+        when(meterstandRepository.findByDatumtijdBetween(toMillisSinceEpoch(LocalDate.of(2016, JANUARY, 1).atStartOfDay()),
+                toMillisSinceEpoch(LocalDate.of(2016, JANUARY, 1).atStartOfDay().plusDays(1).minusNanos(1))))
+                .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 
-        assertThat(deletedMeterstandCaptor.getValue()).containsExactlyInAnyOrder(m2, m3, m4);
-    }
-
-    @Test
-    public void shouldKeepFirstAndLastInOneHourWhenOnlyOneMeterstandExists() throws Exception {
-        Date date = toDate("14:46:30");
-
-        Meterstand m1 = new Meterstand();
-        m1.setDatumtijd(toDate("12:00:00").getTime());
-
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(singletonList(m1));
-
-        meterstandService.cleanup(date);
-
-        verify(meterstandRepository).findByDatumtijdBetween(anyLong(), anyLong());
-        verifyNoMoreInteractions(meterstandRepository);
-    }
-
-    @Test
-    public void shouldDeletePerHour() throws Exception {
-        Date date = toDate("14:46:30");
-
-        Meterstand m1 = new Meterstand();
-        m1.setDatumtijd(toDate("12:00:00").getTime());
-        Meterstand m2 = new Meterstand();
-        m2.setDatumtijd(toDate("12:15:00").getTime());
-        Meterstand m3 = new Meterstand();
-        m3.setDatumtijd(toDate("12:30:00").getTime());
-
-        Meterstand m4 = new Meterstand();
-        m4.setDatumtijd(toDate("13:00:00").getTime());
-        Meterstand m5 = new Meterstand();
-        m5.setDatumtijd(toDate("13:15:00").getTime());
-        Meterstand m6 = new Meterstand();
-        m6.setDatumtijd(toDate("13:30:00").getTime());
-
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(asList(m1, m2, m3, m4, m5, m6));
-
-        meterstandService.cleanup(date);
+        meterstandService.dailyCleanup();
 
         verify(meterstandRepository, times(2)).deleteInBatch(deletedMeterstandCaptor.capture());
 
-        assertThat(deletedMeterstandCaptor.getAllValues().get(0)).containsOnly(m2);
-        assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsOnly(m5);
+        assertThat(deletedMeterstandCaptor.getAllValues().get(0)).containsExactly(meterstand2, meterstand3);
+        assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsExactly(meterstand6, meterstand7);
     }
 
-    private Date toDate(String timeString) throws ParseException {
-        return DateUtils.parseDate("2016-01-01 " + timeString, "yyyy-MM-dd HH:mm:ss");
+    @Test
+    public void whenSaveThenDelegatedToRepository() {
+        Meterstand meterstand = aMeterstand().build();
+        when(meterstandRepository.save(meterstand)).thenReturn(meterstand);
+
+        Meterstand savedMeterstand = meterstandService.save(meterstand);
+
+        assertThat(savedMeterstand).isSameAs(meterstand);
     }
 
+    @Test
+    public void whenGetMostRecentThenMostRecentReturned() {
+        assertThat(meterstandService.getMostRecent()).isNull();
+
+        Meterstand meterstand = aMeterstand().build();
+        Meterstand savedMeterstand = meterstandService.save(meterstand);
+
+        assertThat(meterstandService.getMostRecent()).isEqualTo(savedMeterstand);
+    }
+
+    @Test
+    public void whenGetOldestDelegatedToRepository() {
+        Meterstand oldestMeterstand = aMeterstand().build();
+
+        when(meterstandRepository.getOudste()).thenReturn(oldestMeterstand);
+
+        assertThat(meterstandService.getOldest()).isSameAs(oldestMeterstand);
+    }
+
+    @Test
+    public void whenGetOldestOfTodayThenReturned() {
+        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+
+        createMeterstandService(timeTravelTo(today.atStartOfDay()));
+
+        Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000")).withStroomTarief2(new BigDecimal("200.000")).build();
+        when(meterstandRepository.getOudsteInPeriode(toMillisSinceEpoch(today.atStartOfDay()), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).minusNanos(1))))
+                .thenReturn(oldestMeterstandElectricity);
+
+        Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
+        when(meterstandRepository.getOudsteInPeriode(toMillisSinceEpoch(today.atStartOfDay().plusHours(1)), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1))))
+                .thenReturn(oldestMeterstandGas);
+
+        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
+        assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
+        assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandGas.getGas());
+    }
 }

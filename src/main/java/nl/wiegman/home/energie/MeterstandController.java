@@ -3,8 +3,6 @@ package nl.wiegman.home.energie;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
 import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +18,10 @@ import nl.wiegman.home.DateTimePeriod;
 public class MeterstandController {
 
     private final MeterstandService meterstandService;
-    private final Clock clock;
 
     @Autowired
-    public MeterstandController(MeterstandService meterstandService, Clock clock) {
+    public MeterstandController(MeterstandService meterstandService) {
         this.meterstandService = meterstandService;
-        this.clock = clock;
     }
 
     @GetMapping("meest-recente")
@@ -35,7 +31,7 @@ public class MeterstandController {
 
     @GetMapping("oudste-vandaag")
     public Meterstand getOudsteVandaag() {
-        return meterstandService.getOudsteMeterstandOpDag(LocalDate.now(clock));
+        return meterstandService.getOldestOfToday();
     }
 
     @GetMapping("per-dag/{vanaf}/{totEnMet}")

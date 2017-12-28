@@ -3,6 +3,7 @@ package nl.wiegman.home.mindergasnl;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -54,45 +55,55 @@ public class MindergasnlService {
 
     @Scheduled(cron = THREE_AM)
     public void uploadMeterstand() {
-
         List<MindergasnlSettings> settings = getAllSettings();
 
-        if (!settings.isEmpty() && getAllSettings().get(0).isAutomatischUploaden()) {
+        if (settings.isEmpty() || !getAllSettings().get(0).isAutomatischUploaden()) {
+            return;
+        }
 
-            LocalDateTime todayAtStartOfDay = LocalDate.now(clock).atStartOfDay();
-            LocalDateTime yesterdayAtStartOfDay = todayAtStartOfDay.minusDays(1);
+        LocalDateTime todayAtStartOfDay = LocalDate.now(clock).atStartOfDay();
+        LocalDateTime yesterdayAtStartOfDay = todayAtStartOfDay.minusDays(1);
 
-            DateTimePeriod period = DateTimePeriod.aPeriodWithToDateTime(yesterdayAtStartOfDay, todayAtStartOfDay);
+        DateTimePeriod period = DateTimePeriod.aPeriodWithToDateTime(yesterdayAtStartOfDay, todayAtStartOfDay);
 
-            List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.perDag(period);
+        List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.perDag(period);
 
-            if (isEmpty(yesterdaysLastMeterstand)) {
-                LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterdayAtStartOfDay);
-            } else {
-                BigDecimal gasStand = yesterdaysLastMeterstand.get(0).getMeterstand().getGas();
+        if (isEmpty(yesterdaysLastMeterstand)) {
+            LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterdayAtStartOfDay);
+            return;
+        }
 
-                try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
-                    HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
+        BigDecimal gasStand = yesterdaysLastMeterstand.get(0).getMeterstand().getGas();
 
-                    String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", yesterdayAtStartOfDay.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
-                    LOGGER.info("Upload to mindergas.nl: " + message);
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
 
-                    request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
-                    request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
+            HttpPost request = createRequest(yesterdayAtStartOfDay, gasStand);
+            CloseableHttpResponse response = httpClient.execute(request);
+            logErrorWhenNoSuccess(response);
 
-                    StringEntity params = new StringEntity(message);
-                    request.setEntity(params);
+        } catch (Exception ex) {
+            LOGGER.error("Failed to upload to mindergas.nl", ex);
+        }
+    }
 
-                    CloseableHttpResponse response = httpClient.execute(request);
+    private HttpPost createRequest(LocalDateTime yesterdayAtStartOfDay, BigDecimal gasStand) throws UnsupportedEncodingException {
+        HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
-                    int statusCode = response.getStatusLine().getStatusCode();
-                    if (statusCode != 201) {
-                        LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
-                    }
-                } catch (Exception ex) {
-                    LOGGER.error("Failed to upload to mindergas.nl", ex);
-                }
-            }
+        String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", yesterdayAtStartOfDay.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
+        LOGGER.info("Upload to mindergas.nl: " + message);
+
+        request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
+        request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
+
+        StringEntity params = new StringEntity(message);
+        request.setEntity(params);
+        return request;
+    }
+
+    private void logErrorWhenNoSuccess(CloseableHttpResponse response) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
         }
     }
 }

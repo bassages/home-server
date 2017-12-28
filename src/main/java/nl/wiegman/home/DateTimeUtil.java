@@ -1,6 +1,7 @@
 package nl.wiegman.home;
 
 import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -12,7 +13,6 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -27,7 +27,7 @@ public class DateTimeUtil {
 
         return Stream.iterate(datumVan, date -> date.plusDays(1))
                 .limit(DAYS.between(datumVan, datumTot))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public static List<LocalDate> getDaysInPeriod(DatePeriod period) {
@@ -36,12 +36,6 @@ public class DateTimeUtil {
 
     public static Set<Month> getAllMonths() {
         return EnumSet.allOf(Month.class);
-    }
-
-
-    public static long getStartOfDay(Date day) {
-        Calendar startOfDay = getStartOfDayAsCalendar(day);
-        return startOfDay.getTimeInMillis();
     }
 
     public static Date getStartOfDayAsDate(Date day) {
@@ -57,21 +51,6 @@ public class DateTimeUtil {
         startOfDay.set(Calendar.SECOND, 0);
         startOfDay.set(Calendar.MILLISECOND, 0);
         return startOfDay;
-    }
-
-    public static long getEndOfDay(Date day) {
-        Calendar endOfDay = getEndOfDayAsCalendar(day);
-        return endOfDay.getTimeInMillis();
-    }
-
-    private static Calendar getEndOfDayAsCalendar(Date day) {
-        Calendar endOfDay = Calendar.getInstance();
-        endOfDay.setTime(day);
-        endOfDay.set(Calendar.HOUR_OF_DAY, 23);
-        endOfDay.set(Calendar.MINUTE, 59);
-        endOfDay.set(Calendar.SECOND, 59);
-        endOfDay.set(Calendar.MILLISECOND, 0);
-        return endOfDay;
     }
 
     public static Date toDateAtStartOfDay(LocalDate localDate) {

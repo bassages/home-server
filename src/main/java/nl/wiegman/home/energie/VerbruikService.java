@@ -2,7 +2,6 @@ package nl.wiegman.home.energie;
 
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.TimeUnit.HOURS;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
@@ -12,6 +11,7 @@ import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
 import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
+import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -34,7 +34,6 @@ import nl.wiegman.home.energiecontract.EnergiecontractService;
 @Service
 public class VerbruikService {
 
-    private static final long NR_OF_MILLIS_IN_ONE_HOUR = HOURS.toMillis(1);
     protected static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
     protected static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
 
@@ -270,8 +269,8 @@ public class VerbruikService {
     private BigDecimal getGasVerbruik(DateTimePeriod period) {
         // Gas is registered once every hour, in the hour after it actually is used.
         // Compensate for that hour to make the query return the correct usages.
-        long periodeVan = toMillisSinceEpoch(period.getStartDateTime()) + NR_OF_MILLIS_IN_ONE_HOUR;
-        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime()) + NR_OF_MILLIS_IN_ONE_HOUR;
+        long periodeVan = toMillisSinceEpoch(period.getStartDateTime()) + MILLIS_PER_HOUR;
+        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime()) + MILLIS_PER_HOUR;
         return verbruikRepository.getGasVerbruikInPeriod(periodeVan, periodeTotEnMet);
     }
 }
