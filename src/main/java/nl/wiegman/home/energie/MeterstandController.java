@@ -1,7 +1,7 @@
 package nl.wiegman.home.energie;
 
-import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
-import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
+import static nl.wiegman.home.DatePeriod.aPeriodWithEndDate;
+import static nl.wiegman.home.DateTimeUtil.toLocalDate;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import nl.wiegman.home.DateTimePeriod;
+import nl.wiegman.home.DatePeriod;
 
 @RestController
 @RequestMapping("/api/meterstanden")
@@ -36,7 +36,7 @@ public class MeterstandController {
 
     @GetMapping("per-dag/{vanaf}/{totEnMet}")
     public List<MeterstandOpDag> perDag(@PathVariable("vanaf") long startDateInMillisSinceEpoch, @PathVariable("totEnMet") long endDateInMillisSinceEpoch) {
-        DateTimePeriod period = aPeriodWithEndDateTime(toLocalDateTime(startDateInMillisSinceEpoch), toLocalDateTime(endDateInMillisSinceEpoch));
+        DatePeriod period = aPeriodWithEndDate(toLocalDate(startDateInMillisSinceEpoch), toLocalDate(endDateInMillisSinceEpoch));
         return meterstandService.perDag(period);
     }
 }

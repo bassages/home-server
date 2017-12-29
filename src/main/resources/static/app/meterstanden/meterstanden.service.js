@@ -5,9 +5,9 @@
         .module('app')
         .service('MeterstandenService', MeterstandenService);
 
-    MeterstandenService.$inject = ['$http', '$log'];
+    MeterstandenService.$inject = ['$http'];
 
-    function MeterstandenService($http, $log) {
+    function MeterstandenService($http) {
 
         this.getMeterstandenPerDagInPeriod = function(van, totEnMet) {
 

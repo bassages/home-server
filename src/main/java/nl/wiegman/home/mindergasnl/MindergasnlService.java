@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import nl.wiegman.home.DateTimePeriod;
+import nl.wiegman.home.DatePeriod;
 import nl.wiegman.home.energie.MeterstandOpDag;
 import nl.wiegman.home.energie.MeterstandService;
 
@@ -61,15 +60,15 @@ public class MindergasnlService {
     }
 
     private void uploadMeterstand(MindergasnlSettings settings) {
-        LocalDateTime todayAtStartOfDay = LocalDate.now(clock).atStartOfDay();
-        LocalDateTime yesterdayAtStartOfDay = todayAtStartOfDay.minusDays(1);
+        LocalDate today = LocalDate.now(clock);
+        LocalDate yesterday = today.minusDays(1);
 
-        DateTimePeriod period = DateTimePeriod.aPeriodWithToDateTime(yesterdayAtStartOfDay, todayAtStartOfDay);
+        DatePeriod period = DatePeriod.aPeriodWithToDate(yesterday, today);
 
         List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.perDag(period);
 
         if (isEmpty(yesterdaysLastMeterstand)) {
-            LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterdayAtStartOfDay);
+            LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterday);
             return;
         }
 
@@ -77,7 +76,7 @@ public class MindergasnlService {
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
 
-            HttpPost request = createRequest(settings.getAuthenticatietoken(), yesterdayAtStartOfDay, gasStand);
+            HttpPost request = createRequest(settings.getAuthenticatietoken(), yesterday, gasStand);
             CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);
 
@@ -86,10 +85,10 @@ public class MindergasnlService {
         }
     }
 
-    private HttpPost createRequest(String authenticatietoken, LocalDateTime yesterdayAtStartOfDay, BigDecimal gasStand) throws UnsupportedEncodingException {
+    private HttpPost createRequest(String authenticatietoken, LocalDate day, BigDecimal gasStand) throws UnsupportedEncodingException {
         HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
-        String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", yesterdayAtStartOfDay.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
+        String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", day.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
         LOGGER.info("Upload to mindergas.nl: " + message);
 
         request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());

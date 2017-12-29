@@ -25,7 +25,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import nl.wiegman.home.DateTimePeriod;
+import nl.wiegman.home.DatePeriod;
 import nl.wiegman.home.cache.CacheService;
 
 @Service
@@ -134,10 +134,10 @@ public class MeterstandService {
         return oudsteStroomStandOpDag;
     }
 
-    public List<MeterstandOpDag> perDag(DateTimePeriod period) {
+    public List<MeterstandOpDag> perDag(DatePeriod period) {
         return getDaysInPeriod(period).stream()
-                .map(this::getMeterstandOpDag)
-                .collect(toList());
+                                      .map(this::getMeterstandOpDag)
+                                      .collect(toList());
     }
 
     private MeterstandOpDag getMeterstandOpDag(LocalDate day) {
