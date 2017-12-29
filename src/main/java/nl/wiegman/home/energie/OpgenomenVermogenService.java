@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Map;
 import java.util.stream.LongStream;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class OpgenomenVermogenService {
     public List<OpgenomenVermogen> getHistory(Date from, Date to, long subPeriodLength) {
         List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
 
-        long nrOfSubPeriodsInPeriod = (to.getTime()-from.getTime())/subPeriodLength;
+        long nrOfSubPeriodsInPeriod = (to.getTime() - from.getTime()) / subPeriodLength;
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod).boxed()
                 .map(periodNumber -> this.toSubPeriod(periodNumber, from.getTime(), subPeriodLength))
@@ -127,8 +127,8 @@ public class OpgenomenVermogenService {
 
         opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
 
-        opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE    )));
-        opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: " + ReflectionToStringBuilder.toString(opgenomenVermogen, ToStringStyle.SHORT_PREFIX_STYLE)));
+        opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+        opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
 
         if (isNotEmpty(opgenomenVermogensInOneHour)) {
             opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensInOneHour);

@@ -1,7 +1,9 @@
 package nl.wiegman.home.klimaat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -30,35 +32,36 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
-    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(String klimaatSensorCode, Date van, Date tot);
+    @Query(value = "SELECT k FROM Klimaat k where k.klimaatSensor.code = :klimaatSensorCode AND k.datumtijd >= :van AND k.datumtijd <= :totEnMet ORDER BY k.datumtijd")
+    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode, @Param("van") LocalDateTime van, @Param("totEnMet") LocalDateTime totEnMet);
 
     @Query(value = PEAK_HIGH_TEMPERATURE_DATES, nativeQuery = true)
-    List<Date> getPeakHighTemperatureDates(@Param("van") Date van, @Param("tot") Date tot, @Param("limit") int limit);
+    List<Date> getPeakHighTemperatureDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_HIGHEST_TEMPERATURE_ON_DAY, nativeQuery = true)
-    Klimaat firstHighestTemperatureOnDay(@Param("date") Date day);
+    Klimaat firstHighestTemperatureOnDay(@Param("date") LocalDate day);
 
     @Query(value = PEAK_LOW_TEMPERATURE_DATES, nativeQuery = true)
-    List<Date> getPeakLowTemperatureDates(@Param("van") Date van, @Param("tot") Date tot, @Param("limit") int limit);
+    List<Date> getPeakLowTemperatureDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_LOWEST_TEMPERATURE_ON_DAY, nativeQuery = true)
-    Klimaat firstLowestTemperatureOnDay(@Param("date") Date day);
+    Klimaat firstLowestTemperatureOnDay(@Param("date") LocalDate day);
 
     @Query(value = PEAK_HIGH_HUMIDITY_DATES, nativeQuery = true)
-    List<Date> getPeakHighHumidityDates(@Param("van") Date van, @Param("tot") Date tot, @Param("limit") int limit);
+    List<Date> getPeakHighHumidityDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_HIGHEST_HUMIDITY_ON_DAY, nativeQuery = true)
     Klimaat firstHighestHumidityOnDay(@Param("date") Date day);
 
     @Query(value = PEAK_LOW_HUMIDITY_DATES, nativeQuery = true)
-    List<Date> getPeakLowHumidityDates(@Param("van") Date van, @Param("tot") Date tot, @Param("limit") int limit);
+    List<Date> getPeakLowHumidityDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_LOWEST_HUMIDITY_ON_DAY, nativeQuery = true)
-    Klimaat firstLowestHumidityOnDay(@Param("date") Date day);
+    Klimaat firstLowestHumidityOnDay(@Param("date") LocalDate day);
 
     @Query(value = AVERAGE_TEMPERATUUR_BETWEEEN)
-    BigDecimal getAverageTemperatuur(@Param("van") Date van, @Param("tot") Date tot);
+    BigDecimal getAverageTemperatuur(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Query(value = AVERAGE_LUCHTVOCHTIGHEID_BETWEEN)
-    BigDecimal getAverageLuchtvochtigheid(@Param("van") Date van, @Param("tot") Date tot);
+    BigDecimal getAverageLuchtvochtigheid(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 }

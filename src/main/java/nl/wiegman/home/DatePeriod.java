@@ -14,6 +14,10 @@ public class DatePeriod {
         return dateTimePeriod.getStartDateTime().toLocalDate();
     }
 
+    public LocalDate getFromDate() {
+        return dateTimePeriod.getStartDateTime().toLocalDate();
+    }
+
     public LocalDate getToDate() {
         return dateTimePeriod.getToDateTime().toLocalDate();
     }

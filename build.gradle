@@ -47,31 +47,33 @@ jar {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-cache")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-websocket")
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-cache')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-websocket')
 
     // Needed to make the actuator hypermedia-based “discovery page” for the other endpoints work
-    compile("org.springframework.boot:spring-boot-starter-hateoas")
+    compile('org.springframework.boot:spring-boot-starter-hateoas')
 
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-actuator-docs")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa")
-    compile("org.springframework.boot:spring-boot-starter-tomcat")
-    compile("org.springframework.boot:spring-boot-devtools")
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-actuator-docs')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-tomcat')
+    compile('org.springframework.boot:spring-boot-devtools')
 
-    compile("net.sf.ehcache:ehcache")
-    compile("commons-io:commons-io:2.6")
-    compile("org.apache.commons:commons-collections4:4.1")
-    compile("org.apache.commons:commons-lang3:3.7")
-    compile("org.apache.httpcomponents:httpclient:4.5.4")
-    compile("org.apache.commons:commons-math3:3.6.1")
+    compile('net.sf.ehcache:ehcache')
+    compile('commons-io:commons-io:2.6')
+    compile('org.apache.commons:commons-collections4:4.1')
+    compile('org.apache.commons:commons-lang3:3.7')
+    compile('org.apache.httpcomponents:httpclient:4.5.4')
+    compile('org.apache.commons:commons-math3:3.6.1')
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.assertj:assertj-core:3.8.0");
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.assertj:assertj-core:3.8.0');
 
-    runtime("com.h2database:h2")
+    runtime('com.h2database:h2')
+    runtime('org.hibernate:hibernate-java8')
+    runtime('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 }
 
 // Take over system properties.
@@ -92,7 +94,7 @@ clean.doFirst {
 }
 
 task buildGulpFromGradle(type: GulpTask) {
-    description = "Triggers the Gulp build. Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified."
+    description = 'Triggers the Gulp build. Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
 
     // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
     npmInstall.outputs.upToDateWhen { false }
@@ -102,6 +104,6 @@ task buildGulpFromGradle(type: GulpTask) {
 
     args = ['build', "--buildtype=${project.buildtype}" ]
 
-    // limit memory usage to be able to build in OpenShift container
+    // limit memory usage
     options = ['--max-old-space-size=512']
 }

@@ -2,6 +2,7 @@ package nl.wiegman.home.klimaat;
 
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 import java.math.BigDecimal;
@@ -42,7 +43,7 @@ public class KlimaatSensorValueTrendService {
 
     private BigDecimal calculateSlopeOfSensorValue(List<Klimaat> klimaats, Function<Klimaat, BigDecimal> sensorValueGetter) {
         SimpleRegression simpleRegression = new SimpleRegression();
-        klimaats.forEach(klimaat -> simpleRegression.addData(klimaat.getDatumtijd().getTime(), sensorValueGetter.apply(klimaat).doubleValue()));
+        klimaats.forEach(klimaat -> simpleRegression.addData(toMillisSinceEpoch(klimaat.getDatumtijd()), sensorValueGetter.apply(klimaat).doubleValue()));
         return new BigDecimal(simpleRegression.getSlope());
     }
 }

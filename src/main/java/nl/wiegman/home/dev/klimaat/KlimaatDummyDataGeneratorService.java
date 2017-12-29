@@ -1,7 +1,7 @@
 package nl.wiegman.home.dev.klimaat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -77,7 +77,7 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
             Klimaat klimaat = new Klimaat();
             klimaat.setLuchtvochtigheid(getNextLuchtVochtigheid());
             klimaat.setTemperatuur(getNextTemperatuur());
-            klimaat.setDatumtijd(new Date());
+            klimaat.setDatumtijd(LocalDateTime.now());
             klimaat.setKlimaatSensor(klimaatSensorRepository.findAll().get(0));
             klimaatService.add(klimaat);
         } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).

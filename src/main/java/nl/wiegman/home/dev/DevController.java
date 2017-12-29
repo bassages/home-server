@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.wiegman.home.DateTimeUtil;
 import nl.wiegman.home.dev.energie.SlimmeMeterSimulatorService;
 import nl.wiegman.home.klimaat.Klimaat;
 import nl.wiegman.home.klimaat.KlimaatRepos;
@@ -51,7 +52,7 @@ public class DevController {
         while (date.after(toDate)) {
             date = DateUtils.addMinutes(date, -15);
             Klimaat klimaat = new Klimaat();
-            klimaat.setDatumtijd(date);
+            klimaat.setDatumtijd(DateTimeUtil.toLocalDateTime(date));
             klimaat.setKlimaatSensor(klimaatSensor);
 
             long dayOfMonth = Long.valueOf(new SimpleDateFormat("d").format(date));

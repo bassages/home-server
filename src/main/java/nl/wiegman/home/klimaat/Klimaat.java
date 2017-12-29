@@ -1,7 +1,8 @@
 package nl.wiegman.home.klimaat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -24,13 +23,11 @@ public class Klimaat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Temporal(TemporalType.DATE)
     @Column
-    private Date datum;
+    private LocalDate datum;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, unique = true)
-    private Date datumtijd;
+    private LocalDateTime datumtijd;
 
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
@@ -67,13 +64,13 @@ public class Klimaat {
         this.luchtvochtigheid = luchtvochtigheid;
     }
 
-    public Date getDatumtijd() {
+    public LocalDateTime getDatumtijd() {
         return datumtijd;
     }
 
-    public void setDatumtijd(Date datumtijd) {
+    public void setDatumtijd(LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
-        this.datum = datumtijd;
+        this.datum = datumtijd.toLocalDate();
     }
 
     public KlimaatSensor getKlimaatSensor() {

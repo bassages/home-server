@@ -1,23 +1,23 @@
 package nl.wiegman.home.klimaat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import nl.wiegman.home.Trend;
 
 public class RealtimeKlimaat {
 
-    private Date datumtijd;
+    private LocalDateTime datumtijd;
     private BigDecimal temperatuur;
     private BigDecimal luchtvochtigheid;
     private Trend temperatuurTrend;
     private Trend luchtvochtigheidTrend;
 
-    public Date getDatumtijd() {
+    public LocalDateTime getDatumtijd() {
         return datumtijd;
     }
 
-    public void setDatumtijd(Date datumtijd) {
+    public void setDatumtijd(LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
     }
 

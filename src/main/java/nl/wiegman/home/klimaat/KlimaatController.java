@@ -1,19 +1,20 @@
 package nl.wiegman.home.klimaat;
 
 import static java.util.stream.Collectors.toList;
+import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
+import static nl.wiegman.home.DateTimeUtil.toDateAtStartOfDay;
+import static nl.wiegman.home.DateTimeUtil.toLocalDate;
+import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import nl.wiegman.home.DateTimeUtil;
+import nl.wiegman.home.DatePeriod;
+import nl.wiegman.home.DateTimePeriod;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -57,45 +59,43 @@ public class KlimaatController {
 
     @GetMapping(path = "hoogste")
     public List<Klimaat> getHighest(@RequestParam("sensortype") String sensortype, @RequestParam("from") long from, @RequestParam("to") long to, @RequestParam("limit") int limit) {
-        return klimaatService.getHighest(SensorType.fromString(sensortype), new Date(from), new Date(to), limit);
+        DatePeriod period = aPeriodWithToDate(toLocalDate(from), toLocalDate(to));
+        return klimaatService.getHighest(SensorType.fromString(sensortype), period, limit);
     }
 
     @GetMapping(path = "laagste")
     public List<Klimaat> getLowest(@RequestParam("sensortype") String sensortype, @RequestParam("from") long from, @RequestParam("to") long to, @RequestParam("limit") int limit) {
-        return klimaatService.getLowest(SensorType.fromString(sensortype), new Date(from), new Date(to), limit);
+        DatePeriod period = aPeriodWithToDate(toLocalDate(from), toLocalDate(to));
+        return klimaatService.getLowest(SensorType.fromString(sensortype), period, limit);
     }
 
     @GetMapping
-    public List<Klimaat> findAllInPeriod(@RequestParam("from") long from, @RequestParam("to") long to) {
-        return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, new Date(from), new Date(to));
-    }
-
-    @GetMapping(path = "gemiddelde")
-    public BigDecimal getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("from") long from, @RequestParam("to") long to) {
-        return klimaatService.getAverage(SensorType.fromString(sensortype), new Date(from), new Date(to));
+    public List<Klimaat> findAllInPeriod(@RequestParam("from") long start, @RequestParam("to") long end) {
+        DateTimePeriod period = DateTimePeriod.aPeriodWithEndDateTime(toLocalDateTime(start), toLocalDateTime(end));
+        return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, period);
     }
 
     @GetMapping(path = "gemiddeld-per-maand-in-jaar")
     public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
         return IntStream.of(jaren).mapToObj(jaar ->
-                IntStream.rangeClosed(1, 12)
-                    .mapToObj(maand -> getAverageInMonthOfYear(sensortype, maand, jaar))
+                IntStream.rangeClosed(1, Month.values().length)
+                    .mapToObj(maand -> getAverageInMonthOfYear(sensortype, YearMonth.of(jaar, maand)))
                     .collect(toList())).collect(toList());
     }
 
-    private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(String sensortype, int maand, int jaar) {
-        LocalDate from = LocalDate.of(jaar, maand, 1);
+    private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(String sensortype, YearMonth yearMonth) {
+        LocalDate from = yearMonth.atDay(1);
         LocalDate to = from.plusMonths(1);
 
-        GemiddeldeKlimaatPerMaand gemiddeldeKlimaatPerMaand = new GemiddeldeKlimaatPerMaand();
-        gemiddeldeKlimaatPerMaand.setMaand(DateTimeUtil.toDateAtStartOfDay(from));
-        gemiddeldeKlimaatPerMaand.setGemiddelde(klimaatService.getAverage(SensorType.fromString(sensortype), DateTimeUtil.toDateAtStartOfDay(from), DateTimeUtil.toDateAtStartOfDay(to)));
-        return gemiddeldeKlimaatPerMaand;
+        BigDecimal average = klimaatService.getAverage(SensorType.fromString(sensortype), aPeriodWithToDate(from, to));
+
+        return new GemiddeldeKlimaatPerMaand(toDateAtStartOfDay(from), average);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public void handleBadRequests(HttpServletResponse response, IllegalArgumentException ex) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-    }
+    // TODO: this causes stack traces to be "swallowed"
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public void handleBadRequests(HttpServletResponse response, IllegalArgumentException ex) throws IOException {
+//        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+//    }
 
 }

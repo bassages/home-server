@@ -22,6 +22,10 @@ public class DateTimePeriod {
         return startDateTime;
     }
 
+    public LocalDateTime getFromDateTime() {
+        return startDateTime;
+    }
+
     public LocalDateTime getToDateTime() {
         return toDateTime;
     }

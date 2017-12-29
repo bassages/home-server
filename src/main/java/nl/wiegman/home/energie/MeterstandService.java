@@ -33,6 +33,8 @@ public class MeterstandService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandService.class);
 
+    private static final String CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG = "meestRecenteMeterstandOpDag";
+
     private static final String TWO_AM = "0 0 2 * * *";
     private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
 
@@ -72,10 +74,10 @@ public class MeterstandService {
 
         List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(toMillisSinceEpoch(start), toMillisSinceEpoch(end));
 
-        Map<Integer, List<Meterstand>> byHour = meterstandenOnDay.stream()
+        Map<Integer, List<Meterstand>> meterstandenByHour = meterstandenOnDay.stream()
                 .collect(groupingBy(item -> item.getDatumtijdAsLocalDateTime().getHour()));
 
-        byHour.values().forEach(this::cleanupMeterStandenInOneHour);
+        meterstandenByHour.values().forEach(this::cleanupMeterStandenInOneHour);
     }
 
     private void clearCachesThatUsesPossibleDeletedMeterstanden() {
@@ -153,7 +155,7 @@ public class MeterstandService {
         }
     }
 
-    @Cacheable(cacheNames = "meestRecenteMeterstandOpDag")
+    @Cacheable(cacheNames = CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG)
     public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(LocalDate day) {
         return getNonCachedMeestRecenteMeterstandOpDag(day);
     }

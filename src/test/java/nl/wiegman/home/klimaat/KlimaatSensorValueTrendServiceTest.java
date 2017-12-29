@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import nl.wiegman.home.DateTimeUtil;
 import nl.wiegman.home.Trend;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -85,7 +86,7 @@ public class KlimaatSensorValueTrendServiceTest {
 
     private Klimaat getKlimaat(Date datumtijd, BigDecimal temperatuur) throws ParseException {
         Klimaat klimaat = new Klimaat();
-        klimaat.setDatumtijd(datumtijd);
+        klimaat.setDatumtijd(DateTimeUtil.toLocalDateTime(datumtijd));
         klimaat.setTemperatuur(temperatuur);
         klimaat.setKlimaatSensor(klimaatSensor);
         return klimaat;

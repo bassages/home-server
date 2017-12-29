@@ -8,19 +8,16 @@ public class GemiddeldeKlimaatPerMaand {
     private Date maand;
     private BigDecimal gemiddelde;
 
+    public GemiddeldeKlimaatPerMaand(Date maand, BigDecimal average) {
+        this.maand = maand;
+        this.gemiddelde = average;
+    }
+
     public Date getMaand() {
         return maand;
     }
 
-    public void setMaand(Date maand) {
-        this.maand = maand;
-    }
-
     public BigDecimal getGemiddelde() {
         return gemiddelde;
-    }
-
-    public void setGemiddelde(BigDecimal gemiddelde) {
-        this.gemiddelde = gemiddelde;
     }
 }
