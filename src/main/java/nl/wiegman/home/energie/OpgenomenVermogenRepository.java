@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -16,7 +16,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
     String MOST_RECENT = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)";
 
     @Query(value = ALL_IN_PERIOD_SORTED)
-    List<OpgenomenVermogen> getOpgenomenVermogen(@Param("van") Date van, @Param("tot") Date tot);
+    List<OpgenomenVermogen> getOpgenomenVermogen(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Query(value = MOST_RECENT)
     OpgenomenVermogen getMeestRecente();

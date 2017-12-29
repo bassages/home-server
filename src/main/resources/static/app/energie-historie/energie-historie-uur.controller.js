@@ -165,7 +165,7 @@
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-                var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.getTime();
+                var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.toString('yyyy-MM-dd');
 
                 $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {

@@ -2,24 +2,24 @@ package nl.wiegman.home.energie;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static nl.wiegman.home.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -28,117 +28,103 @@ import nl.wiegman.home.cache.CacheService;
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenServiceTest {
 
+    private OpgenomenVermogenService opgenomenVermogenService;
+
     @Mock
     private OpgenomenVermogenRepository opgenomenVermogenRepository;
     @Mock
     private CacheService cacheService;
 
-    @InjectMocks
-    private OpgenomenVermogenService opgenomenVermogenService;
-
     @Captor
     private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
 
+    @Before
+    public void setup() {
+        Clock clock = Clock.systemDefaultZone();
+        createOpgenomenVermogenService(clock);
+    }
+
+    private void createOpgenomenVermogenService(Clock clock) {
+        opgenomenVermogenService = new OpgenomenVermogenService(opgenomenVermogenRepository, cacheService, clock);
+    }
+
     @Test
-    public void shouldClearCacheOnCleanup() {
-        opgenomenVermogenService.cleanup(mock(Date.class));
+    public void shouldClearCacheOnDailyCleanup() {
+        opgenomenVermogenService.dailyCleanup();
         verify(cacheService).clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
 
     @Test
-    public void shouldCleanupOneDay() throws Exception {
-        Date date = toDate("14:46:30");
+    public void shouldCleanupOneDay() {
+        LocalDate date = LocalDate.of(2016, 1, 1);
 
-        ArgumentCaptor<Date> fromDateCaptor = ArgumentCaptor.forClass(Date.class);
-        ArgumentCaptor<Date> toDateCaptor = ArgumentCaptor.forClass(Date.class);
+        ArgumentCaptor<LocalDateTime> fromDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+        ArgumentCaptor<LocalDateTime> toDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
         when(opgenomenVermogenRepository.getOpgenomenVermogen(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(emptyList());
 
         opgenomenVermogenService.cleanup(date);
 
-        assertThat(fromDateCaptor.getValue()).withDateFormat("yyyy-MM-dd HH:mm:ss.SSS").isEqualTo("2016-01-01 00:00:00.000");
-        assertThat(toDateCaptor.getValue()).withDateFormat("yyyy-MM-dd HH:mm:ss.SSS").isEqualTo("2016-01-02 00:00:00.000");
+        assertThat(fromDateCaptor.getValue()).isEqualTo(date.atStartOfDay());
+        assertThat(toDateCaptor.getValue()).isEqualTo(date.atStartOfDay().plusDays(1));
 
         verify(opgenomenVermogenRepository).getOpgenomenVermogen(any(), any());
         verifyNoMoreInteractions(opgenomenVermogenRepository);
     }
 
     @Test
-    public void shouldKeepLatestRecordInMinuteWhenWattIsTheSame() throws Exception {
-        Date date = toDate("14:46:30");
+    public void shouldKeepLatestRecordInMinuteWhenWattIsTheSame() {
+        LocalDate date = LocalDate.of(2016, 1, 1);
 
-        OpgenomenVermogen ov1 = new OpgenomenVermogen();
-        ov1.setDatumtijd(toDate("12:00:00"));
-        ov1.setWatt(1);
-        OpgenomenVermogen ov2 = new OpgenomenVermogen();
-        ov2.setDatumtijd(toDate("12:00:10"));
-        ov2.setWatt(1);
-        OpgenomenVermogen ov3 = new OpgenomenVermogen();
-        ov3.setDatumtijd(toDate("12:00:20"));
-        ov3.setWatt(1);
+        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(1).build();
+        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(1).build();
+        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenService.cleanup(date);
 
         verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
-        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(ov1, ov2);
+        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(opgenomenVermogen1, opgenomenVermogen2);
     }
 
     @Test
-    public void shouldKeepHighestWatt() throws Exception {
-        Date date = toDate("14:46:30");
+    public void shouldKeepHighestWatt() {
+        LocalDate date = LocalDate.of(2016, 1, 1);
 
-        OpgenomenVermogen ov1 = new OpgenomenVermogen();
-        ov1.setDatumtijd(toDate("12:00:00"));
-        ov1.setWatt(3);
-        OpgenomenVermogen ov2 = new OpgenomenVermogen();
-        ov2.setDatumtijd(toDate("12:00:10"));
-        ov2.setWatt(2);
-        OpgenomenVermogen ov3 = new OpgenomenVermogen();
-        ov3.setDatumtijd(toDate("12:00:20"));
-        ov3.setWatt(1);
+        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(3).build();
+        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(2).build();
+        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenService.cleanup(date);
 
         verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
-        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(ov2, ov3);
+        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(opgenomenVermogen2, opgenomenVermogen3);
     }
 
     @Test
-    public void shouldCleanUpPerMinuteAndDeletePerHour() throws Exception {
-        Date date = toDate("14:46:30");
+    public void shouldCleanUpPerMinuteAndDeletePerHour() {
+        LocalDate date = LocalDate.of(2016, 1, 1);
 
-        OpgenomenVermogen ov1 = new OpgenomenVermogen();
-        ov1.setDatumtijd(toDate("12:00:00"));
-        OpgenomenVermogen ov2 = new OpgenomenVermogen();
-        ov2.setDatumtijd(toDate("12:00:10"));
+        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 0)).build();
+        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 10)).build();
 
-        OpgenomenVermogen ov3 = new OpgenomenVermogen();
-        ov3.setDatumtijd(toDate("12:01:00"));
-        OpgenomenVermogen ov4 = new OpgenomenVermogen();
-        ov4.setDatumtijd(toDate("12:01:10"));
+        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 1, 0)).build();
+        OpgenomenVermogen opgenomenVermogen4 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 1, 10)).build();
 
-        OpgenomenVermogen ov5 = new OpgenomenVermogen();
-        ov5.setDatumtijd(toDate("13:01:00"));
-        OpgenomenVermogen ov6 = new OpgenomenVermogen();
-        ov6.setDatumtijd(toDate("13:01:10"));
+        OpgenomenVermogen opgenomenVermogen5 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 0)).build();
+        OpgenomenVermogen opgenomenVermogen6 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 10)).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(ov1, ov2, ov3, ov4, ov5, ov6));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
 
         opgenomenVermogenService.cleanup(date);
 
         verify(opgenomenVermogenRepository, times(2)).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
-        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(0)).containsExactlyInAnyOrder(ov1, ov3);
-        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(1)).containsExactlyInAnyOrder(ov5);
+        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(0)).containsExactlyInAnyOrder(opgenomenVermogen1, opgenomenVermogen3);
+        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(1)).containsExactlyInAnyOrder(opgenomenVermogen5);
     }
-
-    private Date toDate(String timeString) throws ParseException {
-        return DateUtils.parseDate("2016-01-01 " + timeString, "yyyy-MM-dd HH:mm:ss");
-    }
-
 }

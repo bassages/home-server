@@ -185,16 +185,20 @@
             return new Date($scope.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999));
         }
 
+        function getPeriodToDate() {
+            return new Date($scope.selection.clone().addMonths(1));
+        }
+
         function getDataFromServer() {
             loadData([]);
 
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-                var van = getPeriodStartDate().getTime();
-                var totEnMet = getPeriodEndDate().getTime();
+                var from = getPeriodStartDate();
+                var to = getPeriodToDate();
 
-                var dataUrl = 'api/energie/verbruik-per-dag/' + van + '/' + totEnMet;
+                var dataUrl = 'api/energie/verbruik-per-dag/' + from.toString('yyyy-MM-dd') + '/' + to.toString('yyyy-MM-dd');
                 $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
                         loadData(EnergieHistorieService.transformServerdata(response.data, 'datumtijd'));

@@ -42,6 +42,10 @@ public class DateTimePeriod {
         return new DateTimePeriod(startDateTime, toDateTime);
     }
 
+    public boolean isWithinPeriod(LocalDateTime localDateTime) {
+        return (localDateTime.isEqual(this.startDateTime) || localDateTime.isAfter(this.startDateTime)) && localDateTime.isBefore(this.toDateTime);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

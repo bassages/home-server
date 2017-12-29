@@ -1,7 +1,7 @@
 package nl.wiegman.home.energie;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
-import static nl.wiegman.home.DateTimeUtil.toLocalDate;
+import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import nl.wiegman.home.DatePeriod;
 
 @RestController
 @RequestMapping("/api/energie")
@@ -28,11 +28,11 @@ public class EnergieController {
         this.verbruikService = verbruikService;
     }
 
-    @GetMapping(path = "gemiddelde-per-dag-in-periode/{van}/{totEnMet}")
-    public VerbruikDto getGemiddeldeVerbruikPerDagInPeriode(@PathVariable("van") long startDateTimeInMillisSinceEpoch, @PathVariable("totEnMet") long endDateTimeInMillisSinceEpoch) {
-        DatePeriod period = DatePeriod.aPeriodWithEndDate(toLocalDate(startDateTimeInMillisSinceEpoch), toLocalDate(endDateTimeInMillisSinceEpoch));
+    @GetMapping(path = "gemiddelde-per-dag-in-periode/{van}/{tot}")
+    public VerbruikDto getGemiddeldeVerbruikPerDagInPeriode(@PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                                            @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
-        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(aPeriodWithToDate(from, to));
 
         VerbruikDto verbruik = new VerbruikDto();
 
@@ -65,16 +65,14 @@ public class EnergieController {
         return verbruikService.getVerbruikPerMaandInJaar(Year.of(jaar));
     }
 
-    @GetMapping(path = "verbruik-per-dag/{van}/{totEnMet}")
-    public List<VerbruikOpDag> getVerbruikPerDag(@PathVariable("van") long startDateTimeInMillisSinceEpoch, @PathVariable("totEnMet") long endDateTimeInMillisSinceEpoch) {
-        DatePeriod period = DatePeriod.aPeriodWithEndDate(toLocalDate(startDateTimeInMillisSinceEpoch), toLocalDate(endDateTimeInMillisSinceEpoch));
-        return verbruikService.getVerbruikPerDag(period);
+    @GetMapping(path = "verbruik-per-dag/{van}/{tot}")
+    public List<VerbruikOpDag> getVerbruikPerDag(@PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                                 @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+        return verbruikService.getVerbruikPerDag(aPeriodWithToDate(from, to));
     }
 
     @GetMapping(path = "verbruik-per-uur-op-dag/{dag}")
-    public List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(@PathVariable("dag") long dateTimeOfDayInMillisSinceEpoch) {
-        LocalDate day = toLocalDate(dateTimeOfDayInMillisSinceEpoch);
+    public List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(@PathVariable("dag") @DateTimeFormat(iso = ISO.DATE) LocalDate day) {
         return verbruikService.getVerbruikPerUurOpDag(day);
     }
-
 }

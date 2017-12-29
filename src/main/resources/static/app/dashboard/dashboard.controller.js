@@ -53,10 +53,10 @@
         });
 
         function getGemiddeldeGasVerbruikPerDagInAfgelopenWeek() {
-            var gisteren = Date.parse('yesterday').getTime();
-            var weekVoorGisteren = Date.parse('yesterday').add(-6).days().getTime();
+            var vandaag = Date.today();
+            var weekVoorGisteren = Date.parse('yesterday').add(-6).days();
 
-            var url = 'api/energie/gemiddelde-per-dag-in-periode/' + weekVoorGisteren + '/' + gisteren;
+            var url = 'api/energie/gemiddelde-per-dag-in-periode/' + weekVoorGisteren.toString('yyyy-MM-dd') + '/' + vandaag.toString('yyyy-MM-dd');
 
             $http({
                 method: 'GET', url: url
@@ -70,7 +70,7 @@
         }
 
         function getGasVerbruikVandaag() {
-            var url = 'api/energie/verbruik-per-dag/' + Date.today().getTime() + '/' + (Date.today().set({hour: 23, minute: 59, second: 59, millisecond: 999})).getTime();
+            var url = 'api/energie/verbruik-per-dag/' + Date.today().toString('yyyy-MM-dd') + '/' + (Date.today().add(1).days().toString('yyyy-MM-dd'));
 
             $http({
                 method: 'GET', url: url

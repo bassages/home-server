@@ -1,8 +1,7 @@
 package nl.wiegman.home.energie;
 
 import static java.math.RoundingMode.HALF_UP;
-
-import java.util.Date;
+import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class SlimmeMeterController {
 
     private OpgenomenVermogen mapToOpgenomenVermogen(Dsmr42Reading dsmr42Reading) {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(new Date(dsmr42Reading.getDatumtijd()));
+        opgenomenVermogen.setDatumtijd(toLocalDateTime(dsmr42Reading.getDatumtijd()));
         opgenomenVermogen.setWatt(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;

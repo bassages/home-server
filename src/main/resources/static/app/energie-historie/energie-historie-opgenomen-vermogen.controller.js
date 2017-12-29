@@ -90,13 +90,13 @@
                 var transformedDataItem = {};
 
                 var tarief = data[i].tariefIndicator.toLowerCase();
-                transformedDataItem.datumtijd = data[i].datumtijd;
+                transformedDataItem.datumtijd = new Date(data[i].datumtijd).getTime();
                 transformedDataItem['watt-' + tarief] = data[i].watt;
 
                 // Fill the "gap" between this row and the previous one
                 if (previousTarief && tarief && tarief !== previousTarief) {
                     var obj = {};
-                    obj.datumtijd = data[i].datumtijd - 1;
+                    obj.datumtijd = new Date(data[i].datumtijd).getTime() - 1;
                     var attribute = 'watt-' + previousTarief;
                     obj[attribute] = data[i].watt;
                     transformedData.push(obj);
@@ -188,7 +188,7 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoChart([]);
 
-            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.getTime() + '/' + getTo().getTime() + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
+            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.toString('yyyy-MM-dd') + '/' + getTo().toString('yyyy-MM-dd') + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
 
             $http({method: 'GET', url: dataUrl})
                 .then(

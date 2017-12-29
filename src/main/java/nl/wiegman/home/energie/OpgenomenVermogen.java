@@ -1,6 +1,6 @@
 package nl.wiegman.home.energie;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +23,7 @@ public class OpgenomenVermogen {
     private long id;
 
     @Column(nullable = false, unique = true)
-    private Date datumtijd;
+    private LocalDateTime datumtijd;
 
     @NotNull
     private int watt;
@@ -39,11 +39,11 @@ public class OpgenomenVermogen {
         this.id = id;
     }
 
-    public Date getDatumtijd() {
+    public LocalDateTime getDatumtijd() {
         return datumtijd;
     }
 
-    public void setDatumtijd(Date datumTijd) {
+    public void setDatumtijd(LocalDateTime datumTijd) {
         this.datumtijd = datumTijd;
     }
 

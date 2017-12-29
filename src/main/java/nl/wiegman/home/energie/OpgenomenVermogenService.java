@@ -4,17 +4,22 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
+import static nl.wiegman.home.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
-import java.util.Date;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +27,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import nl.wiegman.home.DateTimeUtil;
+import nl.wiegman.home.DatePeriod;
+import nl.wiegman.home.DateTimePeriod;
 import nl.wiegman.home.cache.CacheService;
 
 @Service
@@ -30,25 +36,28 @@ public class OpgenomenVermogenService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenService.class);
 
+    private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
     public static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
 
     private static final String ONE_AM = "0 0 1 * * *";
 
     private final CacheService cacheService;
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
+    private final Clock clock;
 
     @Autowired
-    public OpgenomenVermogenService(CacheService cacheService, OpgenomenVermogenRepository opgenomenVermogenRepository) {
+    public OpgenomenVermogenService(OpgenomenVermogenRepository opgenomenVermogenRepository, CacheService cacheService, Clock clock) {
         this.cacheService = cacheService;
         this.opgenomenVermogenRepository = opgenomenVermogenRepository;
+        this.clock = clock;
     }
 
     @Scheduled(cron = ONE_AM)
     public void dailyCleanup() {
-        Date today = new Date();
-        cleanup(DateUtils.addDays(today, -1));
-        cleanup(DateUtils.addDays(today, -2));
-        cleanup(DateUtils.addDays(today, -3));
+        LocalDate today = LocalDate.now(clock);
+        IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
+                 .forEach(i -> cleanup(today.minusDays(i)));
+        cacheService.clear(CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
 
     public OpgenomenVermogen save(OpgenomenVermogen opgenomenVermogen) {
@@ -60,70 +69,73 @@ public class OpgenomenVermogenService {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY)
-    public List<OpgenomenVermogen> getPotentiallyCachedHistory(Date from, Date to, long subPeriodLength) {
-        return getHistory(from, to, subPeriodLength);
+    public List<OpgenomenVermogen> getPotentiallyCachedHistory(DatePeriod period, long subPeriodLength) {
+        return getHistory(period, subPeriodLength);
     }
 
-    public List<OpgenomenVermogen> getHistory(Date from, Date to, long subPeriodLength) {
-        List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
+    public List<OpgenomenVermogen> getHistory(DatePeriod period, long subPeriodLength) {
+        DateTimePeriod dateTimePeriod = period.toDateTimePeriod();
 
-        long nrOfSubPeriodsInPeriod = (to.getTime() - from.getTime()) / subPeriodLength;
+        List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(
+                dateTimePeriod.getFromDateTime(), dateTimePeriod.getToDateTime());
 
-        return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod).boxed()
-                .map(periodNumber -> this.toSubPeriod(periodNumber, from.getTime(), subPeriodLength))
-                .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
-                .collect(toList());
+        long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLength;
+
+        return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod)
+                         .boxed()
+                         .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getStartDateTime(), periodNumber, subPeriodLength))
+                         .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
+                         .collect(toList());
     }
 
-    private Period toSubPeriod(long periodNumber, long start, long subPeriodLength) {
-        long subStart = start + (periodNumber * subPeriodLength);
-        long subEnd = subStart + subPeriodLength;
-        return new Period(subStart, subEnd);
+    private DateTimePeriod toSubPeriod(LocalDateTime from, long periodNumber, long subPeriodLengthInMillis) {
+        long subPeriodLengthInNanos = TimeUnit.MILLISECONDS.toNanos(subPeriodLengthInMillis);
+        LocalDateTime subFrom = from.plusNanos(periodNumber * subPeriodLengthInNanos);
+        LocalDateTime subTo = subFrom.plusNanos(subPeriodLengthInNanos);
+        return aPeriodWithToDateTime(subFrom, subTo);
     }
 
-    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, Period period) {
+    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, DateTimePeriod period) {
         return opgenomenVermogens.stream()
-                .filter(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getTime() >= period.from && opgenomenVermogen.getDatumtijd().getTime() < period.to)
-                .max(comparingInt(OpgenomenVermogen::getWatt))
-                .map(o -> this.mapToOpgenomenVermogen(o, period))
-                .orElse(this.mapToEmptyOpgenomenVermogen(period.from));
+                                 .filter(opgenomenVermogen -> period.isWithinPeriod(opgenomenVermogen.getDatumtijd()))
+                                 .max(comparingInt(OpgenomenVermogen::getWatt))
+                                 .map(o -> this.mapToOpgenomenVermogen(o, period))
+                                 .orElse(this.mapToEmptyOpgenomenVermogen(period.getFromDateTime()));
     }
 
-    private OpgenomenVermogen mapToOpgenomenVermogen(OpgenomenVermogen opgenomenVermogen, Period period) {
+    private OpgenomenVermogen mapToOpgenomenVermogen(OpgenomenVermogen opgenomenVermogen, DateTimePeriod period) {
         OpgenomenVermogen result = new OpgenomenVermogen();
         result.setTariefIndicator(opgenomenVermogen.getTariefIndicator());
-        result.setDatumtijd(new Date(period.from));
+        result.setDatumtijd(period.getFromDateTime());
         result.setWatt(opgenomenVermogen.getWatt());
         return result;
     }
 
-    private OpgenomenVermogen mapToEmptyOpgenomenVermogen(long datumtijd) {
+    private OpgenomenVermogen mapToEmptyOpgenomenVermogen(LocalDateTime datumtijd) {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(new Date(datumtijd));
+        opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
         opgenomenVermogen.setWatt(0);
         return opgenomenVermogen;
     }
 
-    public void cleanup(Date date) {
-        Date from = DateTimeUtil.getStartOfDayAsDate(date);
-        Date to = DateUtils.addDays(from, 1);
+    public void cleanup(LocalDate day) {
+        List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
-        List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(from, to);
+        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByHour = opgenomenVermogensOnDay.stream()
+                                                                                                .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getHour()));
 
-        Map<Integer, List<OpgenomenVermogen>> byHour = opgenomenVermogensOnDay.stream()
-                .collect(groupingBy(item -> toLocalDateTime(item.getDatumtijd()).getHour()));
-
-        byHour.values().forEach(this::cleanupHour);
-
-        cacheService.clear(CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
+        opgenomenVermogensByHour.values().forEach(this::cleanupHour);
     }
 
     private void cleanupHour(List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
-        Map<Integer, List<OpgenomenVermogen>> byMinute = opgenomenVermogensInOneHour.stream()
-                .collect(groupingBy(item -> toLocalDateTime(item.getDatumtijd()).getMinute()));
+        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
+                                                                                                      .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
 
-        List<OpgenomenVermogen> opgenomenVermogensToKeep = byMinute.values().stream().map(this::getOpgenomenVermogenToKeepInMinute).collect(toList());
+        List<OpgenomenVermogen> opgenomenVermogensToKeep = opgenomenVermogensByMinute.values()
+                                                                                     .stream()
+                                                                                     .map(this::getOpgenomenVermogenToKeepInMinute)
+                                                                                     .collect(toList());
 
         opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
 
@@ -136,15 +148,7 @@ public class OpgenomenVermogenService {
     }
 
     private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        return opgenomenVermogenInOneMinute.stream()
-                .max(comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd))).get();
-    }
-
-    private static class Period {
-        private long from, to;
-        private Period(long from, long to) {
-            this.from = from;
-            this.to = to;
-        }
+        Comparator<OpgenomenVermogen> order = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
+        return opgenomenVermogenInOneMinute.stream().max(order).get();
     }
 }
