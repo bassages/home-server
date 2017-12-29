@@ -9,6 +9,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -45,8 +46,8 @@ public class MindergasnlService {
         this.clock = clock;
     }
 
-    public List<MindergasnlSettings> getAllSettings() {
-        return mindergasnlSettingsRepository.findAll();
+    public Optional<MindergasnlSettings> findOne() {
+        return mindergasnlSettingsRepository.findOneByIdIsNotNull();
     }
 
     public MindergasnlSettings save(MindergasnlSettings mindergasnlSettings) {
@@ -54,13 +55,12 @@ public class MindergasnlService {
     }
 
     @Scheduled(cron = THREE_AM)
-    public void uploadMeterstand() {
-        List<MindergasnlSettings> settings = getAllSettings();
+    public void uploadMeterstandWhenEnabled() {
+        findOne().filter(MindergasnlSettings::isAutomatischUploaden)
+                 .ifPresent(this::uploadMeterstand);
+    }
 
-        if (settings.isEmpty() || !getAllSettings().get(0).isAutomatischUploaden()) {
-            return;
-        }
-
+    private void uploadMeterstand(MindergasnlSettings settings) {
         LocalDateTime todayAtStartOfDay = LocalDate.now(clock).atStartOfDay();
         LocalDateTime yesterdayAtStartOfDay = todayAtStartOfDay.minusDays(1);
 
@@ -77,7 +77,7 @@ public class MindergasnlService {
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
 
-            HttpPost request = createRequest(yesterdayAtStartOfDay, gasStand);
+            HttpPost request = createRequest(settings.getAuthenticatietoken(), yesterdayAtStartOfDay, gasStand);
             CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);
 
@@ -86,14 +86,14 @@ public class MindergasnlService {
         }
     }
 
-    private HttpPost createRequest(LocalDateTime yesterdayAtStartOfDay, BigDecimal gasStand) throws UnsupportedEncodingException {
+    private HttpPost createRequest(String authenticatietoken, LocalDateTime yesterdayAtStartOfDay, BigDecimal gasStand) throws UnsupportedEncodingException {
         HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
         String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", yesterdayAtStartOfDay.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
         LOGGER.info("Upload to mindergas.nl: " + message);
 
         request.addHeader("content-type", ContentType.APPLICATION_JSON.getMimeType());
-        request.addHeader("AUTH-TOKEN", getAllSettings().get(0).getAuthenticatietoken());
+        request.addHeader("AUTH-TOKEN", authenticatietoken);
 
         StringEntity params = new StringEntity(message);
         request.setEntity(params);

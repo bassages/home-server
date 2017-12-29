@@ -1,9 +1,10 @@
 package nl.wiegman.home.energie;
 
+import static java.lang.String.format;
+
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
@@ -18,40 +19,36 @@ public class SlimmeMeterHealth implements HealthIndicator {
     private static final String DETAIL_KEY_MESSAGE = "message";
 
     private final MeterstandService meterstandService;
+    private final Clock clock;
 
     @Autowired
-    public SlimmeMeterHealth(MeterstandService meterstandService) {
+    public SlimmeMeterHealth(MeterstandService meterstandService, Clock clock) {
         this.meterstandService = meterstandService;
+        this.clock = clock;
     }
 
     @Override
     public Health health() {
-        Date now = new Date();
-
         Meterstand mostRecent = meterstandService.getMostRecent();
 
         if (mostRecent == null) {
-
             return Health.unknown()
                          .withDetail(DETAIL_KEY_MESSAGE, "No Meterstand received since application startup")
                          .build();
 
-        } else if (mostRecent.getDatumtijd() < (now.getTime() - TimeUnit.MINUTES.toMillis(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
-
+        } else if (mostRecent.getDatumtijdAsLocalDateTime().isBefore(LocalDateTime.now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
             return Health.down()
-                         .withDetail(
-                                 DETAIL_KEY_MESSAGE, "Most recent valid Meterstand was saved at " + formatDatumtjd(mostRecent.getDatumtijdAsLocalDateTime()) + ". Which is more than " + MAXIMUM_MESSAGE_AGE_IN_MINUTES + " minutes ago.")
+                         .withDetail(DETAIL_KEY_MESSAGE, format("Most recent valid Meterstand was saved at %s. Which is more than %d minutes ago.", formatDatumtjd(mostRecent), MAXIMUM_MESSAGE_AGE_IN_MINUTES))
                          .build();
 
         } else {
-
             return Health.up()
-                         .withDetail(DETAIL_KEY_MESSAGE, "Most recent valid Meterstand was saved at " + formatDatumtjd(mostRecent.getDatumtijdAsLocalDateTime()))
+                         .withDetail(DETAIL_KEY_MESSAGE, format("Most recent valid Meterstand was saved at %s", formatDatumtjd(mostRecent)))
                          .build();
         }
     }
 
-    private String formatDatumtjd(LocalDateTime datumtijd) {
-        return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(datumtijd);
+    private String formatDatumtjd(Meterstand mostRecent) {
+        return mostRecent.getDatumtijdAsLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

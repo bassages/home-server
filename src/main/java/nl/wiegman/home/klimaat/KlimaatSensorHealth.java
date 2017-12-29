@@ -2,9 +2,9 @@ package nl.wiegman.home.klimaat;
 
 import static java.lang.String.format;
 
-import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
@@ -47,7 +47,7 @@ public class KlimaatSensorHealth implements HealthIndicator {
     }
 
     private String formatDatumtijd(RealtimeKlimaat mostRecent) {
-        return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(mostRecent.getDatumtijd());
+        return mostRecent.getDatumtijd().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
 }

@@ -1,7 +1,5 @@
 package nl.wiegman.home.mindergasnl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +19,8 @@ public class MindergasnlSettingsController {
     }
 
     @GetMapping
-    public List<MindergasnlSettings> get() {
-        return mindergasnlService.getAllSettings();
+    public MindergasnlSettings get() {
+        return mindergasnlService.findOne().orElse(null);
     }
 
     @PostMapping
