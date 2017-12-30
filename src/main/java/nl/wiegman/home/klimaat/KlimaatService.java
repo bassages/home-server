@@ -4,12 +4,16 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
+import static nl.wiegman.home.DateTimeUtil.toDateAtStartOfDay;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +25,12 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import nl.wiegman.home.DatePeriod;
-import nl.wiegman.home.DateTimePeriod;
 
 @Service
 public class KlimaatService {
@@ -45,7 +49,9 @@ public class KlimaatService {
 
     private final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = new ConcurrentHashMap<>();
 
-    private final KlimaatServiceCached klimaatServiceCached;
+    @Autowired
+    private KlimaatService klimaatServiceProxyWithEnabledCaching; // Needed to make use of use caching annotations
+
     private final KlimaatRepos klimaatRepository;
     private final KlimaatSensorRepository klimaatSensorRepository;
 
@@ -56,10 +62,9 @@ public class KlimaatService {
     private final Clock clock;
 
     @Autowired
-    public KlimaatService(KlimaatServiceCached klimaatServiceCached, KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
+    public KlimaatService(KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
             KlimaatSensorValueTrendService klimaatSensorValueTrendService, SimpMessagingTemplate messagingTemplate, Clock clock) {
 
-        this.klimaatServiceCached = klimaatServiceCached;
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
         this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
@@ -84,8 +89,8 @@ public class KlimaatService {
     private List<Klimaat> getKlimaatsReceivedInLastNumberOfMinutes(String klimaatSensorCode, int nrOfMinutes) {
         LocalDateTime from = LocalDateTime.now(clock).minusMinutes(nrOfMinutes);
         return recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode).stream()
-                .filter(klimaat -> klimaat.getDatumtijd().isAfter(from))
-                .collect(toList());
+                                                                                  .filter(klimaat -> klimaat.getDatumtijd().isAfter(from))
+                                                                                  .collect(toList());
     }
 
     private void saveKlimaatWithAveragedRecentSensorValues(LocalDateTime referenceDateTime, String klimaatSensorCode) {
@@ -118,30 +123,31 @@ public class KlimaatService {
     }
 
     private KlimaatSensor getOrCreateIfNonExists(String klimaatSensorCode) {
-        KlimaatSensor klimaatSensor = klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
-        if (klimaatSensor == null) {
-            klimaatSensor = new KlimaatSensor();
-            klimaatSensor.setCode(klimaatSensorCode);
-            klimaatSensor = klimaatSensorRepository.save(klimaatSensor);
-        }
-        return klimaatSensor;
+        return klimaatSensorRepository.findFirstByCode(klimaatSensorCode)
+                                      .orElseGet(() -> createKlimaatSensor(klimaatSensorCode));
     }
 
-    public KlimaatSensor getKlimaatSensorByCode(String klimaatSensorCode) {
+    private KlimaatSensor createKlimaatSensor(String klimaatSensorCode) {
+        KlimaatSensor klimaatSensor = new KlimaatSensor();
+        klimaatSensor.setCode(klimaatSensorCode);
+        return klimaatSensorRepository.save(klimaatSensor);
+    }
+
+    public Optional<KlimaatSensor> getKlimaatSensorByCode(String klimaatSensorCode) {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
-    public List<Klimaat> getInPeriod(String klimaatSensorCode, DateTimePeriod period) {
+    public List<Klimaat> getInPeriod(String klimaatSensorCode, DatePeriod period) {
         LocalDate today = LocalDate.now(clock);
 
-        if (period.getToDateTime().isBefore(today.atStartOfDay())) {
-            return klimaatServiceCached.getInPeriod(klimaatSensorCode, period);
+        if (period.getEndDate().isBefore(today)) {
+            return klimaatServiceProxyWithEnabledCaching.getPotentiallyCachedAllInPeriod(klimaatSensorCode, period);
         } else {
-            return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, period.getFromDateTime(), period.getToDateTime());
+            return this.getNotCachedAllInPeriod(klimaatSensorCode, period);
         }
     }
 
-    public BigDecimal getAverage(SensorType sensortype, DatePeriod period) {
+    private BigDecimal getAverage(SensorType sensortype, DatePeriod period) {
         switch (sensortype) {
             case TEMPERATUUR:
                 return klimaatRepository.getAverageTemperatuur(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
@@ -153,17 +159,16 @@ public class KlimaatService {
     }
 
     public RealtimeKlimaat getMostRecent(String klimaatSensorCode) {
-        return getLast(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode))
-                .map(this::mapToRealtimeKlimaat)
-                .orElse(null);
+        List<Klimaat> recentlyReceivedKlimaatForSensor = recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode);
+        return getLast(recentlyReceivedKlimaatForSensor).map(this::mapToRealtimeKlimaat)
+                                                        .orElse(null);
     }
 
     private Optional<Klimaat> getLast(List<Klimaat> klimaats) {
-        if (isNotEmpty(klimaats)) {
-            return Optional.of(klimaats.get(klimaats.size() - 1));
-        } else {
+        if (isEmpty(klimaats)) {
             return Optional.empty();
         }
+        return Optional.of(klimaats.get(klimaats.size() - 1));
     }
 
     public void add(Klimaat klimaat) {
@@ -172,18 +177,33 @@ public class KlimaatService {
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
-    public List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
+    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(SensorType sensortype, int[] years) {
+        return IntStream.of(years).mapToObj(jaar ->
+                IntStream.rangeClosed(1, Month.values().length)
+                        .mapToObj(maand -> getAverageInMonthOfYear(sensortype, YearMonth.of(jaar, maand)))
+                        .collect(toList())).collect(toList());
+    }
+
+
+    private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(SensorType sensortype, YearMonth yearMonth) {
+        LocalDate from = yearMonth.atDay(1);
+        LocalDate to = from.plusMonths(1);
+        DatePeriod period = aPeriodWithToDate(from, to);
+        return new GemiddeldeKlimaatPerMaand(toDateAtStartOfDay(from), getAverage(sensortype, period));
+    }
+
+    private List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && !ZERO.equals(klimaat.getLuchtvochtigheid()))
-                .map(Klimaat::getLuchtvochtigheid)
-                .collect(toList());
+                          .filter(klimaat -> klimaat.getLuchtvochtigheid() != null && klimaat.getLuchtvochtigheid().compareTo(ZERO) != 0)
+                          .map(Klimaat::getLuchtvochtigheid)
+                          .collect(toList());
     }
 
     private List<BigDecimal> getValidTemperatures(List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                .filter(klimaat -> klimaat.getTemperatuur() != null && !ZERO.equals(klimaat.getTemperatuur()))
-                .map(Klimaat::getTemperatuur)
-                .collect(toList());
+                          .filter(klimaat -> klimaat.getTemperatuur() != null && klimaat.getTemperatuur().compareTo(ZERO) != 0)
+                          .map(Klimaat::getTemperatuur)
+                          .collect(toList());
     }
 
     public List<Klimaat> getHighest(SensorType sensortype, DatePeriod period, int limit) {
@@ -210,18 +230,18 @@ public class KlimaatService {
 
     private List<Klimaat> getLowestTemperature(DatePeriod period, int limit) {
         return klimaatRepository.getPeakLowTemperatureDates(period.getFromDate(), period.getToDate(), limit)
-                    .stream()
-                    .map(java.sql.Date::toLocalDate)
-                    .map(klimaatRepository::firstLowestTemperatureOnDay)
-                    .collect(toList());
+                                .stream()
+                                .map(java.sql.Date::toLocalDate)
+                                .map(klimaatRepository::firstLowestTemperatureOnDay)
+                                .collect(toList());
     }
 
     private List<Klimaat> getLowestHumidity(DatePeriod period, int limit) {
         return klimaatRepository.getPeakLowHumidityDates(period.getFromDate(), period.getToDate(), limit)
-                    .stream()
-                    .map(java.sql.Date::toLocalDate)
-                    .map(klimaatRepository::firstLowestHumidityOnDay)
-                    .collect(toList());
+                                .stream()
+                                .map(java.sql.Date::toLocalDate)
+                                .map(klimaatRepository::firstLowestHumidityOnDay)
+                                .collect(toList());
     }
 
     private BigDecimal getAverage(List<BigDecimal> decimals) {
@@ -235,17 +255,17 @@ public class KlimaatService {
 
     private List<Klimaat> getHighestTemperature(DatePeriod period, int limit) {
         return klimaatRepository.getPeakHighTemperatureDates(period.getFromDate(), period.getToDate(), limit)
-                .stream()
-                .map(java.sql.Date::toLocalDate)
-                .map(klimaatRepository::firstHighestTemperatureOnDay)
-                .collect(toList());
+                                .stream()
+                                .map(java.sql.Date::toLocalDate)
+                                .map(klimaatRepository::firstHighestTemperatureOnDay)
+                                .collect(toList());
     }
 
     private List<Klimaat> getHighestHumidity(DatePeriod period, int limit) {
         return klimaatRepository.getPeakHighHumidityDates(period.getFromDate(), period.getToDate(), limit)
-                .stream()
-                .map(klimaatRepository::firstHighestHumidityOnDay)
-                .collect(toList());
+                                .stream()
+                                .map(klimaatRepository::firstHighestHumidityOnDay)
+                                .collect(toList());
     }
 
     private void publishEvent(Klimaat klimaat) {
@@ -265,5 +285,18 @@ public class KlimaatService {
         realtimeKlimaat.setLuchtvochtigheidTrend(klimaatSensorValueTrendService.determineValueTrend(klimaatsToDetermineTrendFor, Klimaat::getLuchtvochtigheid));
 
         return realtimeKlimaat;
+    }
+
+    private List<Klimaat> getNotCachedAllInPeriod(String klimaatSensorCode, DatePeriod period) {
+        return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode,
+                                                                                            period.toDateTimePeriod().getStartDateTime(),
+                                                                                            period.toDateTimePeriod().getEndDateTime());
+    }
+
+    @Cacheable(cacheNames = "klimaatInPeriod")
+    public List<Klimaat> getPotentiallyCachedAllInPeriod(String klimaatSensorCode, DatePeriod period) {
+        return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode,
+                                                                                            period.toDateTimePeriod().getStartDateTime(),
+                                                                                            period.toDateTimePeriod().getEndDateTime());
     }
 }

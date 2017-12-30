@@ -342,7 +342,9 @@
                 var requests = [];
 
                 for (var i = 0; i < vm.selection.length; i++) {
-                    var dataUrl = 'api/klimaat?from=' + vm.selection[i].getTime() + '&to=' + (getTo(vm.selection[i]).getTime() - 1);
+                    var from = vm.selection[i];
+                    var to = getTo(from);
+                    var dataUrl = 'api/klimaat?from=' + from.toString('yyyy-MM-dd') + '&to=' + to.toString('yyyy-MM-dd');
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }
 

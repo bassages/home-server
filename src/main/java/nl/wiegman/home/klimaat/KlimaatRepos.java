@@ -19,6 +19,8 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String AVERAGE_LUCHTVOCHTIGHEID_BETWEEN = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
     String AVERAGE_TEMPERATUUR_BETWEEEN = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
 
+    String BY_KLIMAAT_SENSOR_CODE_AND_DATUMTIJD_IN_PERIOD_ORDER_BY_DATUMTIJD = "SELECT k FROM Klimaat k where k.klimaatSensor.code = :klimaatSensorCode AND k.datumtijd >= :van AND k.datumtijd <= :totEnMet ORDER BY k.datumtijd";
+
     // Native queries
     String PEAK_HIGH_TEMPERATURE_DATES = "SELECT datum FROM (SELECT datum, MAX(temperatuur) AS temperatuur FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY temperatuur DESC LIMIT :limit) datums";
     String FIRST_HIGHEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY temperatuur DESC, datumtijd ASC LIMIT 1";
@@ -32,8 +34,10 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
     String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
     String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
 
-    @Query(value = "SELECT k FROM Klimaat k where k.klimaatSensor.code = :klimaatSensorCode AND k.datumtijd >= :van AND k.datumtijd <= :totEnMet ORDER BY k.datumtijd")
-    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode, @Param("van") LocalDateTime van, @Param("totEnMet") LocalDateTime totEnMet);
+    @Query(value = BY_KLIMAAT_SENSOR_CODE_AND_DATUMTIJD_IN_PERIOD_ORDER_BY_DATUMTIJD)
+    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode,
+                                                                             @Param("van") LocalDateTime van,
+                                                                             @Param("totEnMet") LocalDateTime totEnMet);
 
     @Query(value = PEAK_HIGH_TEMPERATURE_DATES, nativeQuery = true)
     List<Date> getPeakHighTemperatureDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
