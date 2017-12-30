@@ -1,21 +1,23 @@
 package nl.wiegman.home.energie;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-public class VerbruikInJaar {
+public class VerbruikKostenOpDag {
 
-    private int jaar;
+    private LocalDate dag;
 
     @JsonUnwrapped
     private VerbruikKostenOverzicht verbruikKostenOverzicht;
 
-    public VerbruikInJaar(int jaar, VerbruikKostenOverzicht verbruikKostenOverzicht) {
-        this.jaar = jaar;
+    public VerbruikKostenOpDag(LocalDate dag, VerbruikKostenOverzicht verbruikKostenOverzicht) {
+        this.dag = dag;
         this.verbruikKostenOverzicht = verbruikKostenOverzicht;
     }
 
-    public int getJaar() {
-        return jaar;
+    public LocalDate getDag() {
+        return dag;
     }
 
     public VerbruikKostenOverzicht getVerbruikKostenOverzicht() {

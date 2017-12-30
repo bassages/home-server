@@ -2,7 +2,7 @@ package nl.wiegman.home.energie;
 
 import java.math.BigDecimal;
 
-public class VerbruikDto {
+public class VerbruikKostenOverzicht {
 
     private BigDecimal stroomVerbruikDal;
     private BigDecimal stroomKostenDal;

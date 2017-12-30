@@ -55,19 +55,19 @@ public class VerbruikServiceTest {
         LocalDate to = LocalDate.of(2016, JANUARY, 3);
         DatePeriod period = aPeriodWithToDate(from, to);
 
-        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
         verifyZeroInteractions(meterstandService);
 
         assertThat(verbruikPerDag).hasSize(1);
-        VerbruikOpDag verbruikOpDag = verbruikPerDag.get(0);
-        assertThat(verbruikOpDag.getDatumtijd()).isEqualTo(toMillisSinceEpochAtStartOfDay(from));
-        assertThat(verbruikOpDag.getGasKosten()).isNull();
-        assertThat(verbruikOpDag.getGasVerbruik()).isNull();
-        assertThat(verbruikOpDag.getStroomKostenDal()).isNull();
-        assertThat(verbruikOpDag.getStroomVerbruikDal()).isNull();
-        assertThat(verbruikOpDag.getStroomKostenNormaal()).isNull();
-        assertThat(verbruikOpDag.getStroomVerbruikNormaal()).isNull();
+        VerbruikKostenOpDag verbruikKostenOpDag = verbruikPerDag.get(0);
+        assertThat(verbruikKostenOpDag.getDag()).isEqualTo(from);
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasKosten()).isNull();
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasVerbruik()).isNull();
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenDal()).isNull();
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isNull();
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isNull();
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isNull();
     }
 
     @Test
@@ -108,26 +108,26 @@ public class VerbruikServiceTest {
         when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(from.plusDays(1)), toMillisSinceEpochAtStartOfDay(from.plusDays(2)) - 1))
                 .thenReturn(new BigDecimal("3.777"));
 
-        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
         assertThat(verbruikPerDag).hasSize(2);
-        VerbruikOpDag verbruikOpDag1 = verbruikPerDag.get(0);
-        assertThat(verbruikOpDag1.getDatumtijd()).isEqualTo(toMillisSinceEpochAtStartOfDay(from));
-        assertThat(verbruikOpDag1.getGasVerbruik()).isEqualTo(new BigDecimal("1.111"));
-        assertThat(verbruikOpDag1.getGasKosten()).isEqualTo(new BigDecimal("11.110"));
-        assertThat(verbruikOpDag1.getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.222"));
-        assertThat(verbruikOpDag1.getStroomKostenDal()).isEqualTo(new BigDecimal("44.440"));
-        assertThat(verbruikOpDag1.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.333"));
-        assertThat(verbruikOpDag1.getStroomKostenNormaal()).isEqualTo(new BigDecimal("99.990"));
+        VerbruikKostenOpDag verbruikKostenOpDag1 = verbruikPerDag.get(0);
+        assertThat(verbruikKostenOpDag1.getDag()).isEqualTo(from);
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.111"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("11.110"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.222"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("44.440"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.333"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("99.990"));
 
-        VerbruikOpDag verbruikOpDag2 = verbruikPerDag.get(1);
-        assertThat(verbruikOpDag2.getDatumtijd()).isEqualTo(toMillisSinceEpochAtStartOfDay(from.plusDays(1)));
-        assertThat(verbruikOpDag2.getGasVerbruik()).isEqualTo(new BigDecimal("1.999"));
-        assertThat(verbruikOpDag2.getGasKosten()).isEqualTo(new BigDecimal("79.960"));
-        assertThat(verbruikOpDag2.getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.888"));
-        assertThat(verbruikOpDag2.getStroomKostenDal()).isEqualTo(new BigDecimal("144.400"));
-        assertThat(verbruikOpDag2.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.777"));
-        assertThat(verbruikOpDag2.getStroomKostenNormaal()).isEqualTo(new BigDecimal("226.620"));
+        VerbruikKostenOpDag verbruikKostenOpDag2 = verbruikPerDag.get(1);
+        assertThat(verbruikKostenOpDag2.getDag()).isEqualTo(from.plusDays(1));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.999"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("79.960"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.888"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("144.400"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.777"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("226.620"));
     }
 
     @Test
@@ -155,17 +155,17 @@ public class VerbruikServiceTest {
         when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(day), toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1))
                 .thenReturn(new BigDecimal("3.000"));
 
-        List<VerbruikOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
         assertThat(verbruikPerDag).hasSize(1);
-        VerbruikOpDag verbruikOpDag = verbruikPerDag.get(0);
-        assertThat(verbruikOpDag.getDatumtijd()).isEqualTo(toMillisSinceEpochAtStartOfDay(day));
-        assertThat(verbruikOpDag.getGasVerbruik()).isEqualTo(new BigDecimal("1.000"));
-        assertThat(verbruikOpDag.getGasKosten()).isEqualTo(new BigDecimal("10.000"));
-        assertThat(verbruikOpDag.getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.000"));
-        assertThat(verbruikOpDag.getStroomKostenDal()).isEqualTo(new BigDecimal("40.000"));
-        assertThat(verbruikOpDag.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.000"));
-        assertThat(verbruikOpDag.getStroomKostenNormaal()).isEqualTo(new BigDecimal("90.000"));
+        VerbruikKostenOpDag verbruikKostenOpDag = verbruikPerDag.get(0);
+        assertThat(verbruikKostenOpDag.getDag()).isEqualTo(day);
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.000"));
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("10.000"));
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.000"));
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("40.000"));
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.000"));
+        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("90.000"));
 
         verifyZeroInteractions(verbruikServiceProxyWithEnabledCaching);
     }

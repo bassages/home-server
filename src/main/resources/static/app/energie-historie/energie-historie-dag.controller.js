@@ -123,7 +123,7 @@
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
-            chartConfig.data.keys = {x: 'datumtijd', value: keysGroups};
+            chartConfig.data.keys = {x: 'dag', value: keysGroups};
 
             chartConfig.axis = {};
             chartConfig.axis.x = {
@@ -164,9 +164,9 @@
             $log.debug('loadDataIntoTable', data.length);
 
             var labelFormatter = function(d) {
-                return d3.time.format('%d-%m (%a)')(new Date(d.datumtijd));
+                return d3.time.format('%d-%m (%a)')(new Date(d.dag));
             };
-            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter, 'datumtijd');
+            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter, 'dag');
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -201,7 +201,7 @@
                 var dataUrl = 'api/energie/verbruik-per-dag/' + from.toString('yyyy-MM-dd') + '/' + to.toString('yyyy-MM-dd');
                 $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
-                        loadData(EnergieHistorieService.transformServerdata(response.data, 'datumtijd'));
+                        loadData(EnergieHistorieService.transformServerdata(response.data, 'dag'));
                         LoadingIndicatorService.stopLoading();
                     },
                     function errorCallback(response) {

@@ -56,7 +56,7 @@
             var vandaag = Date.today();
             var weekVoorGisteren = Date.parse('yesterday').add(-6).days();
 
-            var url = 'api/energie/gemiddelde-per-dag-in-periode/' + weekVoorGisteren.toString('yyyy-MM-dd') + '/' + vandaag.toString('yyyy-MM-dd');
+            var url = 'api/energie/gemiddelde-per-dag/' + weekVoorGisteren.toString('yyyy-MM-dd') + '/' + vandaag.toString('yyyy-MM-dd');
 
             $http({
                 method: 'GET', url: url

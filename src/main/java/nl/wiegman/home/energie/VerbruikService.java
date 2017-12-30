@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -10,7 +11,6 @@ import static nl.wiegman.home.DateTimeUtil.getAllMonths;
 import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
 import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
-import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
 import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
 import java.math.BigDecimal;
@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +61,13 @@ public class VerbruikService {
                         .collect(toList());
     }
 
-    public List<VerbruikInMaandVanJaar> getVerbruikPerMaandInJaar(Year year) {
+    public List<VerbruikInMaandInJaar> getVerbruikPerMaandInJaar(Year year) {
         return getAllMonths().stream()
                              .map(monthInYear -> getVerbruikInMaand(YearMonth.of(year.getValue(), monthInYear)))
                              .collect(toList());
     }
 
-    public List<VerbruikOpDag> getVerbruikPerDag(DatePeriod period) {
+    public List<VerbruikKostenOpDag> getVerbruikPerDag(DatePeriod period) {
         return getDaysInPeriod(period).stream()
                                       .map(this::getVerbruikOpDag)
                                       .collect(toList());
@@ -87,81 +89,72 @@ public class VerbruikService {
                         .collect(toList());
     }
 
-    private VerbruikInJaar getVerbruikInJaar(Year year) {
-        VerbruikInJaar verbruikInJaar = new VerbruikInJaar();
-        verbruikInJaar.setJaar(year.getValue());
+    public VerbruikKostenOverzicht getGemiddeldeVerbruikPerDagInPeriode(DatePeriod period) {
+        List<VerbruikKostenOpDag> verbruikPerDag = getVerbruikPerDag(period);
 
+        VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomVerbruikDal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
+        verbruikKostenOverzicht.setStroomVerbruikNormaal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
+        verbruikKostenOverzicht.setGasVerbruik(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getGasVerbruik, 3));
+        verbruikKostenOverzicht.setStroomKostenDal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomKostenDal, 2));
+        verbruikKostenOverzicht.setStroomKostenNormaal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
+        verbruikKostenOverzicht.setGasKosten(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getGasKosten, 2));
+        return verbruikKostenOverzicht;
+    }
+
+    private BigDecimal berekenGemiddelde(List<VerbruikKostenOpDag> verbruikPerDag, Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter, int scale) {
+        BigDecimal sumVerbruik = verbruikPerDag.stream()
+                                               .map(VerbruikKostenOpDag::getVerbruikKostenOverzicht)
+                                               .map(attributeToAverageGetter)
+                                               .filter(Objects::nonNull)
+                                               .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
+    }
+
+    private VerbruikInJaar getVerbruikInJaar(Year year) {
         LocalDateTime from = LocalDate.of(year.getValue(), JANUARY, 1).atStartOfDay();
         LocalDateTime to = from.plusYears(1);
-
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
-
-        setVerbruikEnKosten(period, verbruikInJaar);
-
-        return verbruikInJaar;
+        return new VerbruikInJaar(year.getValue(), getVerbruikEnKostenOverzicht(period));
     }
 
     private VerbruikInUurOpDag getVerbruikInUur(LocalDate day, int hour) {
-        VerbruikInUurOpDag verbruikInUurOpDag = new VerbruikInUurOpDag();
-        verbruikInUurOpDag.setUur(hour);
-
-        DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay().plusHours(hour), day.atStartOfDay().plusHours(hour + 1));
-
-        setVerbruikEnKosten(period, verbruikInUurOpDag);
-
-        return verbruikInUurOpDag;
+        LocalDateTime from = day.atStartOfDay().plusHours(hour);
+        LocalDateTime to = day.atStartOfDay().plusHours(hour + 1);
+        DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        return new VerbruikInUurOpDag(hour, getVerbruikEnKostenOverzicht(period));
     }
 
-    private VerbruikInMaandVanJaar getVerbruikInMaand(YearMonth yearMonth) {
-        VerbruikInMaandVanJaar verbruikInMaandVanJaar = new VerbruikInMaandVanJaar();
-        verbruikInMaandVanJaar.setMaand(yearMonth.getMonthValue());
-
+    private VerbruikInMaandInJaar getVerbruikInMaand(YearMonth yearMonth) {
         LocalDateTime from = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime to = yearMonth.atDay(1).atStartOfDay().plusMonths(1);
-
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
-
-        setVerbruikEnKosten(period, verbruikInMaandVanJaar);
-
-        return verbruikInMaandVanJaar;
+        return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), getVerbruikEnKostenOverzicht(period));
     }
 
-    private VerbruikOpDag getVerbruikOpDag(LocalDate day) {
-        VerbruikOpDag verbruikOpDag = new VerbruikOpDag();
-        verbruikOpDag.setDatumtijd(toMillisSinceEpochAtStartOfDay(day));
-
+    private VerbruikKostenOpDag getVerbruikOpDag(LocalDate day) {
         LocalDateTime from = day.atStartOfDay();
         LocalDateTime to = day.atStartOfDay().plusDays(1);
-
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
-
-        setVerbruikEnKosten(period, verbruikOpDag);
-
-        return verbruikOpDag;
+        return new VerbruikKostenOpDag(day, getVerbruikEnKostenOverzicht(period));
     }
 
-    private void setVerbruikEnKosten(DateTimePeriod period, VerbruikDto verbruik) {
-        setGasVerbruikEnKosten(period, verbruik);
-        setStroomVerbruikEnKostenDalTarief(period, verbruik);
-        setStroomVerbruikEnKostenNormaalTarief(period, verbruik);
-    }
+    private VerbruikKostenOverzicht getVerbruikEnKostenOverzicht(DateTimePeriod period) {
+        VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
 
-    private void setGasVerbruikEnKosten(DateTimePeriod period, VerbruikDto verbruik) {
         VerbruikKosten gasVerbruikKostenInPeriode = getGasVerbruikInPeriode(period);
-        verbruik.setGasVerbruik(gasVerbruikKostenInPeriode.getVerbruik());
-        verbruik.setGasKosten(gasVerbruikKostenInPeriode.getKosten());
-    }
+        verbruikKostenOverzicht.setGasVerbruik(gasVerbruikKostenInPeriode.getVerbruik());
+        verbruikKostenOverzicht.setGasKosten(gasVerbruikKostenInPeriode.getKosten());
 
-    private void setStroomVerbruikEnKostenDalTarief(DateTimePeriod period, VerbruikDto verbruik) {
         VerbruikKosten stroomVerbruikKostenDalTariefInPeriode = getStroomVerbruikInPeriode(period, StroomTariefIndicator.DAL);
-        verbruik.setStroomVerbruikDal(stroomVerbruikKostenDalTariefInPeriode.getVerbruik());
-        verbruik.setStroomKostenDal(stroomVerbruikKostenDalTariefInPeriode.getKosten());
-    }
+        verbruikKostenOverzicht.setStroomVerbruikDal(stroomVerbruikKostenDalTariefInPeriode.getVerbruik());
+        verbruikKostenOverzicht.setStroomKostenDal(stroomVerbruikKostenDalTariefInPeriode.getKosten());
 
-    private void setStroomVerbruikEnKostenNormaalTarief(DateTimePeriod period, VerbruikDto verbruik) {
         VerbruikKosten stroomVerbruikKostenNormaalTariefInPeriode = getStroomVerbruikInPeriode(period, StroomTariefIndicator.NORMAAL);
-        verbruik.setStroomVerbruikNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getVerbruik());
-        verbruik.setStroomKostenNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getKosten());
+        verbruikKostenOverzicht.setStroomVerbruikNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getVerbruik());
+        verbruikKostenOverzicht.setStroomKostenNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getKosten());
+
+        return verbruikKostenOverzicht;
     }
 
     private VerbruikKosten getGasVerbruikInPeriode(DateTimePeriod period) {

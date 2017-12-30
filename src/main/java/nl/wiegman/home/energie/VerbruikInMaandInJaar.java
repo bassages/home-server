@@ -2,20 +2,20 @@ package nl.wiegman.home.energie;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-public class VerbruikInJaar {
+public class VerbruikInMaandInJaar {
 
-    private int jaar;
+    private int maand; // Range: 1 .. 12
 
     @JsonUnwrapped
     private VerbruikKostenOverzicht verbruikKostenOverzicht;
 
-    public VerbruikInJaar(int jaar, VerbruikKostenOverzicht verbruikKostenOverzicht) {
-        this.jaar = jaar;
+    public VerbruikInMaandInJaar(int maand, VerbruikKostenOverzicht verbruikKostenOverzicht) {
+        this.maand = maand;
         this.verbruikKostenOverzicht = verbruikKostenOverzicht;
     }
 
-    public int getJaar() {
-        return jaar;
+    public int getMaand() {
+        return maand;
     }
 
     public VerbruikKostenOverzicht getVerbruikKostenOverzicht() {
