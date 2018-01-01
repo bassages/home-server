@@ -35,7 +35,7 @@ public class EnergieControllerTest {
     @Test
     public void whenGetGemiddeldeVerbruikPerDagThenDelegatedToVerbruikService() {
         VerbruikKostenOverzicht verbruikKostenOverzicht = mock(VerbruikKostenOverzicht.class);
-        when(verbruikService.getGemiddeldeVerbruikPerDagInPeriode(datePeriodCaptor.capture())).thenReturn(verbruikKostenOverzicht);
+        when(verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(datePeriodCaptor.capture())).thenReturn(verbruikKostenOverzicht);
 
         LocalDate from = LocalDate.of(2017, 4, 2);
         LocalDate to = LocalDate.of(2017, 5, 19);

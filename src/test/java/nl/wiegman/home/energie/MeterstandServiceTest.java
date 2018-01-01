@@ -61,8 +61,8 @@ public class MeterstandServiceTest {
     @Test
     public void shouldClearCacheOnCleanup() {
         meterstandService.dailyCleanup();
-        verify(cacheService).clear(VerbruikService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
-        verify(cacheService).clear(VerbruikService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
     }
 
     @Test

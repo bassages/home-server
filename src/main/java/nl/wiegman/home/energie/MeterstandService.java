@@ -83,8 +83,8 @@ public class MeterstandService {
     }
 
     private void clearCachesThatUsesPossibleDeletedMeterstanden() {
-        cacheService.clear(VerbruikService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
-        cacheService.clear(VerbruikService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        cacheService.clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        cacheService.clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
 
     private void cleanupMeterStandenInOneHour(List<Meterstand> meterstandenInOneHour) {

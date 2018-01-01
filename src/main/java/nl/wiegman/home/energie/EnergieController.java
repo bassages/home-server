@@ -29,7 +29,7 @@ public class EnergieController {
     public VerbruikKostenOverzicht getGemiddeldeVerbruikPerDag(@PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                                @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
-        return verbruikService.getGemiddeldeVerbruikPerDagInPeriode(aPeriodWithToDate(from, to));
+        return verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(aPeriodWithToDate(from, to));
     }
 
     @GetMapping(path = "verbruik-per-jaar")

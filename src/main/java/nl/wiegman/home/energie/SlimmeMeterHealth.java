@@ -1,9 +1,9 @@
 package nl.wiegman.home.energie;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
                          .withDetail(DETAIL_KEY_MESSAGE, "No Meterstand registered yet")
                          .build();
 
-        } else if (mostRecent.getDatumtijdAsLocalDateTime().isBefore(LocalDateTime.now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
+        } else if (mostRecent.getDatumtijdAsLocalDateTime().isBefore(now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
             return Health.down()
                          .withDetail(DETAIL_KEY_MESSAGE, format("Most recent valid Meterstand was saved at %s. Which is more than %d minutes ago.", formatDatumtjd(mostRecent), MAXIMUM_MESSAGE_AGE_IN_MINUTES))
                          .build();

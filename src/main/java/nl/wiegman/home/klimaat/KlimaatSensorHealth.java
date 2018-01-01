@@ -1,9 +1,9 @@
 package nl.wiegman.home.klimaat;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class KlimaatSensorHealth implements HealthIndicator {
             return Health.unknown()
                          .withDetail(DETAIL_KEY_OF_MESSAGE, "No valid klimaat received since application startup")
                          .build();
-        } else if (mostRecent.getDatumtijd().isBefore(LocalDateTime.now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
+        } else if (mostRecent.getDatumtijd().isBefore(now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
             return Health.down()
                          .withDetail(DETAIL_KEY_OF_MESSAGE, format("Most recent valid klimaat was saved at %s. Which is more than %d minutes ago.", formatDatumtijd(mostRecent), MAXIMUM_KLIMAAT_AGE_IN_MINUTES))
                          .build();

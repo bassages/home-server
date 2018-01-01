@@ -1,172 +1,205 @@
 package nl.wiegman.home.energie;
 
+import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.HOURS;
-import static nl.wiegman.home.DatePeriod.aPeriodWithEndDate;
+import static java.time.Month.MARCH;
+import static java.util.stream.IntStream.range;
 import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
-import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
-import static nl.wiegman.home.util.TimeMachine.timeTravelTo;
+import static nl.wiegman.home.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import nl.wiegman.home.DatePeriod;
-import nl.wiegman.home.energiecontract.Energiecontract;
-import nl.wiegman.home.energiecontract.EnergiecontractService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VerbruikServiceTest {
-    private static final long NR_OF_MILLIS_IN_ONE_HOUR = HOURS.toMillis(1);
 
+    @InjectMocks
     private VerbruikService verbruikService;
 
     @Mock
     private MeterstandService meterstandService;
     @Mock
-    private EnergiecontractService energiecontractService;
-    @Mock
-    private VerbruikRepository verbruikRepository;
-
-    private void createVerbruikService(Clock clock) {
-        verbruikService = new VerbruikService(meterstandService, energiecontractService, verbruikRepository, clock);
-        ReflectionTestUtils.setField(verbruikService, "verbruikServiceProxyWithEnabledCaching", verbruikService);
-    }
+    private VerbruikKostenOverzichtService verbruikKostenOverzichtService;
 
     @Test
-    public void whenGetVerbruikPerDagForDateInFutureThenNoOtherServicesCalledAndUsageIsZero() {
-        createVerbruikService(timeTravelTo(LocalDate.of(2016, JANUARY, 1).atStartOfDay()));
-
-        LocalDate from = LocalDate.of(2016, JANUARY, 2);
-        LocalDate to = LocalDate.of(2016, JANUARY, 3);
-        DatePeriod period = aPeriodWithToDate(from, to);
-
-        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
-
-        verifyZeroInteractions(meterstandService);
-
-        assertThat(verbruikPerDag).hasSize(1);
-        VerbruikKostenOpDag verbruikKostenOpDag = verbruikPerDag.get(0);
-        assertThat(verbruikKostenOpDag.getDag()).isEqualTo(from);
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasKosten()).isNull();
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasVerbruik()).isNull();
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenDal()).isNull();
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isNull();
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isNull();
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isNull();
-    }
-
-    @Test
-    public void givenMultipleEnergycontractsWhenGetVerbruikPerDagForTwoDaysInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
-        createVerbruikService(timeTravelTo(LocalDate.of(2016, JANUARY, 4).atStartOfDay()));
-
+    public void whenGetVerbruikPerDagForTwoDaysThenVerbruikKostenOverzichtServiceIsCalledForBothDays() {
         LocalDate from = LocalDate.of(2016, JANUARY, 2);
         LocalDate to = LocalDate.of(2016, JANUARY, 4);
         DatePeriod period = aPeriodWithToDate(from, to);
 
-        Energiecontract energiecontract1 = new Energiecontract();
-        energiecontract1.setVan(0L);
-        energiecontract1.setTotEnMet(toMillisSinceEpochAtStartOfDay(from.plusDays(1)) - 1);
-        energiecontract1.setGasPerKuub(new BigDecimal("10"));
-        energiecontract1.setStroomPerKwhDalTarief(new BigDecimal("20"));
-        energiecontract1.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
+        VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1)))))
+                .thenReturn(verbruikKostenOverzichtForDay1);
 
-        Energiecontract energiecontract2 = new Energiecontract();
-        energiecontract2.setVan(toMillisSinceEpochAtStartOfDay(from.plusDays(1)));
-        energiecontract2.setTotEnMet(Long.MAX_VALUE);
-        energiecontract2.setGasPerKuub(new BigDecimal("40"));
-        energiecontract2.setStroomPerKwhDalTarief(new BigDecimal("50"));
-        energiecontract2.setStroomPerKwhNormaalTarief(new BigDecimal("60"));
-
-        when(energiecontractService.findAllInInPeriod(any())).thenReturn(asList(energiecontract1, energiecontract2));
-
-        when(verbruikRepository.getGasVerbruikInPeriod(toMillisSinceEpochAtStartOfDay(from) + NR_OF_MILLIS_IN_ONE_HOUR, toMillisSinceEpochAtStartOfDay(from.plusDays(1)) - 1 + NR_OF_MILLIS_IN_ONE_HOUR))
-                .thenReturn(new BigDecimal("1.111"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(toMillisSinceEpochAtStartOfDay(from), toMillisSinceEpochAtStartOfDay(from.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("2.222"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(from), toMillisSinceEpochAtStartOfDay(from.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("3.333"));
-
-        when(verbruikRepository.getGasVerbruikInPeriod(toMillisSinceEpochAtStartOfDay(from.plusDays(1)) + NR_OF_MILLIS_IN_ONE_HOUR, toMillisSinceEpochAtStartOfDay(from.plusDays(2)) - 1 + NR_OF_MILLIS_IN_ONE_HOUR))
-                .thenReturn(new BigDecimal("1.999"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(toMillisSinceEpochAtStartOfDay(from.plusDays(1)), toMillisSinceEpochAtStartOfDay(from.plusDays(2)) - 1))
-                .thenReturn(new BigDecimal("2.888"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(from.plusDays(1)), toMillisSinceEpochAtStartOfDay(from.plusDays(2)) - 1))
-                .thenReturn(new BigDecimal("3.777"));
+        VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay()))))
+                .thenReturn(verbruikKostenOverzichtForDay2);
 
         List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
         assertThat(verbruikPerDag).hasSize(2);
+
         VerbruikKostenOpDag verbruikKostenOpDag1 = verbruikPerDag.get(0);
         assertThat(verbruikKostenOpDag1.getDag()).isEqualTo(from);
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.111"));
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("11.110"));
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.222"));
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("44.440"));
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.333"));
-        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("99.990"));
+        assertThat(verbruikKostenOpDag1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
 
         VerbruikKostenOpDag verbruikKostenOpDag2 = verbruikPerDag.get(1);
         assertThat(verbruikKostenOpDag2.getDag()).isEqualTo(from.plusDays(1));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.999"));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("79.960"));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.888"));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("144.400"));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.777"));
-        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("226.620"));
+        assertThat(verbruikKostenOpDag2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
     }
 
     @Test
-    public void whenGetVerbruikPerDagForCurrentDayThenUsageAreRetrievedFromNonCachedService() {
-        createVerbruikService(timeTravelTo(LocalDate.of(2016, JANUARY, 4).atTime(14, 43, 13)));
+    public void whenGetVerbruikPerUurOpDagThenVerbruikKostenOverzichtServiceIsCalledForAllHoursInDay() {
+        LocalDate day = LocalDate.of(2016, JANUARY, 2);
 
-        VerbruikService verbruikServiceProxyWithEnabledCaching = mock(VerbruikService.class);
-        ReflectionTestUtils.setField(verbruikService, "verbruikServiceProxyWithEnabledCaching", verbruikServiceProxyWithEnabledCaching);
+        VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(day.atStartOfDay(), day.atStartOfDay().plusHours(1))))
+                .thenReturn(verbruikKostenOverzichtForHour1);
 
-        LocalDate day = LocalDate.of(2016, JANUARY, 4);
-        DatePeriod period = aPeriodWithEndDate(day, day);
+        VerbruikKostenOverzicht verbruikKostenOverzichtForHour2 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(day.atStartOfDay().plusHours(1), day.atStartOfDay().plusHours(2))))
+                .thenReturn(verbruikKostenOverzichtForHour2);
 
-        Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setVan(0L);
-        energiecontract.setTotEnMet(Long.MAX_VALUE);
-        energiecontract.setGasPerKuub(new BigDecimal("10"));
-        energiecontract.setStroomPerKwhDalTarief(new BigDecimal("20"));
-        energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
-        when(energiecontractService.findAllInInPeriod(any())).thenReturn(singletonList(energiecontract));
+        List<VerbruikInUurOpDag> verbruikPerUurOpDag = verbruikService.getVerbruikPerUurOpDag(day);
 
-        when(verbruikRepository.getGasVerbruikInPeriod(toMillisSinceEpochAtStartOfDay(day) + NR_OF_MILLIS_IN_ONE_HOUR, toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1 + NR_OF_MILLIS_IN_ONE_HOUR))
-                .thenReturn(new BigDecimal("1.000"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(toMillisSinceEpochAtStartOfDay(day), toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("2.000"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(day), toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("3.000"));
+        assertThat(verbruikPerUurOpDag).hasSize(24);
 
-        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
+        assertThat(verbruikKostenForHour1.getUur()).isEqualTo(0);
+        assertThat(verbruikKostenForHour1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour1);
 
-        assertThat(verbruikPerDag).hasSize(1);
-        VerbruikKostenOpDag verbruikKostenOpDag = verbruikPerDag.get(0);
-        assertThat(verbruikKostenOpDag.getDag()).isEqualTo(day);
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasVerbruik()).isEqualTo(new BigDecimal("1.000"));
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getGasKosten()).isEqualTo(new BigDecimal("10.000"));
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikDal()).isEqualTo(new BigDecimal("2.000"));
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenDal()).isEqualTo(new BigDecimal("40.000"));
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.000"));
-        assertThat(verbruikKostenOpDag.getVerbruikKostenOverzicht().getStroomKostenNormaal()).isEqualTo(new BigDecimal("90.000"));
+        VerbruikInUurOpDag verbruikKostenForHour2 = verbruikPerUurOpDag.get(1);
+        assertThat(verbruikKostenForHour2.getUur()).isEqualTo(1);
+        assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour2);
 
-        verifyZeroInteractions(verbruikServiceProxyWithEnabledCaching);
+        range(0, 24).forEach(hour ->
+            verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(day.atStartOfDay().plusHours(hour), day.atStartOfDay().plusHours(hour + 1)))
+        );
+    }
+
+    @Test
+    public void whenGetVerbruikPerMaandInJaarThenVerbruikKostenOverzichtServiceIsCalledForAllMonthsInYear() {
+        int year = 2018;
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
+                    aPeriodWithToDateTime(LocalDate.of(year, JANUARY, 1).atStartOfDay(), LocalDate.of(year, FEBRUARY, 1).atStartOfDay())))
+                .thenReturn(verbruikKostenOverzichtForJanuary);
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtForFebruary = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
+                aPeriodWithToDateTime(LocalDate.of(year, FEBRUARY, 1).atStartOfDay(), LocalDate.of(year, MARCH, 1).atStartOfDay())))
+                .thenReturn(verbruikKostenOverzichtForFebruary);
+
+        List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = verbruikService.getVerbruikPerMaandInJaar(Year.of(year));
+
+        assertThat(verbruikPerMaandInJaar).hasSize(12);
+
+        VerbruikInMaandInJaar verbruikKostenForMonth1 = verbruikPerMaandInJaar.get(0);
+        assertThat(verbruikKostenForMonth1.getMaand()).isEqualTo(1);
+        assertThat(verbruikKostenForMonth1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForJanuary);
+
+        VerbruikInMaandInJaar verbruikKostenForHour2 = verbruikPerMaandInJaar.get(1);
+        assertThat(verbruikKostenForHour2.getMaand()).isEqualTo(2);
+        assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
+
+        range(1, 12).forEach(month ->
+            verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
+                    aPeriodWithToDateTime(LocalDate.of(year, month, 1).atStartOfDay(), LocalDate.of(year, month + 1, 1).atStartOfDay()))
+        );
+    }
+
+    @Test
+    public void givenMeterstandenExistsForTwoYearsWhenGetVerbruikPerJaarThenVerbruikKostenOverzichtServiceIsCalledForBothYears() {
+        Meterstand meterstandFor2018 = aMeterstand().withDatumTijd(LocalDate.of(2018, 1, 1).atStartOfDay()).build();
+        when(meterstandService.getOldest()).thenReturn(meterstandFor2018);
+
+        Meterstand meterstandFor2019 = aMeterstand().withDatumTijd(LocalDate.of(2019, 1, 1).atStartOfDay()).build();
+        when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
+                aPeriodWithToDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay(), LocalDate.of(2019, JANUARY, 1).atStartOfDay())))
+                .thenReturn(verbruikKostenOverzichtFor2018);
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtFor2019 = new VerbruikKostenOverzicht();
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
+                aPeriodWithToDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay(), LocalDate.of(2020, JANUARY, 1).atStartOfDay())))
+                .thenReturn(verbruikKostenOverzichtFor2019);
+
+        List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
+
+        assertThat(verbruikPerJaar).hasSize(2);
+
+        VerbruikInJaar verbruikInJaar2018 = verbruikPerJaar.get(0);
+        assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
+        assertThat(verbruikInJaar2018.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
+
+        VerbruikInJaar verbruikInJaar2019 = verbruikPerJaar.get(1);
+        assertThat(verbruikInJaar2019.getJaar()).isEqualTo(2019);
+        assertThat(verbruikInJaar2019.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
+    }
+
+    @Test
+    public void givenNoMeterstandenExistsWhenGetVerbruikPerJaarThenResultIsEmpty() {
+        when(meterstandService.getOldest()).thenReturn(null);
+
+        List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
+
+        assertThat(verbruikPerJaar).isEmpty();
+    }
+
+    @Test
+    public void whenGetGemiddeldeVerbruikEnKostenInPeriodeThenAveragesAreReturned() {
+        LocalDate from = LocalDate.of(2016, JANUARY, 2);
+        LocalDate to = LocalDate.of(2016, JANUARY, 4);
+        DatePeriod period = aPeriodWithToDate(from, to);
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        verbruikKostenOverzichtForDay1.setGasVerbruik(new BigDecimal(42.023));
+        verbruikKostenOverzichtForDay1.setGasKosten(new BigDecimal(10.000));
+        verbruikKostenOverzichtForDay1.setStroomVerbruikDal(new BigDecimal(123.000));
+        verbruikKostenOverzichtForDay1.setStroomKostenDal(new BigDecimal(12.872));
+        verbruikKostenOverzichtForDay1.setStroomVerbruikNormaal(new BigDecimal(2450.607));
+        verbruikKostenOverzichtForDay1.setStroomKostenNormaal(new BigDecimal(2312.023));
+
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1)))))
+                .thenReturn(verbruikKostenOverzichtForDay1);
+
+        VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        verbruikKostenOverzichtForDay2.setGasVerbruik(new BigDecimal(21.531));
+        verbruikKostenOverzichtForDay2.setGasKosten(new BigDecimal(34.131));
+        verbruikKostenOverzichtForDay2.setStroomVerbruikDal(new BigDecimal(134.012));
+        verbruikKostenOverzichtForDay2.setStroomKostenDal(new BigDecimal(71.325));
+        verbruikKostenOverzichtForDay2.setStroomVerbruikNormaal(new BigDecimal(2321.242));
+        verbruikKostenOverzichtForDay2.setStroomKostenNormaal(new BigDecimal(9214.081));
+
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay()))))
+                .thenReturn(verbruikKostenOverzichtForDay2);
+
+        VerbruikKostenOverzicht gemiddeldeVerbruikPerDagInPeriode = verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period);
+
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getGasVerbruik()).isEqualTo(new BigDecimal("31.777"));
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomVerbruikDal()).isEqualTo(new BigDecimal("128.506"));
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("2385.925"));
+
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getGasKosten()).isEqualTo(new BigDecimal("22.07"));
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomKostenDal()).isEqualTo(new BigDecimal("42.10"));
+        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomKostenNormaal()).isEqualTo(new BigDecimal("5763.05"));
     }
 }
