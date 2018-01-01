@@ -32,4 +32,14 @@ public class DateTimePeriodTest {
         assertThat(dateTimePeriod.getToDateTime()).isEqualTo(toDateTime);
         assertThat(dateTimePeriod.getEndDateTime()).isEqualTo(toDateTime.minusNanos(1));
     }
+
+    @Test
+    public void whenCreateDateTimePeriodThenStartDateTimeIsSameAsFromDateTime() {
+        LocalDateTime startDateTime = LocalDateTime.of(2017, Month.SEPTEMBER, 12, 13, 57);
+
+        DateTimePeriod dateTimePeriod = DateTimePeriod.aPeriodWithEndDateTime(startDateTime, startDateTime);
+
+        assertThat(dateTimePeriod.getStartDateTime()).isEqualTo(startDateTime);
+        assertThat(dateTimePeriod.getFromDateTime()).isEqualTo(startDateTime);
+    }
 }

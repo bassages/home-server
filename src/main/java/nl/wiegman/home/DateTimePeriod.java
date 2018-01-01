@@ -63,9 +63,4 @@ public class DateTimePeriod {
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(startDateTime).append(endDateTime).toHashCode();
     }
-
-    @Override
-    public String toString() {
-        return "DateTimePeriod{" + "startDateTime=" + startDateTime + ", endDateTime=" + endDateTime + ", toDateTime=" + toDateTime + '}';
-    }
 }

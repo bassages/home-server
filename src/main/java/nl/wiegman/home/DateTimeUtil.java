@@ -6,13 +6,9 @@ import static java.util.stream.Collectors.toList;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
@@ -32,25 +28,6 @@ public class DateTimeUtil {
 
     public static List<LocalDate> getDaysInPeriod(DatePeriod period) {
         return getDaysInPeriod(period.toDateTimePeriod());
-    }
-
-    public static Set<Month> getAllMonths() {
-        return EnumSet.allOf(Month.class);
-    }
-
-    public static Date getStartOfDayAsDate(Date day) {
-        Calendar startOfDay = getStartOfDayAsCalendar(day);
-        return startOfDay.getTime();
-    }
-
-    private static Calendar getStartOfDayAsCalendar(Date day) {
-        Calendar startOfDay = Calendar.getInstance();
-        startOfDay.setTime(day);
-        startOfDay.set(Calendar.HOUR_OF_DAY, 0);
-        startOfDay.set(Calendar.MINUTE, 0);
-        startOfDay.set(Calendar.SECOND, 0);
-        startOfDay.set(Calendar.MILLISECOND, 0);
-        return startOfDay;
     }
 
     public static Date toDateAtStartOfDay(LocalDate localDate) {

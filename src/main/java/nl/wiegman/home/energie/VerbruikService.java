@@ -3,11 +3,11 @@ package nl.wiegman.home.energie;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
+import static java.util.EnumSet.allOf;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.wiegman.home.DateTimeUtil.getAllMonths;
 import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
 import static nl.wiegman.home.DateTimeUtil.toLocalDateTime;
 import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
@@ -62,9 +63,9 @@ public class VerbruikService {
     }
 
     public List<VerbruikInMaandInJaar> getVerbruikPerMaandInJaar(Year year) {
-        return getAllMonths().stream()
-                             .map(monthInYear -> getVerbruikInMaand(YearMonth.of(year.getValue(), monthInYear)))
-                             .collect(toList());
+        return allOf(Month.class).stream()
+                                 .map(monthInYear -> getVerbruikInMaand(YearMonth.of(year.getValue(), monthInYear)))
+                                 .collect(toList());
     }
 
     public List<VerbruikKostenOpDag> getVerbruikPerDag(DatePeriod period) {
