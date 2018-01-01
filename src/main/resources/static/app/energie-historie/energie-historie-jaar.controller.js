@@ -64,34 +64,28 @@
             return $scope.soort === 'kosten';
         }
 
-        function getTicksForEveryYearInResponse(data) {
-            return _.map(data, 'jaar').sort();
+        function chartDataClick(data, element) {
+            navigateToDetailsOfSelection(data.x);
         }
 
         function getChartConfig(data) {
             var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
+            chartConfig.data.onclick = chartDataClick;
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];
             chartConfig.data.keys = {x: 'jaar', value: keysGroups};
 
             chartConfig.axis = {};
-            chartConfig.axis.x = {
-                tick: {
-                    format: function (d) { return d; },
-                    values: getTicksForEveryYearInResponse(data), xcentered: true
-                }, padding: {left: 0, right: 10}
-            };
 
             var yAxisFormat = function (value) { return EnergieHistorieService.formatWithoutUnitLabel($scope.soort, value); };
             chartConfig.axis.y = {tick: {format: yAxisFormat }};
 
             chartConfig.tooltip = {
-                contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+                contents: function (data, defaultTitleFormat, defaultValueFormat, color) {
                     var titleFormat = function(d) { return d; };
-                    return EnergieHistorieService.getTooltipContent(this, d, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
+                    return EnergieHistorieService.getTooltipContent(this, data, titleFormat, defaultValueFormat, color, $scope.soort, $scope.energiesoorten);
                 }
             };
 

@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -45,7 +46,8 @@ public class MeterstandService {
     private final CacheService cacheService;
     private final Clock clock;
 
-    private Meterstand mostRecentlySavedMeterstand = null;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<Meterstand> mostRecentlySavedMeterstand = Optional.empty();
 
     @Autowired
     public MeterstandService(MeterstandRepository meterstandRepository, CacheService cacheService, Clock clock) {
@@ -56,7 +58,7 @@ public class MeterstandService {
 
     public Meterstand save(Meterstand meterstand) {
         Meterstand savedMeterStand = meterstandRepository.save(meterstand);
-        mostRecentlySavedMeterstand = savedMeterStand;
+        mostRecentlySavedMeterstand = Optional.of(savedMeterStand);
         return savedMeterStand;
     }
 
@@ -106,11 +108,11 @@ public class MeterstandService {
     }
 
     public Meterstand getMostRecent() {
-        return mostRecentlySavedMeterstand;
+        return mostRecentlySavedMeterstand.orElseGet(meterstandRepository::getMostRecent);
     }
 
     public Meterstand getOldest() {
-        return meterstandRepository.getOudste();
+        return meterstandRepository.getOldest();
     }
 
     public Meterstand getOldestOfToday() {
@@ -119,13 +121,13 @@ public class MeterstandService {
         long van = toMillisSinceEpochAtStartOfDay(today);
         long totEnMet = toMillisSinceEpochAtStartOfDay(today.plusDays(1)) - 1;
 
-        Meterstand oudsteStroomStandOpDag = meterstandRepository.getOudsteInPeriode(van, totEnMet);
+        Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
 
         if (oudsteStroomStandOpDag != null) {
             // Gas is registered once every hour, in the hour AFTER it actually is used.
             // Compensate for that hour
 
-            Meterstand oudsteGasStandOpDag = meterstandRepository.getOudsteInPeriode(van + MILLIS_PER_HOUR, totEnMet + MILLIS_PER_HOUR);
+            Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van + MILLIS_PER_HOUR, totEnMet + MILLIS_PER_HOUR);
 
             if (oudsteGasStandOpDag != null) {
                 oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
@@ -163,6 +165,6 @@ public class MeterstandService {
     private Meterstand getNonCachedMeestRecenteMeterstandOpDag(LocalDate day) {
         long van = toMillisSinceEpochAtStartOfDay(day);
         long totEnMet = toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1;
-        return meterstandRepository.getMeestRecenteInPeriode(van, totEnMet);
+        return meterstandRepository.getMostRecentInPeriod(van, totEnMet);
     }
 }

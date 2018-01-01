@@ -101,10 +101,14 @@
             changeDate($scope.selection);
         }
 
+        function chartDataClick(data, element) {
+            navigateToDetailsOfSelection(data.x);
+        }
+
         function getChartConfig(data) {
             var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection($scope.selection); };
+            chartConfig.data.onclick = chartDataClick;
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];

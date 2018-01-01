@@ -106,10 +106,14 @@
             return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         }
 
+        function chartDataClick(data, element) {
+            navigateToDetailsOfSelection(data.x);
+        }
+
         function getChartConfig(data) {
             var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
+            chartConfig.data.onclick = chartDataClick;
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];

@@ -116,10 +116,14 @@
             return tickValues;
         }
 
+        function chartDataClick(data, element) {
+            navigateToDetailsOfSelection(data.x);
+        }
+
         function getChartConfig(data) {
             var chartConfig = EnergieHistorieService.getDefaultBarChartConfig(data);
 
-            chartConfig.data.onclick = function (data, element) { navigateToDetailsOfSelection(data.x); };
+            chartConfig.data.onclick = chartDataClick;
 
             var keysGroups = EnergieHistorieService.getKeysGroups($scope.energiesoorten, $scope.soort);
             chartConfig.data.groups = [keysGroups];

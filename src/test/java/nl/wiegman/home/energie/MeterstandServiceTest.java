@@ -130,7 +130,7 @@ public class MeterstandServiceTest {
     public void whenGetOldestDelegatedToRepository() {
         Meterstand oldestMeterstand = aMeterstand().build();
 
-        when(meterstandRepository.getOudste()).thenReturn(oldestMeterstand);
+        when(meterstandRepository.getOldest()).thenReturn(oldestMeterstand);
 
         assertThat(meterstandService.getOldest()).isSameAs(oldestMeterstand);
     }
@@ -142,11 +142,11 @@ public class MeterstandServiceTest {
         createMeterstandService(timeTravelTo(today.atStartOfDay()));
 
         Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000")).withStroomTarief2(new BigDecimal("200.000")).build();
-        when(meterstandRepository.getOudsteInPeriode(toMillisSinceEpoch(today.atStartOfDay()), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).minusNanos(1))))
+        when(meterstandRepository.getOldestInPeriod(toMillisSinceEpoch(today.atStartOfDay()), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).minusNanos(1))))
                 .thenReturn(oldestMeterstandElectricity);
 
         Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
-        when(meterstandRepository.getOudsteInPeriode(toMillisSinceEpoch(today.atStartOfDay().plusHours(1)), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1))))
+        when(meterstandRepository.getOldestInPeriod(toMillisSinceEpoch(today.atStartOfDay().plusHours(1)), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1))))
                 .thenReturn(oldestMeterstandGas);
 
         Meterstand oldestOfToday = meterstandService.getOldestOfToday();
