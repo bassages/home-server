@@ -7,7 +7,10 @@ import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
 import static nl.wiegman.home.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -117,13 +120,21 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetMostRecentThenMostRecentReturned() {
-        assertThat(meterstandService.getMostRecent()).isNull();
+    public void givenMeterstandAlreadySavedWhenGetMostRecentThenMostRecentReturned() {
+        when(meterstandRepository.save(any(Meterstand.class))).then(returnsFirstArg());
 
         Meterstand meterstand = aMeterstand().build();
         Meterstand savedMeterstand = meterstandService.save(meterstand);
 
         assertThat(meterstandService.getMostRecent()).isEqualTo(savedMeterstand);
+    }
+
+    @Test
+    public void givenNoMeterstandSavedYetWhenGetMostRecentThenMostRecentIsRetrievedFromRepository() {
+        Meterstand meterstand = mock(Meterstand.class);
+        when(meterstandRepository.getMostRecent()).thenReturn(meterstand);
+
+        assertThat(meterstandService.getMostRecent()).isEqualTo(meterstand);
     }
 
     @Test
