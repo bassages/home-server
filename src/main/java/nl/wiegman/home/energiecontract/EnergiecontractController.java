@@ -28,7 +28,7 @@ public class EnergiecontractController {
     }
 
     @GetMapping("/current")
-    public Energiecontract current() {
+    public Energiecontract getCurrentlyValid() {
         return energiecontractService.getCurrent();
     }
 
