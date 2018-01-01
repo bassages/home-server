@@ -33,7 +33,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
 
         if (mostRecent == null) {
             return Health.unknown()
-                         .withDetail(DETAIL_KEY_MESSAGE, "No Meterstand received since application startup")
+                         .withDetail(DETAIL_KEY_MESSAGE, "No Meterstand registered yet")
                          .build();
 
         } else if (mostRecent.getDatumtijdAsLocalDateTime().isBefore(LocalDateTime.now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
