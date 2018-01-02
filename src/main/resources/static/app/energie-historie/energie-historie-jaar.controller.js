@@ -106,7 +106,7 @@
             $log.debug('loadDataIntoTable', data.length);
 
             var labelFormatter = function(d) { return d.jaar; };
-            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter);
+            var table = EnergieHistorieService.getTableData(data, $scope.energiesoorten, $scope.soort, labelFormatter, 'jaar');
             $scope.rows = table.rows;
             $scope.cols = table.cols;
         }
@@ -140,6 +140,7 @@
 
         function navigateToDetailsOfSelection(year) {
             $timeout(function() {
+                console.log(year);
                 var date = Date.parseExact('1-1-' + year, 'd-M-yyyy');
                 $location.path('/energie/' + $scope.soort + '/maand').search({energiesoort: $scope.energiesoorten, datum: $filter('date')(date, "dd-MM-yyyy")});
             });
