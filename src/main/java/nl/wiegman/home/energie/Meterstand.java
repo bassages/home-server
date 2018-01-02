@@ -25,6 +25,9 @@ public class Meterstand {
     @Column(nullable = false, unique = true)
     private long datumtijd;
 
+    @Column(nullable = false)
+    private LocalDateTime dateTime;
+
     @Column(nullable = false, precision = 8, scale = 3)
     private BigDecimal stroomTarief1;
 
@@ -84,5 +87,13 @@ public class Meterstand {
 
     public void setStroomTariefIndicator(StroomTariefIndicator stroomTariefIndicator) {
         this.stroomTariefIndicator = stroomTariefIndicator.getId();
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

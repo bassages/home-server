@@ -64,6 +64,7 @@ public class SlimmeMeterController {
     private Meterstand mapToMeterStand(Dsmr42Reading dsmr42Reading) {
         Meterstand meterstand = new Meterstand();
         meterstand.setDatumtijd(dsmr42Reading.getDatumtijd());
+        meterstand.setDateTime(toLocalDateTime(dsmr42Reading.getDatumtijd()));
         meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         meterstand.setGas(dsmr42Reading.getGas().setScale(GAS_SCALE, HALF_UP));
         meterstand.setStroomTarief1(dsmr42Reading.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
