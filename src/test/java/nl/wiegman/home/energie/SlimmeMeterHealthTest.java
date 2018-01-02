@@ -47,7 +47,7 @@ public class SlimmeMeterHealthTest {
     public void givenMostRecentMeterstandIsFiveMinutesOldWhenGetHealthThenHealthIsUp() {
         setup(SOME_MOMENT_IN_TIME);
 
-        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDatumTijd(SOME_MOMENT_IN_TIME.minusMinutes(5)).build();
+        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(SOME_MOMENT_IN_TIME.minusMinutes(5)).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
 
         Health health = slimmeMeterHealth.health();
@@ -61,7 +61,7 @@ public class SlimmeMeterHealthTest {
         LocalDateTime currentDateTime = LocalDate.of(2017, 2, 5).atTime(10, 0, 0);
         setup(currentDateTime);
 
-        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDatumTijd(currentDateTime.minusMinutes(5).minusSeconds(1)).build();
+        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(currentDateTime.minusMinutes(5).minusSeconds(1)).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
 
         Health health = slimmeMeterHealth.health();

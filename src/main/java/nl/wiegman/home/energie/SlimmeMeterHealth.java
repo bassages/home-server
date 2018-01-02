@@ -36,7 +36,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
                          .withDetail(DETAIL_KEY_MESSAGE, "No Meterstand registered yet")
                          .build();
 
-        } else if (mostRecent.getDatumtijdAsLocalDateTime().isBefore(now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
+        } else if (mostRecent.getDateTime().isBefore(now(clock).minusMinutes(MAXIMUM_MESSAGE_AGE_IN_MINUTES))) {
             return Health.down()
                          .withDetail(DETAIL_KEY_MESSAGE, format("Most recent valid Meterstand was saved at %s. Which is more than %d minutes ago.", formatDatumtjd(mostRecent), MAXIMUM_MESSAGE_AGE_IN_MINUTES))
                          .build();
@@ -49,6 +49,6 @@ public class SlimmeMeterHealth implements HealthIndicator {
     }
 
     private String formatDatumtjd(Meterstand mostRecent) {
-        return mostRecent.getDatumtijdAsLocalDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return mostRecent.getDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

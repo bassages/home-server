@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -12,10 +13,10 @@ import org.springframework.data.repository.query.Param;
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
     // JPQL queries. Please note that BETWEEN in HQL is INCLUSIVE
-    String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
-    String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(datumtijd) from Meterstand m where m.datumtijd BETWEEN :van AND :totEnMet)";
-    String MOST_RECENT = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM Meterstand mostrecent)";
-    String OLDEST = "SELECT m FROM Meterstand m WHERE m.datumtijd = (SELECT MIN(oldest.datumtijd) FROM Meterstand oldest)";
+    String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)";
+    String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)";
+    String MOST_RECENT = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(mostrecent.dateTime) FROM Meterstand mostrecent)";
+    String OLDEST = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(oldest.dateTime  ) FROM Meterstand oldest)";
 
     @Query(value = MOST_RECENT)
     Meterstand getMostRecent();
@@ -24,10 +25,10 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     Meterstand getOldest();
 
     @Query(value = MOST_RECENT_IN_PERIOD)
-    Meterstand getMostRecentInPeriod(@Param("van") long start, @Param("totEnMet") long end);
+    Meterstand getMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     @Query(value = OLDEST_IN_PERIOD)
-    Meterstand getOldestInPeriod(@Param("van") long start, @Param("totEnMet") long end);
+    Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
-    List<Meterstand> findByDatumtijdBetween(long start, long end);
+    List<Meterstand> findByDatumtijdBetween(LocalDateTime start, LocalDateTime end);
 }

@@ -3,13 +3,11 @@ package nl.wiegman.home.energie;
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
 import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
 import static nl.wiegman.home.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -71,13 +69,13 @@ public class MeterstandServiceTest {
 
         createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
 
-        Meterstand meterstand = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
+        Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
 
-        when(meterstandRepository.findByDatumtijdBetween(anyLong(), anyLong())).thenReturn(singletonList(meterstand));
+        when(meterstandRepository.findByDatumtijdBetween(any(), any())).thenReturn(singletonList(meterstand));
 
         meterstandService.dailyCleanup();
 
-        verify(meterstandRepository, times(3)).findByDatumtijdBetween(anyLong(), anyLong());
+        verify(meterstandRepository, times(3)).findByDatumtijdBetween(any(), any());
         verifyNoMoreInteractions(meterstandRepository);
     }
 
@@ -87,18 +85,18 @@ public class MeterstandServiceTest {
 
         createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
 
-        Meterstand meterstand1 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
-        Meterstand meterstand2 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 15, 0)).build();
-        Meterstand meterstand3 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 30, 0)).build();
-        Meterstand meterstand4 = aMeterstand().withDatumTijd(dayToCleanup.atTime(12, 45, 0)).build();
+        Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
+        Meterstand meterstand2 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
+        Meterstand meterstand3 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 30, 0)).build();
+        Meterstand meterstand4 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 45, 0)).build();
 
-        Meterstand meterstand5 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 0, 0)).build();
-        Meterstand meterstand6 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 15, 0)).build();
-        Meterstand meterstand7 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 30, 0)).build();
-        Meterstand meterstand8 = aMeterstand().withDatumTijd(dayToCleanup.atTime(13, 45, 0)).build();
+        Meterstand meterstand5 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 0, 0)).build();
+        Meterstand meterstand6 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 15, 0)).build();
+        Meterstand meterstand7 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 30, 0)).build();
+        Meterstand meterstand8 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 45, 0)).build();
 
-        when(meterstandRepository.findByDatumtijdBetween(toMillisSinceEpoch(LocalDate.of(2016, JANUARY, 1).atStartOfDay()),
-                toMillisSinceEpoch(LocalDate.of(2016, JANUARY, 1).atStartOfDay().plusDays(1).minusNanos(1))))
+        when(meterstandRepository.findByDatumtijdBetween(LocalDate.of(2016, JANUARY, 1).atStartOfDay(),
+                                                         LocalDate.of(2016, JANUARY, 1).atStartOfDay().plusDays(1).minusNanos(1)))
                 .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 
         meterstandService.dailyCleanup();
@@ -153,11 +151,11 @@ public class MeterstandServiceTest {
         createMeterstandService(timeTravelTo(today.atStartOfDay()));
 
         Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000")).withStroomTarief2(new BigDecimal("200.000")).build();
-        when(meterstandRepository.getOldestInPeriod(toMillisSinceEpoch(today.atStartOfDay()), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).minusNanos(1))))
+        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
                 .thenReturn(oldestMeterstandElectricity);
 
         Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
-        when(meterstandRepository.getOldestInPeriod(toMillisSinceEpoch(today.atStartOfDay().plusHours(1)), toMillisSinceEpoch(today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1))))
+        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                 .thenReturn(oldestMeterstandGas);
 
         Meterstand oldestOfToday = meterstandService.getOldestOfToday();

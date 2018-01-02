@@ -4,11 +4,8 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
-import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
-import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -74,10 +71,10 @@ public class MeterstandService {
         LocalDateTime start = day.atStartOfDay();
         LocalDateTime end = start.plusDays(1).minusNanos(1);
 
-        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(toMillisSinceEpoch(start), toMillisSinceEpoch(end));
+        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(start, end);
 
         Map<Integer, List<Meterstand>> meterstandenByHour = meterstandenOnDay.stream()
-                .collect(groupingBy(item -> item.getDatumtijdAsLocalDateTime().getHour()));
+                                                                             .collect(groupingBy(meterstand -> meterstand.getDateTime().getHour()));
 
         meterstandenByHour.values().forEach(this::cleanupMeterStandenInOneHour);
     }
@@ -88,16 +85,16 @@ public class MeterstandService {
     }
 
     private void cleanupMeterStandenInOneHour(List<Meterstand> meterstandenInOneHour) {
-        meterstandenInOneHour.sort(comparing(Meterstand::getDatumtijd));
+        meterstandenInOneHour.sort(comparing(Meterstand::getDateTime));
 
         if (meterstandenInOneHour.size() >= 2) {
 
             Meterstand firstMeterstandInHour = meterstandenInOneHour.get(0);
-            LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDatumtijdAsLocalDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+            LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
             meterstandenInOneHour.remove(firstMeterstandInHour);
 
             Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
-            LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDatumtijdAsLocalDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+            LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
             if (isNotEmpty(meterstandenInOneHour)) {
@@ -118,16 +115,15 @@ public class MeterstandService {
     public Meterstand getOldestOfToday() {
         LocalDate today = LocalDate.now(clock);
 
-        long van = toMillisSinceEpochAtStartOfDay(today);
-        long totEnMet = toMillisSinceEpochAtStartOfDay(today.plusDays(1)) - 1;
+        LocalDateTime van = today.atStartOfDay();
+        LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
 
         Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
 
         if (oudsteStroomStandOpDag != null) {
             // Gas is registered once every hour, in the hour AFTER it actually is used.
             // Compensate for that hour
-
-            Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van + MILLIS_PER_HOUR, totEnMet + MILLIS_PER_HOUR);
+            Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
 
             if (oudsteGasStandOpDag != null) {
                 oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
@@ -163,8 +159,8 @@ public class MeterstandService {
     }
 
     private Meterstand getNonCachedMeestRecenteMeterstandOpDag(LocalDate day) {
-        long van = toMillisSinceEpochAtStartOfDay(day);
-        long totEnMet = toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1;
+        LocalDateTime van = day.atStartOfDay();
+        LocalDateTime totEnMet = day.atStartOfDay().plusDays(1).minusNanos(1);
         return meterstandRepository.getMostRecentInPeriod(van, totEnMet);
     }
 }

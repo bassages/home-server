@@ -63,8 +63,8 @@ public class VerbruikService {
             return emptyList();
         }
 
-        int from = oldest.getDatumtijdAsLocalDateTime().getYear();
-        int to = mostRecent.getDatumtijdAsLocalDateTime().plusYears(1).getYear();
+        int from = oldest.getDateTime().getYear();
+        int to = mostRecent.getDateTime().plusYears(1).getYear();
 
         return IntStream.range(from, to)
                         .mapToObj(year -> getVerbruikInJaar(Year.of(year)))

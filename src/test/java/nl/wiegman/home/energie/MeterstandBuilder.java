@@ -1,5 +1,7 @@
 package nl.wiegman.home.energie;
 
+import static nl.wiegman.home.DateTimeUtil.toMillisSinceEpoch;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,14 +15,16 @@ public class MeterstandBuilder {
     public static MeterstandBuilder aMeterstand() {
         return new MeterstandBuilder();
     }
-    public MeterstandBuilder withDatumTijd(LocalDateTime datumtijd) {
-        this.datumtijd = datumtijd;
+
+    public MeterstandBuilder withDateTime(LocalDateTime dateTime) {
+        this.datumtijd = dateTime;
         return this;
     }
 
     public Meterstand build() {
         Meterstand meterstand = new Meterstand();
-        meterstand.setDatumtijd(datumtijd);
+        meterstand.setDatumtijd(toMillisSinceEpoch(datumtijd));
+        meterstand.setDateTime(datumtijd);
         meterstand.setStroomTarief1(stroomTarief1);
         meterstand.setStroomTarief2(stroomTarief2);
         meterstand.setGas(gas);

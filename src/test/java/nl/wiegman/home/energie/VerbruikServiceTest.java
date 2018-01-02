@@ -126,10 +126,10 @@ public class VerbruikServiceTest {
 
     @Test
     public void givenMeterstandenExistsForTwoYearsWhenGetVerbruikPerJaarThenVerbruikKostenOverzichtServiceIsCalledForBothYears() {
-        Meterstand meterstandFor2018 = aMeterstand().withDatumTijd(LocalDate.of(2018, 1, 1).atStartOfDay()).build();
+        Meterstand meterstandFor2018 = aMeterstand().withDateTime(LocalDate.of(2018, 1, 1).atStartOfDay()).build();
         when(meterstandService.getOldest()).thenReturn(meterstandFor2018);
 
-        Meterstand meterstandFor2019 = aMeterstand().withDatumTijd(LocalDate.of(2019, 1, 1).atStartOfDay()).build();
+        Meterstand meterstandFor2019 = aMeterstand().withDateTime(LocalDate.of(2019, 1, 1).atStartOfDay()).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
 
         VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();
