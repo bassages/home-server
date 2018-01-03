@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import static java.time.LocalDate.now;
 import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
 
 import java.time.Clock;
@@ -30,8 +31,8 @@ public class OpgenomenVermogenController {
     }
 
     @GetMapping("meest-recente")
-    public OpgenomenVermogen getMeestRecente() {
-        return opgenomenVermogenService.getMeestRecente();
+    public OpgenomenVermogen getMostRecent() {
+        return opgenomenVermogenService.getMostRecent();
     }
 
     @GetMapping(path = "historie/{from}/{to}")
@@ -40,7 +41,7 @@ public class OpgenomenVermogenController {
                                                                @RequestParam("subPeriodLength") long subPeriodLength) {
         DatePeriod period = aPeriodWithToDate(from, to);
 
-        if (to.isBefore(LocalDate.now(clock))) {
+        if (to.isBefore(now(clock))) {
             return opgenomenVermogenService.getPotentiallyCachedHistory(period, subPeriodLength);
         } else {
             return opgenomenVermogenService.getHistory(period, subPeriodLength);

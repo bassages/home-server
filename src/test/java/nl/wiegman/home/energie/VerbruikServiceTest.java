@@ -3,16 +3,17 @@ package nl.wiegman.home.energie;
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
+import static java.util.Arrays.asList;
 import static java.util.stream.IntStream.range;
 import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -171,35 +172,18 @@ public class VerbruikServiceTest {
         DatePeriod period = aPeriodWithToDate(from, to);
 
         VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
-        verbruikKostenOverzichtForDay1.setGasVerbruik(new BigDecimal(42.023));
-        verbruikKostenOverzichtForDay1.setGasKosten(new BigDecimal(10.000));
-        verbruikKostenOverzichtForDay1.setStroomVerbruikDal(new BigDecimal(123.000));
-        verbruikKostenOverzichtForDay1.setStroomKostenDal(new BigDecimal(12.872));
-        verbruikKostenOverzichtForDay1.setStroomVerbruikNormaal(new BigDecimal(2450.607));
-        verbruikKostenOverzichtForDay1.setStroomKostenNormaal(new BigDecimal(2312.023));
-
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1)))))
                 .thenReturn(verbruikKostenOverzichtForDay1);
 
         VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
-        verbruikKostenOverzichtForDay2.setGasVerbruik(new BigDecimal(21.531));
-        verbruikKostenOverzichtForDay2.setGasKosten(new BigDecimal(34.131));
-        verbruikKostenOverzichtForDay2.setStroomVerbruikDal(new BigDecimal(134.012));
-        verbruikKostenOverzichtForDay2.setStroomKostenDal(new BigDecimal(71.325));
-        verbruikKostenOverzichtForDay2.setStroomVerbruikNormaal(new BigDecimal(2321.242));
-        verbruikKostenOverzichtForDay2.setStroomKostenNormaal(new BigDecimal(9214.081));
-
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay()))))
                 .thenReturn(verbruikKostenOverzichtForDay2);
 
-        VerbruikKostenOverzicht gemiddeldeVerbruikPerDagInPeriode = verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period);
+        VerbruikKostenOverzicht verbruikKostenOverzichtAverages = mock(VerbruikKostenOverzicht.class);
+        when(verbruikKostenOverzichtService.getAverages(asList(verbruikKostenOverzichtForDay1, verbruikKostenOverzichtForDay2))).thenReturn(verbruikKostenOverzichtAverages);
 
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getGasVerbruik()).isEqualTo(new BigDecimal("31.777"));
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomVerbruikDal()).isEqualTo(new BigDecimal("128.506"));
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("2385.925"));
+        assertThat(verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period)).isSameAs(verbruikKostenOverzichtAverages);
 
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getGasKosten()).isEqualTo(new BigDecimal("22.07"));
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomKostenDal()).isEqualTo(new BigDecimal("42.10"));
-        assertThat(gemiddeldeVerbruikPerDagInPeriode.getStroomKostenNormaal()).isEqualTo(new BigDecimal("5763.05"));
+        verify(verbruikKostenOverzichtService).getAverages(asList(verbruikKostenOverzichtForDay1, verbruikKostenOverzichtForDay2));
     }
 }

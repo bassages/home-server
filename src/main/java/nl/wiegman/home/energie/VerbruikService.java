@@ -1,6 +1,5 @@
 package nl.wiegman.home.energie;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static java.util.EnumSet.allOf;
@@ -8,15 +7,12 @@ import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.wiegman.home.DateTimeUtil.getDaysInPeriod;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,25 +68,8 @@ public class VerbruikService {
     }
 
     public VerbruikKostenOverzicht getGemiddeldeVerbruikEnKostenInPeriode(DatePeriod period) {
-        List<VerbruikKostenOpDag> verbruikPerDag = getVerbruikPerDag(period);
-
-        VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
-        verbruikKostenOverzicht.setStroomVerbruikDal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
-        verbruikKostenOverzicht.setStroomVerbruikNormaal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
-        verbruikKostenOverzicht.setGasVerbruik(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getGasVerbruik, 3));
-        verbruikKostenOverzicht.setStroomKostenDal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomKostenDal, 2));
-        verbruikKostenOverzicht.setStroomKostenNormaal(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
-        verbruikKostenOverzicht.setGasKosten(berekenGemiddelde(verbruikPerDag, VerbruikKostenOverzicht::getGasKosten, 2));
-        return verbruikKostenOverzicht;
-    }
-
-    private BigDecimal berekenGemiddelde(List<VerbruikKostenOpDag> verbruikPerDag, Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter, int scale) {
-        BigDecimal sumVerbruik = verbruikPerDag.stream()
-                                               .map(VerbruikKostenOpDag::getVerbruikKostenOverzicht)
-                                               .map(attributeToAverageGetter)
-                                               .filter(Objects::nonNull)
-                                               .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sumVerbruik.divide(new BigDecimal(verbruikPerDag.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
+        List<VerbruikKostenOverzicht> verbruikKostenOverzichtPerDag = getVerbruikPerDag(period).stream().map(VerbruikKostenOpDag::getVerbruikKostenOverzicht).collect(toList());
+        return verbruikKostenOverzichtService.getAverages(verbruikKostenOverzichtPerDag);
     }
 
     private VerbruikInJaar getVerbruikInJaar(Year year) {

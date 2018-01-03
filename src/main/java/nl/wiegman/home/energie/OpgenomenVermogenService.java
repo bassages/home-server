@@ -64,7 +64,7 @@ public class OpgenomenVermogenService {
         return opgenomenVermogenRepository.save(opgenomenVermogen);
     }
 
-    public OpgenomenVermogen getMeestRecente() {
+    public OpgenomenVermogen getMostRecent() {
         return opgenomenVermogenRepository.getMeestRecente();
     }
 

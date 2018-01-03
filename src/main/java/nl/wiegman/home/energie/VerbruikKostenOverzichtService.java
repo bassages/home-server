@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.wiegman.home.DateTimePeriod.aPeriodWithEndDateTime;
@@ -10,6 +11,9 @@ import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -78,6 +82,26 @@ public class VerbruikKostenOverzichtService {
             return getNotCachedStroomVerbruikInPeriode(period, stroomTariefIndicator);
         }
     }
+
+    public VerbruikKostenOverzicht getAverages(List<VerbruikKostenOverzicht> verbruikKostenOverzichten) {
+        VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomVerbruikDal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
+        verbruikKostenOverzicht.setStroomVerbruikNormaal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
+        verbruikKostenOverzicht.setGasVerbruik(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasVerbruik, 3));
+        verbruikKostenOverzicht.setStroomKostenDal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenDal, 2));
+        verbruikKostenOverzicht.setStroomKostenNormaal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
+        verbruikKostenOverzicht.setGasKosten(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasKosten, 2));
+        return verbruikKostenOverzicht;
+    }
+
+    private BigDecimal berekenGemiddelde(List<VerbruikKostenOverzicht> verbruikKostenOverzichtPerDag, Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter, int scale) {
+        BigDecimal sumVerbruik = verbruikKostenOverzichtPerDag.stream()
+                                                              .map(attributeToAverageGetter)
+                                                              .filter(Objects::nonNull)
+                                                             .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return sumVerbruik.divide(new BigDecimal(verbruikKostenOverzichtPerDag.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
+    }
+
 
     @Cacheable(cacheNames = CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)
     public VerbruikKosten getPotentiallyCachedGasVerbruikInPeriode(DateTimePeriod period) {

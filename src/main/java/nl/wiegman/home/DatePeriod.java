@@ -2,6 +2,9 @@ package nl.wiegman.home;
 
 import java.time.LocalDate;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class DatePeriod {
 
     private final DateTimePeriod dateTimePeriod;
@@ -36,5 +39,23 @@ public class DatePeriod {
 
     public DateTimePeriod toDateTimePeriod() {
         return dateTimePeriod;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        DatePeriod period = (DatePeriod) o;
+
+        return new EqualsBuilder().append(dateTimePeriod, period.dateTimePeriod).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(dateTimePeriod).toHashCode();
     }
 }
