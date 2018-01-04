@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,8 +50,8 @@ public class KlimaatController {
 
     @GetMapping(path = "hoogste")
     public List<Klimaat> getHighest(@RequestParam("sensortype") String sensortype,
-                                    @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                    @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                    @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                     @RequestParam("limit") int limit) {
 
         DatePeriod period = aPeriodWithToDate(from, to);
@@ -59,8 +60,8 @@ public class KlimaatController {
 
     @GetMapping(path = "laagste")
     public List<Klimaat> getLowest(@RequestParam("sensortype") String sensortype,
-                                   @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                   @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                   @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                   @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                    @RequestParam("limit") int limit) {
 
         DatePeriod period = aPeriodWithToDate(from, to);
@@ -68,8 +69,8 @@ public class KlimaatController {
     }
 
     @GetMapping
-    public List<Klimaat> findAllInPeriod(@RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                         @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+    public List<Klimaat> findAllInPeriod(@RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                         @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
         DatePeriod period = aPeriodWithToDate(from, to);
         return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, period);

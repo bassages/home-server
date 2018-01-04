@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,8 @@ public class OpgenomenVermogenController {
     }
 
     @GetMapping(path = "historie/{from}/{to}")
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathVariable("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-                                                               @PathVariable("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                                               @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                                                @RequestParam("subPeriodLength") long subPeriodLength) {
         DatePeriod period = aPeriodWithToDate(from, to);
 
