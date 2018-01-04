@@ -14,24 +14,24 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenControllerTest {
 
+    @InjectMocks
     private OpgenomenVermogenController opgenomenVermogenController;
 
     @Mock
     private OpgenomenVermogenService opgenomenVermogenService;
-
-    private void createOpgenomenVermogenController(Clock clock) {
-        opgenomenVermogenController = new OpgenomenVermogenController(opgenomenVermogenService, clock);
-    }
+    @Mock
+    private Clock clock;
 
     @Test
     public void whenGetMostRecentThenDelegatedToService() {
-        createOpgenomenVermogenController(timeTravelTo(LocalDate.of(2017, 3, 5).atStartOfDay()));
+        timeTravelTo(clock, LocalDate.of(2017, 3, 5).atStartOfDay());
 
         OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
         when(opgenomenVermogenService.getMostRecent()).thenReturn(mostRecent);
@@ -41,7 +41,7 @@ public class OpgenomenVermogenControllerTest {
 
     @Test
     public void whenGetOpgenomenVermogenHistoryInPastThenDelegatedToCachedService() {
-        createOpgenomenVermogenController(timeTravelTo(LocalDate.of(2019, 3, 5).atStartOfDay()));
+        timeTravelTo(clock, LocalDate.of(2019, 3, 5).atStartOfDay());
 
         LocalDate from = LocalDate.of(2017, 1, 1);
         LocalDate to = LocalDate.of(2018, 2, 1);
@@ -55,7 +55,7 @@ public class OpgenomenVermogenControllerTest {
 
     @Test
     public void whenGetOpgenomenVermogenHistoryOfTodayThenDelegatedToNotCachedService() {
-        createOpgenomenVermogenController(timeTravelTo(LocalDate.of(2018, 1, 1).atStartOfDay()));
+        timeTravelTo(clock, LocalDate.of(2018, 1, 1).atStartOfDay());
 
         LocalDate from = LocalDate.of(2018, 1, 1);
         LocalDate to = LocalDate.of(2018, 1, 1);
@@ -66,5 +66,4 @@ public class OpgenomenVermogenControllerTest {
 
         assertThat(opgenomenVermogenController.getOpgenomenVermogenHistory(from, to, subPeriodLength)).isSameAs(opgenomenVermogens);
     }
-
 }

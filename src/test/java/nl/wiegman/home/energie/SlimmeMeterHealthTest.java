@@ -8,11 +8,13 @@ import static org.springframework.boot.actuate.health.Status.DOWN;
 import static org.springframework.boot.actuate.health.Status.UNKNOWN;
 import static org.springframework.boot.actuate.health.Status.UP;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.actuate.health.Health;
@@ -20,20 +22,17 @@ import org.springframework.boot.actuate.health.Health;
 @RunWith(MockitoJUnitRunner.class)
 public class SlimmeMeterHealthTest {
 
-    private static final LocalDateTime SOME_MOMENT_IN_TIME = LocalDate.of(2017, 2, 5).atTime(10, 5);
-
+    @InjectMocks
     private SlimmeMeterHealth slimmeMeterHealth;
 
     @Mock
     private MeterstandService meterstandService;
-
-    public void setup(LocalDateTime localDateTimeToTimeTravelTo) {
-        slimmeMeterHealth = new SlimmeMeterHealth(meterstandService, timeTravelTo(localDateTimeToTimeTravelTo));
-    }
+    @Mock
+    private Clock clock;
 
     @Test
     public void givenNoMeterstandExistsWhenGetHealthThenHealthIsUnknown() {
-        setup(LocalDate.of(2017, 2, 5).atTime(10, 0, 0));
+        timeTravelTo(clock, LocalDate.of(2017, 2, 5).atTime(10, 0, 0));
 
         when(meterstandService.getMostRecent()).thenReturn(null);
 
@@ -45,9 +44,10 @@ public class SlimmeMeterHealthTest {
 
     @Test
     public void givenMostRecentMeterstandIsFiveMinutesOldWhenGetHealthThenHealthIsUp() {
-        setup(SOME_MOMENT_IN_TIME);
+        LocalDateTime fixedLocalDateTime = LocalDate.of(2017, 2, 5).atTime(10, 5);
+        timeTravelTo(clock, fixedLocalDateTime);
 
-        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(SOME_MOMENT_IN_TIME.minusMinutes(5)).build();
+        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(fixedLocalDateTime.minusMinutes(5)).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
 
         Health health = slimmeMeterHealth.health();
@@ -58,16 +58,15 @@ public class SlimmeMeterHealthTest {
 
     @Test
     public void givenMostRecentMeterstandIsMoreThenFiveMinutesOldWhenGetHealthThenHealthIsDown() {
-        LocalDateTime currentDateTime = LocalDate.of(2017, 2, 5).atTime(10, 0, 0);
-        setup(currentDateTime);
+        LocalDateTime fixedLocalDateTime = LocalDate.of(2017, 2, 5).atTime(10, 5);
+        timeTravelTo(clock, fixedLocalDateTime);
 
-        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(currentDateTime.minusMinutes(5).minusSeconds(1)).build();
+        Meterstand meterstandThatIsFiveMinutesOld = aMeterstand().withDateTime(fixedLocalDateTime.minusMinutes(5).minusSeconds(1)).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
 
         Health health = slimmeMeterHealth.health();
 
         assertThat(health.getStatus()).isEqualTo(DOWN);
-        assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T09:54:59. Which is more than 5 minutes ago.");
+        assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T09:59:59. Which is more than 5 minutes ago.");
     }
-
 }

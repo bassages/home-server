@@ -13,17 +13,19 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import nl.wiegman.home.DateTimePeriod;
 import nl.wiegman.home.energiecontract.Energiecontract;
@@ -32,25 +34,24 @@ import nl.wiegman.home.energiecontract.EnergiecontractService;
 @RunWith(MockitoJUnitRunner.class)
 public class VerbruikKostenOverzichtServiceTest {
 
+    @InjectMocks
     private VerbruikKostenOverzichtService verbruikKostenOverzichtService;
 
     @Mock
     private VerbruikRepository verbruikRepository;
     @Mock
     private EnergiecontractService energiecontractService;
+    @Mock
+    private Clock clock;
 
-    private void createVerbruikKostenOverzichtService(Clock clock) {
-        verbruikKostenOverzichtService = new VerbruikKostenOverzichtService(energiecontractService, verbruikRepository, clock);
-        ReflectionTestUtils.setField(verbruikKostenOverzichtService, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtService);
-    }
-
-    private void createVerbruikKostenOverzichtService() {
-        createVerbruikKostenOverzichtService(Clock.systemDefaultZone());
+    @Before
+    public void setup() {
+        setField(verbruikKostenOverzichtService, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtService);
     }
 
     @Test
     public void whenGetForPeriodInFutureThenNoOtherServicesCalledAndUsageIsZero() {
-        createVerbruikKostenOverzichtService(timeTravelTo(LocalDate.of(2016, JANUARY, 1).atStartOfDay()));
+        timeTravelTo(clock, LocalDate.of(2016, JANUARY, 1).atStartOfDay());
 
         LocalDateTime from = LocalDateTime.of(2016, JANUARY, 2, 10, 6);
         LocalDateTime to = LocalDateTime.of(2016, JANUARY, 3, 4, 13);
@@ -70,7 +71,7 @@ public class VerbruikKostenOverzichtServiceTest {
 
     @Test
     public void givenMultipleEnergycontractsWhenGetForPeriodInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
-        createVerbruikKostenOverzichtService(timeTravelTo(LocalDate.of(2016, JANUARY, 4).atStartOfDay()));
+        timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atStartOfDay());
 
         LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atTime(0, 0);
         LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atTime(0, 0);
@@ -111,10 +112,10 @@ public class VerbruikKostenOverzichtServiceTest {
 
     @Test
     public void whenGetVerbruikPerDagForCurrentDayThenUsageAreRetrievedFromNonCachedService() {
-        createVerbruikKostenOverzichtService(timeTravelTo(LocalDate.of(2016, JANUARY, 4).atTime(14, 43, 13)));
+        timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atTime(14, 43, 13));
 
         VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching = mock(VerbruikKostenOverzichtService.class);
-        ReflectionTestUtils.setField(verbruikKostenOverzichtServiceProxyWithEnabledCaching, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtServiceProxyWithEnabledCaching);
+        setField(verbruikKostenOverzichtServiceProxyWithEnabledCaching, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtServiceProxyWithEnabledCaching);
 
         LocalDate day = LocalDate.of(2016, JANUARY, 4);
         DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
@@ -148,8 +149,6 @@ public class VerbruikKostenOverzichtServiceTest {
 
     @Test
     public void whenGetAveragesThenAveragesAreReturned() {
-        createVerbruikKostenOverzichtService();
-
         VerbruikKostenOverzicht verbruikKostenOverzicht1 = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht1.setGasVerbruik(new BigDecimal(42.023));
         verbruikKostenOverzicht1.setGasKosten(new BigDecimal(10.000));

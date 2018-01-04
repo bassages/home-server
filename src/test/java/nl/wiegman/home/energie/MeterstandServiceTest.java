@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.wiegman.home.energie.MeterstandBuilder.aMeterstand;
 import static nl.wiegman.home.util.TimeMachine.timeTravelTo;
+import static nl.wiegman.home.util.TimeMachine.useSystemDefaultClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -27,7 +29,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import nl.wiegman.home.cache.CacheService;
 
@@ -41,24 +42,23 @@ public class MeterstandServiceTest {
     private CacheService cacheService;
     @Mock
     private MeterstandRepository meterstandRepository;
+    @Mock
+    private Clock clock;
 
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
 
     @Before
     public void setup() {
-        Clock clock = Clock.systemDefaultZone();
-        createMeterstandService(clock);
-    }
-
-    private void createMeterstandService(Clock clock) {
-        meterstandService = new MeterstandService(meterstandRepository, cacheService, clock);
-        ReflectionTestUtils.setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", meterstandService);
+        setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", meterstandService);
     }
 
     @Test
     public void shouldClearCacheOnCleanup() {
+        useSystemDefaultClock(clock);
+
         meterstandService.dailyCleanup();
+
         verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
         verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
     }
@@ -67,10 +67,9 @@ public class MeterstandServiceTest {
     public void givenOnlyASingleMeterstandExistsWhenCleanupThenNoneDeleted() {
         LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
+        timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
 
         Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
-
         when(meterstandRepository.findByDatumtijdBetween(any(), any())).thenReturn(singletonList(meterstand));
 
         meterstandService.dailyCleanup();
@@ -83,7 +82,7 @@ public class MeterstandServiceTest {
     public void whenCleanupThenAllButFirstAndLastMeterstandPerHourAreDeleted() {
         LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        createMeterstandService(timeTravelTo(dayToCleanup.plusDays(1).atStartOfDay()));
+        timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
 
         Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         Meterstand meterstand2 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -148,7 +147,7 @@ public class MeterstandServiceTest {
     public void whenGetOldestOfTodayThenReturned() {
         LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
-        createMeterstandService(timeTravelTo(today.atStartOfDay()));
+        timeTravelTo(clock, today.atStartOfDay());
 
         Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000")).withStroomTarief2(new BigDecimal("200.000")).build();
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
