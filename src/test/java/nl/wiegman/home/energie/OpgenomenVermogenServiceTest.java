@@ -1,5 +1,6 @@
 package nl.wiegman.home.energie;
 
+import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static nl.wiegman.home.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
@@ -56,7 +57,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void shouldCleanupOneDay() {
-        LocalDate date = LocalDate.of(2016, 1, 1);
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         ArgumentCaptor<LocalDateTime> fromDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
         ArgumentCaptor<LocalDateTime> toDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
@@ -73,7 +74,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void shouldKeepLatestRecordInMinuteWhenWattIsTheSame() {
-        LocalDate date = LocalDate.of(2016, 1, 1);
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(1).build();
         OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(1).build();
@@ -90,7 +91,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void shouldKeepHighestWatt() {
-        LocalDate date = LocalDate.of(2016, 1, 1);
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(3).build();
         OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(2).build();
@@ -107,7 +108,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void shouldCleanUpPerMinuteAndDeletePerHour() {
-        LocalDate date = LocalDate.of(2016, 1, 1);
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 0)).build();
         OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 10)).build();

@@ -41,10 +41,10 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var van = vm.selection.getTime();
-            var totEnMet = vm.selection.clone().moveToLastDayOfMonth().setHours(23, 59, 59, 999);
+            var van = vm.selection;
+            var tot = vm.selection.clone().addMonths(1);
 
-            MeterstandenService.getMeterstandenPerDagInPeriod(van, totEnMet)
+            MeterstandenService.getMeterstandenPerDagInPeriod(van, tot)
                 .then(
                 function successCallback(response) {
                     vm.meterstandenPerDag = response.data;

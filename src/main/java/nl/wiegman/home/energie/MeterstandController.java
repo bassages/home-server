@@ -1,11 +1,13 @@
 package nl.wiegman.home.energie;
 
-import static nl.wiegman.home.DatePeriod.aPeriodWithEndDate;
-import static nl.wiegman.home.DateTimeUtil.toLocalDate;
+import static nl.wiegman.home.DatePeriod.aPeriodWithToDate;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,18 +27,19 @@ public class MeterstandController {
     }
 
     @GetMapping("meest-recente")
-    public Meterstand getMeestRecente() {
+    public Meterstand getMostRecent() {
         return meterstandService.getMostRecent();
     }
 
     @GetMapping("oudste-vandaag")
-    public Meterstand getOudsteVandaag() {
+    public Meterstand getOldestOfToday() {
         return meterstandService.getOldestOfToday();
     }
 
-    @GetMapping("per-dag/{vanaf}/{totEnMet}")
-    public List<MeterstandOpDag> perDag(@PathVariable("vanaf") long startDateInMillisSinceEpoch, @PathVariable("totEnMet") long endDateInMillisSinceEpoch) {
-        DatePeriod period = aPeriodWithEndDate(toLocalDate(startDateInMillisSinceEpoch), toLocalDate(endDateInMillisSinceEpoch));
-        return meterstandService.perDag(period);
+    @GetMapping("per-dag/{vanaf}/{tot}")
+    public List<MeterstandOpDag> perDag(@PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                        @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+        DatePeriod period = aPeriodWithToDate(from, to);
+        return meterstandService.getPerDag(period);
     }
 }

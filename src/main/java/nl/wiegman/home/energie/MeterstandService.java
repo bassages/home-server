@@ -132,7 +132,7 @@ public class MeterstandService {
         return oudsteStroomStandOpDag;
     }
 
-    public List<MeterstandOpDag> perDag(DatePeriod period) {
+    public List<MeterstandOpDag> getPerDag(DatePeriod period) {
         return getDaysInPeriod(period).stream()
                                       .map(this::getMeterstandOpDag)
                                       .collect(toList());

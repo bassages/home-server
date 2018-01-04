@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
 
@@ -119,18 +120,20 @@ public class VerbruikServiceTest {
         assertThat(verbruikKostenForHour2.getMaand()).isEqualTo(2);
         assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
 
-        range(1, 12).forEach(month ->
-            verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
-                    aPeriodWithToDateTime(LocalDate.of(year, month, 1).atStartOfDay(), LocalDate.of(year, month + 1, 1).atStartOfDay()))
+        range(1, 12).forEach(month -> {
+                LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
+                LocalDateTime to = LocalDate.of(year, month + 1, 1).atStartOfDay();
+                verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(from, to));
+            }
         );
     }
 
     @Test
     public void givenMeterstandenExistsForTwoYearsWhenGetVerbruikPerJaarThenVerbruikKostenOverzichtServiceIsCalledForBothYears() {
-        Meterstand meterstandFor2018 = aMeterstand().withDateTime(LocalDate.of(2018, 1, 1).atStartOfDay()).build();
+        Meterstand meterstandFor2018 = aMeterstand().withDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay()).build();
         when(meterstandService.getOldest()).thenReturn(meterstandFor2018);
 
-        Meterstand meterstandFor2019 = aMeterstand().withDateTime(LocalDate.of(2019, 1, 1).atStartOfDay()).build();
+        Meterstand meterstandFor2019 = aMeterstand().withDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay()).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
 
         VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();

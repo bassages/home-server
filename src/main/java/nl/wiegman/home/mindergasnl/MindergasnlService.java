@@ -65,7 +65,7 @@ public class MindergasnlService {
 
         DatePeriod period = DatePeriod.aPeriodWithToDate(yesterday, today);
 
-        List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.perDag(period);
+        List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.getPerDag(period);
 
         if (isEmpty(yesterdaysLastMeterstand)) {
             LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterday);
