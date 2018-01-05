@@ -2,6 +2,7 @@ package nl.homeserver.klimaat;
 
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
+import static nl.homeserver.klimaat.KlimaatController.DEFAULT_KLIMAAT_SENSOR_CODE;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
@@ -29,11 +30,11 @@ public class KlimaatSensorHealth implements HealthIndicator {
 
     @Override
     public Health health() {
-        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(KlimaatController.DEFAULT_KLIMAAT_SENSOR_CODE);
+        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(DEFAULT_KLIMAAT_SENSOR_CODE);
 
         if (mostRecent == null) {
             return Health.unknown()
-                         .withDetail(DETAIL_KEY_OF_MESSAGE, "No valid klimaat received since application startup")
+                         .withDetail(DETAIL_KEY_OF_MESSAGE, "No Klimaat registered yet")
                          .build();
         } else if (mostRecent.getDatumtijd().isBefore(now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES))) {
             return Health.down()

@@ -12,6 +12,10 @@ public class MeterstandBuilder {
     private BigDecimal stroomTarief2 = new BigDecimal("0.000");
     private BigDecimal gas = new BigDecimal("0.000");
 
+    private MeterstandBuilder() {
+        // Hide public constructor
+    }
+
     public static MeterstandBuilder aMeterstand() {
         return new MeterstandBuilder();
     }

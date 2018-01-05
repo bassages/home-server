@@ -38,8 +38,8 @@ public class SlimmeMeterHealthTest {
 
         Health health = slimmeMeterHealth.health();
 
-        assertThat(health.getStatus()).isEqualTo(UNKNOWN);
         assertThat(health.getDetails().get("message")).isEqualTo("No Meterstand registered yet");
+        assertThat(health.getStatus()).isEqualTo(UNKNOWN);
     }
 
     @Test
@@ -52,8 +52,8 @@ public class SlimmeMeterHealthTest {
 
         Health health = slimmeMeterHealth.health();
 
-        assertThat(health.getStatus()).isEqualTo(UP);
         assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T10:00:00");
+        assertThat(health.getStatus()).isEqualTo(UP);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class SlimmeMeterHealthTest {
 
         Health health = slimmeMeterHealth.health();
 
-        assertThat(health.getStatus()).isEqualTo(DOWN);
         assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T09:59:59. Which is more than 5 minutes ago.");
+        assertThat(health.getStatus()).isEqualTo(DOWN);
     }
 }
