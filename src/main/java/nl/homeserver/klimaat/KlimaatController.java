@@ -5,7 +5,6 @@ import static java.lang.String.format;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ public class KlimaatController {
 
     private final KlimaatService klimaatService;
 
-    @Autowired
     public KlimaatController(KlimaatService klimaatService) {
         this.klimaatService = klimaatService;
     }

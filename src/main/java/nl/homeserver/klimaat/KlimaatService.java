@@ -58,7 +58,6 @@ public class KlimaatService {
 
     private final Clock clock;
 
-    @Autowired
     public KlimaatService(KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
             KlimaatSensorValueTrendService klimaatSensorValueTrendService, SimpMessagingTemplate messagingTemplate, Clock clock) {
 

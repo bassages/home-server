@@ -7,7 +7,6 @@ import static nl.homeserver.klimaat.KlimaatController.DEFAULT_KLIMAAT_SENSOR_COD
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -22,7 +21,6 @@ public class KlimaatSensorHealth implements HealthIndicator {
     private final KlimaatService klimaatService;
     private final Clock clock;
 
-    @Autowired
     public KlimaatSensorHealth(KlimaatService klimaatService, Clock clock) {
         this.klimaatService = klimaatService;
         this.clock = clock;

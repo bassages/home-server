@@ -10,7 +10,7 @@ import org.junit.Test;
 public class VerbruikKostenOverzichtenTest {
 
     @Test
-    public void whenGetAveragesThenAveragesAreReturned() {
+    public void whenAverageToSingleThenSingleVerbuikKostenOverichWithAveragesReturned() {
         VerbruikKostenOverzicht verbruikKostenOverzicht1 = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht1.setGasVerbruik(new BigDecimal(42.023));
         verbruikKostenOverzicht1.setGasKosten(new BigDecimal(10.000));
@@ -28,7 +28,7 @@ public class VerbruikKostenOverzichtenTest {
         verbruikKostenOverzicht2.setStroomKostenNormaal(new BigDecimal(9214.081));
 
         VerbruikKostenOverzichten verbruikKostenOverzichten = new VerbruikKostenOverzichten(asList(verbruikKostenOverzicht1, verbruikKostenOverzicht2));
-        VerbruikKostenOverzicht averagedVerbruikKostenOverzicht = verbruikKostenOverzichten.getAverages();
+        VerbruikKostenOverzicht averagedVerbruikKostenOverzicht = verbruikKostenOverzichten.averageToSingle();
 
         assertThat(averagedVerbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("31.777"));
         assertThat(averagedVerbruikKostenOverzicht.getStroomVerbruikDal()).isEqualTo(new BigDecimal("128.506"));

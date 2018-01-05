@@ -6,7 +6,6 @@ import static java.time.LocalDateTime.now;
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,6 @@ public class SlimmeMeterHealth implements HealthIndicator {
     private final MeterstandService meterstandService;
     private final Clock clock;
 
-    @Autowired
     public SlimmeMeterHealth(MeterstandService meterstandService, Clock clock) {
         this.meterstandService = meterstandService;
         this.clock = clock;

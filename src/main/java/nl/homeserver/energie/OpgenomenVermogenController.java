@@ -6,7 +6,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,6 @@ public class OpgenomenVermogenController {
     private final OpgenomenVermogenService opgenomenVermogenService;
     private final Clock clock;
 
-    @Autowired
     public OpgenomenVermogenController(OpgenomenVermogenService opgenomenVermogenService, Clock clock) {
         this.opgenomenVermogenService = opgenomenVermogenService;
         this.clock = clock;

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ public class EnergiecontractService {
     private final CacheService cacheService;
     private final Clock clock;
 
-    @Autowired
     public EnergiecontractService(EnergiecontractRepository energiecontractRepository, CacheService cacheService, Clock clock) {
         this.energiecontractRepository = energiecontractRepository;
         this.cacheService = cacheService;

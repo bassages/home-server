@@ -16,7 +16,6 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import nl.homeserver.DatePeriod;
@@ -28,7 +27,6 @@ public class VerbruikService {
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
     private final MeterstandService meterstandService;
 
-    @Autowired
     public VerbruikService(VerbruikKostenOverzichtService verbruikKostenOverzichtService, MeterstandService meterstandService) {
         this.verbruikKostenOverzichtService = verbruikKostenOverzichtService;
         this.meterstandService = meterstandService;
@@ -72,7 +70,7 @@ public class VerbruikService {
         return getVerbruikPerDag(period).stream()
                                         .map(VerbruikKostenOpDag::getVerbruikKostenOverzicht)
                                         .collect(collectingAndThen(toList(), VerbruikKostenOverzichten::new))
-                                        .getAverages();
+                                        .averageToSingle();
     }
 
     private VerbruikInJaar getVerbruikInJaar(Year year) {

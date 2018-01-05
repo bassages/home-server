@@ -18,7 +18,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,6 @@ public class MindergasnlService {
     private final MeterstandService meterstandService;
     private final Clock clock;
 
-    @Autowired
     public MindergasnlService(MindergasnlSettingsRepository mindergasnlSettingsRepository, MeterstandService meterstandService, Clock clock) {
         this.mindergasnlSettingsRepository = mindergasnlSettingsRepository;
         this.meterstandService = meterstandService;

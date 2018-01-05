@@ -32,7 +32,6 @@ public class VerbruikKostenOverzichtService {
     private final VerbruikRepository verbruikRepository;
     private final Clock clock;
 
-    @Autowired
     public VerbruikKostenOverzichtService(EnergiecontractService energiecontractService, VerbruikRepository verbruikRepository, Clock clock) {
         this.energiecontractService = energiecontractService;
         this.verbruikRepository = verbruikRepository;
@@ -93,7 +92,7 @@ public class VerbruikKostenOverzichtService {
         return energiecontractService.findAllInInPeriod(period)
                                      .stream()
                                      .map(energieContract -> this.getGasVerbruikKosten(energieContract, period))
-                                     .collect(collectingAndThen(toList(), Verbruiken::new))
+                                     .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
                                      .sumToSingle();
     }
 
@@ -101,7 +100,7 @@ public class VerbruikKostenOverzichtService {
         return energiecontractService.findAllInInPeriod(period)
                                      .stream()
                                      .map(energieContract -> this.getStroomVerbruikKosten(energieContract, stroomTariefIndicator, period))
-                                     .collect(collectingAndThen(toList(), Verbruiken::new))
+                                     .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
                                      .sumToSingle();
     }
 

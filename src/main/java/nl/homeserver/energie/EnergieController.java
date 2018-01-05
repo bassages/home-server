@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,6 @@ public class EnergieController {
 
     private final VerbruikService verbruikService;
 
-    @Autowired
     public EnergieController(VerbruikService verbruikService) {
         this.verbruikService = verbruikService;
     }

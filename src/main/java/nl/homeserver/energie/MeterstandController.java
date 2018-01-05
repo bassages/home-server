@@ -3,7 +3,6 @@ package nl.homeserver.energie;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,6 @@ public class MeterstandController {
 
     private final MeterstandService meterstandService;
 
-    @Autowired
     public MeterstandController(MeterstandService meterstandService) {
         this.meterstandService = meterstandService;
     }

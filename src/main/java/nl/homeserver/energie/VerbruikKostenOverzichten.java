@@ -15,27 +15,27 @@ public class VerbruikKostenOverzichten {
         this.verbruikKostenOverzichten = verbruikKostenOverzichten;
     }
 
-    public VerbruikKostenOverzicht getAverages() {
+    public VerbruikKostenOverzicht averageToSingle() {
         VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
-        verbruikKostenOverzicht.setStroomVerbruikDal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
-        verbruikKostenOverzicht.setStroomVerbruikNormaal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
-        verbruikKostenOverzicht.setGasVerbruik(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasVerbruik, 3));
-        verbruikKostenOverzicht.setStroomKostenDal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenDal, 2));
-        verbruikKostenOverzicht.setStroomKostenNormaal(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
-        verbruikKostenOverzicht.setGasKosten(berekenGemiddelde(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasKosten, 2));
+        verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
+        verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
+        verbruikKostenOverzicht.setGasVerbruik(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasVerbruik, 3));
+        verbruikKostenOverzicht.setStroomKostenDal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenDal, 2));
+        verbruikKostenOverzicht.setStroomKostenNormaal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
+        verbruikKostenOverzicht.setGasKosten(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasKosten, 2));
         return verbruikKostenOverzicht;
     }
 
-    private BigDecimal berekenGemiddelde(final Collection<VerbruikKostenOverzicht> verbruikKostenOverzichtPerDag,
-                                         final Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter,
-                                         final int scale) {
+    private BigDecimal getAverage(final Collection<VerbruikKostenOverzicht> verbruikKostenOverzichten,
+                                  final Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter,
+                                  final int scale) {
 
-        BigDecimal sum = verbruikKostenOverzichtPerDag.stream()
+        BigDecimal sum = verbruikKostenOverzichten.stream()
                                                       .map(attributeToAverageGetter)
                                                       .filter(Objects::nonNull)
                                                       .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return sum.divide(new BigDecimal(verbruikKostenOverzichtPerDag.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
+        return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
     }
 
 }

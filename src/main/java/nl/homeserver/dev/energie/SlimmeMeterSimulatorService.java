@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,6 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
     private final MeterstandService meterstandService;
     private final SlimmeMeterController slimmeMeterController;
 
-    @Autowired
     public SlimmeMeterSimulatorService(MeterstandService meterstandService, SlimmeMeterController slimmeMeterController) {
         this.meterstandService = meterstandService;
         this.slimmeMeterController = slimmeMeterController;
