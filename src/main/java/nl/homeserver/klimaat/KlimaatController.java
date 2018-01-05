@@ -79,11 +79,4 @@ public class KlimaatController {
     public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
         return klimaatService.getAverage(SensorType.fromString(sensortype), jaren);
     }
-
-    // TODO: this causes stack traces to be "swallowed", WHY was it here anyway?
-//    @ExceptionHandler(IllegalArgumentException.class)
-//    public void handleBadRequests(HttpServletResponse response, IllegalArgumentException ex) throws IOException {
-//        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
-//    }
-
 }
