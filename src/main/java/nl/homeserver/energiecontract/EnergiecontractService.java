@@ -1,5 +1,6 @@
 package nl.homeserver.energiecontract;
 
+import static java.time.LocalDateTime.now;
 import static nl.homeserver.DateTimeUtil.toDate;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
@@ -34,7 +35,7 @@ public class EnergiecontractService {
     }
 
     public Energiecontract getCurrent() {
-        LocalDateTime now = LocalDateTime.now(clock);
+        LocalDateTime now = now(clock);
         return energiecontractRepository.findFirstByVanLessThanEqualOrderByVanDesc(toDate(now).getTime());
     }
 

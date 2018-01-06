@@ -2,10 +2,9 @@ package nl.homeserver.energie;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimePeriod.aPeriodWithEndDateTime;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toLocalDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -141,18 +140,17 @@ public class VerbruikKostenOverzichtService {
         if (subTotEnMetMillis > periodeTotEnMet) {
             subTotEnMetMillis = periodeTotEnMet;
         }
-        return aPeriodWithEndDateTime(toLocalDateTime(subVanMillis), toLocalDateTime(subTotEnMetMillis));
+        LocalDateTime from = toLocalDateTime(subVanMillis);
+        LocalDateTime to = toLocalDateTime(subTotEnMetMillis + 1);
+        return aPeriodWithToDateTime(from, to);
     }
 
     private BigDecimal getStroomVerbruik(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
-        long periodeVan = toMillisSinceEpoch(period.getStartDateTime());
-        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
-
         switch (stroomTariefIndicator) {
             case DAL:
-                return verbruikRepository.getStroomVerbruikDalTariefInPeriod(periodeVan, periodeTotEnMet);
+                return verbruikRepository.getStroomVerbruikDalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
             case NORMAAL:
-                return verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(periodeVan, periodeTotEnMet);
+                return verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
             default:
                 throw new IllegalArgumentException("Unexpected StroomTariefIndicator: " + stroomTariefIndicator.name());
         }
@@ -161,8 +159,6 @@ public class VerbruikKostenOverzichtService {
     private BigDecimal getGasVerbruik(DateTimePeriod period) {
         // Gas is registered once every hour, in the hour after it actually is used.
         // Compensate for that hour to make the query return the correct usages.
-        long periodeVan = toMillisSinceEpoch(period.getStartDateTime()) + MILLIS_PER_HOUR;
-        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime()) + MILLIS_PER_HOUR;
-        return verbruikRepository.getGasVerbruikInPeriod(periodeVan, periodeTotEnMet);
+        return verbruikRepository.getGasVerbruikInPeriod(period.getFromDateTime().plusHours(1), period.getToDateTime().plusHours(1));
     }
 }

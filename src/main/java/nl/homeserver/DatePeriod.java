@@ -1,6 +1,7 @@
 package nl.homeserver;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -39,6 +40,10 @@ public class DatePeriod {
 
     public DateTimePeriod toDateTimePeriod() {
         return dateTimePeriod;
+    }
+
+    public List<LocalDate> getDays() {
+        return dateTimePeriod.getDays();
     }
 
     @Override

@@ -6,7 +6,6 @@ import static java.util.EnumSet.allOf;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.getDaysInPeriod;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,9 +44,9 @@ public class VerbruikService {
     }
 
     public List<VerbruikKostenOpDag> getVerbruikPerDag(DatePeriod period) {
-        return getDaysInPeriod(period).stream()
-                                      .map(this::getVerbruikOpDag)
-                                      .collect(toList());
+        return period.getDays().stream()
+                               .map(this::getVerbruikOpDag)
+                               .collect(toList());
     }
 
     public List<VerbruikInJaar> getVerbruikPerJaar() {

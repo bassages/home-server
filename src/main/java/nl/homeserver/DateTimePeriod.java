@@ -1,7 +1,14 @@
 package nl.homeserver;
 
-import java.time.LocalDateTime;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.stream.Collectors.toList;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -44,6 +51,17 @@ public class DateTimePeriod {
 
     public boolean isWithinPeriod(LocalDateTime localDateTime) {
         return (localDateTime.isEqual(this.startDateTime) || localDateTime.isAfter(this.startDateTime)) && localDateTime.isBefore(this.toDateTime);
+    }
+
+    public List<LocalDate> getDays() {
+        Validate.notNull(this.toDateTime, "DateTimePeriod must must be ending at some point of time");
+
+        LocalDate from = startDateTime.toLocalDate();
+        LocalDate to = toDateTime.toLocalDate();
+
+        return Stream.iterate(from, date -> date.plusDays(1))
+                     .limit(DAYS.between(from, to))
+                     .collect(toList());
     }
 
     @Override

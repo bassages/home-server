@@ -2,8 +2,8 @@ package nl.homeserver.energie;
 
 import static java.math.RoundingMode.HALF_UP;
 import static nl.homeserver.DateTimeUtil.toLocalDateTime;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
+import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class SlimmeMeterController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@RequestBody Dsmr42Reading dsmr42Reading) {
-        LOGGER.info(ReflectionToStringBuilder.toString(SHORT_PREFIX_STYLE));
+        LOGGER.info(ReflectionToStringBuilder.toString(dsmr42Reading, new RecursiveToStringStyle()));
 
         saveMeterstand(dsmr42Reading);
         saveOpgenomenVermogen(dsmr42Reading);

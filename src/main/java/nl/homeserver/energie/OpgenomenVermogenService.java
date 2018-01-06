@@ -4,6 +4,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
-import nl.homeserver.DateTimeUtil;
 import nl.homeserver.cache.CacheService;
 
 @Service
@@ -84,7 +84,7 @@ public class OpgenomenVermogenService {
         List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(
                 dateTimePeriod.getFromDateTime(), dateTimePeriod.getToDateTime());
 
-        long nrOfSubPeriodsInPeriod = (DateTimeUtil.toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - DateTimeUtil.toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLength;
+        long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLength;
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod)
                          .boxed()

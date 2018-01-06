@@ -4,6 +4,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
@@ -29,7 +30,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimeUtil;
 
 @Service
 public class KlimaatService {
@@ -184,8 +184,8 @@ public class KlimaatService {
     private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(SensorType sensortype, YearMonth yearMonth) {
         LocalDate from = yearMonth.atDay(1);
         LocalDate to = from.plusMonths(1);
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
-        return new GemiddeldeKlimaatPerMaand(DateTimeUtil.toDateAtStartOfDay(from), getAverage(sensortype, period));
+        DatePeriod period = aPeriodWithToDate(from, to);
+        return new GemiddeldeKlimaatPerMaand(from, getAverage(sensortype, period));
     }
 
     private List<BigDecimal> getValidHumidities(List<Klimaat> klimaatList) {

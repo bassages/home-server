@@ -3,7 +3,6 @@ package nl.homeserver.energie;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimeUtil.getDaysInPeriod;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
@@ -138,9 +137,9 @@ public class MeterstandService {
     }
 
     public List<MeterstandOpDag> getPerDag(DatePeriod period) {
-        return getDaysInPeriod(period).stream()
-                                      .map(this::getMeterstandOpDag)
-                                      .collect(toList());
+        return period.getDays().stream()
+                               .map(this::getMeterstandOpDag)
+                               .collect(toList());
     }
 
     private MeterstandOpDag getMeterstandOpDag(LocalDate day) {

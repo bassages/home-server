@@ -5,9 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpochAtStartOfDay;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -73,8 +71,8 @@ public class VerbruikKostenOverzichtServiceTest {
     public void givenMultipleEnergycontractsWhenGetForPeriodInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atStartOfDay());
 
-        LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atTime(0, 0);
-        LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atTime(0, 0);
+        LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
+        LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atStartOfDay();
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
         Energiecontract energiecontract1 = new Energiecontract();
@@ -93,12 +91,9 @@ public class VerbruikKostenOverzichtServiceTest {
 
         when(energiecontractService.findAllInInPeriod(any())).thenReturn(asList(energiecontract1, energiecontract2));
 
-        when(verbruikRepository.getGasVerbruikInPeriod(toMillisSinceEpoch(from) + MILLIS_PER_HOUR, toMillisSinceEpoch(from.plusDays(1)) - 1 + MILLIS_PER_HOUR))
-                .thenReturn(new BigDecimal("1.111"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(toMillisSinceEpoch(from), toMillisSinceEpoch(from.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("2.222"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpoch(from), toMillisSinceEpoch(from.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("3.333"));
+        when(verbruikRepository.getGasVerbruikInPeriod(from.plusHours(1), from.plusDays(1).plusHours(1))).thenReturn(new BigDecimal("1.111"));
+        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(from, from.plusDays(1))).thenReturn(new BigDecimal("2.222"));
+        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(from, from.plusDays(1))).thenReturn(new BigDecimal("3.333"));
 
         VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period);
 
@@ -128,12 +123,9 @@ public class VerbruikKostenOverzichtServiceTest {
         energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
         when(energiecontractService.findAllInInPeriod(any())).thenReturn(singletonList(energiecontract));
 
-        when(verbruikRepository.getGasVerbruikInPeriod(toMillisSinceEpochAtStartOfDay(day) + MILLIS_PER_HOUR, toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1 + MILLIS_PER_HOUR))
-                .thenReturn(new BigDecimal("1.000"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(toMillisSinceEpochAtStartOfDay(day), toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("2.000"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(toMillisSinceEpochAtStartOfDay(day), toMillisSinceEpochAtStartOfDay(day.plusDays(1)) - 1))
-                .thenReturn(new BigDecimal("3.000"));
+        when(verbruikRepository.getGasVerbruikInPeriod(day.atStartOfDay().plusHours(1), day.plusDays(1).atStartOfDay().plusHours(1))).thenReturn(new BigDecimal("1.000"));
+        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay())).thenReturn(new BigDecimal("2.000"));
+        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay())).thenReturn(new BigDecimal("3.000"));
 
         VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period);
 

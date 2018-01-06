@@ -1,19 +1,19 @@
 package nl.homeserver.klimaat;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class GemiddeldeKlimaatPerMaand {
 
-    private Date maand;
+    private LocalDate maand;
     private BigDecimal gemiddelde;
 
-    public GemiddeldeKlimaatPerMaand(Date maand, BigDecimal average) {
+    public GemiddeldeKlimaatPerMaand(LocalDate maand, BigDecimal average) {
         this.maand = maand;
         this.gemiddelde = average;
     }
 
-    public Date getMaand() {
+    public LocalDate getMaand() {
         return maand;
     }
 

@@ -1,6 +1,7 @@
 package nl.homeserver.klimaat;
 
 import static java.lang.String.format;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,7 +52,7 @@ public class KlimaatController {
                                     @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                     @RequestParam("limit") int limit) {
 
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
+        DatePeriod period = aPeriodWithToDate(from, to);
         return klimaatService.getHighest(SensorType.fromString(sensortype), period, limit);
     }
 
@@ -61,7 +62,7 @@ public class KlimaatController {
                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                    @RequestParam("limit") int limit) {
 
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
+        DatePeriod period = aPeriodWithToDate(from, to);
         return klimaatService.getLowest(SensorType.fromString(sensortype), period, limit);
     }
 
@@ -69,7 +70,7 @@ public class KlimaatController {
     public List<Klimaat> findAllInPeriod(@RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                          @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
+        DatePeriod period = aPeriodWithToDate(from, to);
         return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, period);
     }
 
