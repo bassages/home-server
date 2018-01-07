@@ -24,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import nl.homeserver.energie.EnergieController;
+import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
 import nl.homeserver.klimaat.KlimaatController;
 
@@ -39,6 +40,8 @@ public class WarmupCacheTest {
     private OpgenomenVermogenController opgenomenVermogenController;
     @Mock
     private EnergieController energieController;
+    @Mock
+    private MeterstandController meterstandController;
     @Mock
     private Clock clock;
 
@@ -59,7 +62,7 @@ public class WarmupCacheTest {
 
         warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verifyZeroInteractions(klimaatController, opgenomenVermogenController, energieController);
+        verifyZeroInteractions(klimaatController, opgenomenVermogenController, energieController, meterstandController);
     }
 
     @Test
@@ -136,13 +139,55 @@ public class WarmupCacheTest {
     }
 
     @Test
-    public void givenWarmupEnabledWhenApplicationStartedThenVerbruikDagWarmedup() {
+    public void givenWarmupEnabledWhenApplicationStartedThenVerbruikPerDagWarmedup() {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
         warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(energieController, times(13)).getVerbruikPerDag(fromDateCaptor.capture(), toDateCaptor.capture());
+
+        assertThat(fromDateCaptor.getAllValues()).containsExactly(
+                LocalDate.of(2016, 12, 1),
+                LocalDate.of(2017, 1, 1),
+                LocalDate.of(2017, 2, 1),
+                LocalDate.of(2017, 3, 1),
+                LocalDate.of(2017, 4, 1),
+                LocalDate.of(2017, 5, 1),
+                LocalDate.of(2017, 6, 1),
+                LocalDate.of(2017, 7, 1),
+                LocalDate.of(2017, 8, 1),
+                LocalDate.of(2017, 9, 1),
+                LocalDate.of(2017, 10, 1),
+                LocalDate.of(2017, 11, 1),
+                LocalDate.of(2017, 12, 1)
+        );
+
+        assertThat(toDateCaptor.getAllValues()).containsExactly(
+                YearMonth.of(2016, 12).atEndOfMonth(),
+                YearMonth.of(2017, 1).atEndOfMonth(),
+                YearMonth.of(2017, 2).atEndOfMonth(),
+                YearMonth.of(2017, 3).atEndOfMonth(),
+                YearMonth.of(2017, 4).atEndOfMonth(),
+                YearMonth.of(2017, 5).atEndOfMonth(),
+                YearMonth.of(2017, 6).atEndOfMonth(),
+                YearMonth.of(2017, 7).atEndOfMonth(),
+                YearMonth.of(2017, 8).atEndOfMonth(),
+                YearMonth.of(2017, 9).atEndOfMonth(),
+                YearMonth.of(2017, 10).atEndOfMonth(),
+                YearMonth.of(2017, 11).atEndOfMonth(),
+                YearMonth.of(2017, 12).atEndOfMonth()
+        );
+    }
+
+    @Test
+    public void givenWarmupEnabledWhenApplicationStartedThenMeterstandenPerDagWarmedup() {
+        setWarmupCacheEnabled();
+        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+
+        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+
+        verify(meterstandController, times(13)).perDag(fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
                 LocalDate.of(2016, 12, 1),
@@ -206,16 +251,9 @@ public class WarmupCacheTest {
 
         warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verify(klimaatController, times(14)).findAllInPeriod(fromDateCaptor.capture(), toDateCaptor.capture());
+        verify(klimaatController, times(7)).findAllInPeriod(fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 16),
-                LocalDate.of(2017, 12, 17),
-                LocalDate.of(2017, 12, 18),
-                LocalDate.of(2017, 12, 19),
-                LocalDate.of(2017, 12, 20),
-                LocalDate.of(2017, 12, 21),
-                LocalDate.of(2017, 12, 22),
                 LocalDate.of(2017, 12, 23),
                 LocalDate.of(2017, 12, 24),
                 LocalDate.of(2017, 12, 25),
@@ -226,13 +264,6 @@ public class WarmupCacheTest {
         );
 
         assertThat(toDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 17),
-                LocalDate.of(2017, 12, 18),
-                LocalDate.of(2017, 12, 19),
-                LocalDate.of(2017, 12, 20),
-                LocalDate.of(2017, 12, 21),
-                LocalDate.of(2017, 12, 22),
-                LocalDate.of(2017, 12, 23),
                 LocalDate.of(2017, 12, 24),
                 LocalDate.of(2017, 12, 25),
                 LocalDate.of(2017, 12, 26),

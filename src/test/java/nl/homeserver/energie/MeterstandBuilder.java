@@ -1,7 +1,5 @@
 package nl.homeserver.energie;
 
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -27,7 +25,6 @@ public class MeterstandBuilder {
 
     public Meterstand build() {
         Meterstand meterstand = new Meterstand();
-        meterstand.setDatumtijd(toMillisSinceEpoch(datumtijd));
         meterstand.setDateTime(datumtijd);
         meterstand.setStroomTarief1(stroomTarief1);
         meterstand.setStroomTarief2(stroomTarief2);

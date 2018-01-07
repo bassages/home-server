@@ -68,11 +68,11 @@ public class MeterstandServiceTest {
         timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
 
         Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
-        when(meterstandRepository.findByDatumtijdBetween(any(), any())).thenReturn(singletonList(meterstand));
+        when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(singletonList(meterstand));
 
         meterstandService.dailyCleanup();
 
-        verify(meterstandRepository, times(3)).findByDatumtijdBetween(any(), any());
+        verify(meterstandRepository, times(3)).findByDateTimeBetween(any(), any());
         verifyNoMoreInteractions(meterstandRepository);
     }
 
@@ -92,7 +92,7 @@ public class MeterstandServiceTest {
         Meterstand meterstand7 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 30, 0)).build();
         Meterstand meterstand8 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 45, 0)).build();
 
-        when(meterstandRepository.findByDatumtijdBetween(LocalDate.of(2016, JANUARY, 1).atStartOfDay(),
+        when(meterstandRepository.findByDateTimeBetween(LocalDate.of(2016, JANUARY, 1).atStartOfDay(),
                                                          LocalDate.of(2016, JANUARY, 1).atStartOfDay().plusDays(1).minusNanos(1)))
                 .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 

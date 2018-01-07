@@ -19,9 +19,6 @@ public class Meterstand {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false, unique = true)
-    private long datumtijd;
-
     @Column(nullable = false)
     private LocalDateTime dateTime;
 
@@ -36,14 +33,6 @@ public class Meterstand {
 
     @Column(nullable = false, precision = 1)
     private short stroomTariefIndicator;
-
-    public long getDatumtijd() {
-        return datumtijd;
-    }
-
-    public void setDatumtijd(long datumtijd) {
-        this.datumtijd = datumtijd;
-    }
 
     public BigDecimal getStroomTarief1() {
         return stroomTarief1;

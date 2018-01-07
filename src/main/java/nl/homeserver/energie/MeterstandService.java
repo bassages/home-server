@@ -75,7 +75,7 @@ public class MeterstandService {
         LocalDateTime start = day.atStartOfDay();
         LocalDateTime end = start.plusDays(1).minusNanos(1);
 
-        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDatumtijdBetween(start, end);
+        List<Meterstand> meterstandenOnDay = meterstandRepository.findByDateTimeBetween(start, end);
 
         Map<Integer, List<Meterstand>> meterstandenByHour = meterstandenOnDay.stream()
                                                                              .collect(groupingBy(meterstand -> meterstand.getDateTime().getHour()));

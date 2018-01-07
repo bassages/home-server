@@ -1,6 +1,7 @@
 package nl.homeserver.energie;
 
 import static java.time.LocalDate.now;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class OpgenomenVermogenController {
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                                @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                                                @RequestParam("subPeriodLength") long subPeriodLength) {
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
+        DatePeriod period = aPeriodWithToDate(from, to);
 
         if (to.isBefore(now(clock))) {
             return opgenomenVermogenService.getPotentiallyCachedHistory(period, subPeriodLength);
