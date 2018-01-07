@@ -3,12 +3,15 @@ package nl.homeserver.cache;
 import static java.time.LocalDate.now;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.util.Comparator.reverseOrder;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.LongStream.rangeClosed;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Month;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -48,18 +51,24 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     private void warmupEnergyCache() {
         LocalDate today = now(clock);
 
-        aPeriodWithToDate(today, today.plusDays(14)).getDays()
-                                                    .forEach(day -> opgenomenVermogenController.getOpgenomenVermogenHistory(day,
-                                                                                                                            day.plusDays(1),
-                                                                                                                            MINUTES.toMillis(3)));
+        aPeriodWithToDate(today.minusDays(14), today).getDays()
+                                                     .forEach(day -> opgenomenVermogenController.getOpgenomenVermogenHistory(day,
+                                                                                                                             day.plusDays(1),
+                                                                                                                             MINUTES.toMillis(3)));
 
-        aPeriodWithToDate(today, today.plusDays(14)).getDays()
-                                                    .forEach(energieController::getVerbruikPerUurOpDag);
+        aPeriodWithToDate(today.minusDays(14), today).getDays()
+                                                     .forEach(energieController::getVerbruikPerUurOpDag);
 
-        rangeClosed(0, 24).forEach(monthToSubtract -> energieController.getVerbruikPerDag(today.minusMonths(monthToSubtract + 1).with(firstDayOfMonth()),
-                                                                                          today.minusMonths(monthToSubtract).with(lastDayOfMonth())));
+        rangeClosed(0, Month.values().length).boxed().collect(toList())
+                                                     .stream()
+                                                     .sorted(reverseOrder())
+                                                     .forEach(monthsToSubtract -> energieController.getVerbruikPerDag(today.minusMonths(monthsToSubtract).with(firstDayOfMonth()),
+                                                                                                                      today.minusMonths(monthsToSubtract).with(lastDayOfMonth())));
 
-        rangeClosed(0, 2).forEach(yearsToSubTract -> energieController.getVerbruikPerMaandInJaar(today.minusYears(yearsToSubTract).getYear()));
+        rangeClosed(0, 1).boxed().collect(toList())
+                                 .stream()
+                                 .sorted(reverseOrder())
+                                 .forEach(yearsToSubTract -> energieController.getVerbruikPerMaandInJaar(today.minusYears(yearsToSubTract).getYear()));
 
         energieController.getVerbruikPerJaar();
     }
@@ -67,7 +76,7 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     private void warmupClimateCache() {
         LocalDate today = now(clock);
 
-        aPeriodWithToDate(today, today.plusDays(14)).getDays()
+        aPeriodWithToDate(today.minusDays(14), today).getDays()
                                                     .forEach(day -> klimaatController.findAllInPeriod(day, day.plusDays(1)));
     }
 }
