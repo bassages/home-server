@@ -344,7 +344,8 @@
                 for (var i = 0; i < vm.selection.length; i++) {
                     var from = vm.selection[i];
                     var to = getTo(from);
-                    var dataUrl = 'api/klimaat?from=' + from.toString('yyyy-MM-dd') + '&to=' + to.toString('yyyy-MM-dd');
+                    var defaultSensorCode = 'WOONKAMER';
+                    var dataUrl = 'api/klimaat/' + defaultSensorCode + '?from=' + from.toString('yyyy-MM-dd') + '&to=' + to.toString('yyyy-MM-dd');
                     requests.push( $http({method: 'GET', url: dataUrl}) );
                 }
 

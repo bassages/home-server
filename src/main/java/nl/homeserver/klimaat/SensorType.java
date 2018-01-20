@@ -4,7 +4,7 @@ public enum SensorType {
     TEMPERATUUR,
     LUCHTVOCHTIGHEID;
 
-    public static SensorType fromString(String string) {
+    public static SensorType toSensorType(String string) {
         return SensorType.valueOf(string.toUpperCase());
     }
 }

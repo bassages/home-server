@@ -59,7 +59,8 @@
         }
 
         function getTopChartData(charttype) {
-            var dataUrl = 'api/klimaat/' + charttype + '?from=' + vm.from.toString('yyyy-MM-dd') + '&to=' + vm.to.clone().add(1).day().toString('yyyy-MM-dd') + '&sensortype=' + vm.sensortype + '&limit=' + vm.limit;
+            var defaultSensorCode = 'WOONKAMER';
+            var dataUrl = 'api/klimaat/' + defaultSensorCode + '/' + charttype + '?from=' + vm.from.toString('yyyy-MM-dd') + '&to=' + vm.to.clone().add(1).day().toString('yyyy-MM-dd') + '&sensorType=' + vm.sensortype + '&limit=' + vm.limit;
             return $http( { method: 'GET', url: dataUrl } );
         }
 

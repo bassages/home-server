@@ -1,5 +1,6 @@
 package nl.homeserver.cache;
 
+import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.Clock;
@@ -27,6 +29,8 @@ import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
 import nl.homeserver.klimaat.KlimaatController;
+import nl.homeserver.klimaat.KlimaatSensor;
+import nl.homeserver.klimaat.KlimaatService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WarmupCacheTest {
@@ -36,6 +40,8 @@ public class WarmupCacheTest {
 
     @Mock
     private KlimaatController klimaatController;
+    @Mock
+    private KlimaatService klimaatService;
     @Mock
     private OpgenomenVermogenController opgenomenVermogenController;
     @Mock
@@ -249,9 +255,14 @@ public class WarmupCacheTest {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
+        KlimaatSensor klimaatSensor = new KlimaatSensor();
+        String sensorCode = "SOME_NICE_CODE";
+        klimaatSensor.setCode(sensorCode);
+        when(klimaatService.getAllKlimaatSensors()).thenReturn(singletonList(klimaatSensor));
+
         warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verify(klimaatController, times(7)).findAllInPeriod(fromDateCaptor.capture(), toDateCaptor.capture());
+        verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode), fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
                 LocalDate.of(2017, 12, 23),

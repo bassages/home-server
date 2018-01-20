@@ -73,7 +73,8 @@
 
                 var urlParamJaar = 'jaar=' + _.map(vm.selection, function(o) { return new Date(o).getFullYear(); }).join('&jaar=');
 
-                var dataUrl = 'api/klimaat/gemiddeld-per-maand-in-jaar?' + urlParamJaar + '&sensortype=' + vm.sensortype;
+                var defaultSensorCode = 'WOONKAMER';
+                var dataUrl = 'api/klimaat/' + defaultSensorCode + '/gemiddeld-per-maand-in-jaar?' + urlParamJaar + '&sensorType=' + vm.sensortype;
 
                 $http( { method: 'GET', url: dataUrl } ).then(
                     function successCallback(response) {

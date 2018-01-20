@@ -118,8 +118,9 @@
         }
 
         function getMeestRecenteKlimaat() {
+            var defaultSensorCode = 'WOONKAMER';
             $http({
-                method: 'GET', url: 'api/klimaat/meest-recente'
+                method: 'GET', url: 'api/klimaat/' + defaultSensorCode + '/meest-recente'
             }).then(function successCallback(response) {
                 updateKlimaat(response.data);
             }, function errorCallback(response) {

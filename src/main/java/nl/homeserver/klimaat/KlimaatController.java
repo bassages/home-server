@@ -1,7 +1,7 @@
 package nl.homeserver.klimaat;
 
-import static java.lang.String.format;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.SensorType.toSensorType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import nl.homeserver.DatePeriod;
+import nl.homeserver.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -35,47 +35,57 @@ public class KlimaatController {
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@PathVariable("sensorCode") String sensorCode, @RequestBody Klimaat klimaat) {
-        KlimaatSensor klimaatSensor = klimaatService.getKlimaatSensorByCode(sensorCode)
-                                                    .orElseThrow(() -> new IllegalArgumentException(format("klimaatsensor with code %s does not exist", sensorCode)));
+        KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
     }
 
-    @GetMapping(path = "meest-recente")
-    public RealtimeKlimaat getMostRecent() {
-        return klimaatService.getMostRecent(DEFAULT_KLIMAAT_SENSOR_CODE);
+    @GetMapping(path = "{sensorCode}/meest-recente")
+    public RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") String sensorCode) {
+        getKlimaatSensorExpectingOne(sensorCode);
+        return klimaatService.getMostRecent(sensorCode);
     }
 
-    @GetMapping(path = "hoogste")
-    public List<Klimaat> getHighest(@RequestParam("sensortype") String sensortype,
+    @GetMapping(path = "{sensorCode}/hoogste")
+    public List<Klimaat> getHighest(@PathVariable("sensorCode") String sensorCode,
+                                    @RequestParam("sensorType") String sensorType,
                                     @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                     @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                     @RequestParam("limit") int limit) {
 
-        DatePeriod period = aPeriodWithToDate(from, to);
-        return klimaatService.getHighest(SensorType.fromString(sensortype), period, limit);
+        getKlimaatSensorExpectingOne(sensorCode);
+        return klimaatService.getHighest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);
     }
 
-    @GetMapping(path = "laagste")
-    public List<Klimaat> getLowest(@RequestParam("sensortype") String sensortype,
+    @GetMapping(path = "{sensorCode}/laagste")
+    public List<Klimaat> getLowest(@PathVariable("sensorCode") String sensorCode,
+                                   @RequestParam("sensorType") String sensorType,
                                    @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                    @RequestParam("limit") int limit) {
 
-        DatePeriod period = aPeriodWithToDate(from, to);
-        return klimaatService.getLowest(SensorType.fromString(sensortype), period, limit);
+        getKlimaatSensorExpectingOne(sensorCode);
+        return klimaatService.getLowest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);
     }
 
-    @GetMapping
-    public List<Klimaat> findAllInPeriod(@RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+    @GetMapping(path = "{sensorCode}")
+    public List<Klimaat> findAllInPeriod(@PathVariable("sensorCode") String sensorCode,
+                                         @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                          @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
-        DatePeriod period = aPeriodWithToDate(from, to);
-        return klimaatService.getInPeriod(DEFAULT_KLIMAAT_SENSOR_CODE, period);
+        getKlimaatSensorExpectingOne(sensorCode);
+        return klimaatService.getInPeriod(sensorCode, aPeriodWithToDate(from, to));
     }
 
-    @GetMapping(path = "gemiddeld-per-maand-in-jaar")
-    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@RequestParam("sensortype") String sensortype, @RequestParam("jaar") int[] jaren) {
-        return klimaatService.getAverage(SensorType.fromString(sensortype), jaren);
+    @GetMapping(path = "{sensorCode}/gemiddeld-per-maand-in-jaar")
+    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") String sensorCode,
+                                                            @RequestParam("sensorType") String sensorType, @RequestParam("jaar") int[] jaren) {
+        getKlimaatSensorExpectingOne(sensorCode);
+        return klimaatService.getAverage(sensorCode, toSensorType(sensorType), jaren);
+    }
+
+    private KlimaatSensor getKlimaatSensorExpectingOne(@PathVariable("klimaatSensorCode") String klimaatSensorCode) {
+        return klimaatService.getKlimaatSensorByCode(klimaatSensorCode)
+                             .orElseThrow(() -> new ResourceNotFoundException("KlimaatSensor", klimaatSensorCode));
     }
 }

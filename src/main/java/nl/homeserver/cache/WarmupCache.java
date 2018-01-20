@@ -13,6 +13,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
 import nl.homeserver.klimaat.KlimaatController;
+import nl.homeserver.klimaat.KlimaatSensor;
+import nl.homeserver.klimaat.KlimaatService;
 
 @Component
 public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
@@ -33,6 +36,7 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     private final OpgenomenVermogenController opgenomenVermogenController;
     private final EnergieController energieController;
     private final KlimaatController klimaatController;
+    private final KlimaatService klimaatService;
     private final MeterstandController meterstandController;
     private final Clock clock;
 
@@ -40,10 +44,11 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     private boolean warmupCacheOnApplicationStart;
 
     public WarmupCache(OpgenomenVermogenController opgenomenVermogenController, EnergieController energieController, KlimaatController klimaatController,
-            MeterstandController meterstandController, Clock clock) {
+            KlimaatService klimaatService, MeterstandController meterstandController, Clock clock) {
         this.opgenomenVermogenController = opgenomenVermogenController;
         this.energieController = energieController;
         this.klimaatController = klimaatController;
+        this.klimaatService = klimaatService;
         this.meterstandController = meterstandController;
         this.clock = clock;
     }
@@ -98,7 +103,13 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
         LocalDate today = now(clock);
 
         LOGGER.info("Warmup of cache klimaat");
-        aPeriodWithToDate(today.minusDays(7), today).getDays()
-                                                    .forEach(day -> klimaatController.findAllInPeriod(day, day.plusDays(1)));
+
+        List<KlimaatSensor> klimaatSensors = klimaatService.getAllKlimaatSensors();
+
+        for (KlimaatSensor klimaatSensor : klimaatSensors) {
+            aPeriodWithToDate(today.minusDays(7), today).getDays()
+                    .forEach(day -> klimaatController.findAllInPeriod(klimaatSensor.getCode(), day, day.plusDays(1)));
+
+        }
     }
 }

@@ -27,7 +27,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '8.9.3' // LTS
+    version = '8.9.4' // LTS version
     download = true
 }
 
@@ -67,9 +67,10 @@ dependencies {
     compile('org.apache.commons:commons-lang3:3.7')
     compile('org.apache.httpcomponents:httpclient:4.5.4')
     compile('org.apache.commons:commons-math3:3.6.1')
+    compile('javax.inject:javax.inject:1')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.assertj:assertj-core:3.8.0')
+    testCompile('org.assertj:assertj-core:3.9.0')
 
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')

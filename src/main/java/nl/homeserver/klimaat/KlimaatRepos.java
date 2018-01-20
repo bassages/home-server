@@ -16,56 +16,119 @@ import org.springframework.data.repository.query.Param;
 public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     // JPQL queries
-    String AVERAGE_LUCHTVOCHTIGHEID_BETWEEN = "SELECT avg(luchtvochtigheid) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
-    String AVERAGE_TEMPERATUUR_BETWEEEN = "SELECT avg(temperatuur) FROM Klimaat WHERE datumtijd >= :van AND datumtijd < :tot";
+    String AVERAGE_LUCHTVOCHTIGHEID_BETWEEN = "SELECT AVG(k.luchtvochtigheid) "
+                                            + "  FROM Klimaat k "
+                                            + " WHERE k.klimaatSensor.code = :sensorCode "
+                                            + "   AND k.datumtijd >= :van AND k.datumtijd < :tot";
 
-    String BY_KLIMAAT_SENSOR_CODE_AND_DATUMTIJD_IN_PERIOD_ORDER_BY_DATUMTIJD = "SELECT k FROM Klimaat k where k.klimaatSensor.code = :klimaatSensorCode AND k.datumtijd >= :van AND k.datumtijd <= :totEnMet ORDER BY k.datumtijd";
+    String AVERAGE_TEMPERATUUR_BETWEEEN = "SELECT AVG(k.temperatuur) "
+                                        + "  FROM Klimaat k "
+                                        + " WHERE k.klimaatSensor.code = :sensorCode "
+                                        + "  AND k.datumtijd >= :van AND k.datumtijd < :tot";
+
+    String BY_KLIMAAT_SENSOR_CODE_AND_DATUMTIJD_IN_PERIOD_ORDER_BY_DATUMTIJD = "  SELECT k FROM Klimaat k "
+                                                                             + "   WHERE k.klimaatSensor.code = :sensorCode "
+                                                                             + "     AND k.datumtijd >= :van "
+                                                                             + "     AND k.datumtijd <= :totEnMet "
+                                                                             + "ORDER BY k.datumtijd";
 
     // Native queries
-    String PEAK_HIGH_TEMPERATURE_DATES = "SELECT datum FROM (SELECT datum, MAX(temperatuur) AS temperatuur FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY temperatuur DESC LIMIT :limit) datums";
-    String FIRST_HIGHEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY temperatuur DESC, datumtijd ASC LIMIT 1";
+    String PEAK_HIGH_TEMPERATURE_DATES = "SELECT datum FROM (  SELECT k.datum AS datum, "
+                                       + "                            MAX(k.temperatuur) AS temperatuur"
+                                       + "                       FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
+                                       + "                      WHERE ks.code = :sensorCode "
+                                       + "                   GROUP BY k.datum "
+                                       + "                     HAVING k.datum >= :van AND k.datum < :tot "
+                                       + "                   ORDER BY temperatuur "
+                                       + "                   DESC LIMIT :limit "
+                                       + "                  ) datums";
 
-    String PEAK_LOW_TEMPERATURE_DATES = "SELECT datum FROM (SELECT datum, MIN(temperatuur) AS temperatuur FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY temperatuur ASC LIMIT :limit) datums";
-    String FIRST_LOWEST_TEMPERATURE_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY temperatuur ASC, datumtijd ASC LIMIT 1";
+    String FIRST_HIGHEST_TEMPERATURE_ON_DAY = "  SELECT * "
+                                            + "    FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
+                                            + "   WHERE k.datum = :date "
+                                            + "     AND ks.code = :sensorCode "
+                                            + "ORDER BY k.temperatuur DESC, k.datumtijd ASC LIMIT 1";
 
-    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MAX(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid DESC LIMIT :limit) datums";
-    String FIRST_HIGHEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid DESC, datumtijd ASC LIMIT 1";
+    String PEAK_LOW_TEMPERATURE_DATES = "SELECT datum FROM (  SELECT k.datum AS datum,"
+                                      + "                            MIN(k.temperatuur) AS temperatuur"
+                                      + "                       FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id"
+                                      + "                      WHERE ks.code = :sensorCode"
+                                      + "                   GROUP BY k.datum"
+                                      + "                     HAVING k.datum >= :van AND k.datum < :tot"
+                                      + "                   ORDER BY temperatuur"
+                                      + "                   DESC LIMIT :limit"
+                                      + "                  ) datums";
 
-    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (SELECT datum, MIN(luchtvochtigheid) AS luchtvochtigheid FROM klimaat GROUP BY datum HAVING datum >= :van AND datum < :tot ORDER BY luchtvochtigheid ASC LIMIT :limit) datums";
-    String FIRST_LOWEST_HUMIDITY_ON_DAY = "SELECT * FROM klimaat WHERE datum = :date ORDER BY luchtvochtigheid ASC, datumtijd ASC LIMIT 1";
+    String FIRST_LOWEST_TEMPERATURE_ON_DAY = "  SELECT * "
+                                           + "    FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
+                                           + "   WHERE k.datum = :date "
+                                           + "     AND ks.code = :sensorCode "
+                                           + "ORDER BY k.temperatuur ASC, k.datumtijd ASC LIMIT 1";
+
+    String PEAK_HIGH_HUMIDITY_DATES = "SELECT datum FROM (  SELECT k.datum AS datum, "
+                                    + "                            MAX(k.luchtvochtigheid) AS luchtvochtigheid"
+                                    + "                       FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id"
+                                    + "                      WHERE ks.code = :sensorCode"
+                                    + "                   GROUP BY k.datum"
+                                    + "                     HAVING k.datum >= :van AND k.datum < :tot"
+                                    + "                   ORDER BY luchtvochtigheid"
+                                    + "                   DESC LIMIT :limit"
+                                    + "                  ) datums";
+
+    String FIRST_HIGHEST_HUMIDITY_ON_DAY = "  SELECT * "
+                                         + "    FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
+                                         + "   WHERE k.datum = :date "
+                                         + "     AND ks.code = :sensorCode "
+                                         + "ORDER BY k.luchtvochtigheid DESC, k.datumtijd ASC LIMIT 1";
+
+    String PEAK_LOW_HUMIDITY_DATES = "SELECT datum FROM (  SELECT k.datum AS datum,"
+                                   + "                            MIN(k.luchtvochtigheid) AS luchtvochtigheid"
+                                   + "                       FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id"
+                                   + "                      WHERE ks.code = :sensorCode"
+                                   + "                   GROUP BY k.datum"
+                                   + "                     HAVING k.datum >= :van AND k.datum < :tot"
+                                   + "                   ORDER BY luchtvochtigheid"
+                                   + "                   DESC LIMIT :limit"
+                                   + "                  ) datums";
+
+    String FIRST_LOWEST_HUMIDITY_ON_DAY = "  SELECT * "
+                                        + "    FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
+                                        + "   WHERE k.datum = :date "
+                                        + "     AND ks.code = :sensorCode "
+                                        + "ORDER BY k.luchtvochtigheid ASC, k.datumtijd ASC LIMIT 1";
 
     @Query(value = BY_KLIMAAT_SENSOR_CODE_AND_DATUMTIJD_IN_PERIOD_ORDER_BY_DATUMTIJD)
-    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("klimaatSensorCode") String klimaatSensorCode,
+    List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("sensorCode") String sensorCode,
                                                                              @Param("van") LocalDateTime van,
                                                                              @Param("totEnMet") LocalDateTime totEnMet);
 
     @Query(value = PEAK_HIGH_TEMPERATURE_DATES, nativeQuery = true)
-    List<Date> getPeakHighTemperatureDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
+    List<Date> getPeakHighTemperatureDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_HIGHEST_TEMPERATURE_ON_DAY, nativeQuery = true)
-    Klimaat firstHighestTemperatureOnDay(@Param("date") LocalDate day);
+    Klimaat firstHighestTemperatureOnDay(@Param("sensorCode") String sensorCode, @Param("date") LocalDate day);
 
     @Query(value = PEAK_LOW_TEMPERATURE_DATES, nativeQuery = true)
-    List<Date> getPeakLowTemperatureDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
+    List<Date> getPeakLowTemperatureDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_LOWEST_TEMPERATURE_ON_DAY, nativeQuery = true)
-    Klimaat firstLowestTemperatureOnDay(@Param("date") LocalDate day);
+    Klimaat firstLowestTemperatureOnDay(@Param("sensorCode") String sensorCode, @Param("date") LocalDate day);
 
     @Query(value = PEAK_HIGH_HUMIDITY_DATES, nativeQuery = true)
-    List<Date> getPeakHighHumidityDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
+    List<Date> getPeakHighHumidityDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_HIGHEST_HUMIDITY_ON_DAY, nativeQuery = true)
-    Klimaat firstHighestHumidityOnDay(@Param("date") Date day);
+    Klimaat firstHighestHumidityOnDay(@Param("sensorCode") String sensorCode, @Param("date") Date day);
 
     @Query(value = PEAK_LOW_HUMIDITY_DATES, nativeQuery = true)
-    List<Date> getPeakLowHumidityDates(@Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
+    List<Date> getPeakLowHumidityDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
     @Query(value = FIRST_LOWEST_HUMIDITY_ON_DAY, nativeQuery = true)
-    Klimaat firstLowestHumidityOnDay(@Param("date") LocalDate day);
+    Klimaat firstLowestHumidityOnDay(@Param("sensorCode") String sensorCode, @Param("date") LocalDate day);
 
     @Query(value = AVERAGE_TEMPERATUUR_BETWEEEN)
-    BigDecimal getAverageTemperatuur(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
+    BigDecimal getAverageTemperatuur(@Param("sensorCode") String sensorCode, @Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Query(value = AVERAGE_LUCHTVOCHTIGHEID_BETWEEN)
-    BigDecimal getAverageLuchtvochtigheid(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
+    BigDecimal getAverageLuchtvochtigheid(@Param("sensorCode") String sensorCode, @Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 }
