@@ -1,9 +1,9 @@
 package nl.homeserver.klimaat;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -120,6 +120,15 @@ public class KlimaatService {
                                                            .collect(toList());
     }
 
+    private BigDecimal getAverage(List<BigDecimal> decimals) {
+        BigDecimal average = null;
+        if (!decimals.isEmpty()) {
+            BigDecimal total = decimals.stream().reduce(ZERO, BigDecimal::add);
+            average = total.divide(BigDecimal.valueOf(decimals.size()), HALF_UP);
+        }
+        return average;
+    }
+
     private KlimaatSensor getOrCreateIfNonExists(String klimaatSensorCode) {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode)
                                       .orElseGet(() -> createKlimaatSensor(klimaatSensorCode));
@@ -212,7 +221,7 @@ public class KlimaatService {
             case LUCHTVOCHTIGHEID:
                 return getHighestHumidity(sensorCode, period, limit);
             default:
-                return emptyList();
+                throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
         }
     }
 
@@ -223,7 +232,7 @@ public class KlimaatService {
             case LUCHTVOCHTIGHEID:
                 return getLowestHumidity(sensorCode, period, limit);
             default:
-                return null;
+                throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
         }
     }
 
@@ -231,7 +240,7 @@ public class KlimaatService {
         return klimaatRepository.getPeakLowTemperatureDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
-                                .map(day -> klimaatRepository.firstLowestTemperatureOnDay(sensorCode, day))
+                                .map(day -> klimaatRepository.earliestLowestTemperatureOnDay(sensorCode, day))
                                 .collect(toList());
     }
 
@@ -239,31 +248,23 @@ public class KlimaatService {
         return klimaatRepository.getPeakLowHumidityDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
-                                .map(day -> klimaatRepository.firstLowestHumidityOnDay(sensorCode, day))
+                                .map(day -> klimaatRepository.earliestLowestHumidityOnDay(sensorCode, day))
                                 .collect(toList());
-    }
-
-    private BigDecimal getAverage(List<BigDecimal> decimals) {
-        BigDecimal average = null;
-        if (!decimals.isEmpty()) {
-            BigDecimal total = decimals.stream().reduce(ZERO, BigDecimal::add);
-            average = total.divide(BigDecimal.valueOf(decimals.size()), HALF_UP);
-        }
-        return average;
     }
 
     private List<Klimaat> getHighestTemperature(String sensorCode, DatePeriod period, int limit) {
         return klimaatRepository.getPeakHighTemperatureDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
-                                .map(day -> klimaatRepository.firstHighestTemperatureOnDay(sensorCode, day))
+                                .map(day -> klimaatRepository.earliestHighestTemperatureOnDay(sensorCode, day))
                                 .collect(toList());
     }
 
     private List<Klimaat> getHighestHumidity(String sensorCode, DatePeriod period, int limit) {
         return klimaatRepository.getPeakHighHumidityDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
-                                .map(day -> klimaatRepository.firstHighestHumidityOnDay(sensorCode, day))
+                                .map(java.sql.Date::toLocalDate)
+                                .map(day -> klimaatRepository.earliestHighestHumidityOnDay(sensorCode, day))
                                 .collect(toList());
     }
 

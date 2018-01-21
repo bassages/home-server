@@ -1,8 +1,13 @@
 package nl.homeserver.klimaat;
 
 import static java.time.Month.JANUARY;
+import static java.time.Month.SEPTEMBER;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
+import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -14,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,6 +47,8 @@ public class KlimaatServiceTest {
     private KlimaatService klimaatService;
 
     @Mock
+    private KlimaatRepos klimaatRepository;
+    @Mock
     private KlimaatSensorRepository klimaatSensorRepository;
     @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -51,12 +59,13 @@ public class KlimaatServiceTest {
 
     @Captor
     private ArgumentCaptor<RealtimeKlimaat> realtimeKlimaatCaptor;
+    @Captor
+    private ArgumentCaptor<Klimaat> klimaatCaptor;
 
     @Test
     public void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
         String sensorCode = "MasterBedroom";
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode(sensorCode);
+        KlimaatSensor klimaatSensor = createKlimaatSensor(sensorCode);
 
         when(klimaatSensorRepository.findFirstByCode(sensorCode)).thenReturn(Optional.of(klimaatSensor));
 
@@ -77,8 +86,7 @@ public class KlimaatServiceTest {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode("Attic");
+        KlimaatSensor klimaatSensor = createKlimaatSensor("Attic");
 
         Klimaat klimaat = new Klimaat();
         klimaat.setDatumtijd(currentDateTime);
@@ -117,8 +125,7 @@ public class KlimaatServiceTest {
 
         Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
 
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode("Basement");
+        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
 
         Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
                                     .withDatumtijd(currentDateTime)
@@ -136,8 +143,7 @@ public class KlimaatServiceTest {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode("Basement");
+        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
 
         Klimaat oldKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
                                        .withDatumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
@@ -162,5 +168,121 @@ public class KlimaatServiceTest {
 
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode).containsKeys(klimaatSensor.getCode());
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensor.getCode())).containsOnly(klimaatToAdd, recentKlimaat);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void whenSaveThenOneKlimaatPerSensorSavedWithAverageSensorValues() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 2);
+        timeTravelTo(clock, currentDateTime);
+
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+
+        KlimaatSensor klimaatSensorBasement = createKlimaatSensor("Basement");
+
+        when(klimaatSensorRepository.findFirstByCode(klimaatSensorBasement.getCode())).thenReturn(Optional.of(klimaatSensorBasement));
+
+        Klimaat recentKlimaat1ForBasement = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                      .withDatumtijd(currentDateTime.minusMinutes(10))
+                                                      .withLuchtvochtigheid(new BigDecimal("25.00"))
+                                                      .withTemperatuur(new BigDecimal("20.00"))
+                                                      .build();
+        Klimaat recentKlimaat2ForBasement = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                      .withDatumtijd(currentDateTime.minusMinutes(5))
+                                                      .withLuchtvochtigheid(new BigDecimal("75.00"))
+                                                      .withTemperatuur(new BigDecimal("10.00"))
+                                                      .build();
+
+        List<Klimaat> recentlyReceivedKlimaatsForBasement = new ArrayList<>();
+        recentlyReceivedKlimaatsForBasement.add(recentKlimaat1ForBasement);
+        recentlyReceivedKlimaatsForBasement.add(recentKlimaat2ForBasement);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorBasement.getCode(), recentlyReceivedKlimaatsForBasement);
+
+        klimaatService.save();
+
+        verify(klimaatRepository).save(klimaatCaptor.capture());
+
+        Klimaat savedKlimaat = klimaatCaptor.getValue();
+        assertThat(savedKlimaat.getDatumtijd()).isEqualTo(LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0));
+        assertThat(savedKlimaat.getLuchtvochtigheid()).isEqualTo(new BigDecimal("50.0"));
+        assertThat(savedKlimaat.getTemperatuur()).isEqualTo(new BigDecimal("15.00"));
+    }
+
+    @Test
+    public void whenGetHighestTemperatureThenDelegatedToRepository() {
+        String sensorCode = "DogHouse";
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+
+        Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakHighTemperatureDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestHighestTemperatureOnDay(sensorCode, from)).thenReturn(klimaat);
+
+        List<Klimaat> highest = klimaatService.getHighest(sensorCode, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
+
+        assertThat(highest).containsExactly(klimaat);
+    }
+
+    @Test
+    public void whenGetLowestTemperatureThenDelegatedToRepository() {
+        String sensorCode = "DogHouse";
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+
+        Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakLowTemperatureDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestLowestTemperatureOnDay(sensorCode, from)).thenReturn(klimaat);
+
+        List<Klimaat> lowest = klimaatService.getLowest(sensorCode, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
+
+        assertThat(lowest).containsExactly(klimaat);
+    }
+
+    @Test
+    public void whenGetHighestHumidityThenDelegatedToRepository() {
+        String sensorCode = "DogHouse";
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+
+        Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakHighHumidityDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestHighestHumidityOnDay(sensorCode, from)).thenReturn(klimaat);
+
+        List<Klimaat> highest = klimaatService.getHighest(sensorCode, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
+
+        assertThat(highest).containsExactly(klimaat);
+    }
+
+    @Test
+    public void whenGetLowestHumidityThenDelegatedToRepository() {
+        String sensorCode = "DogHouse";
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+
+        Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakLowHumidityDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestLowestHumidityOnDay(sensorCode, from)).thenReturn(klimaat);
+
+        List<Klimaat> lowest = klimaatService.getLowest(sensorCode, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
+
+        assertThat(lowest).containsExactly(klimaat);
+    }
+
+    private KlimaatSensor createKlimaatSensor(String sensorCode) {
+        KlimaatSensor klimaatSensorBasement = new KlimaatSensor();
+        klimaatSensorBasement.setCode(sensorCode);
+        return klimaatSensorBasement;
     }
 }
