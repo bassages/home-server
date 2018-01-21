@@ -2,6 +2,7 @@ package nl.homeserver.klimaat;
 
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -12,6 +13,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class KlimaatService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
 
-    private static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
+    protected static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
     private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 18;
     private static final int NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR = 15;
@@ -70,23 +72,16 @@ public class KlimaatService {
 
     private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
         int maxNrOfMinutes = IntStream.of(NR_OF_MINUTES_TO_DETERMINE_TREND_FOR, NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR).max().getAsInt();
-        LocalDateTime cleanUpAllBefore = LocalDateTime.now().minusMinutes(maxNrOfMinutes);
+        LocalDateTime cleanUpAllBefore = now(clock).minusMinutes(maxNrOfMinutes);
         LOGGER.info("cleanUpRecentlyReceivedKlimaats before {}", cleanUpAllBefore);
         recentlyReceivedKlimaatsPerKlimaatSensorCode.values().forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().isBefore(cleanUpAllBefore)));
     }
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
     public void save() {
-        LocalDateTime referenceDateTime = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime referenceDateTime = now(clock).truncatedTo(ChronoUnit.MINUTES);
         recentlyReceivedKlimaatsPerKlimaatSensorCode
                 .forEach((klimaatSensorCode, klimaats) -> this.saveKlimaatWithAveragedRecentSensorValues(referenceDateTime, klimaatSensorCode));
-    }
-
-    private List<Klimaat> getKlimaatsReceivedInLastNumberOfMinutes(String klimaatSensorCode, int nrOfMinutes) {
-        LocalDateTime from = LocalDateTime.now(clock).minusMinutes(nrOfMinutes);
-        return recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode).stream()
-                                                                                  .filter(klimaat -> klimaat.getDatumtijd().isAfter(from))
-                                                                                  .collect(toList());
     }
 
     private void saveKlimaatWithAveragedRecentSensorValues(LocalDateTime referenceDateTime, String klimaatSensorCode) {
@@ -118,6 +113,13 @@ public class KlimaatService {
         }
     }
 
+    private List<Klimaat> getKlimaatsReceivedInLastNumberOfMinutes(String klimaatSensorCode, int nrOfMinutes) {
+        LocalDateTime from = now(clock).minusMinutes(nrOfMinutes);
+        return recentlyReceivedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>()).stream()
+                                                           .filter(klimaat -> klimaat.getDatumtijd().isAfter(from))
+                                                           .collect(toList());
+    }
+
     private KlimaatSensor getOrCreateIfNonExists(String klimaatSensorCode) {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode)
                                       .orElseGet(() -> createKlimaatSensor(klimaatSensorCode));
@@ -127,10 +129,6 @@ public class KlimaatService {
         KlimaatSensor klimaatSensor = new KlimaatSensor();
         klimaatSensor.setCode(klimaatSensorCode);
         return klimaatSensorRepository.save(klimaatSensor);
-    }
-
-    public Optional<KlimaatSensor> getKlimaatSensorByCode(String klimaatSensorCode) {
-        return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
     public List<Klimaat> getInPeriod(String klimaatSensorCode, DatePeriod period) {
@@ -168,18 +166,23 @@ public class KlimaatService {
     }
 
     public void add(Klimaat klimaat) {
-        recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         publishEvent(klimaat);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
-    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(String sensorCode, SensorType sensorType, int[] years) {
-        return IntStream.of(years).mapToObj(jaar ->
-                IntStream.rangeClosed(1, Month.values().length)
-                        .mapToObj(maand -> getAverageInMonthOfYear(sensorCode, sensorType, YearMonth.of(jaar, maand)))
-                        .collect(toList())).collect(toList());
+    public List<List<GemiddeldeKlimaatPerMaand>> getAveragePerMonthInYears(String sensorCode, SensorType sensorType, int[] years) {
+        return IntStream.of(years)
+                        .mapToObj(Year::of)
+                        .map(year -> getAveragePerMonthInYear(sensorCode, sensorType, year))
+                        .collect(toList());
     }
 
+    private List<GemiddeldeKlimaatPerMaand> getAveragePerMonthInYear(String sensorCode, SensorType sensorType, Year year) {
+        return IntStream.rangeClosed(1, Month.values().length)
+                        .mapToObj(maand -> getAverageInMonthOfYear(sensorCode, sensorType, YearMonth.of(year.getValue(), maand)))
+                        .collect(toList());
+    }
 
     private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(String sensorCode, SensorType sensorType, YearMonth yearMonth) {
         LocalDate from = yearMonth.atDay(1);
@@ -294,6 +297,10 @@ public class KlimaatService {
         return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode,
                                                                                             period.toDateTimePeriod().getStartDateTime(),
                                                                                             period.toDateTimePeriod().getEndDateTime());
+    }
+
+    public Optional<KlimaatSensor> getKlimaatSensorByCode(String klimaatSensorCode) {
+        return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
     public List<KlimaatSensor> getAllKlimaatSensors() {

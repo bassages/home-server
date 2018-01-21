@@ -146,7 +146,7 @@ public class KlimaatControllerTest {
         List<GemiddeldeKlimaatPerMaand> year = asList(month1, month2);
 
         List<List<GemiddeldeKlimaatPerMaand>> monthsInYears = singletonList(year);
-        when(klimaatService.getAverage(EXISTING_SENSOR_CODE, sensorType, years)).thenReturn(monthsInYears);
+        when(klimaatService.getAveragePerMonthInYears(EXISTING_SENSOR_CODE, sensorType, years)).thenReturn(monthsInYears);
 
         assertThat(klimaatController.getAverage(EXISTING_SENSOR_CODE, sensorType.name(), years)).isSameAs(monthsInYears);
     }

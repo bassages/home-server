@@ -79,7 +79,7 @@ public class KlimaatController {
     public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") String sensorCode,
                                                             @RequestParam("sensorType") String sensorType, @RequestParam("jaar") int[] jaren) {
         getKlimaatSensorExpectingOne(sensorCode);
-        return klimaatService.getAverage(sensorCode, toSensorType(sensorType), jaren);
+        return klimaatService.getAveragePerMonthInYears(sensorCode, toSensorType(sensorType), jaren);
     }
 
     private KlimaatSensor getKlimaatSensorExpectingOne(@PathVariable("klimaatSensorCode") String klimaatSensorCode) {
