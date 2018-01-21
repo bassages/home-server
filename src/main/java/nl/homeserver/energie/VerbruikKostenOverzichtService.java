@@ -5,6 +5,8 @@ import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toLocalDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import static nl.homeserver.energie.StroomTariefIndicator.DAL;
+import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -44,11 +46,11 @@ public class VerbruikKostenOverzichtService {
         verbruikKostenOverzicht.setGasVerbruik(gasVerbruikKostenInPeriode.getVerbruik());
         verbruikKostenOverzicht.setGasKosten(gasVerbruikKostenInPeriode.getKosten());
 
-        VerbruikKosten stroomVerbruikKostenDalTariefInPeriode = getStroomVerbruikInPeriode(period, StroomTariefIndicator.DAL);
+        VerbruikKosten stroomVerbruikKostenDalTariefInPeriode = getStroomVerbruikInPeriode(period, DAL);
         verbruikKostenOverzicht.setStroomVerbruikDal(stroomVerbruikKostenDalTariefInPeriode.getVerbruik());
         verbruikKostenOverzicht.setStroomKostenDal(stroomVerbruikKostenDalTariefInPeriode.getKosten());
 
-        VerbruikKosten stroomVerbruikKostenNormaalTariefInPeriode = getStroomVerbruikInPeriode(period, StroomTariefIndicator.NORMAAL);
+        VerbruikKosten stroomVerbruikKostenNormaalTariefInPeriode = getStroomVerbruikInPeriode(period, NORMAAL);
         verbruikKostenOverzicht.setStroomVerbruikNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getVerbruik());
         verbruikKostenOverzicht.setStroomKostenNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getKosten());
 

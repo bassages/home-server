@@ -20,11 +20,10 @@ public abstract class AbstractDataGeneratorService {
         BigDecimal result;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp);
-        if (calendar.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY
-                || calendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-            result = new BigDecimal(0.0015d);
+        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            result = new BigDecimal("0.0015");
         } else {
-            result = new BigDecimal(0.001d);
+            result = new BigDecimal("0.001");
         }
         return result;
     }
@@ -38,24 +37,24 @@ public abstract class AbstractDataGeneratorService {
             case Calendar.DECEMBER:
             case Calendar.JANUARY:
             case Calendar.FEBRUARY:
-                result = new BigDecimal(0.0015d);
+                result = new BigDecimal("0.0015");
                 break;
             case Calendar.MARCH:
             case Calendar.APRIL:
-                result = new BigDecimal(0.0005d);
+                result = new BigDecimal("0.0005");
                 break;
             case Calendar.MAY:
             case Calendar.JUNE:
             case Calendar.JULY:
             case Calendar.AUGUST:
-                result = new BigDecimal(0.0001d);
+                result = new BigDecimal("0.0001");
                 break;
             case Calendar.SEPTEMBER:
-                result = new BigDecimal(0.0005d);
+                result = new BigDecimal("0.0005d");
                 break;
             case Calendar.OCTOBER:
             case Calendar.NOVEMBER:
-                result = new BigDecimal(0.001d);
+                result = new BigDecimal("0.001d");
                 break;
         }
         return result;

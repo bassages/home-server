@@ -157,7 +157,8 @@ public class OpgenomenVermogenService {
     }
 
     private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        Comparator<OpgenomenVermogen> order = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
-        return opgenomenVermogenInOneMinute.stream().max(order).get();
+        Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
+        return opgenomenVermogenInOneMinute.stream()
+                                           .max(byHighestWattThenDatumtijd).orElse(null);
     }
 }

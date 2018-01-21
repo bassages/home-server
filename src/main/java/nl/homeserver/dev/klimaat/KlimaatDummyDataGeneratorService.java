@@ -24,23 +24,23 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
 
     private static final Logger LOG = LoggerFactory.getLogger(KlimaatDummyDataGeneratorService.class);
 
-    private static final BigDecimal TEMPERATUUR_STEP = new BigDecimal(0.75d);
-    private static final BigDecimal TEMPERATUUR_MINIMUM = new BigDecimal(10.0d);
-    private static final BigDecimal TEMPERATUUR_MAXIMUM = new BigDecimal(32.0d);
+    private static final BigDecimal TEMPERATUUR_STEP = new BigDecimal("0.75");
+    private static final BigDecimal TEMPERATUUR_MINIMUM = new BigDecimal("10.0");
+    private static final BigDecimal TEMPERATUUR_MAXIMUM = new BigDecimal("32.0");
 
-    private static final BigDecimal LUCHTVOCHTIGHEID_STEP = new BigDecimal(0.75d);
-    private static final BigDecimal LUCHTVOCHTIGHEID_MINIMUM = new BigDecimal(20.0d);
-    private static final BigDecimal LUCHTVOCHTIGHEID_MAXIMUM = new BigDecimal(90.0d);
+    private static final BigDecimal LUCHTVOCHTIGHEID_STEP = new BigDecimal("0.75");
+    private static final BigDecimal LUCHTVOCHTIGHEID_MINIMUM = new BigDecimal("20.0");
+    private static final BigDecimal LUCHTVOCHTIGHEID_MAXIMUM = new BigDecimal("90.0");
 
     private static final int GENERATOR_RUN_INTERVAL_IN_SECONDS = 10;
 
     private final ScheduledExecutorService historischeDataGeneratorScheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> dataGeneratorScheduler = null;
 
-    private BigDecimal lastGeneratedTemperatuur = new BigDecimal(20.0d);
+    private BigDecimal lastGeneratedTemperatuur = new BigDecimal("20.0");
     private boolean temperatuurUp = true;
 
-    private BigDecimal lastGeneratedLuchtvochtigheid = new BigDecimal(40.0d);
+    private BigDecimal lastGeneratedLuchtvochtigheid = new BigDecimal("40.0");
     private boolean luchtvochtigheidUp = true;
 
     @Value("${klimaatDataGenerator.autostart}")
