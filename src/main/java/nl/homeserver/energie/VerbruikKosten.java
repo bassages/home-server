@@ -11,7 +11,7 @@ public class VerbruikKosten {
     private BigDecimal verbruik;
     private BigDecimal kosten;
 
-    public final static VerbruikKosten UNKNOWN = new VerbruikKosten(null, null);
+    public static final VerbruikKosten UNKNOWN = new VerbruikKosten(null, null);
 
     public VerbruikKosten(BigDecimal verbruik, BigDecimal kosten) {
         this.verbruik = verbruik;
