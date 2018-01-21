@@ -94,11 +94,15 @@ public class MeterstandService {
         if (meterstandenInOneHour.size() >= 2) {
 
             Meterstand firstMeterstandInHour = meterstandenInOneHour.get(0);
-            LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+            }
             meterstandenInOneHour.remove(firstMeterstandInHour);
 
             Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
-            LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+            }
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
             if (isNotEmpty(meterstandenInOneHour)) {
