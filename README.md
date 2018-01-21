@@ -35,5 +35,5 @@
 ## Temperatuur / Luchtvochtigheid
 ![Alt text](documentation/screenshots/temperatuur.png?raw=true "Temperatuur")
 
-## Kosten per maand in jaar
+## Kosten per maand in jaar (klein scherm)
 <img src="https://raw.githubusercontent.com/bassages/home-server/master/documentation/screenshots/kosten-maand-xs.png" width="400">
