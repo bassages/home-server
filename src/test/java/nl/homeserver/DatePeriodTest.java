@@ -16,7 +16,7 @@ public class DatePeriodTest {
 
         DatePeriod datePeriod = DatePeriod.aPeriodWithEndDate(startDate, endDate);
 
-        assertThat(datePeriod.getStartDate()).isEqualTo(startDate);
+        assertThat(datePeriod.getFromDate()).isEqualTo(startDate);
         assertThat(datePeriod.getEndDate()).isEqualTo(endDate);
         assertThat(datePeriod.getToDate()).isEqualTo(endDate.plusDays(1));
     }
@@ -28,7 +28,7 @@ public class DatePeriodTest {
 
         DatePeriod datePeriod = DatePeriod.aPeriodWithToDate(startDate, toDate);
 
-        assertThat(datePeriod.getStartDate()).isEqualTo(startDate);
+        assertThat(datePeriod.getFromDate()).isEqualTo(startDate);
         assertThat(datePeriod.getToDate()).isEqualTo(toDate);
         assertThat(datePeriod.getEndDate()).isEqualTo(toDate.minusDays(1));
     }

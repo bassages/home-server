@@ -1,5 +1,4 @@
-<a href="https://travis-ci.org/bassages/home-server">
-<img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
+<a href="https://travis-ci.org/bassages/home-server"><img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
 <a href="https://sonarcloud.io/dashboard?id=home-server"><img src="https://sonarcloud.io/api/badges/gate?key=home-server" alt="SonarCloud"></a>
 
 # Features

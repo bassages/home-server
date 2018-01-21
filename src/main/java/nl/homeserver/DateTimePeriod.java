@@ -25,10 +25,6 @@ public class DateTimePeriod {
         this.endDateTime = toDateTime.minusNanos(1);
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
-
     public LocalDateTime getFromDateTime() {
         return startDateTime;
     }

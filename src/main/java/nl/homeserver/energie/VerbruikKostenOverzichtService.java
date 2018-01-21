@@ -59,7 +59,7 @@ public class VerbruikKostenOverzichtService {
 
     private VerbruikKosten getGasVerbruikInPeriode(DateTimePeriod period) {
         LocalDateTime now = LocalDateTime.now(clock);
-        if (period.getStartDateTime().isAfter(now) || period.getStartDateTime().isEqual(now)) {
+        if (period.getFromDateTime().isAfter(now) || period.getFromDateTime().isEqual(now)) {
             return VerbruikKosten.UNKNOWN;
         } else if (period.getEndDateTime().isBefore(now)) {
             return verbruikKostenOverzichtServiceProxyWithEnabledCaching.getPotentiallyCachedGasVerbruikInPeriode(period);
@@ -70,7 +70,7 @@ public class VerbruikKostenOverzichtService {
 
     private VerbruikKosten getStroomVerbruikInPeriode(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
         LocalDateTime now = LocalDateTime.now(clock);
-        if (period.getStartDateTime().isAfter(now) || period.getStartDateTime().isEqual(now)) {
+        if (period.getFromDateTime().isAfter(now) || period.getFromDateTime().isEqual(now)) {
             return VerbruikKosten.UNKNOWN;
         } else if (period.getEndDateTime().isBefore(now)) {
             return verbruikKostenOverzichtServiceProxyWithEnabledCaching.getPotentiallyCachedStroomVerbruikInPeriode(period, stroomTariefIndicator);
@@ -130,7 +130,7 @@ public class VerbruikKostenOverzichtService {
     }
 
     private DateTimePeriod getSubPeriod(Energiecontract energiecontract, DateTimePeriod period) {
-        long periodeVan = toMillisSinceEpoch(period.getStartDateTime());
+        long periodeVan = toMillisSinceEpoch(period.getFromDateTime());
         long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
 
         long subVanMillis = energiecontract.getVan();

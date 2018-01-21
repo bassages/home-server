@@ -79,7 +79,7 @@ public class EnergiecontractService {
     }
 
     public List<Energiecontract> findAllInInPeriod(DateTimePeriod period) {
-        long periodeVan = toMillisSinceEpoch(period.getStartDateTime());
+        long periodeVan = toMillisSinceEpoch(period.getFromDateTime());
         long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
         return energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
     }

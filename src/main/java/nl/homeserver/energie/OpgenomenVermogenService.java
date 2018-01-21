@@ -92,7 +92,7 @@ public class OpgenomenVermogenService {
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod)
                          .boxed()
-                         .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getStartDateTime(), periodNumber, subPeriodDuration))
+                         .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getFromDateTime(), periodNumber, subPeriodDuration))
                          .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
                          .collect(toList());
     }

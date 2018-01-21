@@ -289,14 +289,14 @@ public class KlimaatService {
 
     private List<Klimaat> getNotCachedAllInPeriod(String klimaatSensorCode, DatePeriod period) {
         return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode,
-                                                                                            period.toDateTimePeriod().getStartDateTime(),
+                                                                                            period.toDateTimePeriod().getFromDateTime(),
                                                                                             period.toDateTimePeriod().getEndDateTime());
     }
 
     @Cacheable(cacheNames = "klimaatInPeriod")
     public List<Klimaat> getPotentiallyCachedAllInPeriod(String klimaatSensorCode, DatePeriod period) {
         return klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode,
-                                                                                            period.toDateTimePeriod().getStartDateTime(),
+                                                                                            period.toDateTimePeriod().getFromDateTime(),
                                                                                             period.toDateTimePeriod().getEndDateTime());
     }
 

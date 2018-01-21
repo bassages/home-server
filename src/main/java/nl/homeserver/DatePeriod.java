@@ -14,12 +14,8 @@ public class DatePeriod {
         this.dateTimePeriod = dateTimePeriod;
     }
 
-    public LocalDate getStartDate() {
-        return dateTimePeriod.getStartDateTime().toLocalDate();
-    }
-
     public LocalDate getFromDate() {
-        return dateTimePeriod.getStartDateTime().toLocalDate();
+        return dateTimePeriod.getFromDateTime().toLocalDate();
     }
 
     public LocalDate getToDate() {
