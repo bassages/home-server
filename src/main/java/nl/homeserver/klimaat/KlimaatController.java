@@ -24,8 +24,6 @@ import nl.homeserver.ResourceNotFoundException;
 @RequestMapping("/api/klimaat")
 public class KlimaatController {
 
-    public static final String DEFAULT_KLIMAAT_SENSOR_CODE = "WOONKAMER";
-
     private final KlimaatService klimaatService;
 
     public KlimaatController(KlimaatService klimaatService) {
