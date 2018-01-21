@@ -42,20 +42,20 @@ public class Meterstand {
         this.stroomTarief1 = stroomTarief1;
     }
 
-    public BigDecimal getStroomTarief2() {
-        return stroomTarief2;
-    }
-
-    public void setStroomTarief2(BigDecimal stroomTarief2) {
-        this.stroomTarief2 = stroomTarief2;
-    }
-
     public BigDecimal getGas() {
         return gas;
     }
 
     public void setGas(BigDecimal gas) {
         this.gas = gas;
+    }
+
+    public BigDecimal getStroomTarief2() {
+        return stroomTarief2;
+    }
+
+    public void setStroomTarief2(BigDecimal stroomTarief2) {
+        this.stroomTarief2 = stroomTarief2;
     }
 
     public StroomTariefIndicator getStroomTariefIndicator() {
