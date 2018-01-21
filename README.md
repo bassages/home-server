@@ -20,6 +20,9 @@
 ## Actueel
 ![Alt text](documentation/screenshots/actueel-xl.png?raw=true "Actueel")
 
+## Opgenomen vermogen
+![Alt text](documentation/screenshots/opgenomen-vermogen.png?raw=true "Actueel")
+
 ## Kosten per maand in jaar
 ![Alt text](documentation/screenshots/kosten-maand-xl.png?raw=true "Kosten per maand in jaar")
 
