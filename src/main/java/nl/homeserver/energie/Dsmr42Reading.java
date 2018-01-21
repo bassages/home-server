@@ -46,14 +46,6 @@ public class Dsmr42Reading {
         this.stroomTarief1 = stroomTarief1;
     }
 
-    public BigDecimal getStroomTarief2() {
-        return stroomTarief2;
-    }
-
-    public void setStroomTarief2(BigDecimal stroomTarief2) {
-        this.stroomTarief2 = stroomTarief2;
-    }
-
     public BigDecimal getGas() {
         return gas;
     }
@@ -149,4 +141,13 @@ public class Dsmr42Reading {
     public void setTariefIndicatorStroom(String tariefIndicatorStroom) {
         this.tariefIndicatorStroom = tariefIndicatorStroom;
     }
+
+    public BigDecimal getStroomTarief2() {
+        return stroomTarief2;
+    }
+
+    public void setStroomTarief2(BigDecimal stroomTarief2) {
+        this.stroomTarief2 = stroomTarief2;
+    }
+
 }
