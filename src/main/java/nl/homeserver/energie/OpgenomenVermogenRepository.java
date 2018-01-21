@@ -12,13 +12,10 @@ import org.springframework.data.repository.query.Param;
 @Transactional
 public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVermogen, Long> {
 
-    String ALL_IN_PERIOD_SORTED = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd >= :van AND ov.datumtijd < :tot ORDER BY ov.datumtijd";
-    String MOST_RECENT = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)";
-
-    @Query(value = ALL_IN_PERIOD_SORTED)
+    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd >= :van AND ov.datumtijd < :tot ORDER BY ov.datumtijd")
     List<OpgenomenVermogen> getOpgenomenVermogen(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
-    @Query(value = MOST_RECENT)
+    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
     OpgenomenVermogen getMeestRecente();
 
 }

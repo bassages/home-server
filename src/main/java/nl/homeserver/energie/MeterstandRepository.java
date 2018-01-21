@@ -12,22 +12,18 @@ import org.springframework.data.repository.query.Param;
 @Transactional
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
-    // JPQL queries. Please note that BETWEEN in HQL is INCLUSIVE
-    String MOST_RECENT_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)";
-    String OLDEST_IN_PERIOD = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)";
-    String MOST_RECENT = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(mostrecent.dateTime) FROM Meterstand mostrecent)";
-    String OLDEST = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(oldest.dateTime) FROM Meterstand oldest)";
+    // Please note that BETWEEN in HQL is INCLUSIVE
 
-    @Query(value = MOST_RECENT)
+    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(mostrecent.dateTime) FROM Meterstand mostrecent)")
     Meterstand getMostRecent();
 
-    @Query(value = OLDEST)
+    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(oldest.dateTime) FROM Meterstand oldest)")
     Meterstand getOldest();
 
-    @Query(value = MOST_RECENT_IN_PERIOD)
+    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)")
     Meterstand getMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
-    @Query(value = OLDEST_IN_PERIOD)
+    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)")
     Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     List<Meterstand> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);

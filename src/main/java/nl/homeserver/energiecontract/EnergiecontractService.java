@@ -8,6 +8,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import nl.homeserver.cache.CacheService;
 public class EnergiecontractService {
 
     public static final long SINT_JUTTEMIS = 7258114800000L;
+
+    private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
 
     private final EnergiecontractRepository energiecontractRepository;
     private final CacheService cacheService;
@@ -78,6 +81,7 @@ public class EnergiecontractService {
         }
     }
 
+    @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     public List<Energiecontract> findAllInInPeriod(DateTimePeriod period) {
         long periodeVan = toMillisSinceEpoch(period.getFromDateTime());
         long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
