@@ -34,7 +34,9 @@ public class SlimmeMeterController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@RequestBody Dsmr42Reading dsmr42Reading) {
-        LOGGER.info(ReflectionToStringBuilder.toString(dsmr42Reading, new RecursiveToStringStyle()));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(ReflectionToStringBuilder.toString(dsmr42Reading, new RecursiveToStringStyle()));
+        }
 
         saveMeterstand(dsmr42Reading);
         saveOpgenomenVermogen(dsmr42Reading);

@@ -78,8 +78,8 @@ public class KlimaatDummyDataGeneratorService extends AbstractDataGeneratorServi
             klimaat.setDatumtijd(LocalDateTime.now());
             klimaat.setKlimaatSensor(klimaatSensorRepository.findAll().get(0));
             klimaatService.add(klimaat);
-        } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
-            LOG.error("Caught exception in ScheduledExecutorService.", t);
+        } catch (Exception e) {
+            LOG.error("Caught exception in ScheduledExecutorService.", e);
         }
     }
 

@@ -148,8 +148,10 @@ public class OpgenomenVermogenService {
 
         opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
 
-        opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-        opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+        if (LOGGER.isInfoEnabled()) {
+            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+            opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+        }
 
         if (isNotEmpty(opgenomenVermogensInOneHour)) {
             opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensInOneHour);

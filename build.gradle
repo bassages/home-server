@@ -3,6 +3,7 @@ plugins {
     id 'com.moowork.gulp' version '1.2.0'
     id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'jacoco'
     id "org.sonarqube" version "2.6.1"
 }
 

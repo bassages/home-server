@@ -89,8 +89,8 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
             dsmr42Reading.setStroomOpgenomenVermogenInWatt(getDummyVermogenInWatt());
             slimmeMeterController.save(dsmr42Reading);
 
-        } catch (Throwable t) {  // Catch Throwable rather than Exception (a subclass).
-            logger.error("Caught exception in ScheduledExecutorService.", t);
+        } catch (Exception e) {
+            logger.error("Caught exception in ScheduledExecutorService.", e);
         }
     }
 
