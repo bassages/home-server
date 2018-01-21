@@ -56,6 +56,8 @@ public abstract class AbstractDataGeneratorService {
             case Calendar.NOVEMBER:
                 result = new BigDecimal("0.001d");
                 break;
+             default:
+                 break;
         }
         return result;
     }

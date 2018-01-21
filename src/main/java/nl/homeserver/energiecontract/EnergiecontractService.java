@@ -2,12 +2,12 @@ package nl.homeserver.energiecontract;
 
 import static java.time.LocalDateTime.now;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -64,17 +64,15 @@ public class EnergiecontractService {
             Energiecontract currentEnergiecontract = energiecontractList.get(i);
             if (previousEnergiecontract != null) {
                 long totEnMet = currentEnergiecontract.getVan() - 1;
-                if (ObjectUtils.notEqual(previousEnergiecontract.getTotEnMet(), totEnMet)) {
+                if (notEqual(previousEnergiecontract.getTotEnMet(), totEnMet)) {
                     previousEnergiecontract.setTotEnMet(totEnMet);
                     energiecontractRepository.save(previousEnergiecontract);
                 }
             }
 
-            if (i == (energiecontractList.size() - 1)) {
-                if (ObjectUtils.notEqual(currentEnergiecontract.getTotEnMet(), SINT_JUTTEMIS)) {
-                    currentEnergiecontract.setTotEnMet(SINT_JUTTEMIS);
-                    energiecontractRepository.save(currentEnergiecontract);
-                }
+            if (i == (energiecontractList.size() - 1) && notEqual(currentEnergiecontract.getTotEnMet(), SINT_JUTTEMIS)) {
+                currentEnergiecontract.setTotEnMet(SINT_JUTTEMIS);
+                energiecontractRepository.save(currentEnergiecontract);
             }
             previousEnergiecontract = currentEnergiecontract;
         }

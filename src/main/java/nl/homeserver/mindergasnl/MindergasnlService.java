@@ -94,7 +94,7 @@ public class MindergasnlService {
         HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
 
         String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", day.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
-        LOGGER.info("Upload to mindergas.nl: " + message);
+        LOGGER.info("Upload to mindergas.nl: {}", message);
 
         request.addHeader(HEADER_NAME_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
         request.addHeader(HEADER_NAME_AUTH_TOKEN, authenticatietoken);
@@ -107,7 +107,7 @@ public class MindergasnlService {
     private void logErrorWhenNoSuccess(CloseableHttpResponse response) {
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 201) {
-            LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: " + statusCode);
+            LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: {}", statusCode);
         }
     }
 }

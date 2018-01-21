@@ -53,8 +53,8 @@ public class DevController {
             klimaat.setDatumtijd(loopDateTime);
             klimaat.setKlimaatSensor(klimaatSensor);
 
-            long dayOfMonth = Long.valueOf(new SimpleDateFormat("d").format(loopDateTime));
-            long hourOfDay = Long.valueOf(new SimpleDateFormat("HH").format(loopDateTime));
+            long dayOfMonth = Long.parseLong(new SimpleDateFormat("d").format(loopDateTime));
+            long hourOfDay = Long.parseLong(new SimpleDateFormat("HH").format(loopDateTime));
 
             klimaat.setTemperatuur(new BigDecimal(dayOfMonth + "." + hourOfDay));
             klimaat.setLuchtvochtigheid(new BigDecimal(((dayOfMonth + 45) + "." + hourOfDay)));

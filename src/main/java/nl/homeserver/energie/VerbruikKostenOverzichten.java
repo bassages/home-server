@@ -9,20 +9,20 @@ import java.util.function.Function;
 
 public class VerbruikKostenOverzichten {
 
-    private final Collection<VerbruikKostenOverzicht> verbruikKostenOverzichten;
+    private final Collection<VerbruikKostenOverzicht> all;
 
-    public VerbruikKostenOverzichten(final Collection<VerbruikKostenOverzicht> verbruikKostenOverzichten) {
-        this.verbruikKostenOverzichten = verbruikKostenOverzichten;
+    public VerbruikKostenOverzichten(final Collection<VerbruikKostenOverzicht> all) {
+        this.all = all;
     }
 
     public VerbruikKostenOverzicht averageToSingle() {
         VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
-        verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
-        verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
-        verbruikKostenOverzicht.setGasVerbruik(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasVerbruik, 3));
-        verbruikKostenOverzicht.setStroomKostenDal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenDal, 2));
-        verbruikKostenOverzicht.setStroomKostenNormaal(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
-        verbruikKostenOverzicht.setGasKosten(getAverage(verbruikKostenOverzichten, VerbruikKostenOverzicht::getGasKosten, 2));
+        verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
+        verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
+        verbruikKostenOverzicht.setGasVerbruik(getAverage(all, VerbruikKostenOverzicht::getGasVerbruik, 3));
+        verbruikKostenOverzicht.setStroomKostenDal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenDal, 2));
+        verbruikKostenOverzicht.setStroomKostenNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
+        verbruikKostenOverzicht.setGasKosten(getAverage(all, VerbruikKostenOverzicht::getGasKosten, 2));
         return verbruikKostenOverzicht;
     }
 
@@ -37,5 +37,4 @@ public class VerbruikKostenOverzichten {
 
         return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
     }
-
 }
