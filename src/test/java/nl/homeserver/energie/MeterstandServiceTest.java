@@ -1,6 +1,7 @@
 package nl.homeserver.energie;
 
 import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -217,6 +218,16 @@ public class MeterstandServiceTest {
         assertThat(meterstandPerDag).hasSize(1);
         assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(tomorrow);
         assertThat(meterstandPerDag.get(0).getMeterstand()).isNull();
+    }
+
+    @Test
+    public void whenGetPotentiallyCachedMeestRecenteMeterstandOpDagThenDelegatedToRepository() {
+        LocalDate day = LocalDate.of(2016, MARCH, 12);
+
+        Meterstand meterstand = mock(Meterstand.class);
+        when(meterstandRepository.getMostRecentInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusNanos(1))).thenReturn(meterstand);
+
+        assertThat(meterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day)).isSameAs(meterstand);
     }
 
     private void setCachedMeterstandService(MeterstandService cachedMeterstandService) {
