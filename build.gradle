@@ -12,6 +12,9 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.junit.reportsPath", "build/test-results"
         property "sonar.jacoco.reportPath", "build/test-reports/jacoco.exec"
+
+        // Exclude development utils
+        property "sonar.coverage.exclusions", "**/dev/**/*.java"
     }
 }
 
