@@ -8,7 +8,7 @@
     OpgenomenVermogenGrafiekController.$inject = ['$scope', '$http', '$log', '$location', 'LoadingIndicatorService', 'EnergieHistorieService', 'ErrorMessageService'];
 
     function OpgenomenVermogenGrafiekController($scope, $http, $log, $location, LoadingIndicatorService, EnergieHistorieService, ErrorMessageService) {
-        var THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
+        var THREE_MINUTES_IN_SECONDS = 3 * 60;
 
         $scope.isMaxSelected = isMaxSelected;
         $scope.navigate = navigate;
@@ -188,7 +188,7 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoChart([]);
 
-            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.toString('yyyy-MM-dd') + '/' + getTo().toString('yyyy-MM-dd') + '?subPeriodLength=' + THREE_MINUTES_IN_MILLISECONDS;
+            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.toString('yyyy-MM-dd') + '/' + getTo().toString('yyyy-MM-dd') + '?subPeriodLength=' + THREE_MINUTES_IN_SECONDS;
 
             $http({method: 'GET', url: dataUrl})
                 .then(

@@ -4,6 +4,7 @@ import static java.time.LocalDate.now;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -37,13 +38,15 @@ public class OpgenomenVermogenController {
     @GetMapping(path = "historie/{from}/{to}")
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(@PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                                @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
-                                                               @RequestParam("subPeriodLength") long subPeriodLength) {
+                                                               @RequestParam("subPeriodLength") long subPeriodLengthInSeconds) {
+
+        Duration subPeriodDuration = Duration.ofSeconds(subPeriodLengthInSeconds);
         DatePeriod period = aPeriodWithToDate(from, to);
 
         if (to.isBefore(now(clock))) {
-            return opgenomenVermogenService.getPotentiallyCachedHistory(period, subPeriodLength);
+            return opgenomenVermogenService.getPotentiallyCachedHistory(period, subPeriodDuration);
         } else {
-            return opgenomenVermogenService.getHistory(period, subPeriodLength);
+            return opgenomenVermogenService.getHistory(period, subPeriodDuration);
         }
     }
 }

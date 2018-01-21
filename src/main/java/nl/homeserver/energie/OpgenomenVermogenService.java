@@ -1,20 +1,22 @@
 package nl.homeserver.energie;
 
+import static java.time.LocalDateTime.from;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -74,30 +76,31 @@ public class OpgenomenVermogenService {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY)
-    public List<OpgenomenVermogen> getPotentiallyCachedHistory(DatePeriod period, long subPeriodLength) {
-        return getHistory(period, subPeriodLength);
+    public List<OpgenomenVermogen> getPotentiallyCachedHistory(DatePeriod period, Duration subPeriodDuration) {
+        return getHistory(period, subPeriodDuration);
     }
 
-    public List<OpgenomenVermogen> getHistory(DatePeriod period, long subPeriodLength) {
+    public List<OpgenomenVermogen> getHistory(DatePeriod period, Duration subPeriodDuration) {
         DateTimePeriod dateTimePeriod = period.toDateTimePeriod();
 
         List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(
                 dateTimePeriod.getFromDateTime(), dateTimePeriod.getToDateTime());
 
-        long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLength;
+        long subPeriodLengthInMillis = subPeriodDuration.getSeconds() * 1000;
+        long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLengthInMillis;
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod)
                          .boxed()
-                         .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getStartDateTime(), periodNumber, subPeriodLength))
+                         .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getStartDateTime(), periodNumber, subPeriodDuration))
                          .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
                          .collect(toList());
     }
 
-    private DateTimePeriod toSubPeriod(LocalDateTime from, long periodNumber, long subPeriodLengthInMillis) {
-        long subPeriodLengthInNanos = TimeUnit.MILLISECONDS.toNanos(subPeriodLengthInMillis);
-        LocalDateTime subFrom = from.plusNanos(periodNumber * subPeriodLengthInNanos);
-        LocalDateTime subTo = subFrom.plusNanos(subPeriodLengthInNanos);
-        return DateTimePeriod.aPeriodWithToDateTime(subFrom, subTo);
+    private DateTimePeriod toSubPeriod(LocalDateTime from, long periodNumber, Duration subPeriodDuration) {
+        Duration durationUntilStartOfSubPeriod = subPeriodDuration.multipliedBy(periodNumber);
+        LocalDateTime subFrom = from(durationUntilStartOfSubPeriod.addTo(from));
+        LocalDateTime subTo = from(subPeriodDuration.addTo(subFrom));
+        return aPeriodWithToDateTime(subFrom, subTo);
     }
 
     private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, DateTimePeriod period) {

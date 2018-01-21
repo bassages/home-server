@@ -1,5 +1,7 @@
 package nl.homeserver.energie;
 
+import static java.lang.String.format;
+
 import java.util.EnumSet;
 
 public enum StroomTariefIndicator {
@@ -19,9 +21,9 @@ public enum StroomTariefIndicator {
 
     public static StroomTariefIndicator byId(short id) {
         return EnumSet.allOf(StroomTariefIndicator.class)
-                .stream()
-                .filter(e -> e.id == id)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("StroomTariefIndicator with id %s does not exist", id)));
+                      .stream()
+                      .filter(stroomTariefIndicator -> stroomTariefIndicator.id == id)
+                      .findFirst()
+                      .orElseThrow(() -> new RuntimeException(format("StroomTariefIndicator with id %s does not exist", id)));
     }
 }
