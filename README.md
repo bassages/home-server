@@ -32,7 +32,7 @@
 ## Meterstanden per dag
 ![Alt text](documentation/screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
-## Temperatuur
+## Temperatuur / Luchtvochtigheid
 ![Alt text](documentation/screenshots/temperatuur.png?raw=true "Temperatuur")
 
 ## Kosten per maand in jaar
