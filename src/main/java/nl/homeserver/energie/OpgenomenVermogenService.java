@@ -51,6 +51,7 @@ public class OpgenomenVermogenService {
 
     public OpgenomenVermogenService(OpgenomenVermogenRepository opgenomenVermogenRepository, CacheService cacheService, Clock clock,
             SimpMessagingTemplate messagingTemplate) {
+
         this.cacheService = cacheService;
         this.opgenomenVermogenRepository = opgenomenVermogenRepository;
         this.clock = clock;

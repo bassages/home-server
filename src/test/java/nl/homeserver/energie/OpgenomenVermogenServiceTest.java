@@ -8,6 +8,7 @@ import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -22,6 +23,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -159,5 +161,45 @@ public class OpgenomenVermogenServiceTest {
                            .containsExactly(tuple(day.atTime(0, 0), 401),
                                             tuple(day.atTime(12, 0), 601),
                                             tuple(day.plusDays(1).atTime(0, 0), 0));
+    }
+
+    @Test
+    public void whenGetMostRecentThenDelegatedToRepository() {
+        OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
+
+        when(opgenomenVermogenRepository.getMeestRecente()).thenReturn(mostRecent);
+
+        assertThat(opgenomenVermogenService.getMostRecent()).isSameAs(mostRecent);
+    }
+
+    @Test
+    public void whenSaveThenSavedInRepositoryAndMessageSendToTopic() {
+        OpgenomenVermogen opgenomenVermogen = mock(OpgenomenVermogen.class);
+
+        when(opgenomenVermogenRepository.save(any(OpgenomenVermogen.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
+        opgenomenVermogenService.save(opgenomenVermogen);
+
+        verify(messagingTemplate).convertAndSend(OpgenomenVermogenService.TOPIC, opgenomenVermogen);
+    }
+
+    @Test
+    public void whenGetPotentiallyCachedHistoryThenReturned() {
+        LocalDate day = LocalDate.of(2018, JANUARY, 6);
+        DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay()))
+                .thenReturn(emptyList());
+
+        List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
+
+        assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
+                .containsExactly(tuple(day.atTime(0, 0), 0),
+                                 tuple(day.atTime(4, 0), 0),
+                                 tuple(day.atTime(8, 0), 0),
+                                 tuple(day.atTime(12, 0), 0),
+                                 tuple(day.atTime(16, 0), 0),
+                                 tuple(day.atTime(20, 0), 0),
+                                 tuple(day.plusDays(1).atTime(0, 0), 0));
+
     }
 }
