@@ -7,8 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class AbstractDataGeneratorService {
 
     public static final int SLIMME_METER_UPDATE_INTERVAL_IN_SECONDS = 10;
-    public static final BigDecimal INITIAL_GENERATOR_VALUE_STROOM = new BigDecimal(25000d);
-    public static final BigDecimal INITIAL_GENERATOR_VALUE_GAS = new BigDecimal(15000d);
+    public static final BigDecimal INITIAL_GENERATOR_VALUE_STROOM = new BigDecimal("25000");
+    public static final BigDecimal INITIAL_GENERATOR_VALUE_GAS = new BigDecimal("15000");
 
     protected int getDummyVermogenInWatt() {
         int min = ThreadLocalRandom.current().nextInt(50, 50 + 1);
