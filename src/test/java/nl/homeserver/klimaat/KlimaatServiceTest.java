@@ -1,6 +1,8 @@
 package nl.homeserver.klimaat;
 
 import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
 import static java.time.Month.SEPTEMBER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -10,6 +12,7 @@ import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -23,6 +26,7 @@ import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -334,6 +338,66 @@ public class KlimaatServiceTest {
         assertThat(mostRecent.getDatumtijd()).isEqualTo(klimaat2.getDatumtijd());
         assertThat(mostRecent.getTemperatuur()).isEqualTo(klimaat2.getTemperatuur());
         assertThat(mostRecent.getLuchtvochtigheid()).isEqualTo(klimaat2.getLuchtvochtigheid());
+    }
+
+    @Test
+    public void whenGetAverageHumidityPerMonthInYearsThenAveragesReturned() {
+        String sensorCode = "MasterBedroom";
+        int[] years = {2017, 2018};
+
+        BigDecimal averageHumidityInJune2017 = new BigDecimal("22.18");
+        when(klimaatRepository.getAverageLuchtvochtigheid(sensorCode, LocalDate.of(2017, JUNE, 1).atStartOfDay(), LocalDate.of(2017, JULY, 1).atStartOfDay()))
+                              .thenReturn(averageHumidityInJune2017);
+
+        List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(sensorCode, SensorType.LUCHTVOCHTIGHEID, years);
+
+        assertThat(averagePerMonthInYears).hasSize(2);
+
+        List<GemiddeldeKlimaatPerMaand> averagesIn2017 = averagePerMonthInYears.get(0);
+        assertThat(averagesIn2017).hasSize(12);
+        for (Month month : Month.values()) {
+            assertThat(averagesIn2017.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2017, month, 1));
+        }
+        assertThat(averagesIn2017.get(JUNE.ordinal()).getGemiddelde()).isEqualTo(averageHumidityInJune2017);
+
+        List<GemiddeldeKlimaatPerMaand> averagesIn2018 = averagePerMonthInYears.get(1);
+        assertThat(averagesIn2018).hasSize(12);
+        for (Month month : Month.values()) {
+            assertThat(averagesIn2018.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2018, month, 1));
+        }
+    }
+
+    @Test
+    public void whenGetAverageTemperaturePerMonthInYearsThenAveragesReturned() {
+        String sensorCode = "MasterBedroom";
+        int[] years = {2016};
+
+        BigDecimal averageTemperatureInJune2016 = new BigDecimal("22.18");
+        when(klimaatRepository.getAverageTemperatuur(sensorCode, LocalDate.of(2016, JUNE, 1).atStartOfDay(), LocalDate.of(2016, JULY, 1).atStartOfDay()))
+                              .thenReturn(averageTemperatureInJune2016);
+
+        List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(sensorCode, SensorType.TEMPERATUUR, years);
+
+        assertThat(averagePerMonthInYears).hasSize(1);
+
+        List<GemiddeldeKlimaatPerMaand> averagesIn2016 = averagePerMonthInYears.get(0);
+        assertThat(averagesIn2016).hasSize(12);
+        for (Month month : Month.values()) {
+            assertThat(averagesIn2016.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2016, month, 1));
+        }
+
+        assertThat(averagesIn2016.get(JUNE.ordinal()).getGemiddelde()).isEqualTo(averageTemperatureInJune2016);
+    }
+
+    @Test
+    public void givenInvalidSensortypewhenGetAverageTemperaturePerMonthInYearsThenExceptionThrown() {
+        int[] someYears = {2015};
+
+        SensorType invalidSensorType = null;
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> klimaatService.getAveragePerMonthInYears("SomeSomeSensor", invalidSensorType, someYears))
+            .withMessage("Unexpected SensorType [null]");
     }
 
     private KlimaatSensor createKlimaatSensor(String sensorCode) {

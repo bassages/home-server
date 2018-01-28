@@ -151,13 +151,12 @@ public class KlimaatService {
     }
 
     private BigDecimal getAverage(String sensorCode, SensorType sensorType, DatePeriod period) {
-        switch (sensorType) {
-            case TEMPERATUUR:
-                return klimaatRepository.getAverageTemperatuur(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
-            case LUCHTVOCHTIGHEID:
-                return klimaatRepository.getAverageLuchtvochtigheid(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
-            default:
-                return null;
+        if (sensorType == SensorType.TEMPERATUUR) {
+            return klimaatRepository.getAverageTemperatuur(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
+        } else if (sensorType == SensorType.LUCHTVOCHTIGHEID) {
+            return klimaatRepository.getAverageLuchtvochtigheid(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
+        } else {
+            throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
         }
     }
 
