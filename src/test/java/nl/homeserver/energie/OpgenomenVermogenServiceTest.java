@@ -99,7 +99,7 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void shouldKeepHighestWatt() {
+    public void givenMultipleOpgenomenVermogenInOneMinuteWhenCleanupThenHighestWattRetained() {
         LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(3).build();
@@ -116,7 +116,7 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void shouldCleanUpPerMinuteAndDeletePerHour() {
+    public void whenCleanUpThenCleanUpPerMinuteAndDeletePerHour() {
         LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 0)).build();
@@ -128,7 +128,8 @@ public class OpgenomenVermogenServiceTest {
         OpgenomenVermogen opgenomenVermogen5 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 0)).build();
         OpgenomenVermogen opgenomenVermogen6 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 10)).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
 
         opgenomenVermogenService.cleanup(date);
 

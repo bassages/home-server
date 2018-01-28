@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.time.Clock;
@@ -146,15 +145,19 @@ public class OpgenomenVermogenService {
                                                                                      .map(this::getOpgenomenVermogenToKeepInMinute)
                                                                                      .collect(toList());
 
-        opgenomenVermogensInOneHour.removeAll(opgenomenVermogensToKeep);
+        List<OpgenomenVermogen> opgenomenVermogensToDelete = opgenomenVermogensInOneHour.stream()
+                                                                                        .filter(opgenomenVermogen -> !opgenomenVermogensToKeep.contains(opgenomenVermogen))
+                                                                                        .collect(toList());
 
+        log(opgenomenVermogensToDelete, opgenomenVermogensToKeep);
+
+        opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensToDelete);
+    }
+
+    private void log(List<OpgenomenVermogen> opgenomenVermogensToDelete, List<OpgenomenVermogen> opgenomenVermogensToKeep) {
         if (LOGGER.isInfoEnabled()) {
             opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-            opgenomenVermogensInOneHour.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-        }
-
-        if (isNotEmpty(opgenomenVermogensInOneHour)) {
-            opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensInOneHour);
+            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
         }
     }
 

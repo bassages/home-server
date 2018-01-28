@@ -3,7 +3,6 @@ package nl.homeserver.energie;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.time.Clock;
@@ -92,23 +91,19 @@ public class MeterstandService {
         meterstandenInOneHour.sort(comparing(Meterstand::getDateTime));
 
         if (meterstandenInOneHour.size() >= 2) {
-
             Meterstand firstMeterstandInHour = meterstandenInOneHour.get(0);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Keep first: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
-            }
             meterstandenInOneHour.remove(firstMeterstandInHour);
 
             Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Keep last: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
-            }
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
-            if (isNotEmpty(meterstandenInOneHour)) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Keep first in hour: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+                LOGGER.info("Keep last in hour: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
                 meterstandenInOneHour.forEach(meterstand -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
-                meterstandRepository.deleteInBatch(meterstandenInOneHour);
             }
+
+            meterstandRepository.deleteInBatch(meterstandenInOneHour);
         }
     }
 
