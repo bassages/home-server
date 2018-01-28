@@ -82,7 +82,6 @@ public class KlimaatServiceTest {
         assertThat(klimaatService.getAllKlimaatSensors()).isSameAs(klimaatSensors);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
@@ -119,13 +118,12 @@ public class KlimaatServiceTest {
         assertThat(realtimeKlimaat.getTemperatuurTrend()).isEqualTo(Trend.DOWN);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenAddedToRecentlyReceivedKlimaatsPerSensorCode() {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
         KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
 
@@ -159,7 +157,7 @@ public class KlimaatServiceTest {
         recentlyReceivedKlimaats.add(oldKlimaat);
         recentlyReceivedKlimaats.add(recentKlimaat);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensor.getCode(), recentlyReceivedKlimaats);
 
         Klimaat klimaatToAdd = aKlimaat().withKlimaatSensor(klimaatSensor)
@@ -172,7 +170,6 @@ public class KlimaatServiceTest {
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensor.getCode())).containsOnly(klimaatToAdd, recentKlimaat);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void givenKlimaatOfUnUnknowSensorWhenSaveThenKlimaatSensorCreated() {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
@@ -185,7 +182,7 @@ public class KlimaatServiceTest {
                                           .withDatumtijd(currentDateTime)
                                           .build();
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorCode, singletonList(klimaatToSave));
 
         when(klimaatSensorRepository.findFirstByCode(klimaatSensorCode)).thenReturn(Optional.empty());
@@ -198,13 +195,12 @@ public class KlimaatServiceTest {
         assertThat(createdKlimaatSensor.getOmschrijving()).isNull();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void whenSaveThenOneKlimaatPerSensorSavedWithAverageSensorValues() {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 2);
         timeTravelTo(clock, currentDateTime);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
         KlimaatSensor klimaatSensorBasement = createKlimaatSensor("Basement");
 
@@ -308,9 +304,46 @@ public class KlimaatServiceTest {
         assertThat(lowest).containsExactly(klimaat);
     }
 
+    @Test
+    public void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
+        String sensorCode = "Barn";
+
+        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(sensorCode);
+
+        assertThat(mostRecent).isNull();
+    }
+
+    @Test
+    public void givenMultipleRecentlyReceivedKLimaatWhenGetMostRecentThenMostRecentIsReturned() {
+        LocalDate date = LocalDate.of(2016, SEPTEMBER, 1);
+        timeTravelTo(clock, date.atStartOfDay());
+
+        String sensorCode = "Kitchen";
+
+        Klimaat klimaat1 = aKlimaat().withDatumtijd(date.atTime(12, 14, 41)).build();
+        Klimaat klimaat2 = aKlimaat().withKlimaatSensor(createKlimaatSensor(sensorCode))
+                                     .withDatumtijd(date.atTime(23, 26, 8))
+                                     .withTemperatuur(new BigDecimal("23.7"))
+                                     .withLuchtvochtigheid(new BigDecimal("45.7"))
+                                     .build();
+        Klimaat klimaat3 = aKlimaat().withDatumtijd(date.atTime(2, 0, 45)).build();
+
+        getRecentlyReceivedKlimaatPerSensorCode().put(sensorCode, asList(klimaat1, klimaat2, klimaat3));
+
+        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(sensorCode);
+        assertThat(mostRecent.getDatumtijd()).isEqualTo(klimaat2.getDatumtijd());
+        assertThat(mostRecent.getTemperatuur()).isEqualTo(klimaat2.getTemperatuur());
+        assertThat(mostRecent.getLuchtvochtigheid()).isEqualTo(klimaat2.getLuchtvochtigheid());
+    }
+
     private KlimaatSensor createKlimaatSensor(String sensorCode) {
         KlimaatSensor klimaatSensorBasement = new KlimaatSensor();
         klimaatSensorBasement.setCode(sensorCode);
         return klimaatSensorBasement;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, List<Klimaat>> getRecentlyReceivedKlimaatPerSensorCode() {
+        return (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
     }
 }

@@ -4,9 +4,9 @@ import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -162,16 +162,13 @@ public class KlimaatService {
     }
 
     public RealtimeKlimaat getMostRecent(String klimaatSensorCode) {
-        List<Klimaat> recentlyReceivedKlimaatForSensor = recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensorCode);
-        return getLast(recentlyReceivedKlimaatForSensor).map(this::mapToRealtimeKlimaat)
-                                                        .orElse(null);
+        List<Klimaat> recentlyReceivedKlimaatForSensor = recentlyReceivedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>());
+        return getMostRecent(recentlyReceivedKlimaatForSensor).map(this::mapToRealtimeKlimaat)
+                                                              .orElse(null);
     }
 
-    private Optional<Klimaat> getLast(List<Klimaat> klimaats) {
-        if (isEmpty(klimaats)) {
-            return Optional.empty();
-        }
-        return Optional.of(klimaats.get(klimaats.size() - 1));
+    private Optional<Klimaat> getMostRecent(List<Klimaat> klimaats) {
+        return klimaats.stream().max(comparing(Klimaat::getDatumtijd));
     }
 
     public void add(Klimaat klimaat) {
