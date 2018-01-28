@@ -156,7 +156,7 @@ public class KlimaatService {
         } else if (sensorType == SensorType.LUCHTVOCHTIGHEID) {
             return klimaatRepository.getAverageLuchtvochtigheid(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
         } else {
-            throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
+            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
         }
     }
 
@@ -217,7 +217,7 @@ public class KlimaatService {
             case LUCHTVOCHTIGHEID:
                 return getHighestHumidity(sensorCode, period, limit);
             default:
-                throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
+                throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
         }
     }
 
@@ -228,8 +228,12 @@ public class KlimaatService {
             case LUCHTVOCHTIGHEID:
                 return getLowestHumidity(sensorCode, period, limit);
             default:
-                throw new IllegalArgumentException(format("Unexpected SensorType [%s]", sensorType));
+                throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
         }
+    }
+
+    private String createUnexpectedSensorTypeErrorMessage(SensorType sensorType) {
+        return format("Unexpected SensorType [%s]", sensorType);
     }
 
     private List<Klimaat> getLowestTemperature(String sensorCode, DatePeriod period, int limit) {
