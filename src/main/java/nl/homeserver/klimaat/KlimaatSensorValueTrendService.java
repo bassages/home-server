@@ -38,7 +38,7 @@ public class KlimaatSensorValueTrendService {
             BigDecimal slopeOfSensorValue = calculateSlopeOfSensorValue(validklimaats, sensorValueGetter);
             return SIGNUM_OF_SLOPE_TO_TREND_MAPPING.get(slopeOfSensorValue.signum());
         }
-        return null;
+        return Trend.UNKNOWN;
     }
 
     private BigDecimal calculateSlopeOfSensorValue(List<Klimaat> klimaats, Function<Klimaat, BigDecimal> sensorValueGetter) {

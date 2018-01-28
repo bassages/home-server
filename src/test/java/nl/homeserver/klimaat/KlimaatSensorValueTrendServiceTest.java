@@ -86,11 +86,11 @@ public class KlimaatSensorValueTrendServiceTest {
                 aKlimaat().withDatumtijd(day.atTime(14, 8, 0)).withTemperatuur(invalidTemperatuur).withKlimaatSensor(klimaatSensor).build()
         );
 
-        assertThat(klimaatSensorValueTrendService.determineValueTrend(klimaats, Klimaat::getTemperatuur)).isNull();
+        assertThat(klimaatSensorValueTrendService.determineValueTrend(klimaats, Klimaat::getTemperatuur)).isEqualTo(Trend.UNKNOWN);
     }
 
     @Test
     public void givenNotEnoughSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
-        assertThat(klimaatSensorValueTrendService.determineValueTrend(emptyList(), Klimaat::getTemperatuur)).isNull();
+        assertThat(klimaatSensorValueTrendService.determineValueTrend(emptyList(), Klimaat::getTemperatuur)).isEqualTo(Trend.UNKNOWN);
     }
 }

@@ -61,6 +61,8 @@ public class KlimaatServiceTest {
     private ArgumentCaptor<RealtimeKlimaat> realtimeKlimaatCaptor;
     @Captor
     private ArgumentCaptor<Klimaat> klimaatCaptor;
+    @Captor
+    private ArgumentCaptor<KlimaatSensor> klimaatSensorCaptor;
 
     @Test
     public void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
@@ -168,6 +170,32 @@ public class KlimaatServiceTest {
 
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode).containsKeys(klimaatSensor.getCode());
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensor.getCode())).containsOnly(klimaatToAdd, recentKlimaat);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void givenKlimaatOfUnUnknowSensorWhenSaveThenKlimaatSensorCreated() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        String klimaatSensorCode = "This one is unknown";
+        KlimaatSensor klimaatSensor = createKlimaatSensor(klimaatSensorCode);
+
+        Klimaat klimaatToSave = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                          .withDatumtijd(currentDateTime)
+                                          .build();
+
+        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = (Map<String, List<Klimaat>>) getField(klimaatService, "recentlyReceivedKlimaatsPerKlimaatSensorCode");
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorCode, singletonList(klimaatToSave));
+
+        when(klimaatSensorRepository.findFirstByCode(klimaatSensorCode)).thenReturn(Optional.empty());
+
+        klimaatService.save();
+
+        verify(klimaatSensorRepository).save(klimaatSensorCaptor.capture());
+        KlimaatSensor createdKlimaatSensor = klimaatSensorCaptor.getValue();
+        assertThat(createdKlimaatSensor.getCode()).isEqualTo(klimaatSensorCode);
+        assertThat(createdKlimaatSensor.getOmschrijving()).isNull();
     }
 
     @SuppressWarnings("unchecked")
