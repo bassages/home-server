@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Matchers.any;
@@ -20,12 +21,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -36,6 +37,7 @@ import nl.homeserver.cache.CacheService;
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenServiceTest {
 
+    @InjectMocks
     private OpgenomenVermogenService opgenomenVermogenService;
 
     @Mock
@@ -44,23 +46,18 @@ public class OpgenomenVermogenServiceTest {
     private CacheService cacheService;
     @Mock
     private SimpMessagingTemplate messagingTemplate;
+    @Mock
+    private Clock clock;
 
     @Captor
     private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
 
-    @Before
-    public void setup() {
-        Clock clock = Clock.systemDefaultZone();
-        createOpgenomenVermogenService(clock);
-    }
-
-    private void createOpgenomenVermogenService(Clock clock) {
-        opgenomenVermogenService = new OpgenomenVermogenService(opgenomenVermogenRepository, cacheService, clock, messagingTemplate);
-    }
-
     @Test
     public void shouldClearCacheOnDailyCleanup() {
+        timeTravelTo(clock, LocalDate.of(2017, JANUARY, 12).atStartOfDay());
+
         opgenomenVermogenService.dailyCleanup();
+
         verify(cacheService).clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
 
@@ -201,6 +198,5 @@ public class OpgenomenVermogenServiceTest {
                                  tuple(day.atTime(16, 0), 0),
                                  tuple(day.atTime(20, 0), 0),
                                  tuple(day.plusDays(1).atTime(0, 0), 0));
-
     }
 }

@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -42,6 +44,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import nl.homeserver.DatePeriod;
 import nl.homeserver.Trend;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,6 +71,11 @@ public class KlimaatServiceTest {
     @Captor
     private ArgumentCaptor<KlimaatSensor> klimaatSensorCaptor;
 
+    @Before
+    public void setup() {
+        setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", klimaatService);
+    }
+
     @Test
     public void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
         String sensorCode = "MasterBedroom";
@@ -86,6 +94,7 @@ public class KlimaatServiceTest {
         assertThat(klimaatService.getAllKlimaatSensors()).isSameAs(klimaatSensors);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {
         LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
@@ -398,6 +407,53 @@ public class KlimaatServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> klimaatService.getAveragePerMonthInYears("SomeSomeSensor", invalidSensorType, someYears))
             .withMessage("Unexpected SensorType [null]");
+    }
+
+    @Test
+    public void whenGetInPeriodBeforeCurrentDateTimeThenRetrievedFromCache() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        KlimaatService cachedProxy = mock(KlimaatService.class);
+        setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", cachedProxy);
+
+        String klimaatSensorCode = "someKlimaatSensor";
+        DatePeriod period = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+
+        List<Klimaat> cachedKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(cachedProxy.getPotentiallyCachedAllInPeriod(eq(klimaatSensorCode), eq(period))).thenReturn(cachedKlimaats);
+
+        assertThat(klimaatService.getInPeriod(klimaatSensorCode, period)).isSameAs(cachedKlimaats);
+    }
+
+    @Test
+    public void whenGetInPeriodIncludingCurrentDateThenRetrievedFromRepository() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        String klimaatSensorCode = "someKlimaatSensor";
+        DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
+
+        List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
+                              .thenReturn(klimaatsFromRepository);
+
+        assertThat(klimaatService.getInPeriod(klimaatSensorCode, period)).isSameAs(klimaatsFromRepository);
+    }
+
+    @Test
+    public void whenGetPotentiallyCachedAllInPeriodThenRetrievedFromRepository() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        String klimaatSensorCode = "someKlimaatSensor";
+        DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
+
+        List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
+                .thenReturn(klimaatsFromRepository);
+
+        assertThat(klimaatService.getPotentiallyCachedAllInPeriod(klimaatSensorCode, period)).isSameAs(klimaatsFromRepository);
     }
 
     private KlimaatSensor createKlimaatSensor(String sensorCode) {
