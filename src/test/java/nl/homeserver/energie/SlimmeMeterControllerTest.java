@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collections;
-import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +45,6 @@ public class SlimmeMeterControllerTest {
         dsmr42Reading.setStroomTarief1(new BigDecimal("352.907511"));
         dsmr42Reading.setStroomTarief2(new BigDecimal("2341.234345"));
         dsmr42Reading.setStroomOpgenomenVermogenInWatt(424);
-
-        LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
-        langeStroomStoring.setDatumtijdEinde(new Date());
-        langeStroomStoring.setDuurVanStoringInSeconden(120L);
-        dsmr42Reading.setLangeStroomStoringen(Collections.singletonList(langeStroomStoring));
 
         slimmeMeterController.save(dsmr42Reading);
 
