@@ -15,15 +15,15 @@ public class MindergasnlSettings {
 
     @Id
     @GeneratedValue(strategy = AUTO)
-    @Getter
-    @Setter
     private long id;
 
     @Column(nullable = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean automatischUploaden;
 
     @Column
-    @Getter @Setter
+    @Getter
+    @Setter
     private String authenticatietoken;
 }
