@@ -8,6 +8,10 @@ plugins {
     id 'net.ltgt.apt' version '0.13'
 }
 
+jacoco {
+    toolVersion = '0.8.0'
+}
+
 sonarqube {
     properties {
         property "sonar.host.url", "https://sonarcloud.io"
