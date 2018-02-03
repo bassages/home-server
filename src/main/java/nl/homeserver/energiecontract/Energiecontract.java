@@ -23,31 +23,36 @@ public class Energiecontract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter @Setter
     private long id;
 
     @Column(nullable = false, unique = true)
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long van;
 
     @JsonIgnore
     @Column(nullable = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long totEnMet;
 
     @Column(precision = 7, scale = 6, nullable = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal stroomPerKwhNormaalTarief;
 
     @Column(precision = 7, scale = 6)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal stroomPerKwhDalTarief;
 
     @Column(precision = 7, scale = 6)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal gasPerKuub;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String leverancier;
 
     public BigDecimal getStroomKosten(StroomTariefIndicator stroomTariefIndicator) {
