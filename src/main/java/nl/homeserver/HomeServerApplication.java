@@ -24,18 +24,18 @@ public class HomeServerApplication {
     }
 
     @Bean
-    public Executor taskExecutor() {
+    public Executor getTaskExecutor() {
         return new SimpleAsyncTaskExecutor();
     }
 
     @Bean
-    public Clock clock() {
+    public Clock getClock() {
         return Clock.systemDefaultZone();
     }
 
     @Bean
     @Scope(value = SCOPE_PROTOTYPE)
-    public HttpClientBuilder httpClientBuilder() {
+    public HttpClientBuilder getHttpClientBuilder() {
         return HttpClientBuilder.create();
     }
 }
