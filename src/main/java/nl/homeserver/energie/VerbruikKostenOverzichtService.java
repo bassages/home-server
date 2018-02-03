@@ -1,5 +1,6 @@
 package nl.homeserver.energie;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
@@ -59,7 +60,7 @@ public class VerbruikKostenOverzichtService {
 
     private VerbruikKosten getGasVerbruikInPeriode(DateTimePeriod period) {
         LocalDateTime now = LocalDateTime.now(clock);
-        if (period.getFromDateTime().isAfter(now) || period.getFromDateTime().isEqual(now)) {
+        if (period.startOnOrAfter(now)) {
             return VerbruikKosten.UNKNOWN;
         } else if (period.getEndDateTime().isBefore(now)) {
             return verbruikKostenOverzichtServiceProxyWithEnabledCaching.getPotentiallyCachedGasVerbruikInPeriode(period);
@@ -70,7 +71,8 @@ public class VerbruikKostenOverzichtService {
 
     private VerbruikKosten getStroomVerbruikInPeriode(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
         LocalDateTime now = LocalDateTime.now(clock);
-        if (period.getFromDateTime().isAfter(now) || period.getFromDateTime().isEqual(now)) {
+
+        if (period.startOnOrAfter(now)) {
             return VerbruikKosten.UNKNOWN;
         } else if (period.getEndDateTime().isBefore(now)) {
             return verbruikKostenOverzichtServiceProxyWithEnabledCaching.getPotentiallyCachedStroomVerbruikInPeriode(period, stroomTariefIndicator);
@@ -148,13 +150,12 @@ public class VerbruikKostenOverzichtService {
     }
 
     private BigDecimal getStroomVerbruik(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
-        switch (stroomTariefIndicator) {
-            case DAL:
-                return verbruikRepository.getStroomVerbruikDalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
-            case NORMAAL:
-                return verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
-            default:
-                throw new IllegalArgumentException("Unexpected StroomTariefIndicator: " + stroomTariefIndicator.name());
+        if (stroomTariefIndicator == DAL) {
+            return verbruikRepository.getStroomVerbruikDalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
+        } else if (stroomTariefIndicator == NORMAAL) {
+            return verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(period.getFromDateTime(), period.getToDateTime());
+        } else {
+            throw new IllegalArgumentException(format("Unexpected StroomTariefIndicator: [%s]", stroomTariefIndicator));
         }
     }
 

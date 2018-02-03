@@ -66,4 +66,31 @@ public class DateTimePeriodTest {
             LocalDate.of(2015, JANUARY, 5)
         );
     }
+
+    @Test
+    public void givenPeriodThatStartsOnGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+
+        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+
+        assertThat(period.startOnOrAfter(start)).isTrue();
+    }
+
+    @Test
+    public void givenPeriodThatStartsAfterGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+
+        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+
+        assertThat(period.startOnOrAfter(start.minusMinutes(1))).isTrue();
+    }
+
+    @Test
+    public void givenPeriodThatStartsBeforeGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+
+        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+
+        assertThat(period.startOnOrAfter(start.plusMinutes(1))).isFalse();
+    }
 }

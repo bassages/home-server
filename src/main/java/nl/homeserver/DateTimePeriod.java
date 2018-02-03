@@ -42,6 +42,10 @@ public class DateTimePeriod {
         return (localDateTime.isEqual(this.startDateTime) || localDateTime.isAfter(this.startDateTime)) && localDateTime.isBefore(this.toDateTime);
     }
 
+    public boolean startOnOrAfter(LocalDateTime dateTime) {
+        return startDateTime.isEqual(dateTime) || startDateTime.isAfter(dateTime);
+    }
+
     public List<LocalDate> getDays() {
         Validate.notNull(this.toDateTime, "DateTimePeriod must must be ending at some point of time");
 
