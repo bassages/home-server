@@ -14,13 +14,14 @@ public class KlimaatSensor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter @Setter
     private short id;
 
     @Column(unique = true, nullable = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     private String code;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String omschrijving;
 }
