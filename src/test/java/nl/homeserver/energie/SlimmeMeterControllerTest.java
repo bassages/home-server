@@ -56,6 +56,7 @@ public class SlimmeMeterControllerTest {
         dsmr42Reading.setTekstBerichtCodes("HK");
         dsmr42Reading.setMeterIdentificatieGas("MIG");
         dsmr42Reading.setMeterIdentificatieStroom("MIS");
+        dsmr42Reading.setAantalLangeStroomStoringenInAlleFases(431);
 
         LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
         langeStroomStoring.setDatumtijdEinde(new Date());
