@@ -3,21 +3,14 @@ package nl.homeserver.energie;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class VerbruikInJaar {
 
     @Getter
-    private int jaar;
+    private final int jaar;
 
     @JsonUnwrapped
-    private VerbruikKostenOverzicht verbruikKostenOverzicht;
-
-    public VerbruikInJaar(int jaar, VerbruikKostenOverzicht verbruikKostenOverzicht) {
-        this.jaar = jaar;
-        this.verbruikKostenOverzicht = verbruikKostenOverzicht;
-    }
-
-    public VerbruikKostenOverzicht getVerbruikKostenOverzicht() {
-        return verbruikKostenOverzicht;
-    }
+    private final VerbruikKostenOverzicht verbruikKostenOverzicht;
 }

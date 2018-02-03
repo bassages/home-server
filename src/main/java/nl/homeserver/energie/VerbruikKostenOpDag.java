@@ -5,21 +5,15 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class VerbruikKostenOpDag {
 
     @Getter
-    private LocalDate dag;
+    private final LocalDate dag;
 
+    @Getter
     @JsonUnwrapped
-    private VerbruikKostenOverzicht verbruikKostenOverzicht;
-
-    public VerbruikKostenOpDag(LocalDate dag, VerbruikKostenOverzicht verbruikKostenOverzicht) {
-        this.dag = dag;
-        this.verbruikKostenOverzicht = verbruikKostenOverzicht;
-    }
-
-    public VerbruikKostenOverzicht getVerbruikKostenOverzicht() {
-        return verbruikKostenOverzicht;
-    }
+    private final VerbruikKostenOverzicht verbruikKostenOverzicht;
 }

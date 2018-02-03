@@ -3,21 +3,15 @@ package nl.homeserver.energie;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public class VerbruikInUurOpDag extends VerbruikKostenOverzicht {
+@RequiredArgsConstructor
+public class VerbruikInUurOpDag {
 
     @Getter
-    private int uur; // Range: 0 - 23
+    private final int uur; // Range: 0 - 23
 
+    @Getter
     @JsonUnwrapped
-    private VerbruikKostenOverzicht verbruikKostenOverzicht;
-
-    public VerbruikInUurOpDag(int uur, VerbruikKostenOverzicht verbruikKostenOverzicht) {
-        this.uur = uur;
-        this.verbruikKostenOverzicht = verbruikKostenOverzicht;
-    }
-
-    public VerbruikKostenOverzicht getVerbruikKostenOverzicht() {
-        return verbruikKostenOverzicht;
-    }
+    private final VerbruikKostenOverzicht verbruikKostenOverzicht;
 }

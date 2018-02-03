@@ -52,22 +52,4 @@ public class DateTimePeriod {
                      .limit(DAYS.between(from, to))
                      .collect(toList());
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o)
-//            return true;
-//
-//        if (o == null || getClass() != o.getClass())
-//            return false;
-//
-//        DateTimePeriod that = (DateTimePeriod) o;
-//
-//        return new EqualsBuilder().append(startDateTime, that.startDateTime).append(endDateTime, that.endDateTime).isEquals();
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return new HashCodeBuilder(17, 37).append(startDateTime).append(endDateTime).toHashCode();
-//    }
 }

@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
 import nl.homeserver.energie.StroomTariefIndicator;
 
 @Entity
@@ -21,41 +23,32 @@ public class Energiecontract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter @Setter
     private long id;
 
     @Column(nullable = false, unique = true)
+    @Getter @Setter
     private Long van;
 
     @JsonIgnore
     @Column(nullable = false)
+    @Getter @Setter
     private Long totEnMet;
 
     @Column(precision = 7, scale = 6, nullable = false)
+    @Getter @Setter
     private BigDecimal stroomPerKwhNormaalTarief;
 
     @Column(precision = 7, scale = 6)
+    @Getter @Setter
     private BigDecimal stroomPerKwhDalTarief;
 
     @Column(precision = 7, scale = 6)
+    @Getter @Setter
     private BigDecimal gasPerKuub;
 
+    @Getter @Setter
     private String leverancier;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Long getVan() {
-        return van;
-    }
-
-    public void setVan(Long van) {
-        this.van = van;
-    }
 
     public BigDecimal getStroomKosten(StroomTariefIndicator stroomTariefIndicator) {
         switch (stroomTariefIndicator) {
@@ -70,45 +63,5 @@ public class Energiecontract {
             default:
                 return ZERO;
         }
-    }
-
-    public BigDecimal getStroomPerKwhNormaalTarief() {
-        return stroomPerKwhNormaalTarief;
-    }
-
-    public void setStroomPerKwhNormaalTarief(BigDecimal stroomPerKwhNormaalTarief) {
-        this.stroomPerKwhNormaalTarief = stroomPerKwhNormaalTarief;
-    }
-
-    public BigDecimal getStroomPerKwhDalTarief() {
-        return stroomPerKwhDalTarief;
-    }
-
-    public void setStroomPerKwhDalTarief(BigDecimal stroomPerKwhDalTarief) {
-        this.stroomPerKwhDalTarief = stroomPerKwhDalTarief;
-    }
-
-    public BigDecimal getGasPerKuub() {
-        return gasPerKuub;
-    }
-
-    public void setGasPerKuub(BigDecimal gasPerKuub) {
-        this.gasPerKuub = gasPerKuub;
-    }
-
-    public String getLeverancier() {
-        return leverancier;
-    }
-
-    public void setLeverancier(String leverancier) {
-        this.leverancier = leverancier;
-    }
-
-    public Long getTotEnMet() {
-        return totEnMet;
-    }
-
-    public void setTotEnMet(Long totEnMet) {
-        this.totEnMet = totEnMet;
     }
 }
