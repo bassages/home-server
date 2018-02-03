@@ -13,5 +13,5 @@ public class VerbruikInMaandInJaar {
 
     @Getter
     @JsonUnwrapped
-    private VerbruikKostenOverzicht verbruikKostenOverzicht;
+    private final VerbruikKostenOverzicht verbruikKostenOverzicht;
 }

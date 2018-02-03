@@ -11,6 +11,7 @@ public class VerbruikInJaar {
     @Getter
     private final int jaar;
 
+    @Getter
     @JsonUnwrapped
     private final VerbruikKostenOverzicht verbruikKostenOverzicht;
 }
