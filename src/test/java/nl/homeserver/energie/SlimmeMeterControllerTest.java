@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Collections;
+import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,15 +47,30 @@ public class SlimmeMeterControllerTest {
         dsmr42Reading.setStroomTarief1(new BigDecimal("352.907511"));
         dsmr42Reading.setStroomTarief2(new BigDecimal("2341.234345"));
         dsmr42Reading.setStroomOpgenomenVermogenInWatt(424);
+        dsmr42Reading.setAantalSpanningsDippenInFaseL1(100);
+        dsmr42Reading.setAantalSpanningsDippenInFaseL2(200);
+        dsmr42Reading.setAantalStroomStoringenInAlleFases(300);
+        dsmr42Reading.setAantalSpanningsDippenInFaseL1(80);
+        dsmr42Reading.setAantalSpanningsDippenInFaseL2(132);
+        dsmr42Reading.setTekstBericht("Hello Kitty");
+        dsmr42Reading.setTekstBerichtCodes("HK");
+        dsmr42Reading.setMeterIdentificatieGas("MIG");
+        dsmr42Reading.setMeterIdentificatieStroom("MIS");
+
+        LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
+        langeStroomStoring.setDatumtijdEinde(new Date());
+        langeStroomStoring.setDuurVanStoringInSeconden(120L);
+        dsmr42Reading.setLangeStroomStoringen(Collections.singletonList(langeStroomStoring));
 
         slimmeMeterController.save(dsmr42Reading);
 
         verify(meterstandService).save(meterstandCaptor.capture());
-        assertThat(meterstandCaptor.getValue().getDateTime()).isEqualTo(dateTime);
-        assertThat(meterstandCaptor.getValue().getGas()).isEqualTo(new BigDecimal("201.876"));
-        assertThat(meterstandCaptor.getValue().getStroomTariefIndicator()).isEqualTo(stroomTariefIndicator);
-        assertThat(meterstandCaptor.getValue().getStroomTarief1()).isEqualTo(new BigDecimal("352.908"));
-        assertThat(meterstandCaptor.getValue().getStroomTarief2()).isEqualTo(new BigDecimal("2341.234"));
+        Meterstand savedMeterstand = meterstandCaptor.getValue();
+        assertThat(savedMeterstand.getDateTime()).isEqualTo(dateTime);
+        assertThat(savedMeterstand.getGas()).isEqualTo(new BigDecimal("201.876"));
+        assertThat(savedMeterstand.getStroomTariefIndicator()).isEqualTo(stroomTariefIndicator);
+        assertThat(savedMeterstand.getStroomTarief1()).isEqualTo(new BigDecimal("352.908"));
+        assertThat(savedMeterstand.getStroomTarief2()).isEqualTo(new BigDecimal("2341.234"));
 
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(dateTime);

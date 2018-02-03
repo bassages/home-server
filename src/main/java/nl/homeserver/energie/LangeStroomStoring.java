@@ -2,11 +2,13 @@ package nl.homeserver.energie;
 
 import java.util.Date;
 
-import lombok.Data;
+import lombok.Setter;
 
-@Data
 public class LangeStroomStoring {
 
+    @Setter
     private Date datumtijdEinde;
+
+    @Setter
     private Long duurVanStoringInSeconden;
 }
