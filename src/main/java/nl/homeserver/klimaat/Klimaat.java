@@ -16,68 +16,41 @@ import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 public class Klimaat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter @Setter
     private long id;
 
     @Column
+    @Getter
     private LocalDate datum;
 
     @Column(nullable = false, unique = true)
+    @Getter
     private LocalDateTime datumtijd;
 
+    @Getter @Setter
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
 
+    @Getter @Setter
     @Column(precision = 4, scale = 1)
     private BigDecimal luchtvochtigheid;
 
-    @JsonIgnore
     @Fetch(FetchMode.JOIN)
     @ManyToOne(optional = false)
+    @Getter @Setter
+    @JsonIgnore
     private KlimaatSensor klimaatSensor;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public BigDecimal getTemperatuur() {
-        return temperatuur;
-    }
-
-    public void setTemperatuur(BigDecimal temperatuur) {
-        this.temperatuur = temperatuur;
-    }
-
-    public BigDecimal getLuchtvochtigheid() {
-        return luchtvochtigheid;
-    }
-
-    public void setLuchtvochtigheid(BigDecimal luchtvochtigheid) {
-        this.luchtvochtigheid = luchtvochtigheid;
-    }
-
-    public LocalDateTime getDatumtijd() {
-        return datumtijd;
-    }
 
     public void setDatumtijd(LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
         this.datum = datumtijd.toLocalDate();
-    }
-
-    public KlimaatSensor getKlimaatSensor() {
-        return klimaatSensor;
-    }
-
-    public void setKlimaatSensor(KlimaatSensor klimaatSensor) {
-        this.klimaatSensor = klimaatSensor;
     }
 }

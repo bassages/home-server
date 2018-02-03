@@ -1,10 +1,11 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
     id 'com.moowork.gulp' version '1.2.0'
     id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
     id 'jacoco'
     id "org.sonarqube" version "2.6.1"
+    id 'net.ltgt.apt' version '0.10'
 }
 
 sonarqube {
@@ -60,6 +61,9 @@ jar {
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.16.20'
+    apt "org.projectlombok:lombok:1.16.20"
+
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.springframework.boot:spring-boot-starter-web')

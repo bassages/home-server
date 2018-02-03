@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import lombok.Data;
+
+@Data
 public class DateTimePeriod {
 
     private final LocalDateTime startDateTime;
@@ -27,14 +28,6 @@ public class DateTimePeriod {
 
     public LocalDateTime getFromDateTime() {
         return startDateTime;
-    }
-
-    public LocalDateTime getToDateTime() {
-        return toDateTime;
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
     }
 
     public static DateTimePeriod aPeriodWithEndDateTime(LocalDateTime startDate, LocalDateTime endDateTime) {
@@ -60,21 +53,21 @@ public class DateTimePeriod {
                      .collect(toList());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        DateTimePeriod that = (DateTimePeriod) o;
-
-        return new EqualsBuilder().append(startDateTime, that.startDateTime).append(endDateTime, that.endDateTime).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(startDateTime).append(endDateTime).toHashCode();
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o)
+//            return true;
+//
+//        if (o == null || getClass() != o.getClass())
+//            return false;
+//
+//        DateTimePeriod that = (DateTimePeriod) o;
+//
+//        return new EqualsBuilder().append(startDateTime, that.startDateTime).append(endDateTime, that.endDateTime).isEquals();
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return new HashCodeBuilder(17, 37).append(startDateTime).append(endDateTime).toHashCode();
+//    }
 }
