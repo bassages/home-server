@@ -24,28 +24,29 @@ public class Klimaat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter @Setter
     private long id;
 
     @Column
-    @Getter
     private LocalDate datum;
 
     @Column(nullable = false, unique = true)
     @Getter
     private LocalDateTime datumtijd;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     @Column(precision = 4, scale = 1)
     private BigDecimal luchtvochtigheid;
 
     @Fetch(FetchMode.JOIN)
     @ManyToOne(optional = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     @JsonIgnore
     private KlimaatSensor klimaatSensor;
 

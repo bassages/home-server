@@ -8,14 +8,24 @@ import lombok.Setter;
 import nl.homeserver.Trend;
 
 public class RealtimeKlimaat {
-    @Getter @Setter
+
+    @Getter
+    @Setter
     private LocalDateTime datumtijd;
-    @Getter @Setter
+
+    @Getter
+    @Setter
     private BigDecimal temperatuur;
-    @Getter @Setter
+
+    @Getter
+    @Setter
     private BigDecimal luchtvochtigheid;
-    @Getter @Setter
+
+    @Getter
+    @Setter
     private Trend temperatuurTrend;
-    @Getter @Setter
+
+    @Getter
+    @Setter
     private Trend luchtvochtigheidTrend;
 }
