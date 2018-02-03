@@ -137,6 +137,7 @@ public class KlimaatService {
     private KlimaatSensor createKlimaatSensor(String klimaatSensorCode) {
         KlimaatSensor klimaatSensor = new KlimaatSensor();
         klimaatSensor.setCode(klimaatSensorCode);
+        klimaatSensor.setOmschrijving(null);
         return klimaatSensorRepository.save(klimaatSensor);
     }
 
