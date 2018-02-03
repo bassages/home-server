@@ -20,23 +20,26 @@ public class Meterstand {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    @Getter @Setter
     private long id;
 
     @Column(nullable = false)
-    @Getter @Setter
+    @Getter
+    @Setter
     private LocalDateTime dateTime;
 
     @Column(nullable = false, precision = 8, scale = 3)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal stroomTarief1;
 
     @Column(nullable = false, precision = 8, scale = 3)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal stroomTarief2;
 
     @Column(nullable = false, precision = 8, scale = 3)
-    @Getter @Setter
+    @Getter
+    @Setter
     private BigDecimal gas;
 
     @Column(nullable = false, precision = 1)
