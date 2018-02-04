@@ -98,8 +98,8 @@ public class MeterstandService {
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Keep first in hour: {} - {}", firstMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
-                LOGGER.info("Keep last in hour: {} - {}", lastMeterstandInHour.getDateTime(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+                LOGGER.info("Keep first in hour {}: {}", firstMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+                LOGGER.info("Keep last in hour {}: {}", lastMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
                 meterstandenInOneHour.forEach(meterstand -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
             }
 

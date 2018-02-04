@@ -20,6 +20,7 @@ public class Meterstand {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
+    @Setter
     private long id;
 
     @Column(nullable = false)

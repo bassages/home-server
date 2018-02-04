@@ -1,5 +1,6 @@
 package nl.homeserver.energie;
 
+import static ch.qos.logback.classic.Level.INFO;
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.util.Arrays.asList;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
@@ -23,6 +25,8 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.assertj.core.api.Condition;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -32,6 +36,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Appender;
+import nl.homeserver.LoggingRule;
 import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,6 +56,11 @@ public class MeterstandServiceTest {
     private Clock clock;
     @Mock
     private SimpMessagingTemplate messagingTemplate;
+    @Mock
+    private Appender appender;
+
+    @Rule
+    public LoggingRule loggingRule = new LoggingRule(getLogger(MeterstandService.class));
 
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
@@ -93,9 +106,9 @@ public class MeterstandServiceTest {
         Meterstand meterstand7 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 30, 0)).build();
         Meterstand meterstand8 = aMeterstand().withDateTime(dayToCleanup.atTime(13, 45, 0)).build();
 
-        when(meterstandRepository.findByDateTimeBetween(LocalDate.of(2016, JANUARY, 1).atStartOfDay(),
-                                                         LocalDate.of(2016, JANUARY, 1).atStartOfDay().plusDays(1).minusNanos(1)))
-                .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
+        when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
+                                                        dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
+                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 
         meterstandService.dailyCleanup();
 
@@ -103,6 +116,54 @@ public class MeterstandServiceTest {
 
         assertThat(deletedMeterstandCaptor.getAllValues().get(0)).containsExactly(meterstand2, meterstand3);
         assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsExactly(meterstand6, meterstand7);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void whenCleanupThenKeptAndDeletedMeterstandenAreLogged() {
+        LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
+
+        timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
+
+        Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
+        Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
+        Meterstand meterstand3 = aMeterstand().withId(3).withDateTime(dayToCleanup.atTime(12, 30, 0)).build();
+
+        when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
+                                                        dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
+                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3));
+
+        loggingRule.setLevel(INFO);
+
+        meterstandService.dailyCleanup();
+
+        List<LoggingEvent> loggedEvents = loggingRule.getAllLoggedEvents();
+        assertThat(loggedEvents).extracting(LoggingEvent::getLevel).containsOnly(INFO);
+        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Keep first in hour 12: Meterstand[id=1"));
+        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Keep last in hour 12: Meterstand[id=3"));
+        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Delete: Meterstand[id=2"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void givenLogLevelIsNonewhenCleanupThenNothingLogged() {
+        LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
+
+        timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
+
+        Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
+        Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
+        Meterstand meterstand3 = aMeterstand().withId(3).withDateTime(dayToCleanup.atTime(12, 30, 0)).build();
+
+        when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
+                                                        dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
+                .thenReturn(asList(meterstand1, meterstand2, meterstand3));
+
+        loggingRule.setLevel(Level.OFF);
+
+        meterstandService.dailyCleanup();
+
+        assertThat(loggingRule.getAllLoggedEvents()).isEmpty();
     }
 
     @Test
@@ -233,4 +294,19 @@ public class MeterstandServiceTest {
     private void setCachedMeterstandService(MeterstandService cachedMeterstandService) {
         setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", cachedMeterstandService);
     }
+
+    private class LoggingEventMessageContaining extends Condition<LoggingEvent> {
+        private final String requiredContent;
+
+        LoggingEventMessageContaining(String requiredContent) {
+            super("Contains \"" + requiredContent + "\"");
+            this.requiredContent = requiredContent;
+        }
+
+        @Override
+        public boolean matches(LoggingEvent loggingEvent) {
+            return loggingEvent.getFormattedMessage().contains(requiredContent);
+        }
+    }
+
 }

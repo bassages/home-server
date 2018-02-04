@@ -32,7 +32,7 @@ public class MindergasnlService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MindergasnlService.class);
 
-    private static final String METERSTAND_UPLOAD_ENDPOINT = "http://www.mindergas.nl/api/gas_meter_readings";
+    private static final String METERSTAND_UPLOAD_ENDPOINT_URL = "http://www.mindergas.nl/api/gas_meter_readings";
     private static final String THREE_AM = "0 0 3 * * *";
 
     protected static final String HEADER_NAME_CONTENT_TYPE = "content-type";
@@ -91,7 +91,7 @@ public class MindergasnlService {
     }
 
     private HttpPost createRequest(LocalDate day, BigDecimal gasStand, String authenticatietoken) throws UnsupportedEncodingException {
-        HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT);
+        HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT_URL);
 
         String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", day.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
         LOGGER.info("Upload to mindergas.nl: {}", message);
