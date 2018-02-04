@@ -23,15 +23,16 @@ public class OpgenomenVermogen {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    @Getter @Setter
     private long id;
 
     @Column(nullable = false, unique = true)
-    @Getter @Setter
+    @Getter
+    @Setter
     private LocalDateTime datumtijd;
 
     @NotNull
-    @Getter @Setter
+    @Getter
+    @Setter
     private int watt;
 
     @NotNull
