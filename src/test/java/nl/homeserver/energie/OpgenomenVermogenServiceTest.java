@@ -12,15 +12,15 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
@@ -31,7 +31,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.DatePeriod;
+import nl.homeserver.LoggingRule;
+import nl.homeserver.MessageContaining;
 import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,8 +56,11 @@ public class OpgenomenVermogenServiceTest {
     @Captor
     private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
 
+    @Rule
+    public LoggingRule loggingRule = new LoggingRule(getLogger(OpgenomenVermogenService.class));
+
     @Test
-    public void shouldClearCacheOnDailyCleanup() {
+    public void whenDailyCleanupThenCacheCleared() {
         timeTravelTo(clock, LocalDate.of(2017, JANUARY, 12).atStartOfDay());
 
         opgenomenVermogenService.dailyCleanup();
@@ -62,31 +69,15 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void shouldCleanupOneDay() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
-
-        ArgumentCaptor<LocalDateTime> fromDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
-        ArgumentCaptor<LocalDateTime> toDateCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(fromDateCaptor.capture(), toDateCaptor.capture())).thenReturn(emptyList());
-
-        opgenomenVermogenService.cleanup(date);
-
-        assertThat(fromDateCaptor.getValue()).isEqualTo(date.atStartOfDay());
-        assertThat(toDateCaptor.getValue()).isEqualTo(date.atStartOfDay().plusDays(1));
-
-        verify(opgenomenVermogenRepository).getOpgenomenVermogen(any(), any());
-        verifyNoMoreInteractions(opgenomenVermogenRepository);
-    }
-
-    @Test
-    public void shouldKeepLatestRecordInMinuteWhenWattIsTheSame() {
+    public void givengivenMultipleOpgenomenVermogenInOneMinuteWithSameWattWhenCleanupThenMostRecentInMinuteIsKept() {
         LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(1).build();
         OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(1).build();
         OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenService.cleanup(date);
 
@@ -96,14 +87,15 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void givenMultipleOpgenomenVermogenInOneMinuteWhenCleanupThenHighestWattRetained() {
+    public void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentWattWhenCleanupThenHighestWattIsKept() {
         LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
         OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(3).build();
         OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(2).build();
         OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(any(), any())).thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenService.cleanup(date);
 
@@ -134,6 +126,42 @@ public class OpgenomenVermogenServiceTest {
 
         assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(0)).containsExactlyInAnyOrder(opgenomenVermogen1, opgenomenVermogen3);
         assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(1)).containsExactlyInAnyOrder(opgenomenVermogen5);
+    }
+
+    @Test
+    public void givenLogLevelIsInfoWhenCleanupThenKeptAndDeletedOpgenomensAreLoggedAtThatLevel() {
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+
+        OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(date.atTime(0, 0, 0)).build();
+        OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(date.atTime(0, 0, 1)).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                .thenReturn(asList(deleted, kept));
+
+        loggingRule.setLevel(Level.INFO);
+
+        opgenomenVermogenService.cleanup(date);
+
+        List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep: OpgenomenVermogen[id=2"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Delete: OpgenomenVermogen[id=1"));
+    }
+
+    @Test
+    public void givenLogLevelIsOffWhenCleanupThenKeptAndDeletedOpgenomensAreNotLogged() {
+        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+
+        OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(date.atTime(0, 0, 0)).build();
+        OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(date.atTime(0, 0, 1)).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                .thenReturn(asList(deleted, kept));
+
+        loggingRule.setLevel(Level.OFF);
+
+        opgenomenVermogenService.cleanup(date);
+
+        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
     }
 
     @Test

@@ -3,8 +3,6 @@ package nl.homeserver;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -54,7 +52,8 @@ public class LoggingRule implements TestRule {
         logger.setLevel(level);
     }
 
-    public List<LoggingEvent> getAllLoggedEvents() {
-        return loggingEventCaptor.getAllValues();
+    public ArgumentCaptor<LoggingEvent> getLoggedEventCaptor() {
+        return loggingEventCaptor;
     }
+
 }

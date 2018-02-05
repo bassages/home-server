@@ -25,7 +25,6 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.assertj.core.api.Condition;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,8 +37,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Appender;
 import nl.homeserver.LoggingRule;
+import nl.homeserver.MessageContaining;
 import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,8 +55,6 @@ public class MeterstandServiceTest {
     private Clock clock;
     @Mock
     private SimpMessagingTemplate messagingTemplate;
-    @Mock
-    private Appender appender;
 
     @Rule
     public LoggingRule loggingRule = new LoggingRule(getLogger(MeterstandService.class));
@@ -137,16 +134,15 @@ public class MeterstandServiceTest {
 
         meterstandService.dailyCleanup();
 
-        List<LoggingEvent> loggedEvents = loggingRule.getAllLoggedEvents();
-        assertThat(loggedEvents).extracting(LoggingEvent::getLevel).containsOnly(INFO);
-        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Keep first in hour 12: Meterstand[id=1"));
-        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Keep last in hour 12: Meterstand[id=3"));
-        assertThat(loggedEvents).areExactly(1, new LoggingEventMessageContaining("Delete: Meterstand[id=2"));
+        List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep first in hour 12: Meterstand[id=1"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep last in hour 12: Meterstand[id=3"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Delete: Meterstand[id=2"));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void givenLogLevelIsNonewhenCleanupThenNothingLogged() {
+    public void givenLogLevelIsOffWhenCleanupThenNothingLogged() {
         LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         timeTravelTo(clock, dayToCleanup.plusDays(1).atStartOfDay());
@@ -163,7 +159,7 @@ public class MeterstandServiceTest {
 
         meterstandService.dailyCleanup();
 
-        assertThat(loggingRule.getAllLoggedEvents()).isEmpty();
+        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
     }
 
     @Test
@@ -294,19 +290,4 @@ public class MeterstandServiceTest {
     private void setCachedMeterstandService(MeterstandService cachedMeterstandService) {
         setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", cachedMeterstandService);
     }
-
-    private class LoggingEventMessageContaining extends Condition<LoggingEvent> {
-        private final String requiredContent;
-
-        LoggingEventMessageContaining(String requiredContent) {
-            super("Contains \"" + requiredContent + "\"");
-            this.requiredContent = requiredContent;
-        }
-
-        @Override
-        public boolean matches(LoggingEvent loggingEvent) {
-            return loggingEvent.getFormattedMessage().contains(requiredContent);
-        }
-    }
-
 }

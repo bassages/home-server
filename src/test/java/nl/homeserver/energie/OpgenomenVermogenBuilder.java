@@ -9,9 +9,15 @@ public class OpgenomenVermogenBuilder {
     private LocalDateTime datumtijd = LocalDateTime.now();
     private StroomTariefIndicator stroomTariefIndicator = NORMAAL;
     private int watt;
+    private long id;
 
     public static OpgenomenVermogenBuilder aOpgenomenVermogen() {
         return new OpgenomenVermogenBuilder();
+    }
+
+    public OpgenomenVermogenBuilder withId(long id) {
+        this.id = id;
+        return this;
     }
 
     public OpgenomenVermogenBuilder withDatumTijd(LocalDateTime datumtijd) {
@@ -26,6 +32,7 @@ public class OpgenomenVermogenBuilder {
 
     public OpgenomenVermogen build() {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
+        opgenomenVermogen.setId(id);
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setWatt(watt);
         opgenomenVermogen.setTariefIndicator(stroomTariefIndicator);

@@ -23,6 +23,7 @@ public class OpgenomenVermogen {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
+    @Setter
     private long id;
 
     @Column(nullable = false, unique = true)
