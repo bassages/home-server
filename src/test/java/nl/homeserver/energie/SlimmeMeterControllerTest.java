@@ -1,15 +1,22 @@
 package nl.homeserver.energie;
 
+import static ch.qos.logback.classic.Level.INFO;
+import static ch.qos.logback.classic.Level.OFF;
+import static java.math.BigDecimal.TEN;
+import static java.util.Collections.singletonList;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collections;
 import java.util.Date;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -18,7 +25,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import nl.homeserver.DateTimeUtil;
+import nl.homeserver.LoggingRule;
+import nl.homeserver.MessageContaining;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlimmeMeterControllerTest {
@@ -31,6 +39,9 @@ public class SlimmeMeterControllerTest {
     @Mock
     private MeterstandService meterstandService;
 
+    @Rule
+    public LoggingRule loggingRule = new LoggingRule(getLogger(SlimmeMeterController.class));
+
     @Captor
     private ArgumentCaptor<Meterstand> meterstandCaptor;
     @Captor
@@ -40,8 +51,8 @@ public class SlimmeMeterControllerTest {
     public void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
         Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
-        dsmr42Reading.setDatumtijd(DateTimeUtil.toMillisSinceEpoch(dateTime));
-        StroomTariefIndicator stroomTariefIndicator = StroomTariefIndicator.NORMAAL;
+        dsmr42Reading.setDatumtijd(toMillisSinceEpoch(dateTime));
+        StroomTariefIndicator stroomTariefIndicator = NORMAAL;
         dsmr42Reading.setStroomTariefIndicator((int) stroomTariefIndicator.getId());
         dsmr42Reading.setGas(new BigDecimal("201.876234"));
         dsmr42Reading.setStroomTarief1(new BigDecimal("352.907511"));
@@ -61,7 +72,7 @@ public class SlimmeMeterControllerTest {
         LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
         langeStroomStoring.setDatumtijdEinde(new Date());
         langeStroomStoring.setDuurVanStoringInSeconden(120L);
-        dsmr42Reading.setLangeStroomStoringen(Collections.singletonList(langeStroomStoring));
+        dsmr42Reading.setLangeStroomStoringen(singletonList(langeStroomStoring));
 
         slimmeMeterController.save(dsmr42Reading);
 
@@ -78,4 +89,35 @@ public class SlimmeMeterControllerTest {
         assertThat(opgenomenVermogenCaptor.getValue().getWatt()).isEqualTo(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
         assertThat(opgenomenVermogenCaptor.getValue().getTariefIndicator()).isEqualTo(stroomTariefIndicator);
     }
+
+    @Test
+    public void givenLogLevelIsInfoWhenSaveThenLoggedAtLevelInfo() {
+        Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
+        dsmr42Reading.setGas(TEN);
+        dsmr42Reading.setStroomTarief1(TEN);
+        dsmr42Reading.setStroomTarief2(TEN);
+
+        loggingRule.setLevel(INFO);
+
+        slimmeMeterController.save(dsmr42Reading);
+
+        assertThat(loggingRule.getLoggedEventCaptor().getValue()).is(new MessageContaining("[INFO] nl.homeserver.energie.Dsmr42Reading"));
+    }
+
+    @Test
+    public void givenLogLevelIsOffWhenSaveThenNothingLogged() {
+        Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
+        dsmr42Reading.setGas(TEN);
+        dsmr42Reading.setStroomTarief1(TEN);
+        dsmr42Reading.setStroomTarief2(TEN);
+
+        loggingRule.setLevel(OFF);
+
+        slimmeMeterController.save(dsmr42Reading);
+
+        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
+    }
+
 }
