@@ -23,6 +23,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.Rule;
@@ -115,7 +116,6 @@ public class MeterstandServiceTest {
         assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsExactly(meterstand6, meterstand7);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void whenCleanupThenKeptAndDeletedMeterstandenAreLogged() {
         LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
@@ -140,7 +140,6 @@ public class MeterstandServiceTest {
         assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Delete: Meterstand[id=2"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void givenLogLevelIsOffWhenCleanupThenNothingLogged() {
         LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
@@ -153,7 +152,7 @@ public class MeterstandServiceTest {
 
         when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
-                .thenReturn(asList(meterstand1, meterstand2, meterstand3));
+                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3));
 
         loggingRule.setLevel(Level.OFF);
 
@@ -212,16 +211,55 @@ public class MeterstandServiceTest {
                                                               .build();
 
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
-                .thenReturn(oldestMeterstandElectricity);
+                                 .thenReturn(oldestMeterstandElectricity);
 
         Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
-                .thenReturn(oldestMeterstandGas);
+                                 .thenReturn(oldestMeterstandGas);
 
         Meterstand oldestOfToday = meterstandService.getOldestOfToday();
         assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
         assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
         assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandGas.getGas());
+    }
+
+    @Test
+    public void givenNoMeterstandExistsInNextHourWhenGetOldestOfTodayThenGasNotOverWritten() {
+        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+
+        timeTravelTo(clock, today.atStartOfDay());
+
+        Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000"))
+                                                              .withStroomTarief2(new BigDecimal("200.000"))
+                                                              .withGas(new BigDecimal("999.000"))
+                                                              .build();
+
+        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
+                                 .thenReturn(oldestMeterstandElectricity);
+
+        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
+                                 .thenReturn(null);
+
+        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
+        assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
+        assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandElectricity.getGas());
+    }
+
+    @Test
+    public void givenNoMeterstandExistsInPeriodwhenGetOldestOfTodayThenNullReturned() {
+        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+
+        timeTravelTo(clock, today.atStartOfDay());
+
+        when(meterstandRepository.getOldestInPeriod(any(LocalDateTime.class), any(LocalDateTime.class)))
+                                 .thenReturn(null);
+
+        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        assertThat(oldestOfToday).isNull();
+
+        verify(meterstandRepository).getOldestInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1));
+        verifyNoMoreInteractions(meterstandRepository);
     }
 
     @Test

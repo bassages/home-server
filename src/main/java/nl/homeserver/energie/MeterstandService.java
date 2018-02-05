@@ -1,5 +1,6 @@
 package nl.homeserver.energie;
 
+import static java.time.LocalDate.now;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -64,7 +65,7 @@ public class MeterstandService {
 
     @Scheduled(cron = TWO_AM)
     public void dailyCleanup() {
-        LocalDate today = LocalDate.now(clock);
+        LocalDate today = now(clock);
         IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
                  .forEach(i -> cleanup(today.minusDays(i)));
         clearCachesThatUsesPossibleDeletedMeterstanden();
@@ -116,7 +117,7 @@ public class MeterstandService {
     }
 
     public Meterstand getOldestOfToday() {
-        LocalDate today = LocalDate.now(clock);
+        LocalDate today = now(clock);
 
         LocalDateTime van = today.atStartOfDay();
         LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
@@ -124,8 +125,7 @@ public class MeterstandService {
         Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
 
         if (oudsteStroomStandOpDag != null) {
-            // Gas is registered once every hour, in the hour AFTER it actually is used.
-            // Compensate for that hour
+            // Gas is registered once every hour, in the hour AFTER it actually is used. Compensate for that hour
             Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
 
             if (oudsteGasStandOpDag != null) {
@@ -146,7 +146,7 @@ public class MeterstandService {
     }
 
     private Meterstand getMeesteRecenteMeterstandOpDag(LocalDate day) {
-        LocalDate today = LocalDate.now(clock);
+        LocalDate today = now(clock);
         if (day.isAfter(today)) {
             return null;
         } else if (day.isEqual(today)) {
