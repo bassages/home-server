@@ -2,6 +2,7 @@ package nl.homeserver;
 
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
@@ -21,8 +22,8 @@ public class LoggingRule implements TestRule {
 
     private ArgumentCaptor<LoggingEvent> loggingEventCaptor;
 
-    public LoggingRule(org.slf4j.Logger logger) {
-        this.logger = (Logger)logger;
+    public LoggingRule(Class<?> loggerClass) {
+        this.logger = (Logger) getLogger(loggerClass);
         mockAppender = mock(Appender.class);
     }
 

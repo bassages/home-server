@@ -31,6 +31,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +40,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.DatePeriod;
+import nl.homeserver.LoggingRule;
 import nl.homeserver.energie.MeterstandOpDag;
 import nl.homeserver.energie.MeterstandService;
 
@@ -66,6 +70,9 @@ public class MindergasnlServiceTest {
     private CloseableHttpResponse closeableHttpResponse;
     @Mock
     private StatusLine statusLine;
+
+    @Rule
+    public LoggingRule loggingRule = new LoggingRule(MindergasnlService.class);
 
     @Captor
     private ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
@@ -185,5 +192,66 @@ public class MindergasnlServiceTest {
 
         verify(meterstandService).getPerDag(eq(expectedPeriod));
         verifyZeroInteractions(httpClientBuilder);
+    }
+
+    @Test
+    public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged() throws Exception {
+        LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+        timeTravelTo(clock, currentDateTime);
+
+        MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
+        mindergasnlSettings.setAutomatischUploaden(true);
+        mindergasnlSettings.setAuthenticatietoken("LetMeIn");
+        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
+
+        BigDecimal yesterdaysGas = new BigDecimal("12412.812");
+        MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
+
+        DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(singletonList(yesterDaysMeterstand));
+
+        when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
+        when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
+        when(closeableHttpClient.execute(any())).thenReturn(closeableHttpResponse);
+        when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
+
+        when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
+
+        loggingRule.setLevel(Level.ERROR);
+
+        mindergasnlService.uploadMeterstandWhenEnabled();
+
+        verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
+
+        LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        assertThat(loggingEvent.getFormattedMessage()).isEqualTo("Failed to upload to mindergas.nl. HTTP status code: 403");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
+    }
+
+    @Test
+    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged() throws Exception {
+        LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+        timeTravelTo(clock, currentDateTime);
+
+        MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
+        mindergasnlSettings.setAutomatischUploaden(true);
+        mindergasnlSettings.setAuthenticatietoken("LetMeIn");
+        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
+
+        BigDecimal yesterdaysGas = new BigDecimal("12412.812");
+        MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
+
+        DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(singletonList(yesterDaysMeterstand));
+
+        RuntimeException runtimeException = new RuntimeException("FUBAR");
+        when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
+        loggingRule.setLevel(Level.ERROR);
+
+        mindergasnlService.uploadMeterstandWhenEnabled();
+
+        LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        assertThat(loggingEvent.getFormattedMessage()).isEqualTo("Failed to upload to mindergas.nl");
+        assertThat(loggingEvent.getThrowableProxy().getClassName()).isEqualTo(runtimeException.getClass().getName());
     }
 }

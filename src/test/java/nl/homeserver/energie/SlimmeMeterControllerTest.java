@@ -8,7 +8,6 @@ import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,8 +24,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.LoggingRule;
-import nl.homeserver.MessageContaining;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlimmeMeterControllerTest {
@@ -40,7 +40,7 @@ public class SlimmeMeterControllerTest {
     private MeterstandService meterstandService;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(getLogger(SlimmeMeterController.class));
+    public LoggingRule loggingRule = new LoggingRule(SlimmeMeterController.class);
 
     @Captor
     private ArgumentCaptor<Meterstand> meterstandCaptor;
@@ -102,7 +102,9 @@ public class SlimmeMeterControllerTest {
 
         slimmeMeterController.save(dsmr42Reading);
 
-        assertThat(loggingRule.getLoggedEventCaptor().getValue()).is(new MessageContaining("[INFO] nl.homeserver.energie.Dsmr42Reading"));
+        LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
+        assertThat(loggingEvent.getFormattedMessage()).startsWith("nl.homeserver.energie.Dsmr42Reading");
     }
 
     @Test

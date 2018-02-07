@@ -13,7 +13,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -57,7 +56,7 @@ public class OpgenomenVermogenServiceTest {
     private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(getLogger(OpgenomenVermogenService.class));
+    public LoggingRule loggingRule = new LoggingRule(OpgenomenVermogenService.class);
 
     @Test
     public void whenDailyCleanupThenCacheCleared() {

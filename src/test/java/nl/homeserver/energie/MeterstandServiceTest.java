@@ -17,7 +17,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
@@ -58,7 +57,7 @@ public class MeterstandServiceTest {
     private SimpMessagingTemplate messagingTemplate;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(getLogger(MeterstandService.class));
+    public LoggingRule loggingRule = new LoggingRule(MeterstandService.class);
 
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
