@@ -134,11 +134,14 @@ public class VerbruikKostenOverzichtService {
 
     private DateTimePeriod getSubPeriod(Energiecontract energiecontract, DateTimePeriod period) {
         LocalDate subFrom = Stream.of(period.getFromDateTime().toLocalDate(), energiecontract.getValidFrom())
-                                  .max(LocalDate::compareTo).orElse(null);
+                                  .max(LocalDate::compareTo)
+                                  .get();
 
         LocalDate subTo = Stream.of(period.getToDateTime().toLocalDate(), energiecontract.getValidTo())
                                 .filter(Objects::nonNull)
-                                .min(LocalDate::compareTo).orElse(null);
+                                .min(LocalDate::compareTo)
+                                .orElseThrow(() -> new IllegalArgumentException(format("Failed to determine subTo. energiecontract.getValidTo()=[%s] period.getToDateTime()=[%s]",
+                                                                                       energiecontract.getValidTo(), period.getToDateTime())));
 
         return aPeriodWithToDateTime(subFrom.atStartOfDay(), subTo.atStartOfDay());
     }
