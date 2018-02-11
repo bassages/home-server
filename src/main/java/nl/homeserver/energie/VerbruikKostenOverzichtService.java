@@ -9,7 +9,6 @@ import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 
 import java.math.BigDecimal;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -133,18 +132,18 @@ public class VerbruikKostenOverzichtService {
     }
 
     private DateTimePeriod getSubPeriod(Energiecontract energiecontract, DateTimePeriod period) {
-        LocalDate subFrom = Stream.of(period.getFromDateTime().toLocalDate(), energiecontract.getValidFrom())
-                                  .max(LocalDate::compareTo)
-                                  .orElseThrow(() -> new IllegalArgumentException(format("Failed to determine subFrom. energiecontract.id=[%d] energiecontract.getValidFrom()=[%s] period.getFromDateTime()=[%s]",
+        LocalDateTime subFrom = Stream.of(period.getFromDateTime(), energiecontract.getValidFrom().atStartOfDay())
+                                      .max(LocalDateTime::compareTo)
+                                      .orElseThrow(() -> new IllegalArgumentException(format("Failed to determine subFrom. energiecontract.id=[%d] energiecontract.getValidFrom()=[%s] period.getFromDateTime()=[%s]",
                                                                                          energiecontract.getId(), energiecontract.getValidFrom(), period.getFromDateTime())));
 
-        LocalDate subTo = Stream.of(period.getToDateTime().toLocalDate(), energiecontract.getValidTo())
+        LocalDateTime subTo = Stream.of(period.getToDateTime(), energiecontract.getValidTo() != null ? energiecontract.getValidTo().atStartOfDay() : null)
                                 .filter(Objects::nonNull)
-                                .min(LocalDate::compareTo)
+                                .min(LocalDateTime::compareTo)
                                 .orElseThrow(() -> new IllegalArgumentException(format("Failed to determine subTo. energiecontract.id=[%d] energiecontract.getValidTo()=[%s] period.getToDateTime()=[%s]",
                                                                                        energiecontract.getId(), energiecontract.getValidTo(), period.getToDateTime())));
 
-        return aPeriodWithToDateTime(subFrom.atStartOfDay(), subTo.atStartOfDay());
+        return aPeriodWithToDateTime(subFrom, subTo);
     }
 
     private BigDecimal getStroomVerbruik(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {
