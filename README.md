@@ -1,5 +1,5 @@
 <a href="https://travis-ci.org/bassages/home-server" taget="_blank"><img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
-<a href="https://sonarcloud.io/dashboard?id=home-server" target="_blank"><img src="https://sonarcloud.io/api/badges/gate?key=home-server" alt="SonarCloud"></a>
+<a href="https://sonarcloud.io/dashboard?id=home-server" target="_blank"><img src="https://sonarcloud.io/api/project_badges/measure?project=home-server&metric=alert_status" alt="SonarCloud"></a>
 
 # Features
 - Ontvangen van slimme meter data en deze opslaan in een database
