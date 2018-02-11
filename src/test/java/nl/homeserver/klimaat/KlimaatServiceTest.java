@@ -318,6 +318,30 @@ public class KlimaatServiceTest {
     }
 
     @Test
+    public void givenUnexpectedSensorTypewhenGetHighestThenException() {
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 10);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        SensorType unexpectedSensorType = null;
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> klimaatService.getLowest("someSensorCode", unexpectedSensorType, aPeriodWithToDate(from, to), limit))
+                .withMessage("Unexpected SensorType [null]");
+    }
+
+    @Test
+    public void givenUnexpectedSensorTypewhenGetLowestThenException() {
+        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        LocalDate to = from.plusDays(1);
+        int limit = 100;
+
+        SensorType unexpectedSensorType = null;
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> klimaatService.getHighest("someSensorCode", unexpectedSensorType, aPeriodWithToDate(from, to), limit))
+                .withMessage("Unexpected SensorType [null]");
+    }
+
+    @Test
     public void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
         String sensorCode = "Barn";
 

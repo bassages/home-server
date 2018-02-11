@@ -7,6 +7,8 @@ import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
+import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -154,9 +156,9 @@ public class KlimaatService {
     }
 
     private BigDecimal getAverage(String sensorCode, SensorType sensorType, DatePeriod period) {
-        if (sensorType == SensorType.TEMPERATUUR) {
+        if (sensorType == TEMPERATUUR) {
             return klimaatRepository.getAverageTemperatuur(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
-        } else if (sensorType == SensorType.LUCHTVOCHTIGHEID) {
+        } else if (sensorType == LUCHTVOCHTIGHEID) {
             return klimaatRepository.getAverageLuchtvochtigheid(sensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay());
         } else {
             throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
@@ -214,24 +216,22 @@ public class KlimaatService {
     }
 
     public List<Klimaat> getHighest(String sensorCode, SensorType sensorType, DatePeriod period, int limit) {
-        switch (sensorType) {
-            case TEMPERATUUR:
-                return getHighestTemperature(sensorCode, period, limit);
-            case LUCHTVOCHTIGHEID:
-                return getHighestHumidity(sensorCode, period, limit);
-            default:
-                throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
+        if (sensorType == TEMPERATUUR) {
+            return getHighestTemperature(sensorCode, period, limit);
+        } else if (sensorType == LUCHTVOCHTIGHEID) {
+            return getHighestHumidity(sensorCode, period, limit);
+        } else {
+            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
         }
     }
 
     public List<Klimaat> getLowest(String sensorCode, SensorType sensorType, DatePeriod period, int limit) {
-        switch (sensorType) {
-            case TEMPERATUUR:
-                return getLowestTemperature(sensorCode, period, limit);
-            case LUCHTVOCHTIGHEID:
-                return getLowestHumidity(sensorCode, period, limit);
-            default:
-                throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
+        if (sensorType == TEMPERATUUR) {
+            return getLowestTemperature(sensorCode, period, limit);
+        } else if (sensorType == LUCHTVOCHTIGHEID) {
+            return getLowestHumidity(sensorCode, period, limit);
+        } else {
+            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
         }
     }
 
