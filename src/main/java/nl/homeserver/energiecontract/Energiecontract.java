@@ -3,6 +3,7 @@ package nl.homeserver.energiecontract;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,18 +24,18 @@ public class Energiecontract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @Getter
+    private Long id;
 
     @Column(nullable = false, unique = true)
     @Getter
     @Setter
-    private Long van;
+    private LocalDate validFrom;
 
     @JsonIgnore
-    @Column(nullable = false)
     @Getter
     @Setter
-    private Long totEnMet;
+    private LocalDate validTo;
 
     @Column(precision = 7, scale = 6, nullable = false)
     @Getter

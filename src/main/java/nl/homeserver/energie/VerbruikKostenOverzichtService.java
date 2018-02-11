@@ -4,14 +4,15 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.toLocalDateTime;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -43,10 +44,6 @@ public class VerbruikKostenOverzichtService {
     public VerbruikKostenOverzicht getVerbruikEnKostenOverzicht(DateTimePeriod period) {
         VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
 
-        VerbruikKosten gasVerbruikKostenInPeriode = getGasVerbruikInPeriode(period);
-        verbruikKostenOverzicht.setGasVerbruik(gasVerbruikKostenInPeriode.getVerbruik());
-        verbruikKostenOverzicht.setGasKosten(gasVerbruikKostenInPeriode.getKosten());
-
         VerbruikKosten stroomVerbruikKostenDalTariefInPeriode = getStroomVerbruikInPeriode(period, DAL);
         verbruikKostenOverzicht.setStroomVerbruikDal(stroomVerbruikKostenDalTariefInPeriode.getVerbruik());
         verbruikKostenOverzicht.setStroomKostenDal(stroomVerbruikKostenDalTariefInPeriode.getKosten());
@@ -54,6 +51,10 @@ public class VerbruikKostenOverzichtService {
         VerbruikKosten stroomVerbruikKostenNormaalTariefInPeriode = getStroomVerbruikInPeriode(period, NORMAAL);
         verbruikKostenOverzicht.setStroomVerbruikNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getVerbruik());
         verbruikKostenOverzicht.setStroomKostenNormaal(stroomVerbruikKostenNormaalTariefInPeriode.getKosten());
+
+        VerbruikKosten gasVerbruikKostenInPeriode = getGasVerbruikInPeriode(period);
+        verbruikKostenOverzicht.setGasVerbruik(gasVerbruikKostenInPeriode.getVerbruik());
+        verbruikKostenOverzicht.setGasKosten(gasVerbruikKostenInPeriode.getKosten());
 
         return verbruikKostenOverzicht;
     }
@@ -132,21 +133,14 @@ public class VerbruikKostenOverzichtService {
     }
 
     private DateTimePeriod getSubPeriod(Energiecontract energiecontract, DateTimePeriod period) {
-        long periodeVan = toMillisSinceEpoch(period.getFromDateTime());
-        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
+        LocalDate subFrom = Stream.of(period.getFromDateTime().toLocalDate(), energiecontract.getValidFrom())
+                                  .max(LocalDate::compareTo).orElse(null);
 
-        long subVanMillis = energiecontract.getVan();
-        long subTotEnMetMillis = energiecontract.getTotEnMet();
+        LocalDate subTo = Stream.of(period.getToDateTime().toLocalDate(), energiecontract.getValidTo())
+                                .filter(Objects::nonNull)
+                                .min(LocalDate::compareTo).orElse(null);
 
-        if (subVanMillis < periodeVan) {
-            subVanMillis = periodeVan;
-        }
-        if (subTotEnMetMillis > periodeTotEnMet) {
-            subTotEnMetMillis = periodeTotEnMet;
-        }
-        LocalDateTime from = toLocalDateTime(subVanMillis);
-        LocalDateTime to = toLocalDateTime(subTotEnMetMillis + 1);
-        return aPeriodWithToDateTime(from, to);
+        return aPeriodWithToDateTime(subFrom.atStartOfDay(), subTo.atStartOfDay());
     }
 
     private BigDecimal getStroomVerbruik(DateTimePeriod period, StroomTariefIndicator stroomTariefIndicator) {

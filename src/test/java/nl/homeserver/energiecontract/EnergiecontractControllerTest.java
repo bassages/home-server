@@ -1,5 +1,6 @@
 package nl.homeserver.energiecontract;
 
+import static java.time.Month.MARCH;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -8,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Test;
@@ -26,13 +28,36 @@ public class EnergiecontractControllerTest {
     private EnergiecontractService energiecontractService;
 
     @Test
-    public void whenSaveThenDelegatedToService() {
+    public void givenANewEnergyContractWhenSaveThenDelegatedToService() {
         when(energiecontractService.save(any())).then(returnsFirstArg());
         Energiecontract energieContract = mock(Energiecontract.class);
+        when(energieContract.getId()).thenReturn(null);
 
         Energiecontract savedEnergieContract = energiecontractController.save(energieContract);
 
         assertThat(savedEnergieContract).isSameAs(energieContract);
+    }
+
+    @Test
+    public void givenAnExistingEnergyContractWhenSaveThenValidToSetAndSaveIsDelegatedToService() {
+        when(energiecontractService.save(any())).then(returnsFirstArg());
+
+        long id = 13451L;
+        LocalDate validTo = LocalDate.of(2018, MARCH, 13);
+
+        Energiecontract existingEnergiecontract = mock(Energiecontract.class);
+        when(existingEnergiecontract.getId()).thenReturn(id);
+        when(existingEnergiecontract.getValidTo()).thenReturn(validTo);
+
+        Energiecontract energiecontractToUpdate = mock(Energiecontract.class);
+        when(energiecontractToUpdate.getId()).thenReturn(id);
+
+        when(energiecontractService.getById(id)).thenReturn(existingEnergiecontract);
+
+        Energiecontract savedEnergieContract = energiecontractController.save(energiecontractToUpdate);
+
+        assertThat(savedEnergieContract).isSameAs(energiecontractToUpdate);
+        verify(energiecontractToUpdate).setValidTo(validTo);
     }
 
     @Test

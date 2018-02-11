@@ -21,8 +21,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="energieContract in vm.energieContracten | orderBy:'van'" ng-click="vm.startEdit(energieContract)" ng-class="{info: energieContract.id === vm.selectedId}">
-                <td>{{energieContract.van | date : 'EEE. dd-MM-yyyy'}}</td>
+            <tr ng-repeat="energieContract in vm.energieContracten | orderBy:'validFrom'" ng-click="vm.startEdit(energieContract)" ng-class="{info: energieContract.id === vm.selectedId}">
+                <td>{{energieContract.validFrom | date : 'EEE. dd-MM-yyyy'}}</td>
                 <td>{{energieContract.leverancier}}</td>
                 <td>{{energieContract.gasPerKuub | currency : undefined : 6}}</td>
                 <td>{{energieContract.stroomPerKwhNormaalTarief | currency : undefined : 6}}</td>

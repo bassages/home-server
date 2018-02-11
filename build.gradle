@@ -130,3 +130,7 @@ task buildGulpFromGradle(type: GulpTask) {
     options = ['--max-old-space-size=512']
 }
 
+
+test {
+    exclude '**/*IntegrationTest.*'
+}

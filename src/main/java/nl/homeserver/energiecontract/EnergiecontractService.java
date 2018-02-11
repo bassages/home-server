@@ -1,10 +1,10 @@
 package nl.homeserver.energiecontract;
 
 import static java.time.LocalDateTime.now;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,8 +17,6 @@ import nl.homeserver.cache.CacheService;
 
 @Service
 public class EnergiecontractService {
-
-    public static final long SINT_JUTTEMIS = 7258114800000L;
 
     private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
 
@@ -38,43 +36,41 @@ public class EnergiecontractService {
 
     public Energiecontract getCurrent() {
         LocalDateTime now = now(clock);
-        return energiecontractRepository.findFirstByVanLessThanEqualOrderByVanDesc(toMillisSinceEpoch(now));
+        return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
     public Energiecontract save(Energiecontract energiecontract) {
-        if (energiecontract.getTotEnMet() == null) {
-            energiecontract.setTotEnMet(0L);
-        }
         Energiecontract result = energiecontractRepository.save(energiecontract);
-        recalculateTotEnMet();
+        recalculateValidTo();
         cacheService.clearAll();
         return result;
     }
 
     public void delete(long id) {
         energiecontractRepository.delete(id);
-        recalculateTotEnMet();
+        recalculateValidTo();
         cacheService.clearAll();
     }
 
-    protected void recalculateTotEnMet() {
-        Sort sortByVanAsc = new Sort(Sort.Direction.ASC, "van");
+    protected void recalculateValidTo() {
+        Sort sortByVanAsc = new Sort(Sort.Direction.ASC, "validFrom");
 
-        List<Energiecontract> energiecontractList = energiecontractRepository.findAll(sortByVanAsc);
+        List<Energiecontract> energiecontracts = energiecontractRepository.findAll(sortByVanAsc);
 
         Energiecontract previousEnergiecontract = null;
-        for (int i = 0; i < energiecontractList.size(); i++) {
-            Energiecontract currentEnergiecontract = energiecontractList.get(i);
+        for (int i = 0; i < energiecontracts.size(); i++) {
+            Energiecontract currentEnergiecontract = energiecontracts.get(i);
+
             if (previousEnergiecontract != null) {
-                long totEnMet = currentEnergiecontract.getVan() - 1;
-                if (notEqual(previousEnergiecontract.getTotEnMet(), totEnMet)) {
-                    previousEnergiecontract.setTotEnMet(totEnMet);
+                LocalDate validTo = currentEnergiecontract.getValidFrom();
+                if (notEqual(previousEnergiecontract.getValidTo(), validTo)) {
+                    previousEnergiecontract.setValidTo(validTo);
                     energiecontractRepository.save(previousEnergiecontract);
                 }
             }
 
-            if (i == (energiecontractList.size() - 1) && notEqual(currentEnergiecontract.getTotEnMet(), SINT_JUTTEMIS)) {
-                currentEnergiecontract.setTotEnMet(SINT_JUTTEMIS);
+            if (i == (energiecontracts.size() - 1) && currentEnergiecontract.getValidTo() != null) {
+                currentEnergiecontract.setValidTo(null);
                 energiecontractRepository.save(currentEnergiecontract);
             }
             previousEnergiecontract = currentEnergiecontract;
@@ -83,8 +79,10 @@ public class EnergiecontractService {
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     public List<Energiecontract> findAllInInPeriod(DateTimePeriod period) {
-        long periodeVan = toMillisSinceEpoch(period.getFromDateTime());
-        long periodeTotEnMet = toMillisSinceEpoch(period.getEndDateTime());
-        return energiecontractRepository.findAllInInPeriod(periodeVan, periodeTotEnMet);
+        return energiecontractRepository.findValidInPeriod(period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
+    }
+
+    public Energiecontract getById(long id) {
+        return energiecontractRepository.getOne(id);
     }
 }

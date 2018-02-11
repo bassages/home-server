@@ -5,7 +5,6 @@ import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -78,15 +77,15 @@ public class VerbruikKostenOverzichtServiceTest {
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
         Energiecontract energiecontract1 = new Energiecontract();
-        energiecontract1.setVan(0L);
-        energiecontract1.setTotEnMet(toMillisSinceEpoch(from.plusDays(1)) - 1);
+        energiecontract1.setValidFrom(LocalDate.of(2000, JANUARY, 1));
+        energiecontract1.setValidTo(from.plusDays(1).toLocalDate());
         energiecontract1.setGasPerKuub(new BigDecimal("10"));
         energiecontract1.setStroomPerKwhDalTarief(new BigDecimal("20"));
         energiecontract1.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
 
         Energiecontract energiecontract2 = new Energiecontract();
-        energiecontract2.setVan(toMillisSinceEpoch(from.plusDays(1)));
-        energiecontract2.setTotEnMet(Long.MAX_VALUE);
+        energiecontract2.setValidFrom(energiecontract1.getValidTo());
+        energiecontract2.setValidTo(null);
         energiecontract2.setGasPerKuub(new BigDecimal("40"));
         energiecontract2.setStroomPerKwhDalTarief(new BigDecimal("50"));
         energiecontract2.setStroomPerKwhNormaalTarief(new BigDecimal("60"));
@@ -118,8 +117,8 @@ public class VerbruikKostenOverzichtServiceTest {
         DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
         Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setVan(0L);
-        energiecontract.setTotEnMet(Long.MAX_VALUE);
+        energiecontract.setValidFrom(LocalDate.of(2000, JANUARY, 1));
+        energiecontract.setValidTo(null);
         energiecontract.setGasPerKuub(new BigDecimal("10"));
         energiecontract.setStroomPerKwhDalTarief(new BigDecimal("20"));
         energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
@@ -144,8 +143,8 @@ public class VerbruikKostenOverzichtServiceTest {
     @Test
     public void whenGetPotentiallyCachedStroomVerbruikInPeriodeForUnknownTariefThenException() {
         Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setVan(0L);
-        energiecontract.setTotEnMet(Long.MAX_VALUE);
+        energiecontract.setValidFrom(LocalDate.of(2018, JANUARY, 1));
+        energiecontract.setValidTo(LocalDate.of(2019, JANUARY, 1));
         when(energiecontractService.findAllInInPeriod(any())).thenReturn(singletonList(energiecontract));
 
         StroomTariefIndicator unknownStroomTariefIndicator = null;

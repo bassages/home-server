@@ -32,6 +32,9 @@ public class EnergiecontractController {
 
     @PostMapping
     public Energiecontract save(@RequestBody Energiecontract energiecontract) {
+        if (energiecontract.getId() != null) {
+            energiecontract.setValidTo(energiecontractService.getById(energiecontract.getId()).getValidTo());
+        }
         return energiecontractService.save(energiecontract);
     }
 

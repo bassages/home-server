@@ -100,7 +100,7 @@
         }
 
         function selectionChange() {
-            changeDate($scope.selected);
+            changeDate($scope.selection);
         }
 
         function getTicksForEveryDayInMonth() {

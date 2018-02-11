@@ -1,14 +1,18 @@
 package nl.homeserver.energiecontract;
 
+import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,66 +24,87 @@ import org.springframework.data.domain.Sort;
 @RunWith(MockitoJUnitRunner.class)
 public class EnergiecontractServiceTest {
 
-    @Mock
-    private EnergiecontractRepository energiecontractRepositoryMock;
-
     @InjectMocks
     private EnergiecontractService energiecontractService;
 
-    @Test
-    public void givenMultipleEnergieContractsWithoutTotEnMetSetWhenRecalculateTotEnMetThenTotEnMetSetAndSaved() {
-        Energiecontract energiecontract1 = new Energiecontract();
-        energiecontract1.setVan(4L);
+    @Mock
+    private EnergiecontractRepository energiecontractRepository;
+    @Mock
+    private Clock clock;
 
-        Energiecontract energieContract2 = new Energiecontract();
-        energieContract2.setVan(7L);
+    @Test
+    public void givenMultipleEnergieContractsWithoutValidToSetWhenRecalculateValidToThenSetAndSaved() {
+        Energiecontract energiecontract1 = new Energiecontract();
+        energiecontract1.setValidFrom(LocalDate.of(2017, JANUARY, 1));
+
+        Energiecontract energiecontract2 = new Energiecontract();
+        energiecontract2.setValidFrom(LocalDate.of(2017, JANUARY, 6));
 
         Energiecontract energiecontract3 = new Energiecontract();
-        energiecontract3.setVan(30L);
+        energiecontract3.setValidFrom(LocalDate.of(2017, JANUARY, 12));
 
-        Energiecontract energiecontract4 = new Energiecontract();
-        energiecontract4.setVan(345L);
+        when(energiecontractRepository.findAll(any(Sort.class))).thenReturn(asList(energiecontract1, energiecontract2, energiecontract3));
 
-        when(energiecontractRepositoryMock.findAll(any(Sort.class))).thenReturn(asList(energiecontract1, energieContract2, energiecontract3, energiecontract4));
+        energiecontractService.recalculateValidTo();
 
-        energiecontractService.recalculateTotEnMet();
+        assertThat(energiecontract1.getValidTo()).isEqualTo(energiecontract2.getValidFrom());
+        assertThat(energiecontract2.getValidTo()).isEqualTo(energiecontract3.getValidFrom());
+        assertThat(energiecontract3.getValidTo()).isNull();
 
-        assertThat(energiecontract1.getTotEnMet(), is(equalTo(6L)));
-        assertThat(energieContract2.getTotEnMet(), is(equalTo(29L)));
-        assertThat(energiecontract3.getTotEnMet(), is(equalTo(344L)));
-        assertThat(energiecontract4.getTotEnMet(), is(equalTo(EnergiecontractService.SINT_JUTTEMIS)));
-
-        verify(energiecontractRepositoryMock, times(4)).save(any(Energiecontract.class));
+        verify(energiecontractRepository).save(energiecontract1);
+        verify(energiecontractRepository).save(energiecontract2);
     }
 
     @Test
     public void recalculateTotEnMetWithoutChanges() {
-        Energiecontract k1 = new Energiecontract();
-        k1.setVan(4L);
-        k1.setTotEnMet(6L);
+        Energiecontract energiecontract1 = new Energiecontract();
+        energiecontract1.setValidFrom(LocalDate.of(2017, JANUARY, 1));
+        energiecontract1.setValidTo(LocalDate.of(2017, JANUARY, 5));
 
-        Energiecontract k2 = new Energiecontract();
-        k2.setVan(7L);
-        k2.setTotEnMet(29L);
+        Energiecontract energiecontract2 = new Energiecontract();
+        energiecontract2.setValidFrom(energiecontract1.getValidTo());
+        energiecontract2.setValidTo(LocalDate.of(2017, JANUARY, 14));
 
-        Energiecontract k3 = new Energiecontract();
-        k3.setVan(30L);
-        k3.setTotEnMet(344L);
+        Energiecontract energiecontract3 = new Energiecontract();
+        energiecontract3.setValidFrom(energiecontract2.getValidTo());
+        energiecontract3.setValidTo(null);
 
-        Energiecontract k4 = new Energiecontract();
-        k4.setVan(345L);
-        k4.setTotEnMet(EnergiecontractService.SINT_JUTTEMIS);
+        when(energiecontractRepository.findAll(any(Sort.class))).thenReturn(asList(energiecontract1, energiecontract2, energiecontract3));
 
-        when(energiecontractRepositoryMock.findAll(any(Sort.class))).thenReturn(asList(k1, k2, k3, k4));
+        energiecontractService.recalculateValidTo();
 
-        energiecontractService.recalculateTotEnMet();
+        assertThat(energiecontract1.getValidTo()).isEqualTo(LocalDate.of(2017, JANUARY, 5));
+        assertThat(energiecontract2.getValidTo()).isEqualTo(LocalDate.of(2017, JANUARY, 14));
+        assertThat(energiecontract3.getValidTo()).isNull();
 
-        assertThat(k1.getTotEnMet(), is(equalTo(6L)));
-        assertThat(k2.getTotEnMet(), is(equalTo(29L)));
-        assertThat(k3.getTotEnMet(), is(equalTo(344L)));
-        assertThat(k4.getTotEnMet(), is(equalTo(EnergiecontractService.SINT_JUTTEMIS)));
-
-        verify(energiecontractRepositoryMock, never()).save(any(Energiecontract.class));
+        verify(energiecontractRepository, never()).save(any(Energiecontract.class));
     }
 
+    @Test
+    public void whenGetByIdThenDelegatedToRepository() {
+        long id = 132L;
+        Energiecontract energiecontract = mock(Energiecontract.class);
+        when(energiecontractRepository.getOne(id)).thenReturn(energiecontract);
+
+        assertThat(energiecontractService.getById(id)).isSameAs(energiecontract);
+    }
+
+    @Test
+    public void whenGetAllThenDelegatedToRepository() {
+        List<Energiecontract> all = asList(mock(Energiecontract.class), mock(Energiecontract.class));
+        when(energiecontractRepository.findAll()).thenReturn(all);
+
+        assertThat(energiecontractService.getAll()).isSameAs(all);
+    }
+
+    @Test
+    public void whenGetCurrentThenDelegatedToRepository() {
+        LocalDate today = LocalDate.of(2019, JANUARY, 1);
+        timeTravelTo(clock, today.atStartOfDay());
+
+        Energiecontract energiecontract = mock(Energiecontract.class);
+        when(energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(today)).thenReturn(energiecontract);
+
+        assertThat(energiecontractService.getCurrent()).isSameAs(energiecontract);
+    }
 }

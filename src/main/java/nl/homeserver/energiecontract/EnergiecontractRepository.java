@@ -1,5 +1,6 @@
 package nl.homeserver.energiecontract;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -11,11 +12,12 @@ import org.springframework.data.repository.query.Param;
 @Transactional
 public interface EnergiecontractRepository extends JpaRepository<Energiecontract, Long> {
 
-    @Query(value = "  SELECT e "
-                 + "    FROM Energiecontract e "
-                 + "   WHERE (:van BETWEEN e.van AND e.totEnMet) OR (:totEnMet BETWEEN e.van AND e.totEnMet) OR (e.van >= :van AND e.totEnMet <= :totEnMet) "
-                 + "ORDER BY e.van")
-    List<Energiecontract> findAllInInPeriod(@Param("van") long van, @Param("totEnMet") long totEnMet);
+    @Query(value = "   SELECT e "
+                 + "     FROM Energiecontract e "
+                 + "    WHERE (e.validFrom < :to) AND (e.validTo IS NULL OR e.validTo > :from) "
+                 + " ORDER BY e.validFrom")
+    List<Energiecontract> findValidInPeriod(@Param("from") final LocalDate from,
+                                            @Param("to") final LocalDate to);
 
-    Energiecontract findFirstByVanLessThanEqualOrderByVanDesc(@Param("van") long van);
+    Energiecontract findFirstByValidFromLessThanEqualOrderByValidFromDesc(@Param("validFrom") LocalDate validFrom);
 }

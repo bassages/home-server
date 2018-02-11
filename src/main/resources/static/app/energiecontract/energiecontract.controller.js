@@ -42,8 +42,8 @@
         }
 
         function startAdd() {
-            vm.energieContract = new EnergieContractService({van: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
-            vm.vanaf = vm.energieContract.van;
+            vm.energieContract = new EnergieContractService({validFrom: Date.today().getTime(), gasPerKuub: null, stroomPerKwh: null, leverancier: ''});
+            vm.vanaf = vm.energieContract.validFrom;
             vm.selectedId = null;
             vm.detailsmode = 'add';
             vm.showDetails = true;
@@ -51,7 +51,7 @@
 
         function startEdit(energiecontract) {
             vm.energieContract = angular.copy(energiecontract);
-            vm.vanaf = new Date(energiecontract.van);
+            vm.vanaf = new Date(energiecontract.validFrom);
             vm.selectedId = vm.energieContract.id;
             vm.detailsmode = 'edit';
             vm.showDetails = true;
@@ -94,7 +94,7 @@
         function save() {
             LoadingIndicatorService.startLoading();
 
-            vm.energieContract.van = new Date(vm.vanaf).getTime();
+            vm.energieContract.validFrom = new Date(vm.vanaf).toString('yyyy-MM-dd');
 
             $log.info('Save energieContract: ' + angular.toJson(vm.energieContract));
 
