@@ -1,6 +1,7 @@
 package nl.homeserver.dev.energie;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -77,10 +78,9 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
 
     private void simulateUpdateFromSlimmeMeter() {
         try {
-            long datumtijd = System.currentTimeMillis();
-
             Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
 
+            LocalDateTime datumtijd = LocalDateTime.now();
             dsmr42Reading.setDatumtijd(datumtijd);
             dsmr42Reading.setStroomTarief1(getStroomTarief1(datumtijd));
             dsmr42Reading.setStroomTarief2(getStroomTarief2(datumtijd));
@@ -94,17 +94,17 @@ public class SlimmeMeterSimulatorService extends AbstractDataGeneratorService {
         }
     }
 
-    private BigDecimal getGas(long datumtijd) {
+    private BigDecimal getGas(LocalDateTime datumtijd) {
         lastGeneratedGas = lastGeneratedGas.add(getGasIncreasePerInterval(datumtijd));
         return lastGeneratedGas;
     }
 
-    private BigDecimal getStroomTarief2(long datumtijd) {
+    private BigDecimal getStroomTarief2(LocalDateTime datumtijd) {
         lastGeneratedStroomTarief2 = lastGeneratedStroomTarief2.add(getStroomIncreasePerInterval(datumtijd));
         return lastGeneratedStroomTarief2;
     }
 
-    private BigDecimal getStroomTarief1(long datumtijd) {
+    private BigDecimal getStroomTarief1(LocalDateTime datumtijd) {
         lastGeneratedStroomTarief1 = lastGeneratedStroomTarief2.add(getStroomIncreasePerInterval(datumtijd));
         return lastGeneratedStroomTarief1;
     }

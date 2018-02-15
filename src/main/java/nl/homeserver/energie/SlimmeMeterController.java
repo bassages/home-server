@@ -1,7 +1,6 @@
 package nl.homeserver.energie;
 
 import static java.math.RoundingMode.HALF_UP;
-import static nl.homeserver.DateTimeUtil.toLocalDateTime;
 
 import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -54,7 +53,7 @@ public class SlimmeMeterController {
 
     private Meterstand mapToMeterStand(Dsmr42Reading dsmr42Reading) {
         Meterstand meterstand = new Meterstand();
-        meterstand.setDateTime(toLocalDateTime(dsmr42Reading.getDatumtijd()));
+        meterstand.setDateTime(dsmr42Reading.getDatumtijd());
         meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         meterstand.setGas(dsmr42Reading.getGas().setScale(GAS_SCALE, HALF_UP));
         meterstand.setStroomTarief1(dsmr42Reading.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
@@ -64,7 +63,7 @@ public class SlimmeMeterController {
 
     private OpgenomenVermogen mapToOpgenomenVermogen(Dsmr42Reading dsmr42Reading) {
         OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
-        opgenomenVermogen.setDatumtijd(toLocalDateTime(dsmr42Reading.getDatumtijd()));
+        opgenomenVermogen.setDatumtijd(dsmr42Reading.getDatumtijd());
         opgenomenVermogen.setWatt(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;

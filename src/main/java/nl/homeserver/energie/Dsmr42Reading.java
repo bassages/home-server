@@ -1,16 +1,20 @@
 package nl.homeserver.energie;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class Dsmr42Reading {
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Getter
     @Setter
-    private long datumtijd;
+    private LocalDateTime datumtijd;
 
     @Getter
     @Setter

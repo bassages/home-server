@@ -1,13 +1,16 @@
 package nl.homeserver.energie;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Setter;
 
 public class LangeStroomStoring {
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Setter
-    private Date datumtijdEinde;
+    private LocalDateTime datumtijdEinde;
 
     @Setter
     private Long duurVanStoringInSeconden;

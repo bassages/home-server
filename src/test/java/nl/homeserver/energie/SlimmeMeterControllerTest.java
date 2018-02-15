@@ -4,7 +4,6 @@ import static ch.qos.logback.classic.Level.INFO;
 import static ch.qos.logback.classic.Level.OFF;
 import static java.math.BigDecimal.TEN;
 import static java.util.Collections.singletonList;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -51,7 +50,7 @@ public class SlimmeMeterControllerTest {
     public void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
         Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
-        dsmr42Reading.setDatumtijd(toMillisSinceEpoch(dateTime));
+        dsmr42Reading.setDatumtijd(dateTime);
         StroomTariefIndicator stroomTariefIndicator = NORMAAL;
         dsmr42Reading.setStroomTariefIndicator((int) stroomTariefIndicator.getId());
         dsmr42Reading.setGas(new BigDecimal("201.876234"));
@@ -70,7 +69,7 @@ public class SlimmeMeterControllerTest {
         dsmr42Reading.setAantalLangeStroomStoringenInAlleFases(431);
 
         LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
-        langeStroomStoring.setDatumtijdEinde(new Date());
+        langeStroomStoring.setDatumtijdEinde(LocalDateTime.now());
         langeStroomStoring.setDuurVanStoringInSeconden(120L);
         dsmr42Reading.setLangeStroomStoringen(singletonList(langeStroomStoring));
 
