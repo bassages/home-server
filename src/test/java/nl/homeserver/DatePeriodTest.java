@@ -7,6 +7,8 @@ import java.time.Month;
 
 import org.junit.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 public class DatePeriodTest {
 
     @Test
@@ -33,5 +35,8 @@ public class DatePeriodTest {
         assertThat(datePeriod.getEndDate()).isEqualTo(toDate.minusDays(1));
     }
 
-
+    @Test
+    public void testEqualsAndHashCode() {
+        EqualsVerifier.forClass(DatePeriod.class).verify();
+    }
 }

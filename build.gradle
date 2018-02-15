@@ -92,6 +92,7 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.assertj:assertj-core:3.9.0')
+    testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.3');
 
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')
