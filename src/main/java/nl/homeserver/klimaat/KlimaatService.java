@@ -21,9 +21,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +66,11 @@ public class KlimaatService {
 
     private final Clock clock;
 
-    public KlimaatService(KlimaatRepos klimaatRepository, KlimaatSensorRepository klimaatSensorRepository,
-            KlimaatSensorValueTrendService klimaatSensorValueTrendService, SimpMessagingTemplate messagingTemplate, Clock clock) {
+    public KlimaatService(final KlimaatRepos klimaatRepository,
+                          final KlimaatSensorRepository klimaatSensorRepository,
+                          final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
+                          final SimpMessagingTemplate messagingTemplate,
+                          final Clock clock) {
 
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
@@ -107,7 +112,7 @@ public class KlimaatService {
             averageHumidity = averageHumidity.setScale(HUMIDITY_SCALE, HALF_UP);
         }
 
-        if (averageTemperature != null || averageHumidity != null) {
+        if (Stream.of(averageTemperature, averageHumidity).anyMatch(Objects::nonNull)) {
             Klimaat klimaatToSave = new Klimaat();
             klimaatToSave.setDatumtijd(referenceDateTime);
             klimaatToSave.setTemperatuur(averageTemperature);
