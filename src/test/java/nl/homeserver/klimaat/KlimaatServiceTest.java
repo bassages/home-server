@@ -1,5 +1,6 @@
 package nl.homeserver.klimaat;
 
+import static java.math.BigDecimal.ZERO;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JULY;
 import static java.time.Month.JUNE;
@@ -219,21 +220,29 @@ public class KlimaatServiceTest {
 
         when(klimaatSensorRepository.findFirstByCode(klimaatSensorBasement.getCode())).thenReturn(Optional.of(klimaatSensorBasement));
 
-        Klimaat recentKlimaat1ForBasement = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                      .withDatumtijd(currentDateTime.minusMinutes(10))
-                                                      .withLuchtvochtigheid(new BigDecimal("25.00"))
-                                                      .withTemperatuur(new BigDecimal("20.00"))
-                                                      .build();
-        Klimaat recentKlimaat2ForBasement = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                      .withDatumtijd(currentDateTime.minusMinutes(5))
-                                                      .withLuchtvochtigheid(new BigDecimal("75.00"))
-                                                      .withTemperatuur(new BigDecimal("10.00"))
-                                                      .build();
+        Klimaat recentValidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                .withDatumtijd(currentDateTime.minusMinutes(10))
+                                                .withLuchtvochtigheid(new BigDecimal("25.00"))
+                                                .withTemperatuur(new BigDecimal("20.00"))
+                                                .build();
+        Klimaat recentValidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                .withDatumtijd(currentDateTime.minusMinutes(5))
+                                                .withLuchtvochtigheid(new BigDecimal("75.00"))
+                                                .withTemperatuur(new BigDecimal("10.00"))
+                                                .build();
+        Klimaat recentInvalidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                  .withDatumtijd(currentDateTime.minusMinutes(4))
+                                                  .withLuchtvochtigheid(ZERO)
+                                                  .withTemperatuur(ZERO)
+                                                  .build();
+        Klimaat recentInvalidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                  .withDatumtijd(currentDateTime.minusMinutes(3))
+                                                  .withLuchtvochtigheid(null)
+                                                  .withTemperatuur(null)
+                                                  .build();
 
-        List<Klimaat> recentlyReceivedKlimaatsForBasement = new ArrayList<>();
-        recentlyReceivedKlimaatsForBasement.add(recentKlimaat1ForBasement);
-        recentlyReceivedKlimaatsForBasement.add(recentKlimaat2ForBasement);
-        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorBasement.getCode(), recentlyReceivedKlimaatsForBasement);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorBasement.getCode(),
+                                                         asList(recentValidKlimaat1, recentValidKlimaat2, recentInvalidKlimaat1, recentInvalidKlimaat2));
 
         klimaatService.save();
 
