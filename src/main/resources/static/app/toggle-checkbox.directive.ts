@@ -39,9 +39,9 @@ angular
                 var updateElementFromModel = function() {
                     // Update button state to match model
                     var state = ! $($element).attr('disabled');
-                    $($element).bootstrapToggle("enable");
+                    (<any>$($element)).bootstrapToggle("enable");
                     $element.trigger('change');
-                    $($element).bootstrapToggle(state ? "enable" : "disable");
+                    (<any>$($element)).bootstrapToggle(state ? "enable" : "disable");
                 };
 
                 // Observe: Element changes affect Model
@@ -60,7 +60,7 @@ angular
                 $scope.$watch(function() {
                     return $($element).attr('disabled');
                 }, function(newVal) {
-                    $($element).bootstrapToggle(! newVal ? "enable" : "disable");
+                    (<any>$($element)).bootstrapToggle(! newVal ? "enable" : "disable");
                 });
 
                 // Initialise BootstrapToggle

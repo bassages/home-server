@@ -8,7 +8,7 @@
     ApplicationSettingsController.$inject = ['ApplicationSettingsService'];
 
     function ApplicationSettingsController(ApplicationSettingsService) {
-        var vm = this;
+        let vm = this;
 
         vm.settings = ApplicationSettingsService;
     }

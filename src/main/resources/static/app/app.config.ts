@@ -23,7 +23,7 @@
     // Init Lodash
     angular.module('app')
         // allow DI for use in controllers, unit tests
-        .constant('_', window._);
+        .constant('_', (<any>window)._);
 
     angular
         .module('app')

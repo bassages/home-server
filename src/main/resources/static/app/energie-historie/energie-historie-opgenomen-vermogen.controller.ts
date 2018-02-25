@@ -87,7 +87,7 @@
             var previousTarief = null;
 
             for (var i = 0; i < length; i++) {
-                var transformedDataItem = {};
+                var transformedDataItem: any = {};
 
                 var tarief = data[i].tariefIndicator.toLowerCase();
                 transformedDataItem.datumtijd = new Date(data[i].datumtijd).getTime();
@@ -95,9 +95,9 @@
 
                 // Fill the "gap" between this row and the previous one
                 if (previousTarief && tarief && tarief !== previousTarief) {
-                    var obj = {};
+                    const obj: any = {};
                     obj.datumtijd = new Date(data[i].datumtijd).getTime() - 1;
-                    var attribute = 'watt-' + previousTarief;
+                    const attribute = 'watt-' + previousTarief;
                     obj[attribute] = data[i].watt;
                     transformedData.push(obj);
                 }
@@ -109,11 +109,11 @@
         }
 
         function getStatistics(chartData) {
-            var nonZero = _.filter(chartData, function(o) { return o.watt !== null && o.watt > 0; } );
+            let nonZero = _.filter(chartData, function(o:any) { return o.watt !== null && o.watt > 0; } );
 
-            var mean = _.meanBy(nonZero, 'watt');
-            var min = _.minBy(nonZero, 'watt');
-            var max = _.maxBy(chartData, 'watt');
+            let mean: any = _.meanBy(nonZero, 'watt');
+            let min: any = _.minBy(nonZero, 'watt');
+            let max: any = _.maxBy(nonZero, 'watt');
 
             return {
                 avg: mean,
@@ -140,7 +140,7 @@
         }
 
         function getChartConfig(transformedChartData, statistics) {
-            var chartConfig = {};
+            var chartConfig:any = {};
             var tickValues = getTicksForEveryHourInPeriod($scope.selection, getTo());
 
             chartConfig.bindto = '#chart';
@@ -188,7 +188,8 @@
             LoadingIndicatorService.startLoading();
             loadDataIntoChart([]);
 
-            var dataUrl = 'api/opgenomen-vermogen/historie/' + $scope.selection.toString('yyyy-MM-dd') + '/' + getTo().toString('yyyy-MM-dd') + '?subPeriodLength=' + THREE_MINUTES_IN_SECONDS;
+            const selection: Date = $scope.selection;
+            const dataUrl = 'api/opgenomen-vermogen/historie/' + selection.toString('yyyy-MM-dd') + '/' + getTo().toString('yyyy-MM-dd') + '?subPeriodLength=' + THREE_MINUTES_IN_SECONDS;
 
             $http({method: 'GET', url: dataUrl})
                 .then(

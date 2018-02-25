@@ -57,7 +57,7 @@
         }
 
         function removeDate(dateToRemove) {
-            _.remove(vm.selectedDates, function(date) {
+            _.remove(vm.selectedDates, function(date: Date) {
                 return date.getTime() === dateToRemove.getTime();
             });
         }

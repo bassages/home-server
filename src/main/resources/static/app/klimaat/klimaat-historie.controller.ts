@@ -67,7 +67,7 @@
         }
 
         function openDateSelectionDialog() {
-            var modalInstance = $uibModal.open({
+            const modalInstance = $uibModal.open({
                 animation: false,
                 templateUrl: 'app/multiple-dates-selection-dialog.html',
                 backdrop: 'static',
@@ -90,37 +90,37 @@
         }
 
         function getTicksForEveryHourInDay() {
-            var from = getFixedDate();
-            var to = getTo(from);
+            const from: Date = getFixedDate();
+            const to: Date = getTo(from);
 
-            var numberOfHoursInDay = ((to - from) / 1000) / 60 / 60;
+            const numberOfHoursInDay: number = ((to.getTime() - from.getTime()) / 1000) / 60 / 60;
 
-            var tickValues = [];
-            for (var i = 0; i <= numberOfHoursInDay; i++) {
-                var tickValue = from.getTime() + (i * 60 * 60 * 1000);
+            const tickValues = [];
+            for (let i = 0; i <= numberOfHoursInDay; i++) {
+                const tickValue = from.getTime() + (i * 60 * 60 * 1000);
                 tickValues.push(tickValue);
             }
             return tickValues;
         }
 
         function getStatistics(chartData) {
-            var min, max, avg;
+            let min, max, avg;
 
-            var sumOfAllKlimaatValues = 0;
-            var nrOfKlimaatValues = 0;
+            let sumOfAllKlimaatValues = 0;
+            let nrOfKlimaatValues = 0;
 
-            for (var i = 0; i < chartData.length; i++) {
-                var klimaatValuesOnSameTimeOfMultipleDays = chartData[i];
+            for (let i = 0; i < chartData.length; i++) {
+                let klimaatValuesOnSameTimeOfMultipleDays = chartData[i];
 
                 // The next array will contain the formatted date(s) and an item with value 'datumtijd'
-                var formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
+                let formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
                 // Remove the datumtijd value, so that only formatted dates remain
                 removeItemFromList(formattedDates, 'datumtijd');
 
-                for (var j = 0; j < formattedDates.length; j++) {
-                    var formattedDate = formattedDates[j];
+                for (let j = 0; j < formattedDates.length; j++) {
+                    let formattedDate = formattedDates[j];
 
-                    var klimaatValue = klimaatValuesOnSameTimeOfMultipleDays[formattedDate];
+                    let klimaatValue = klimaatValuesOnSameTimeOfMultipleDays[formattedDate];
 
                     if (klimaatValue !== null && (typeof max === 'undefined' || klimaatValue > max)) {
                         max = klimaatValue;
@@ -161,8 +161,8 @@
             };
         }
 
-        function getFixedDate() {
-            return Date.parse('01-01-2016');
+        function getFixedDate(): Date {
+            return new Date('01-01-2016');
         }
 
         function loadDataIntoTable(data) {
@@ -228,12 +228,12 @@
         }
 
         function getChartConfig(chartData) {
-            var chartConfig = {};
+            var chartConfig: any = {};
             var tickValues = getTicksForEveryHourInDay();
 
             chartConfig.bindto = '#chart';
 
-            var value  = [];
+            var value: any = [];
             for (var i = 0; i < vm.selection.length; i++) {
                 value.push(d3.time.format('%d-%m-%Y')(vm.selection[i]));
             }
@@ -293,23 +293,28 @@
             KlimaatSensorGrafiekService.setChartHeightMatchingWithAvailableWindowHeight(vm.chart);
         }
 
-        function getTo(from) {
-            return from.clone().add({days: 1});
+        function getTo(from: Date) {
+            return from.clone().addDays(1);
         }
 
         function transformServerdata(serverresponses) {
-            var result = [];
+            const result = [];
 
-            for (var i = 0; i < serverresponses.length; i++) {
-                var serverresponse = serverresponses[i]; // Values on a specific date
+            for (let i = 0; i < serverresponses.length; i++) {
+                const serverresponse = serverresponses[i]; // Values on a specific date
 
-                for (var j = 0; j < serverresponse.data.length; j++) {
-                    var datumtijd = new Date(serverresponse.data[j].datumtijd);
+                for (let j = 0; j < serverresponse.data.length; j++) {
+                    const datumtijd = new Date(serverresponse.data[j].datumtijd);
 
-                    var datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
-                    var datumtijdValue = serverresponse.data[j][vm.sensortype];
+                    const datumtijdKey = d3.time.format('%d-%m-%Y')(datumtijd);
+                    const datumtijdValue = serverresponse.data[j][vm.sensortype];
 
-                    var row = getOrCreateCombinedRow(result, datumtijd.clone().set({ day: getFixedDate().getDate(), month: getFixedDate().getMonth(), year: getFixedDate().getFullYear()}));
+                    const date: Date = datumtijd.clone();
+                    date.setDate(getFixedDate().getDate());
+                    date.setMonth(getFixedDate().getMonth());
+                    date.setFullYear(getFixedDate().getFullYear());
+                    const row = getOrCreateCombinedRow(result, date);
+
                     row[datumtijdKey] = datumtijdValue;
                 }
             }

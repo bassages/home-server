@@ -63,7 +63,7 @@
             }).then(function successCallback(response) {
                 vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek = response.data.gasVerbruik;
                 $log.debug("Gemiddelde gasverbruik per dag over afgelopen week: " + vm.gemiddeldeGasVerbruikPerDagInAfgelopenWeek);
-                setGasVandaagLeds(vm);
+                setGasVandaagLeds();
             }, function errorCallback(response) {
                 $log.error(angular.toJson(response));
             });

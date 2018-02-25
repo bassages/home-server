@@ -8,7 +8,7 @@
     RealtimeOpgenomenVermogenService.$inject = ['$q', '$timeout', '$log'];
 
     function RealtimeOpgenomenVermogenService($q, $timeout, $log) {
-        var service = {};
+        var service:any = {};
         var listener = $q.defer();
 
         var socket = { client: null, stomp: null };

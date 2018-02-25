@@ -11,7 +11,7 @@
         angular.extend(EnergieHistorieService.prototype, BaseHistorieService);
 
         this.getDefaultBarChartConfig = function(data) {
-            var chartConfig = {};
+            var chartConfig: any = {};
 
             chartConfig.bindto = '#chart';
 
@@ -152,7 +152,7 @@
             }
 
             for (var i = 0; i < data.length; i++) {
-                var row = {};
+                var row: any = {};
 
                 row[""] = labelFormatter(data[i]);
                 row.selectionKey = data[i][selectionKeyAttributeName];

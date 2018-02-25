@@ -3,21 +3,19 @@
 
     angular
         .module('app')
-        .service('RealtimeMeterstandenService', RealtimeMeterstandenService);
+        .service('RealtimeKlimaatService', RealtimeKlimaatService);
 
-    RealtimeMeterstandenService.$inject = ['$q', '$timeout', '$log'];
+    RealtimeKlimaatService.$inject = ['$q', '$timeout', '$log'];
 
-    function RealtimeMeterstandenService($q, $timeout, $log) {
-        var service = {};
+    function RealtimeKlimaatService($q, $timeout, $log) {
+        var service: any = {};
         var listener = $q.defer();
-        var socket = {
-            client: null,
-            stomp: null
-        };
+
+        var socket = { client: null, stomp: null };
 
         service.RECONNECT_TIMEOUT = 10000;
-        service.SOCKET_URL = "/ws/meterstand";
-        service.UPDATE_TOPIC = "/topic/meterstand";
+        service.SOCKET_URL = "/ws/klimaat";
+        service.UPDATE_TOPIC = "/topic/klimaat";
 
         service.receive = function() {
             return listener.promise;

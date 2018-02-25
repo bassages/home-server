@@ -33,7 +33,7 @@
         }
 
         function getFormattedSelectedYears() {
-            return _.map(vm.selection, function(date) { return date.getFullYear(); }).join(', ');
+            return _.map(vm.selection, function(date: Date) { return date.getFullYear(); }).join(', ');
         }
 
         function openMultipleYearsSelectionDialog () {
@@ -71,7 +71,7 @@
             if (vm.selection) {
                 LoadingIndicatorService.startLoading();
 
-                var urlParamJaar = 'jaar=' + _.map(vm.selection, function(o) { return new Date(o).getFullYear(); }).join('&jaar=');
+                var urlParamJaar = 'jaar=' + _.map(vm.selection, function(o: any) { return new Date(o).getFullYear(); }).join('&jaar=');
 
                 var defaultSensorCode = 'WOONKAMER';
                 var dataUrl = 'api/klimaat/' + defaultSensorCode + '/gemiddeld-per-maand-in-jaar?' + urlParamJaar + '&sensorType=' + vm.sensortype;

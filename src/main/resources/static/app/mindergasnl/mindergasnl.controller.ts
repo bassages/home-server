@@ -56,7 +56,7 @@
         }
 
         function handleTechnicalError(details) {
-            var message = 'Er is een onverwachte fout opgetreden.';
+            const message = 'Er is een onverwachte fout opgetreden.';
             $log.error(message + ' ' + details);
             ErrorMessageService.showMessage(message);
         }

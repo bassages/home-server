@@ -102,7 +102,7 @@
         }
 
         function chartDataClick(data, element) {
-            navigateToDetailsOfSelection(data.x);
+            navigateToDetailsOfSelection();
         }
 
         function getChartConfig(data) {
@@ -169,7 +169,8 @@
             if ($scope.energiesoorten.length > 0) {
                 LoadingIndicatorService.startLoading();
 
-                var dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + $scope.selection.toString('yyyy-MM-dd');
+                const selection: Date = $scope.selection;
+                const dataUrl = 'api/energie/verbruik-per-uur-op-dag/' + selection.toString('yyyy-MM-dd');
 
                 $http({method: 'GET', url: dataUrl}).then(
                     function successCallback(response) {
@@ -187,7 +188,7 @@
 
         function navigateToDetailsOfSelection() {
             $timeout(function() {
-                var formattedDate = EnergieHistorieService.formatDateForLocationSearch($scope.selection);
+                const formattedDate = EnergieHistorieService.formatDateForLocationSearch($scope.selection);
                 $location.path('/energie/stroom/opgenomen-vermogen/').search('datum', formattedDate);
             });
         }

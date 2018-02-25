@@ -17,19 +17,23 @@
   },
   "homepage": "https://github.com/bassages/home-server#readme",
   "devDependencies": {
+    "@types/angular": "^1.6.43",
+    "@types/c3": "^0.4.54",
+    "@types/datejs": "0.0.30",
+    "@types/jquery": "^3.2.1",
+    "@types/lodash": "^4.14.104",
     "gulp": "^3.9.1",
     "gulp-angular-templatecache": "^2.0.0",
     "gulp-clean-css": "^3.9.0",
     "gulp-concat": "^2.6.1",
     "gulp-htmlmin": "^3.0.0",
-    "gulp-jshint": "^2.0.4",
     "gulp-less": "^3.3.2",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.6.2",
+    "gulp-typescript": "^4.0.1",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "jshint": "^2.9.5",
-    "jshint-stylish": "^2.2.1",
-    "run-sequence": "^2.2.0"
+    "run-sequence": "^2.2.0",
+    "typescript": "^2.7.2"
   }
 }

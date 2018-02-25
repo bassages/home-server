@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    jshint = require('gulp-jshint'),
+    ts = require('gulp-typescript'),
     sourcemaps = require('gulp-sourcemaps'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
@@ -16,23 +16,12 @@ var appJsDir = appSourcesRoot + '/app';
 var appStylesDir = appSourcesRoot + '/styles';
 
 var buildDir = gutil.env.buildtype === 'prod' ? 'build/resources/main/static' : 'out/production/resources/static';
-var buildJsDir = buildDir + '/app';
+var buildCodeDir = buildDir + '/app';
 var buildCssDir = buildDir + '/css';
 
-// configure the jshint task
-gulp.task('jshint', function() {
-    return gulp.src(appJsDir + '/**/*.js')
-        .pipe(jshint())
-        .pipe(jshint.reporter('jshint-stylish'))
-        .pipe(jshint.reporter('fail'));
-});
-
 gulp.task('buildAndWatch', function(callback) {
-    runSequence('build',
-                'watch',
-                callback);
+    runSequence('build', 'watch', callback);
 });
-
 
 // Task to watch resource changes. If a resource changes, the build is triggered
 gulp.task('watch', function() {
@@ -40,21 +29,23 @@ gulp.task('watch', function() {
 });
 
 gulp.task('build', function(callback) {
-    runSequence('jshint',
+    runSequence(
+                'build-ts',
                 'build-templatecache',
-                'build-js',
                 'build-css',
         callback);
 });
 
-// Task to build js file
-gulp.task('build-js', function() {
-    return gulp.src([appJsDir + '/**/*.js', buildDir + '/generated/**/*.js'])
+gulp.task('build-ts', function () {
+    return gulp.src(appJsDir + '/**/*.ts')
         .pipe(gutil.env.buildtype !== 'prod' ? sourcemaps.init() : gutil.noop())
-        .pipe(concat('home-min.js'))
+        .pipe(ts({
+            outFile: 'home-min.js',
+            diagnostics: true
+        }))
         .pipe(uglify())
         .pipe(gutil.env.buildtype !== 'prod' ? sourcemaps.write() : gutil.noop())
-        .pipe(gulp.dest(buildJsDir));
+        .pipe(gulp.dest(buildCodeDir));
 });
 
 gulp.task('build-templatecache', function () {
@@ -71,7 +62,6 @@ gulp.task('build-templatecache', function () {
         .pipe(gulp.dest(buildDir + '/generated'));
 });
 
-// Task to build css file
 gulp.task('build-css', function() {
     return gulp.src(appStylesDir + '/main.less')
         .pipe(less())
