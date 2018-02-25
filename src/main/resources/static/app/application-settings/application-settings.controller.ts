@@ -9,7 +9,6 @@
 
     function ApplicationSettingsController(ApplicationSettingsService) {
         let vm = this;
-
-        vm.settings = ApplicationSettingsService;
+        vm.applicationsettings = ApplicationSettingsService;
     }
 })();
