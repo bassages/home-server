@@ -175,7 +175,8 @@
                 var klimaatValuesOnSameTimeOfMultipleDays = data[i];
 
                 var row = {};
-                row[""] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
+                var titleOfTimeColumn = "";
+                row[titleOfTimeColumn] = d3.time.format('%H:%M')(new Date(data[i].datumtijd));
 
                 var formattedDates = Object.keys(klimaatValuesOnSameTimeOfMultipleDays);
                 formattedDates = removeItemFromList(formattedDates, 'datumtijd');

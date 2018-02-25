@@ -147,41 +147,45 @@
             var rows = [];
             var cols = [];
 
-            if (energiesoorten.length > 0) {
+            if (energiesoorten.length === 0) {
+                return {rows: rows, cols: cols};
+            }
 
-                for (var i = 0; i < data.length; i++) {
-                    var row = {};
+            for (var i = 0; i < data.length; i++) {
+                var row = {};
 
-                    row[""] = labelFormatter(data[i]);
-                    row.selectionKey = data[i][selectionKeyAttributeName];
+                row[""] = labelFormatter(data[i]);
+                row.selectionKey = data[i][selectionKeyAttributeName];
 
-                    var rowTotal = null;
+                var rowTotal = null;
 
-                    for (var j = 0; j < energiesoorten.length; j++) {
-                        var energiesoort = energiesoorten[j];
-                        var rowLabel = energiesoort.charAt(0).toUpperCase() + energiesoort.slice(1);
-                        var value = data[i][energiesoort + '-' + soort];
+                for (var j = 0; j < energiesoorten.length; j++) {
+                    var energiesoort = energiesoorten[j];
+                    var rowLabel = energiesoort.charAt(0).toUpperCase() + energiesoort.slice(1);
+                    var value = data[i][energiesoort + '-' + soort];
 
-                        var rowValue = '';
-                        if (value !== null) {
-                            rowValue = this.formatWithUnitLabel(soort, energiesoorten, value);
+                    var rowValue = '';
+                    if (value !== null) {
+                        rowValue = this.formatWithUnitLabel(soort, energiesoorten, value);
 
-                            if (rowTotal === null) { rowTotal = 0; }
-                            rowTotal += value;
-                        }
-                        row[rowLabel] = rowValue;
-                    }
-
-                    if (energiesoorten.length > 1) {
                         if (rowTotal === null) {
-                            row.Totaal = '';
-                        } else {
-                            row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                            rowTotal = 0;
                         }
+                        rowTotal += value;
                     }
-
-                    rows.push(row);
+                    row[rowLabel] = rowValue;
                 }
+
+                if (energiesoorten.length > 1) {
+                    if (rowTotal === null) {
+                        row.Totaal = '';
+                    } else {
+                        row.Totaal = this.formatWithUnitLabel(soort, energiesoorten, rowTotal);
+                    }
+                }
+
+                rows.push(row);
+
             }
 
             if (rows.length > 0) {
@@ -190,8 +194,6 @@
 
             return {rows: rows, cols: cols};
         };
-
-
 
         this.transformServerdata = function(serverresponses, key) {
             var result = [];
