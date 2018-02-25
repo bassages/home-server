@@ -8,11 +8,12 @@
     MeterstandenController.$inject = ['$log', 'MeterstandenService', 'LoadingIndicatorService', 'ErrorMessageService'];
 
     function MeterstandenController($log, MeterstandenService, LoadingIndicatorService, ErrorMessageService) {
-        var vm = this;
+        let vm = this;
 
         vm.isMaxSelected = isMaxSelected;
         vm.navigate = navigate;
         vm.toggleDatepickerPopup = toggleDatepickerPopup;
+        vm.getDataFromServer = getDataFromServer;
 
         vm.selection = Date.today().clearTime().moveToFirstDayOfMonth();
         vm.dateformat = 'MMMM yyyy';
@@ -41,11 +42,10 @@
         function getDataFromServer() {
             LoadingIndicatorService.startLoading();
 
-            var van = vm.selection;
-            var tot = vm.selection.clone().addMonths(1);
+            const van: Date = vm.selection;
+            const tot: Date = vm.selection.clone().addMonths(1);
 
-            MeterstandenService.getMeterstandenPerDagInPeriod(van, tot)
-                .then(
+            MeterstandenService.getMeterstandenPerDagInPeriod(van, tot).then(
                 function successCallback(response) {
                     vm.meterstandenPerDag = response.data;
                     LoadingIndicatorService.stopLoading();

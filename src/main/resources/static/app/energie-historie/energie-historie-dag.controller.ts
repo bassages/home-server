@@ -62,7 +62,7 @@
         }
 
         function changeDate(date) {
-            var formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
+            const formattedDate = EnergieHistorieService.formatDateForLocationSearch(date);
             $location.search('datum', formattedDate);
         }
 
