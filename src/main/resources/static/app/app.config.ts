@@ -37,9 +37,9 @@
         $compileProvider.commentDirectivesEnabled(false);
         $compileProvider.cssClassDirectivesEnabled(false);
 
-        numbro.culture('nl-NL');
+        numbro.language('nl-NL');
 
-        var d3Formatters = d3.locale({
+        let d3Formatters = d3.locale({
             "decimal": ",",
             "thousands": ".",
             "grouping": [3],
