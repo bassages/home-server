@@ -56,8 +56,17 @@ public class MindergasnlService {
         return mindergasnlSettingsRepository.findOneByIdIsNotNull();
     }
 
-    public MindergasnlSettings save(MindergasnlSettings mindergasnlSettings) {
-        return mindergasnlSettingsRepository.save(mindergasnlSettings);
+    public MindergasnlSettings save(final MindergasnlSettings mindergasnlSettings) {
+        Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = mindergasnlSettingsRepository.findOneByIdIsNotNull();
+
+        if (optionalExistingMindergasnlSettings.isPresent()) {
+            MindergasnlSettings existingMindergasnlSettings = optionalExistingMindergasnlSettings.get();
+            existingMindergasnlSettings.setAutomatischUploaden(mindergasnlSettings.isAutomatischUploaden());
+            existingMindergasnlSettings.setAuthenticatietoken(mindergasnlSettings.getAuthenticatietoken());
+            return mindergasnlSettingsRepository.save(existingMindergasnlSettings);
+        } else {
+            return mindergasnlSettingsRepository.save(mindergasnlSettings);
+        }
     }
 
     @Scheduled(cron = THREE_AM)

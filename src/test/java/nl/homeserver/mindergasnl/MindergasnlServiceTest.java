@@ -7,6 +7,7 @@ import static nl.homeserver.energie.MeterstandBuilder.aMeterstand;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -78,12 +79,31 @@ public class MindergasnlServiceTest {
     private ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
 
     @Test
-    public void whenSaveSettingsThenDelegatedToRepository() {
+    public void givenNoSettingsExistsWhenSaveSettingsThenDelegatedToRepository() {
+        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
+
         MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
 
         when(mindergasnlSettingsRepository.save(mindergasnlSettings)).thenReturn(mindergasnlSettings);
 
         assertThat(mindergasnlService.save(mindergasnlSettings)).isEqualTo(mindergasnlSettings);
+    }
+
+    @Test
+    public void givenSettingsExistsWhenSaveSettingsThenDelegatedToRepository() {
+        MindergasnlSettings existingMindergasnlSettings = new MindergasnlSettings();
+        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(existingMindergasnlSettings));
+
+        MindergasnlSettings updatedMindergasnlSettings = new MindergasnlSettings();
+        updatedMindergasnlSettings .setAutomatischUploaden(false);
+        updatedMindergasnlSettings.setAuthenticatietoken("newToken");
+
+        when(mindergasnlSettingsRepository.save(any(MindergasnlSettings.class))).then(returnsFirstArg());
+
+        assertThat(mindergasnlService.save(updatedMindergasnlSettings)).isEqualTo(existingMindergasnlSettings);
+
+        assertThat(existingMindergasnlSettings.getAuthenticatietoken()).isSameAs(updatedMindergasnlSettings.getAuthenticatietoken());
+        assertThat(existingMindergasnlSettings.isAutomatischUploaden()).isSameAs(updatedMindergasnlSettings.isAutomatischUploaden());
     }
 
     @Test
