@@ -43,10 +43,10 @@ public class EnergiecontractService {
     }
 
     public Energiecontract save(Energiecontract energiecontract) {
-        Energiecontract result = energiecontractRepository.save(energiecontract);
+        Energiecontract savedEnergieContract = energiecontractRepository.save(energiecontract);
         energiecontractToDateRecalculator.recalculate();
         cacheService.clearAll();
-        return result;
+        return savedEnergieContract;
     }
 
     public void delete(long id) {
