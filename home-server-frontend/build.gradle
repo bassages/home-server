@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'com.moowork.gulp' version '1.2.0'
+}
+
+repositories {
+    jcenter()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.5'
+}
+
+node {
+    // Version of node to use.
+    version = '8.9.4' // LTS version
+    download = true
+}
+
+processResources.dependsOn 'buildAngular'
+
+// Cleans up node_modules and nodejs dirs on clean task
+clean.doFirst {
+    delete "${rootDir}/node_modules"
+    delete "${rootDir}/.gradle/nodejs"
+}
+
+task buildAngular(type: NpmTask) {
+    description = 'Excecute npm run build'
+
+    // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
+    npmInstall.outputs.upToDateWhen { false }
+
+    // make sure npm install has been performed before calling the build task in gulpfile.js
+    dependsOn = [ npmInstall ]
+
+    args = ['run', 'build']
+}

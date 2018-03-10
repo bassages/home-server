@@ -107,8 +107,8 @@ bootRun {
 }
 
 // make sure gulp generates artifacts for the build
-bootRun.dependsOn 'buildGulpFromGradle'
-processResources.dependsOn 'buildGulpFromGradle'
+bootRun.dependsOn 'buildAngularJS'
+processResources.dependsOn 'buildAngularJS'
 
 // Cleans up node_modules and nodejs dirs on clean task
 clean.doFirst {
@@ -116,8 +116,9 @@ clean.doFirst {
     delete "${rootDir}/.gradle/nodejs"
 }
 
-task buildGulpFromGradle(type: GulpTask) {
-    description = 'Triggers the Gulp build. Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
+task buildAngularJS(type: GulpTask) {
+    description = 'Triggers Gulp to build the AngularJS application. ' +
+                  'Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
 
     // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
     npmInstall.outputs.upToDateWhen { false }
@@ -130,7 +131,6 @@ task buildGulpFromGradle(type: GulpTask) {
     // limit memory usage
     options = ['--max-old-space-size=512']
 }
-
 
 test {
     exclude '**/*IntegrationTest.*'

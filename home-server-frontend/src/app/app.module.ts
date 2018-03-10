@@ -11,6 +11,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {NavbarComponent} from './navbar/navbar.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LoaderComponent} from './loader/loader.component';
+import {LoaderService} from "./loader/loader.service";
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {LoaderComponent} from './loader/loader.component';
     MeterstandComponent // Don't forget this!!!
   ],
   providers: [
-    MeterstandService
+    MeterstandService,
+    LoaderService
   ],
   bootstrap: [AppComponent]
 })

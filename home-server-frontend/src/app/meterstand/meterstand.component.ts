@@ -6,6 +6,7 @@ import {DatePickerComponent, IDatePickerConfig} from 'ng2-date-picker';
 import * as _ from "lodash";
 import * as moment from "moment";
 import {Moment} from "moment";
+import {LoaderService} from "../loader/loader.service";
 
 const selectedMonthFormat = "MMMM YYYY";
 
@@ -17,15 +18,13 @@ const selectedMonthFormat = "MMMM YYYY";
 export class MeterstandComponent implements OnInit {
   @ViewChild('monthPicker') monthPicker: DatePickerComponent;
 
-  loading: boolean = false;
-
   monthPickerConfig: IDatePickerConfig;
   monthPickerModel: String;
   selectedMonth: Moment;
 
   sortedMeterstandenPerDag: MeterstandOpDag[] = [];
 
-  constructor(private meterstandService: MeterstandService) {
+  constructor(private meterstandService: MeterstandService, private loaderService: LoaderService) {
     this.monthPickerConfig = {
       format: selectedMonthFormat,
       max: this.getStartOfCurrentMonth()
@@ -49,7 +48,7 @@ export class MeterstandComponent implements OnInit {
     const from = this.selectedMonth.clone().startOf('month');
     const to = from.clone().add(1, 'month');
 
-    this.loading = true;
+    this.loaderService.open();
     this.sortedMeterstandenPerDag = [];
 
     this.meterstandService.getMeterstanden(from, to).subscribe(
@@ -58,7 +57,7 @@ export class MeterstandComponent implements OnInit {
           this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(unsortedMeterstandenPerDag, ['dag']);
         },
         error  => console.error(error),
-        () => this.loading = false
+        () => this.loaderService.close()
       );
   }
 
@@ -77,14 +76,4 @@ export class MeterstandComponent implements OnInit {
     const now: Moment = moment();
     return now.month() === this.selectedMonth.month() && now.year() === this.selectedMonth.year();
   }
-
-  sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
-      }
-    }
-  }
-
 }
