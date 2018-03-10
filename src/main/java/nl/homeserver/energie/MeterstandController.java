@@ -1,5 +1,7 @@
 package nl.homeserver.energie;
 
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class MeterstandController {
     @GetMapping("per-dag/{vanaf}/{tot}")
     public List<MeterstandOpDag> perDag(@PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                         @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
-        DatePeriod period = DatePeriod.aPeriodWithToDate(from, to);
+        DatePeriod period = aPeriodWithToDate(from, to);
         return meterstandService.getPerDag(period);
     }
 }
