@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="hidden-sm col-md-1 col-lg-2"></div>
+  <div class="col-xs-1 visible-xs"></div>
+
+  <!-- stroom -->
+  <div class="col-xs-10 col-sm-6 col-md-5 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-bolt"></i> Stroom
+      </div>
+      <div class="card-body">
+        <div id="ledbar-stroom" class="ledbar float-left">
+          <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="'led-uit'"></div>
+        </div>
+
+        <p class="h3">Op dit moment</p>
+        <div class="h4">
+          200 Watt
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- gas -->
+  <div class="col-xs-offset-1 col-sm-offset-0 col-xs-10 col-sm-6 col-md-5 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <i class="fa fa-fire"></i> Gas
+      </div>
+      <div class="card-body">
+        <div id="ledbar-gas" class="ledbar float-left">
+          <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="'led-uit'"></div>
+        </div>
+
+        <p class="h3">Vandaag</p>
+        <div class="h4">
+          5,098  m&#179;
+        </div>
+      </div>
+    </div>
+
+  </div><!-- End gas -->
+</div>
+

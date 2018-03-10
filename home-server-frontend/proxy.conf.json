@@ -1,0 +1,13 @@
+{
+  "/api": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "auth": "home:home"
+  },
+  "/ws": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "auth": "home:home"
+  }
+
+}
