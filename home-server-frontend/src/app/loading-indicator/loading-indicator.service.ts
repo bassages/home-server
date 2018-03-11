@@ -3,17 +3,17 @@ import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
 
 @Injectable()
-export class LoaderService {
+export class LoadingIndicatorService {
   private openSubject = new Subject();
   private closeSubject = new Subject();
 
   constructor() { }
 
-  onOpen(): Observable<any> {
+  public onOpen(): Observable<any> {
     return this.openSubject.asObservable();
   }
 
-  onClose(): Observable<any> {
+  public onClose(): Observable<any> {
     return this.closeSubject.asObservable();
   }
 

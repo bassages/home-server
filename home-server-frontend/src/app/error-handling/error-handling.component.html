@@ -1,0 +1,11 @@
+<ng-template #errorDialogTemplate let-close="close">
+  <div class="modal-header bg-danger text-light">
+    <h4 class="modal-title"><i class="fa fa-exclamation-triangle"></i> Er is een fout opgetreden</h4>
+  </div>
+  <div class="modal-body">
+    <p>{{message}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="close()">OK</button>
+  </div>
+</ng-template>

@@ -10,8 +10,10 @@ import {DpDatePickerModule} from "ng2-date-picker";
 import {HttpClientModule} from "@angular/common/http";
 import {NavbarComponent} from './navbar/navbar.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
-import {LoaderComponent} from './loader/loader.component';
-import {LoaderService} from "./loader/loader.service";
+import {LoadingIndicatorComponent} from './loading-indicator/loading-indicator.component';
+import {LoadingIndicatorService} from "./loading-indicator/loading-indicator.service";
+import {ErrorHandlingComponent} from './error-handling/error-handling.component';
+import {ErrorHandingService} from "./error-handling/error-handing.service";
 
 @NgModule({
   declarations: [
@@ -19,14 +21,15 @@ import {LoaderService} from "./loader/loader.service";
     MeterstandComponent,
     NavbarComponent,
     DashboardComponent,
-    LoaderComponent
+    LoadingIndicatorComponent,
+    ErrorHandlingComponent
   ],
   imports: [
     BrowserModule,
-    NgbModule.forRoot(),
-    DpDatePickerModule,
     HttpClientModule,
     FormsModule,
+    NgbModule.forRoot(),
+    DpDatePickerModule,
     RouterModule.forRoot([
         { path: '', pathMatch: 'full', component: DashboardComponent},
         { path: 'meterstand', component: MeterstandComponent }
@@ -38,7 +41,8 @@ import {LoaderService} from "./loader/loader.service";
   ],
   providers: [
     MeterstandService,
-    LoaderService
+    LoadingIndicatorService,
+    ErrorHandingService
   ],
   bootstrap: [AppComponent]
 })

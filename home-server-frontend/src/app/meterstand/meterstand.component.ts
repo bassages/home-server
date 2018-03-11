@@ -6,7 +6,8 @@ import {DatePickerComponent, IDatePickerConfig} from 'ng2-date-picker';
 import * as _ from "lodash";
 import * as moment from "moment";
 import {Moment} from "moment";
-import {LoaderService} from "../loader/loader.service";
+import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
+import {ErrorHandingService} from "../error-handling/error-handing.service";
 
 const selectedMonthFormat = "MMMM YYYY";
 
@@ -24,7 +25,10 @@ export class MeterstandComponent implements OnInit {
 
   sortedMeterstandenPerDag: MeterstandOpDag[] = [];
 
-  constructor(private meterstandService: MeterstandService, private loaderService: LoaderService) {
+  constructor(private meterstandService: MeterstandService,
+              private loadingIndicatorService: LoadingIndicatorService,
+              private errorHandlingService: ErrorHandingService) {
+
     this.monthPickerConfig = {
       format: selectedMonthFormat,
       max: this.getStartOfCurrentMonth()
@@ -48,17 +52,17 @@ export class MeterstandComponent implements OnInit {
     const from = this.selectedMonth.clone().startOf('month');
     const to = from.clone().add(1, 'month');
 
-    this.loaderService.open();
+    this.loadingIndicatorService.open();
     this.sortedMeterstandenPerDag = [];
 
     this.meterstandService.getMeterstanden(from, to).subscribe(
-        resp => {
-          const unsortedMeterstandenPerDag: MeterstandOpDag[] = {...resp.body};
-          this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(unsortedMeterstandenPerDag, ['dag']);
-        },
-        error  => console.error(error),
-        () => this.loaderService.close()
-      );
+      resp => {
+        const unsortedMeterstandenPerDag: MeterstandOpDag[] = {...resp.body};
+        this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(unsortedMeterstandenPerDag, ['dag']);
+      },
+      error => this.errorHandlingService.handleError("De meterstanden konden nu niet worden opgehaald", error),
+      () => this.loadingIndicatorService.close()
+    );
   }
 
   monthPickerChanged(selectedMonth: Moment): void {
