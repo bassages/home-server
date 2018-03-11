@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
 import {MeterstandComponent} from './meterstand/meterstand.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -14,6 +14,11 @@ import {LoadingIndicatorComponent} from './loading-indicator/loading-indicator.c
 import {LoadingIndicatorService} from "./loading-indicator/loading-indicator.service";
 import {ErrorHandlingComponent} from './error-handling/error-handling.component';
 import {ErrorHandingService} from "./error-handling/error-handing.service";
+
+const appRoutes: Routes = [
+  { path: '', pathMatch: 'full', component: DashboardComponent},
+  { path: 'meterstand', component: MeterstandComponent }
+];
 
 @NgModule({
   declarations: [
@@ -30,10 +35,7 @@ import {ErrorHandingService} from "./error-handling/error-handing.service";
     FormsModule,
     NgbModule.forRoot(),
     DpDatePickerModule,
-    RouterModule.forRoot([
-        { path: '', pathMatch: 'full', component: DashboardComponent},
-        { path: 'meterstand', component: MeterstandComponent }
-      ]
+    RouterModule.forRoot(appRoutes,{enableTracing: true, useHash: true}
     )
   ],
   entryComponents: [
