@@ -4,8 +4,8 @@ plugins {
     id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
     id 'jacoco'
-    id "org.sonarqube" version '2.6.1'
-    id 'net.ltgt.apt' version '0.13' // Needed by Lombok
+    id "org.sonarqube" version '2.6.2'
+    id 'net.ltgt.apt' version '0.15' // Needed by Lombok
 }
 
 configurations {
@@ -52,7 +52,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '8.9.4' // LTS version
+    version = '8.10.0' // LTS version
     download = true
 }
 
@@ -98,7 +98,7 @@ dependencies {
     compile('javax.inject:javax.inject:1')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.assertj:assertj-core:3.9.0')
+    testCompile('org.assertj:assertj-core:3.9.1')
     testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.3');
 
     runtime('com.h2database:h2')
