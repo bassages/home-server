@@ -10,7 +10,7 @@
     function MeterstandenService($http) {
 
         this.getMeterstandenPerDagInPeriod = function(van, tot) {
-            var url = 'api/meterstanden/per-dag/' + van.toString('yyyy-MM-dd') + '/' + tot.toString('yyyy-MM-dd');
+            const url = 'api/meterstanden/per-dag/' + van.toString('yyyy-MM-dd') + '/' + tot.toString('yyyy-MM-dd');
 
             return $http({
                 method: 'GET', url: url

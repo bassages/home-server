@@ -15,8 +15,13 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/index.html")
                 .addResourceLocations("classpath:/static/")
                 .setCacheControl(CacheControl.noStore());
+
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod((int) TimeUnit.DAYS.toSeconds(365L));
+
+        registry.addResourceHandler("/frontend/**")
+                .addResourceLocations("classpath:/frontend/")
+                .setCacheControl(CacheControl.noStore());
     }
 }

@@ -8,6 +8,13 @@ plugins {
     id 'net.ltgt.apt' version '0.13' // Needed by Lombok
 }
 
+configurations {
+    // custom configuration that contains all of our front-end modules
+    frontend
+    // custom configuration for all JARs that need to be included in the packaged fat JAR
+    packaged.extendsFrom(compile, runtime, frontend)
+}
+
 jacoco {
     toolVersion = '0.8.0'
 }
@@ -40,7 +47,7 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5'
+    gradleVersion = '4.6'
 }
 
 node {
@@ -97,6 +104,14 @@ dependencies {
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')
     runtime('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+
+    frontend project(':home-server-frontend')
+}
+
+springBoot {
+    customConfiguration = 'packaged'
+    // since we're using a custom classifier we don't need to preserve a .original jar
+    backupSource = false
 }
 
 // Take over system properties.
@@ -106,9 +121,12 @@ bootRun {
     systemProperties System.properties
 }
 
-// make sure gulp generates artifacts for the build
-bootRun.dependsOn 'buildAngularJS'
-processResources.dependsOn 'buildAngularJS'
+bootRepackage {
+    mainClass = 'nl.homeserver.HomeServerApplication'
+    classifier = 'fatjar'
+    // ensure that the frontend jars have been built before repackaging
+    dependsOn(':home-server-frontend:jar')
+}
 
 // Cleans up node_modules and nodejs dirs on clean task
 clean.doFirst {
@@ -116,7 +134,7 @@ clean.doFirst {
     delete "${rootDir}/.gradle/nodejs"
 }
 
-task buildAngularJS(type: GulpTask) {
+task buildAngularJsApplication(type: GulpTask) {
     description = 'Triggers Gulp to build the AngularJS application. ' +
                   'Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
 
@@ -131,6 +149,11 @@ task buildAngularJS(type: GulpTask) {
     // limit memory usage
     options = ['--max-old-space-size=512']
 }
+
+// make sure that Gulp generates frontend artifacts for the build
+bootRun.dependsOn 'buildAngularJsApplication'
+processResources.dependsOn 'buildAngularJsApplication'
+
 
 test {
     exclude '**/*IntegrationTest.*'
