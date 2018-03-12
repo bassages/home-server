@@ -16,7 +16,7 @@
         };
 
         service.RECONNECT_TIMEOUT = 10000;
-        service.SOCKET_URL = "/ws/meterstand";
+        service.SOCKET_URL = "/ws";
         service.UPDATE_TOPIC = "/topic/meterstand";
 
         service.receive = function() {

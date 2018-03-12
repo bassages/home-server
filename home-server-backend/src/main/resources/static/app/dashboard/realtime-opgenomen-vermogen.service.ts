@@ -14,7 +14,7 @@
         var socket = { client: null, stomp: null };
 
         service.RECONNECT_TIMEOUT = 10000;
-        service.SOCKET_URL = "/ws/opgenomen-vermogen";
+        service.SOCKET_URL = "/ws";
         service.UPDATE_TOPIC = "/topic/opgenomen-vermogen";
 
         service.receive = function() {
