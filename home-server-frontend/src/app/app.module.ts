@@ -15,6 +15,30 @@ import {LoadingIndicatorService} from "./loading-indicator/loading-indicator.ser
 import {ErrorHandlingComponent} from './error-handling/error-handling.component';
 import {ErrorHandingService} from "./error-handling/error-handing.service";
 
+import * as SockJS from 'sockjs-client';
+import {StompConfig, StompService} from "@stomp/ng2-stompjs";
+
+export function socketProvider() {
+  return new SockJS('/ws');
+}
+
+const stompConfig: StompConfig = {
+  url: socketProvider,
+  headers: { },
+
+  // How often to heartbeat?
+  // Interval in milliseconds, set to 0 to disable
+  heartbeat_in: 0, // Typical value 0 - disabled
+  heartbeat_out: 20000, // Typical value 20000 - every 20 seconds
+  // Wait in milliseconds before attempting auto reconnect
+  // Set to 0 to disable
+  // Typical value 5000 (5 seconds)
+  reconnect_delay: 5000,
+
+  // Will log diagnostics on console
+  debug: true
+};
+
 const appRoutes: Routes = [
   { path: '', pathMatch: 'full', component: DashboardComponent},
   { path: 'meterstand', component: MeterstandComponent }
@@ -44,7 +68,8 @@ const appRoutes: Routes = [
   providers: [
     MeterstandService,
     LoadingIndicatorService,
-    ErrorHandingService
+    ErrorHandingService,
+    StompService, { provide: StompConfig, useValue: stompConfig}
   ],
   bootstrap: [AppComponent]
 })

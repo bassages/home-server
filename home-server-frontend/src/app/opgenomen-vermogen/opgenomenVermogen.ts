@@ -1,9 +1,7 @@
-export class Meterstand {
-  dateTime: Date;
-  stroomTariefIndicator: string;
-  stroomTarief1: number;
-  stroomTarief2: number;
-  gas: number;
+export class OpgenomenVermogen {
+  datumtijd: Date;
+  watt: number;
+  tariefIndicator: TariefIndicator;
 
   constructor(json: string) {
     let jsonObject: any = JSON.parse(json);

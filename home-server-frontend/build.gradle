@@ -13,7 +13,7 @@ task wrapper(type: Wrapper) {
 
 node {
     // Version of node to use.
-    version = '8.9.4' // LTS version
+    version = '8.10.0' // LTS version
     download = true
 }
 
