@@ -17,6 +17,8 @@ import {ErrorHandingService} from "./error-handling/error-handing.service";
 
 import * as SockJS from 'sockjs-client';
 import {StompConfig, StompService} from "@stomp/ng2-stompjs";
+import {OpgenomenVermogenService} from "./opgenomen-vermogen/opgenomenVermogen.service";
+import {EnergieVerbruikService} from "./verbruik/verbruik.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -67,6 +69,8 @@ const appRoutes: Routes = [
   ],
   providers: [
     MeterstandService,
+    OpgenomenVermogenService,
+    EnergieVerbruikService,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, { provide: StompConfig, useValue: stompConfig}

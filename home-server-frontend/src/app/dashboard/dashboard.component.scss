@@ -11,7 +11,7 @@
   overflow: auto;
 }
 
-.led-uit {
+.led-off {
   @extend .led;
   background: #ebebeb;
 }
@@ -166,52 +166,52 @@
   background: #3c83de;
 }
 
-.gas-vandaag-led-9 {
+.gas-led-9 {
   @extend .led;
   background: #d53F27;
 }
 
-.gas-vandaag-led-8 {
+.gas-led-8 {
   @extend .led;
   background: #d15419;
 }
 
-.gas-vandaag-led-7 {
+.gas-led-7 {
   @extend .led;
   background: #e37c2e;
 }
 
-.gas-vandaag-led-6 {
+.gas-led-6 {
   @extend .led;
   background: #f19b2c;
 }
 
-.gas-vandaag-led-5 {
+.gas-led-5 {
   @extend .led;
   background: #efc22f;
 }
 
-.gas-vandaag-led-4 {
+.gas-led-4 {
   @extend .led;
   background: #EFDC1A;
 }
 
-.gas-vandaag-led-3 {
+.gas-led-3 {
   @extend .led;
   background: #baca42;
 }
 
-.gas-vandaag-led-2 {
+.gas-led-2 {
   @extend .led;
   background: #7fc93e;
 }
 
-.gas-vandaag-led-1 {
+.gas-led-1 {
   @extend .led;
   background: #75b437;
 }
 
-.gas-vandaag-led-0 {
+.gas-led-0 {
   @extend .led;
   background: #2b9234;
 }

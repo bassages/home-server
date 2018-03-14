@@ -11,5 +11,4 @@ export class Meterstand {
       this[property] = jsonObject[property];
     }
   }
-
 }
