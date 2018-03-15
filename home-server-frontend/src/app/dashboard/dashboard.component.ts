@@ -13,6 +13,7 @@ import {EnergieVerbruikService} from "../verbruik/verbruik.service";
 import * as _ from "lodash";
 import {VerbruikOpDag} from "../verbruik/verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "../verbruik/gemiddeldVerbruikInPeriod";
+import {TariefIndicator} from "../opgenomen-vermogen/tariefIndicator";
 import moment = require("moment");
 
 @Component({
@@ -22,7 +23,9 @@ import moment = require("moment");
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
-  public ledState = LedState;
+  public LedState = LedState;
+  public tariefIndicator = TariefIndicator;
+
   public opgenomenVermogenLeds: Led[] = [];
   public opgenomenVermogen: OpgenomenVermogen;
 
@@ -55,6 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.getMostRecentOpgenomenVermogen();
     this.getGemiddeldVerbruikAfgelopenWeek();
     this.getVerbruikVandaag();
+    this.getMostRecentMeterstand();
   }
 
   private getMostRecentOpgenomenVermogen() {

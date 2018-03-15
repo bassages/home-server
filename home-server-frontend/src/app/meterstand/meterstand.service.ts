@@ -17,7 +17,7 @@ export class MeterstandService {
   }
 
   public getMostRecent(): Observable<HttpResponse<Meterstand>> {
-    const url = 'api/meterstand/meest-recente';
+    const url = 'api/meterstanden/meest-recente';
     return this.http.get<Meterstand>(url, { observe: 'response' });
   }
 }

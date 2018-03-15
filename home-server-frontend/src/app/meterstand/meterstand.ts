@@ -1,6 +1,8 @@
+import {TariefIndicator} from "../opgenomen-vermogen/tariefIndicator";
+
 export class Meterstand {
   dateTime: Date;
-  stroomTariefIndicator: string;
+  stroomTariefIndicator: TariefIndicator;
   stroomTarief1: number;
   stroomTarief2: number;
   gas: number;

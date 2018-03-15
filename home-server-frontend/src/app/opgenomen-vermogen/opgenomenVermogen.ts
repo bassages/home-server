@@ -1,3 +1,5 @@
+import {TariefIndicator} from "./tariefIndicator";
+
 export class OpgenomenVermogen {
   datumtijd: Date;
   watt: number;

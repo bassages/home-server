@@ -4,6 +4,5 @@ export enum LedState {
 }
 
 export class Led {
-
   constructor(public state: LedState) { }
 }
