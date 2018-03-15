@@ -1,9 +1,8 @@
 <div class="row">
-  <div class="hidden-sm col-md-1 col-lg-2"></div>
-  <div class="col-xs-1 visible-xs"></div>
+  <div class="col-sm-0 col-md-0 col-lg-1 col-xl-2"></div>
 
   <!-- stroom -->
-  <div class="col-xs-10 col-sm-6 col-md-5 col-lg-4">
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-xl-4">
     <div class="card">
       <div class="card-header">
         <i class="fas fa-bolt"></i> Stroom
@@ -15,9 +14,9 @@
 
         <p class="h3">Op dit moment</p>
         <div class="h3">
-          {{opgenomenVermogen ? opgenomenVermogen.watt : '-'}} Watt
-          <i *ngIf="tariefIndicator['DAL'] === tariefIndicator[opgenomenVermogen?.tariefIndicator]" class="fas fa-moon" ngbTooltip="Daltarief"></i>
-          <i *ngIf="tariefIndicator['NORMAAL'] === tariefIndicator[opgenomenVermogen?.tariefIndicator]" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
+          {{opgenomenVermogen ? opgenomenVermogen.watt : '-'}} Wattt
+          <i *ngIf="tariefIndicator['DAL'].toString() === tariefIndicator[opgenomenVermogen?.tariefIndicator].toString()" class="fas fa-moon" ngbTooltip="Daltarief"></i>
+          <i *ngIf="tariefIndicator['NORMAAL'].toString() === tariefIndicator[opgenomenVermogen?.tariefIndicator].toString()" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
       </div>
 
         <hr />
@@ -37,7 +36,7 @@
   </div>
 
   <!-- gas -->
-  <div class="col-xs-offset-1 col-sm-offset-0 col-xs-10 col-sm-6 col-md-5 col-lg-4">
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-5 col-xl-4">
     <div class="card">
       <div class="card-header">
         <i class="fas fa-fire"></i> Gas
