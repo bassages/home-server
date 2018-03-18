@@ -40,7 +40,7 @@
     <tbody>
     <tr *ngFor="let meterstandOpDag of sortedMeterstandenPerDag">
       <td class="text-right">{{meterstandOpDag.dag | date : 'EEE.'}}</td>
-      <td>{{meterstandOpDag.dag | date : 'dd-MM-yyyy'}}</td>
+      <td class="text-nowrap">{{meterstandOpDag.dag | date : 'dd-MM-yyyy'}}</td>
       <td class="text-right">{{meterstandOpDag.meterstand?.stroomTarief1 | number: '1.3-3'}}</td>
       <td class="text-right">{{meterstandOpDag.meterstand?.stroomTarief2 | number: '1.3-3'}}</td>
       <td class="text-right">{{meterstandOpDag.meterstand?.gas | number: '1.3-3'}}</td>
