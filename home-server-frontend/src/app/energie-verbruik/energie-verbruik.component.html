@@ -8,27 +8,13 @@
       <li class="nav-item mr-0"><a class="nav-link" href="#">Jaar</a></li>
 
       <li class="ml-auto mr-auto">
-
-        <div [hidden]="allowMultpleEnergiesoorten()">
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-outline-secondary active">
-              <input type="radio" name="energiesoort" id="stroom"> <i class="fa fa-bolt"></i> Stroom
-            </label>
-            <label class="btn btn-outline-secondary">
-              <input type="radio" name="energiesoort" id="gas">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
-            </label>
-          </div>
-        </div>
-
-        <div [hidden]="!allowMultpleEnergiesoorten()">
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-outline-secondary">
-              <input type="checkbox"> <i class="fa fa-bolt"></i> Stroom
-            </label>
-            <label class="btn btn-outline-secondary">
-              <input type="checkbox">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
-            </label>
-          </div>
+        <div class="btn-group btn-group-toggle">
+          <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}">
+            <input type="checkbox" [checked]="energiesoorten.indexOf('stroom') >= 0" (click)="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom
+          </label>
+          <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}">
+            <input type="checkbox" [checked]="energiesoorten.indexOf('gas') >= 0" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
+          </label>
         </div>
       </li>
       <li class="ml-1">

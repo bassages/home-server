@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {MeterstandOpDag} from "./meterstandOpDag";
 import {Moment} from "moment";
-import {HttpClient, HttpResponse} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
 import "rxjs/Rx";
 import {Meterstand} from "./meterstand";
@@ -11,13 +11,13 @@ export class MeterstandService {
 
   constructor(private http: HttpClient) { }
 
-  public getMeterstanden(from: Moment, to: Moment): Observable<HttpResponse<MeterstandOpDag[]>> {
+  public getMeterstanden(from: Moment, to: Moment): Observable<MeterstandOpDag[]> {
     const url = `api/meterstanden/per-dag/${from.format('YYYY-MM-DD')}/${to.format('YYYY-MM-DD')}`;
-    return this.http.get<MeterstandOpDag[]>(url, { observe: 'response' });
+    return this.http.get<MeterstandOpDag[]>(url, { observe: 'response' }).map(response => response.body);
   }
 
-  public getMostRecent(): Observable<HttpResponse<Meterstand>> {
+  public getMostRecent(): Observable<Meterstand> {
     const url = 'api/meterstanden/meest-recente';
-    return this.http.get<Meterstand>(url, { observe: 'response' });
+    return this.http.get<Meterstand>(url, { observe: 'response' }).map(response => response.body);
   }
 }

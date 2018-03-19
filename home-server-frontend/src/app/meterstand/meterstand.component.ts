@@ -59,10 +59,7 @@ export class MeterstandComponent implements OnInit {
     this.sortedMeterstandenPerDag = [];
 
     this.meterstandService.getMeterstanden(from, to).subscribe(
-      httpResponse => {
-        const unsortedMeterstandenPerDag: MeterstandOpDag[] = {...httpResponse.body};
-        this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(unsortedMeterstandenPerDag, ['dag']);
-      },
+      response => this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(response, ['dag']),
       error => this.errorHandlingService.handleError("De meterstanden konden nu niet worden opgehaald", error),
       () => this.loadingIndicatorService.close()
     );

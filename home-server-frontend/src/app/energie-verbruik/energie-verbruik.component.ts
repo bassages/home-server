@@ -22,8 +22,10 @@ export class EnergieVerbruikComponent implements OnInit {
   public dayPickerConfiguration: IDatePickerConfig;
   public dayPickerModel: String;
   public selectedDay: Moment;
-  public soort: string = 'verbruik';
+  public verbruiksoort: string = 'verbruik';
   public energiesoorten: string[] = ['gas'];
+
+  private verbruikPerUurOpDag: VerbruikInUur[];
 
   private selectedDayFormat = 'DD-MM-YYYY';
   private chart: ChartAPI;
@@ -81,12 +83,12 @@ export class EnergieVerbruikComponent implements OnInit {
       axis: {
         y: {
           tick: {
-            format: (x: number) => this.formatWithoutUnitLabel(this.soort, x)}
+            format: (x: number) => this.formatWithoutUnitLabel(this.verbruiksoort, x)}
         }
       },
       tooltip: {
         contents: function (data, defaultTitleFormat, defaultValueFormat, color) {
-          return that.getTooltipContent(this, data, defaultTitleFormat, defaultValueFormat, color, that.soort, that.energiesoorten)
+          return that.getTooltipContent(this, data, defaultTitleFormat, defaultValueFormat, color, that.verbruiksoort, that.energiesoorten)
         }
       }
     };
@@ -125,9 +127,9 @@ export class EnergieVerbruikComponent implements OnInit {
     this.loadingIndicatorService.open();
 
     this.energieVerbruikService.getVerbruikPerUurOpDag(this.selectedDay).subscribe(
-      httpResponse => {
-        const verbruikPerUurOpDag: VerbruikInUur[] = httpResponse.body;
-        this.initGraph(verbruikPerUurOpDag);
+      response => {
+        this.verbruikPerUurOpDag = response;
+        this.initGraph();
       },
       error => this.errorHandlingService.handleError("De meterstanden konden nu niet worden opgehaald", error),
       () => this.loadingIndicatorService.close()
@@ -164,12 +166,12 @@ export class EnergieVerbruikComponent implements OnInit {
     return keysGroups;
   }
 
-  private initGraph(verbruikPerUurOpDag: VerbruikInUur[]) {
+  private initGraph() {
     const chartConfiguration: ChartConfiguration = this.getDefaultBarChartConfig();
     const keysGroups = this.getKeysGroups();
     chartConfiguration.data.groups = [keysGroups];
     chartConfiguration.data.keys = {x: 'uur', value: keysGroups};
-    chartConfiguration.data.json = verbruikPerUurOpDag;
+    chartConfiguration.data.json = this.verbruikPerUurOpDag;
     chartConfiguration.axis.x = {
         type: 'category',
         tick: {
@@ -180,7 +182,7 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   public allowMultpleEnergiesoorten(): boolean {
-    return this.soort === 'kosten';
+    return this.verbruiksoort === 'kosten';
   }
 
   public formatWithoutUnitLabel = function(soort: string, value: any) {
@@ -249,4 +251,23 @@ export class EnergieVerbruikComponent implements OnInit {
       return '?';
     }
   };
+
+  public toggleEnergiesoort(energiesoortToToggle) {
+    const index = this.energiesoorten.indexOf(energiesoortToToggle);
+
+    if (this.verbruiksoort === 'kosten') {
+      if (index < 0) {
+        this.energiesoorten.push(energiesoortToToggle);
+      } else {
+        this.energiesoorten.splice(index, 1);
+      }
+    } else {
+      if (this.energiesoorten[0] !== energiesoortToToggle) {
+        this.energiesoorten.splice(0, this.energiesoorten.length);
+        this.energiesoorten.push(energiesoortToToggle);
+      }
+    }
+    this.getVerbruik();
+  }
+
 }

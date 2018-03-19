@@ -20,7 +20,6 @@ import {StompConfig, StompService} from "@stomp/ng2-stompjs";
 import {OpgenomenVermogenService} from "./opgenomen-vermogen/opgenomenVermogen.service";
 import {EnergieVerbruikService} from "./energie-verbruik/energie-verbruik.service";
 import {EnergieVerbruikComponent} from "./energie-verbruik/energie-verbruik.component";
-import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
 import {DecimalPipe} from "@angular/common";
 
 export function socketProvider() {
@@ -58,8 +57,7 @@ const appRoutes: Routes = [
     DashboardComponent,
     LoadingIndicatorComponent,
     ErrorHandlingComponent,
-    EnergieVerbruikComponent,
-    DateNavigatorComponent
+    EnergieVerbruikComponent
   ],
   imports: [
     BrowserModule,

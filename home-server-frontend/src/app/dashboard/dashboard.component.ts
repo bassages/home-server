@@ -60,19 +60,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private getMostRecentOpgenomenVermogen() {
-    this.opgenomenVermogenService.getMostRecent().subscribe(
-      httpResponse => {
-        this.setOpgenomenVermogen({...httpResponse.body});
-      }
-    );
+    this.opgenomenVermogenService.getMostRecent().subscribe(mostRecentOpgenomenVermogen => this.setOpgenomenVermogen(mostRecentOpgenomenVermogen));
   }
 
   private getMostRecentMeterstand() {
-    this.meterstandService.getMostRecent().subscribe(
-      httpResponse => {
-        this.setMeterstand({...httpResponse.body});
-      }
-    );
+    this.meterstandService.getMostRecent().subscribe(mostRecentMeterstand => this.setMeterstand(mostRecentMeterstand));
   }
 
   public ngOnDestroy() {
@@ -116,8 +108,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const to = from.clone().add(1, 'day');
 
     this.energieVerbruikService.getVerbruikPerDag(from, to).subscribe(
-      (httpResponse) => {
-        let verbruikPerDag: VerbruikOpDag[] = {...httpResponse.body};
+      (verbruikPerDag: VerbruikOpDag[]) => {
         if (verbruikPerDag) {
           this.verbruikVandaag = verbruikPerDag[0];
           this.setGasVerbruikVandaagLeds();
@@ -130,9 +121,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const to = moment().startOf('day');
     const from = to.clone().subtract(6, 'day');
 
-    this.energieVerbruikService.getGemmiddeldVerbruikPerDag(from, to).subscribe(
-      (httpResponse) => {
-        this.gemiddeldVerbruikPerDagInAfgelopenWeek = {...httpResponse.body};
+    this.energieVerbruikService.getGemiddeldVerbruikPerDag(from, to).subscribe(
+      (gemiddeldVerbruikPerDagInAfgelopenWeek: GemiddeldVerbruikInPeriod) => {
+        this.gemiddeldVerbruikPerDagInAfgelopenWeek = gemiddeldVerbruikPerDagInAfgelopenWeek;
         this.setGasVerbruikVandaagLeds();
       }
     );
@@ -148,7 +139,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private setGasVerbruikVandaagLeds() {
-    if (   this.verbruikVandaag && _.isNumber(this.verbruikVandaag.gasVerbruik)
+    if (this.verbruikVandaag && _.isNumber(this.verbruikVandaag.gasVerbruik)
         && this.gemiddeldVerbruikPerDagInAfgelopenWeek && _.isNumber(this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)) {
       const procentueleVeranderingTovAfgelopenWeek: number = ((this.verbruikVandaag.gasVerbruik - this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik) / this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik) * 100;
 
