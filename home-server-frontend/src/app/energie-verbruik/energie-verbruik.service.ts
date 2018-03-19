@@ -5,6 +5,7 @@ import {Observable} from "rxjs/Observable";
 import "rxjs/Rx";
 import {VerbruikOpDag} from "./verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "./gemiddeldVerbruikInPeriod";
+import {VerbruikInUur} from "./verbruikInUur";
 
 @Injectable()
 export class EnergieVerbruikService {
@@ -19,5 +20,10 @@ export class EnergieVerbruikService {
   public getGemmiddeldVerbruikPerDag(from: Moment, to: Moment): Observable<HttpResponse<GemiddeldVerbruikInPeriod>> {
     const url = 'api/energie/gemiddelde-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
     return this.http.get<GemiddeldVerbruikInPeriod>(url, { observe: 'response' });
+  }
+
+  public getVerbruikPerUurOpDag(dag: Moment): Observable<HttpResponse<VerbruikInUur[]>> {
+    const url = `api/energie/verbruik-per-uur-op-dag/${dag.format('YYYY-MM-DD')}`;
+    return this.http.get<VerbruikInUur[]>(url, { observe: 'response' });
   }
 }

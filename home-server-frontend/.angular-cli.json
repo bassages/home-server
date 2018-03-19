@@ -24,6 +24,7 @@
         "../node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-solid.css",
         "../node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-regular.css",
         "../node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-brands.css",
+        "../node_modules/c3/c3.min.css",
         "styles.css"
       ],
       "scripts": [

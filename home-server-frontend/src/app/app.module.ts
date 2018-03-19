@@ -18,7 +18,10 @@ import {ErrorHandingService} from "./error-handling/error-handing.service";
 import * as SockJS from 'sockjs-client';
 import {StompConfig, StompService} from "@stomp/ng2-stompjs";
 import {OpgenomenVermogenService} from "./opgenomen-vermogen/opgenomenVermogen.service";
-import {EnergieVerbruikService} from "./verbruik/verbruik.service";
+import {EnergieVerbruikService} from "./energie-verbruik/energie-verbruik.service";
+import {EnergieVerbruikComponent} from "./energie-verbruik/energie-verbruik.component";
+import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
+import {DecimalPipe} from "@angular/common";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -26,7 +29,7 @@ export function socketProvider() {
 
 const stompConfig: StompConfig = {
   url: socketProvider,
-  headers: { },
+  headers: {},
 
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable
@@ -42,8 +45,9 @@ const stompConfig: StompConfig = {
 };
 
 const appRoutes: Routes = [
-  { path: '', pathMatch: 'full', component: DashboardComponent},
-  { path: 'meterstand', component: MeterstandComponent }
+  {path: '', pathMatch: 'full', component: DashboardComponent},
+  {path: 'meterstand', component: MeterstandComponent},
+  {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent}
 ];
 
 @NgModule({
@@ -53,7 +57,9 @@ const appRoutes: Routes = [
     NavbarComponent,
     DashboardComponent,
     LoadingIndicatorComponent,
-    ErrorHandlingComponent
+    ErrorHandlingComponent,
+    EnergieVerbruikComponent,
+    DateNavigatorComponent
   ],
   imports: [
     BrowserModule,
@@ -61,19 +67,20 @@ const appRoutes: Routes = [
     FormsModule,
     NgbModule.forRoot(),
     DpDatePickerModule,
-    RouterModule.forRoot(appRoutes,{enableTracing: true, useHash: true}
+    RouterModule.forRoot(appRoutes, {enableTracing: true, useHash: true}
     )
   ],
   entryComponents: [
     MeterstandComponent // Don't forget this!!!
   ],
   providers: [
+    DecimalPipe,
     MeterstandService,
     OpgenomenVermogenService,
     EnergieVerbruikService,
     LoadingIndicatorService,
     ErrorHandingService,
-    StompService, { provide: StompConfig, useValue: stompConfig}
+    StompService, {provide: StompConfig, useValue: stompConfig}
   ],
   bootstrap: [AppComponent]
 })

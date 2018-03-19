@@ -9,11 +9,10 @@ import {OpgenomenVermogen} from "../opgenomen-vermogen/opgenomenVermogen";
 import {OpgenomenVermogenService} from "../opgenomen-vermogen/opgenomenVermogen.service";
 import {Led, LedState} from "./led";
 import {MeterstandService} from "../meterstand/meterstand.service";
-import {EnergieVerbruikService} from "../verbruik/verbruik.service";
+import {EnergieVerbruikService} from "../energie-verbruik/energie-verbruik.service";
 import * as _ from "lodash";
-import {VerbruikOpDag} from "../verbruik/verbruikOpDag";
-import {GemiddeldVerbruikInPeriod} from "../verbruik/gemiddeldVerbruikInPeriod";
-import {TariefIndicator} from "../opgenomen-vermogen/tariefIndicator";
+import {VerbruikOpDag} from "../energie-verbruik/verbruikOpDag";
+import {GemiddeldVerbruikInPeriod} from "../energie-verbruik/gemiddeldVerbruikInPeriod";
 import moment = require("moment");
 
 @Component({
@@ -24,7 +23,6 @@ import moment = require("moment");
 export class DashboardComponent implements OnInit, OnDestroy {
 
   public LedState = LedState;
-  public tariefIndicator = TariefIndicator;
 
   public opgenomenVermogenLeds: Led[] = [];
   public opgenomenVermogen: OpgenomenVermogen;

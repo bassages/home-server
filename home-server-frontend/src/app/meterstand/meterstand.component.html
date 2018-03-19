@@ -13,8 +13,7 @@
         </span>
 
         <input class="form-control text-center text-capitalize" name="monthPicker" type="text"
-               [readonly]="true" [(ngModel)]="monthPickerModel"
-               [dpDayPicker]="monthPickerConfig"
+               [readonly]="true" [(ngModel)]="monthPickerModel" [dpDayPicker]="monthPickerConfig"
                theme="dp-material" mode="month" (onChange)="monthPickerChanged($event)"/>
 
         <span class="input-group-append">

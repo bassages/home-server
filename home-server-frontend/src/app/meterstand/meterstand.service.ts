@@ -12,7 +12,7 @@ export class MeterstandService {
   constructor(private http: HttpClient) { }
 
   public getMeterstanden(from: Moment, to: Moment): Observable<HttpResponse<MeterstandOpDag[]>> {
-    const url = 'api/meterstanden/per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
+    const url = `api/meterstanden/per-dag/${from.format('YYYY-MM-DD')}/${to.format('YYYY-MM-DD')}`;
     return this.http.get<MeterstandOpDag[]>(url, { observe: 'response' });
   }
 

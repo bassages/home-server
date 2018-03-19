@@ -9,8 +9,6 @@ import {Moment} from "moment";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 
-const selectedMonthFormat = "MMMM YYYY";
-
 @Component({
   selector: 'meterstand',
   templateUrl: './meterstand.component.html',
@@ -18,6 +16,8 @@ const selectedMonthFormat = "MMMM YYYY";
 })
 export class MeterstandComponent implements OnInit {
   @ViewChild('monthPicker') monthPicker: DatePickerComponent;
+
+  private selectedMonthFormat = "MMMM YYYY";
 
   monthPickerConfig: IDatePickerConfig;
   monthPickerModel: String;
@@ -28,24 +28,27 @@ export class MeterstandComponent implements OnInit {
   constructor(private meterstandService: MeterstandService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService) {
-
-    this.monthPickerConfig = {
-      format: selectedMonthFormat,
-      max: this.getStartOfCurrentMonth()
-    };
-  }
+    }
 
   ngOnInit() {
+    this.initMonthPicker();
+  }
+
+  private initMonthPicker() {
+    this.monthPickerConfig = {
+      format: this.selectedMonthFormat,
+      max: this.getStartOfCurrentMonth()
+    };
     this.setSelectedMonth(this.getStartOfCurrentMonth());
   }
 
-  private getStartOfCurrentMonth() {
+  private getStartOfCurrentMonth(): Moment {
     return moment().startOf('month');
   }
 
   private setSelectedMonth(month: Moment) {
     this.selectedMonth = month;
-    this.monthPickerModel = month.format(selectedMonthFormat);
+    this.monthPickerModel = month.format(this.selectedMonthFormat);
   }
 
   getMeterstanden(): void {
@@ -81,3 +84,4 @@ export class MeterstandComponent implements OnInit {
     return now.month() === this.selectedMonth.month() && now.year() === this.selectedMonth.year();
   }
 }
+

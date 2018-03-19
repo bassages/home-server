@@ -15,8 +15,8 @@
         <p class="h3">Op dit moment</p>
         <div class="h3">
           {{opgenomenVermogen ? opgenomenVermogen.watt : '-'}} Wattt
-          <i *ngIf="tariefIndicator['DAL'].toString() === tariefIndicator[opgenomenVermogen?.tariefIndicator].toString()" class="fas fa-moon" ngbTooltip="Daltarief"></i>
-          <i *ngIf="tariefIndicator['NORMAAL'].toString() === tariefIndicator[opgenomenVermogen?.tariefIndicator].toString()" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
+          <i *ngIf="opgenomenVermogen?.tariefIndicator === 'DAL'" class="fas fa-moon" ngbTooltip="Daltarief"></i>
+          <i *ngIf="opgenomenVermogen?.tariefIndicator === 'NORMAAL'" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
       </div>
 
         <hr />

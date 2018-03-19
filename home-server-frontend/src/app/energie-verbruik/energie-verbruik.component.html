@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-md-1 pr-0">&nbsp;</div>
+  <div class="col-md-11 pl-0 pr-0">
+    <ul class="nav nav-tabs">
+      <li class="nav-item mr-1"><a class="nav-link active" href="#">Uur</a></li>
+      <li class="nav-item mr-1"><a class="nav-link" href="#">Dag</a></li>
+      <li class="nav-item mr-1"><a class="nav-link" href="#">Maand</a></li>
+      <li class="nav-item mr-0"><a class="nav-link" href="#">Jaar</a></li>
+
+      <li class="ml-auto mr-auto">
+
+        <div [hidden]="allowMultpleEnergiesoorten()">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-secondary active">
+              <input type="radio" name="energiesoort" id="stroom"> <i class="fa fa-bolt"></i> Stroom
+            </label>
+            <label class="btn btn-outline-secondary">
+              <input type="radio" name="energiesoort" id="gas">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
+            </label>
+          </div>
+        </div>
+
+        <div [hidden]="!allowMultpleEnergiesoorten()">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-secondary">
+              <input type="checkbox"> <i class="fa fa-bolt"></i> Stroom
+            </label>
+            <label class="btn btn-outline-secondary">
+              <input type="checkbox">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
+            </label>
+          </div>
+        </div>
+      </li>
+      <li class="ml-1">
+        <form>
+          <div class="input-group">
+            <span class="input-group-prepend">
+              <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fa fa-chevron-left"></i></button>
+            </span>
+            <input class="form-control text-center text-capitalize" name="dayPicker" type="text"
+                   [readonly]="true" [(ngModel)]="dayPickerModel" [dpDayPicker]="dayPickerConfiguration"
+                   theme="dp-material" mode="day" (onChange)="dayPickerChanged($event)"/>
+            <span class="input-group-append">
+              <button (click)="navigate(+1)" [disabled]="isMaxSelected()" type="button" class="btn btn-outline-secondary"><i class="fa fa-chevron-right"></i></button>
+            </span>
+          </div>
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-1 pl-0 pr-0">
+    <ul class="nav nav-tabs-left flex-column">
+      <li class="nav-item"><a class="nav-link mb-1 active" href="#">Verbruik</a></li>
+      <li class="nav-item"><a class="nav-link mb-0" href="#"> Kosten</a></li>
+    </ul>
+  </div>
+
+  <div class="col-md-11 pl-0 pr-0">
+    <div id="chart" class="c3 chart"></div>
+  </div>
+</div>
