@@ -11,6 +11,6 @@ export class OpgenomenVermogenService {
 
   public getMostRecent(): Observable<OpgenomenVermogen> {
     const url = 'api/opgenomen-vermogen/meest-recente';
-    return this.http.get<OpgenomenVermogen>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<OpgenomenVermogen>(url);
   }
 }

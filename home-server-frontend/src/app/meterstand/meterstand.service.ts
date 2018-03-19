@@ -13,11 +13,11 @@ export class MeterstandService {
 
   public getMeterstanden(from: Moment, to: Moment): Observable<MeterstandOpDag[]> {
     const url = `api/meterstanden/per-dag/${from.format('YYYY-MM-DD')}/${to.format('YYYY-MM-DD')}`;
-    return this.http.get<MeterstandOpDag[]>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<MeterstandOpDag[]>(url);
   }
 
   public getMostRecent(): Observable<Meterstand> {
     const url = 'api/meterstanden/meest-recente';
-    return this.http.get<Meterstand>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<Meterstand>(url);
   }
 }

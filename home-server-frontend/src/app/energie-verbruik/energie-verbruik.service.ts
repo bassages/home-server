@@ -14,16 +14,16 @@ export class EnergieVerbruikService {
 
   public getVerbruikPerDag(from: Moment, to: Moment): Observable<VerbruikOpDag[]> {
     const url = 'api/energie/verbruik-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
-    return this.http.get<VerbruikOpDag[]>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<VerbruikOpDag[]>(url);
   }
 
   public getGemiddeldVerbruikPerDag(from: Moment, to: Moment): Observable<GemiddeldVerbruikInPeriod> {
     const url = 'api/energie/gemiddelde-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
-    return this.http.get<GemiddeldVerbruikInPeriod>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<GemiddeldVerbruikInPeriod>(url);
   }
 
   public getVerbruikPerUurOpDag(dag: Moment): Observable<VerbruikInUur[]> {
     const url = `api/energie/verbruik-per-uur-op-dag/${dag.format('YYYY-MM-DD')}`;
-    return this.http.get<VerbruikInUur[]>(url, { observe: 'response' }).map(response => response.body);
+    return this.http.get<VerbruikInUur[]>(url);
   }
 }
