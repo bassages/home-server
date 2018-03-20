@@ -13,6 +13,7 @@ import {EnergieVerbruikService} from "../energie-verbruik/energie-verbruik.servi
 import * as _ from "lodash";
 import {VerbruikOpDag} from "../energie-verbruik/verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "../energie-verbruik/gemiddeldVerbruikInPeriod";
+import {Router} from "@angular/router";
 import moment = require("moment");
 
 @Component({
@@ -44,6 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private klimaatSubscription: Subscription;
 
   constructor(private stompService: StompService,
+              private router: Router,
               private opgenomenVermogenService: OpgenomenVermogenService,
               private meterstandService: MeterstandService,
               private energieVerbruikService: EnergieVerbruikService) { }
@@ -160,4 +162,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  public navigateToVerbruik(energiesoort: string) {
+    const commands = ['/energie', 'verbruik', 'uur'];
+    const extras = {queryParams: { 'energiesoort': energiesoort }};
+    this.router.navigate(commands, extras);
+  }
 }

@@ -24,9 +24,6 @@ export class EnergieVerbruikService {
 
   public getVerbruikPerUurOpDag(dag: Moment): Observable<VerbruikInUur[]> {
     const url = `api/energie/verbruik-per-uur-op-dag/${dag.format('YYYY-MM-DD')}`;
-
-    console.info('getVerbruikPerUurOpDag', url);
-
     return this.http.get<VerbruikInUur[]>(url);
   }
 }

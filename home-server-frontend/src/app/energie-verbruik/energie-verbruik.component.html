@@ -3,16 +3,16 @@
   <div class="col-md-11 pl-0 pr-0">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'uur'}" [routerLink]="['/energie', verbruiksoort, 'uur']" queryParamsHandling="preserve">Uur</a>
+        <a class="nav-link" [ngClass]="{'active': periode == 'uur'}" [routerLink]="['/energie', verbruiksoort, 'uur']" queryParamsHandling="preserve" skipLocationChange="true">Uur</a>
       </li>
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'dag'}" [routerLink]="['/energie', verbruiksoort, 'dag']" queryParamsHandling="preserve">Dag</a>
+        <a class="nav-link" [ngClass]="{'active': periode == 'dag'}" [routerLink]="['/energie', verbruiksoort, 'dag']" queryParamsHandling="preserve" skipLocationChange="true">Dag</a>
       </li>
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'maand'}" [routerLink]="['/energie', verbruiksoort, 'maand']" queryParamsHandling="preserve">Maand</a>
+        <a class="nav-link" [ngClass]="{'active': periode == 'maand'}" [routerLink]="['/energie', verbruiksoort, 'maand']" queryParamsHandling="preserve" skipLocationChange="true">Maand</a>
       </li>
       <li class="nav-item mr-0">
-        <a class="nav-link" [ngClass]="{'active': periode == 'jaar'}" [routerLink]="['/energie', verbruiksoort, 'jaar']" queryParamsHandling="preserve">Jaar</a>
+        <a class="nav-link" [ngClass]="{'active': periode == 'jaar'}" [routerLink]="['/energie', verbruiksoort, 'jaar']" queryParamsHandling="preserve" skipLocationChange="true">Jaar</a>
       </li>
 
       <li class="ml-auto mr-auto">
@@ -48,10 +48,10 @@
   <div class="col-md-1 pl-0 pr-0">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
-        <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve">Verbruik</a>
+        <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve" skipLocationChange="true">Verbruik</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mb-0" [ngClass]="{'active': verbruiksoort == 'kosten'}" [routerLink]="['/energie', 'kosten', periode]" queryParamsHandling="preserve"> Kosten</a>
+        <a class="nav-link mb-0" [ngClass]="{'active': verbruiksoort == 'kosten'}" [routerLink]="['/energie', 'kosten', periode]" queryParamsHandling="preserve" skipLocationChange="true"> Kosten</a>
       </li>
     </ul>
   </div>
