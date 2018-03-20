@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-header clickable" (click)="navigateToVerbruikDetails()">
+    <i class="fas fa-bolt"></i> Stroom
+  </div>
+  <div class="card-body">
+    <div class="ledbar float-left">
+      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="opgenomenVermogenLeds[i]?.state == LedState.ON ? 'opgenomen-vermogen-led-' + i : 'led-off'"></div>
+    </div>
+
+    <p class="h3">Op dit moment</p>
+    <div class="h3">
+      {{opgenomenVermogen ? opgenomenVermogen.watt : '-'}} Wattt
+      <i *ngIf="opgenomenVermogen?.tariefIndicator === 'DAL'" class="fas fa-moon" ngbTooltip="Daltarief"></i>
+      <i *ngIf="opgenomenVermogen?.tariefIndicator === 'NORMAAL'" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
+    </div>
+
+    <hr />
+
+    <p class="h3">Meterstand</p>
+
+    <p class="h6" *ngIf="meterstand">
+      <i class="fas fa-moon" ngbTooltip="Daltarief"></i> {{meterstand.stroomTarief1 | number: '1.3-3'}}
+      |
+      <i class="fas fa-sun" ngbTooltip="Normaaltarief"></i> <span *ngIf="meterstand">{{meterstand.stroomTarief2 | number: '1.3-3'}}</span>
+    </p>
+    <p class="h6" *ngIf="!meterstand">
+      -
+    </p>
+  </div>
+</div>

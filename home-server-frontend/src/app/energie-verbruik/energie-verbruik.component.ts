@@ -14,18 +14,18 @@ import {Observable} from "rxjs/Observable";
 import moment = require("moment");
 
 @Component({
-  selector: 'app-energie-verbruik',
+  selector: 'energie-verbruik',
   templateUrl: './energie-verbruik.component.html',
   styleUrls: ['./energie-verbruik.component.scss']
 })
 export class EnergieVerbruikComponent implements OnInit {
 
   public dayPickerConfiguration: IDatePickerConfig;
-  public dayPickerModel: String;
-  public selectedDay: Moment;
+  public dayPickerModel: String = '';
+  public selectedDay: Moment = moment();
   public previouslySelectedDay: Moment;
-  public verbruiksoort: string = 'verbruik';
-  public energiesoorten: string[];
+  public verbruiksoort: string = '';
+  public energiesoorten: string[] = [];
   public periode: string = 'uur';
 
   private selectedDayFormat = 'DD-MM-YYYY';
@@ -58,8 +58,8 @@ export class EnergieVerbruikComponent implements OnInit {
                 }
                 const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
 
-                if (this.verbruiksoort == verbruiksoortParam
-                      && _.isEqual(this.energiesoorten, energiesoortenParam)
+                if (_.isEqual(this.energiesoorten, energiesoortenParam)
+                      && this.verbruiksoort == verbruiksoortParam
                       && this.selectedDay.isSame(selectedDayParam)
                       && this.periode == periodeParam) {
                   console.warn('parameters did not change');
@@ -77,22 +77,20 @@ export class EnergieVerbruikComponent implements OnInit {
                 this.selectedDay = selectedDayParam;
                 this.previouslySelectedDay = this.selectedDay.clone();
 
-                this.initDayPicker();
+                this.dayPickerModel = this.selectedDay.format(this.selectedDayFormat);
 
-                // setTimeout(() => {this.getAndLoadData();},0);
-                this.getAndLoadData();
+                setTimeout(() => {this.getAndLoadData();},0);
+                // this.getAndLoadData();
               });
+
+    this.initDayPicker();
   }
 
   private initDayPicker() {
-    if (!this.dayPickerConfiguration) {
-
-      this.dayPickerConfiguration = {
-        format: this.selectedDayFormat,
-        max: this.getToday()
-      };
-    }
-    this.dayPickerModel = this.selectedDay.format(this.selectedDayFormat);
+    this.dayPickerConfiguration = {
+      format: this.selectedDayFormat,
+      max: this.getToday()
+    };
   }
 
   private getDefaultBarChartConfig(): ChartConfiguration {

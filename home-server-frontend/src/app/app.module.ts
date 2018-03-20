@@ -21,6 +21,8 @@ import {OpgenomenVermogenService} from "./opgenomen-vermogen/opgenomenVermogen.s
 import {EnergieVerbruikService} from "./energie-verbruik/energie-verbruik.service";
 import {EnergieVerbruikComponent} from "./energie-verbruik/energie-verbruik.component";
 import {DecimalPipe} from "@angular/common";
+import {StroomVerbruikComponent} from "./dashboard/stroom-verbruik/stroom-verbruik.component";
+import {GasVerbruikComponent} from "./dashboard/gas-verbruik/gas-verbruik.component";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -55,6 +57,8 @@ const appRoutes: Routes = [
     MeterstandComponent,
     NavbarComponent,
     DashboardComponent,
+    StroomVerbruikComponent,
+    GasVerbruikComponent,
     LoadingIndicatorComponent,
     ErrorHandlingComponent,
     EnergieVerbruikComponent

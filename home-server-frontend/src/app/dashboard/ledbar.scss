@@ -1,0 +1,17 @@
+.ledbar {
+  overflow: auto;
+  margin-right: 15px;
+}
+
+.led {
+  border-radius: 1px;
+  margin: 1px;
+  width: 35px;
+  height: 6px;
+  overflow: auto;
+}
+
+.led-off {
+  @extend .led;
+  background: #ebebeb;
+}

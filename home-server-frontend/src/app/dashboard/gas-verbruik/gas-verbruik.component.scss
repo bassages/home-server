@@ -1,0 +1,51 @@
+@import "../ledbar";
+
+.gas-led-9 {
+  @extend .led;
+  background: #d53F27;
+}
+
+.gas-led-8 {
+  @extend .led;
+  background: #d15419;
+}
+
+.gas-led-7 {
+  @extend .led;
+  background: #e37c2e;
+}
+
+.gas-led-6 {
+  @extend .led;
+  background: #f19b2c;
+}
+
+.gas-led-5 {
+  @extend .led;
+  background: #efc22f;
+}
+
+.gas-led-4 {
+  @extend .led;
+  background: #EFDC1A;
+}
+
+.gas-led-3 {
+  @extend .led;
+  background: #baca42;
+}
+
+.gas-led-2 {
+  @extend .led;
+  background: #7fc93e;
+}
+
+.gas-led-1 {
+  @extend .led;
+  background: #75b437;
+}
+
+.gas-led-0 {
+  @extend .led;
+  background: #2b9234;
+}
