@@ -65,7 +65,7 @@ const appRoutes: Routes = [
     FormsModule,
     NgbModule.forRoot(),
     DpDatePickerModule,
-    RouterModule.forRoot(appRoutes, {enableTracing: true, useHash: true}
+    RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true}
     )
   ],
   entryComponents: [

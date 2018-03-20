@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
 import {Moment} from "moment";
@@ -10,6 +10,7 @@ import {VerbruikInUur} from "./verbruikInUur";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {DecimalPipe} from "@angular/common";
+import {Observable} from "rxjs/Observable";
 import moment = require("moment");
 
 @Component({
@@ -22,8 +23,10 @@ export class EnergieVerbruikComponent implements OnInit {
   public dayPickerConfiguration: IDatePickerConfig;
   public dayPickerModel: String;
   public selectedDay: Moment;
+  public previouslySelectedDay: Moment;
   public verbruiksoort: string = 'verbruik';
-  public energiesoorten: string[] = ['gas'];
+  public energiesoorten: string[];
+  public periode: string = 'uur';
 
   private verbruikPerUurOpDag: VerbruikInUur[];
 
@@ -34,22 +37,67 @@ export class EnergieVerbruikComponent implements OnInit {
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private decimalPipe: DecimalPipe,
-              private route: ActivatedRoute,
+              private activatedRoute: ActivatedRoute,
               private router: Router) { }
 
   ngOnInit() {
-    this.initDayPicker();
+    Observable.combineLatest([
+                this.activatedRoute.paramMap,
+                this.activatedRoute.queryParamMap
+              ])
+              .subscribe(combined => {
+                const params: ParamMap = <ParamMap>combined[0];
+                const queryParams: ParamMap = <ParamMap>combined[1];
 
-    this.chart = c3.generate(this.getDefaultBarChartConfig());
-    this.chart.resize({height: 500});
+                const verbruiksoortParam = params.get('verbruiksoort');
+                const periodeParam = params.get('periode');
+
+                const energiesoortenParam = queryParams.getAll('energiesoort');
+                if (!queryParams.has('datum')) {
+                  console.info('navigate because of missing datum parameter');
+                  this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, this.getToday());
+                  return;
+                }
+                const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
+
+                if (this.verbruiksoort == verbruiksoortParam
+                      && _.isEqual(this.energiesoorten, energiesoortenParam)
+                      && this.selectedDay.isSame(selectedDayParam)
+                      && this.periode == periodeParam) {
+                  console.warn('parameters did not change');
+                  return;
+                }
+
+                if (verbruiksoortParam == 'verbruik' && energiesoortenParam.length > 1) {
+                  this.navigateTo(verbruiksoortParam, ['stroom'], periodeParam, selectedDayParam);
+                  return;
+                }
+
+                this.verbruiksoort = verbruiksoortParam;
+                this.energiesoorten = energiesoortenParam;
+                this.periode = periodeParam;
+                this.selectedDay = selectedDayParam;
+                this.previouslySelectedDay = this.selectedDay.clone();
+
+                console.info('parameters changed:', 'verbruiksoort:', this.verbruiksoort, ', energiesoorten:', this.energiesoorten, ', selectedDay:', this.selectedDay);
+
+                this.initDayPicker();
+
+                // setTimeout(() => {this.getAndLoadData();},0);
+                this.getAndLoadData();
+              });
   }
 
   private initDayPicker() {
-    this.dayPickerConfiguration = {
-      format: this.selectedDayFormat,
-      max: this.getToday()
-    };
-    this.setSelectedDay(this.getToday());
+    if (!this.dayPickerConfiguration) {
+      console.info('initDayPicker');
+
+      this.dayPickerConfiguration = {
+        format: this.selectedDayFormat,
+        max: this.getToday()
+      };
+    }
+    this.dayPickerModel = this.selectedDay.format(this.selectedDayFormat);
   }
 
   private getDefaultBarChartConfig(): ChartConfiguration {
@@ -117,19 +165,23 @@ export class EnergieVerbruikComponent implements OnInit {
   };
 
   public dayPickerChanged(selectedDay: Moment): void {
-    if (!_.isUndefined(selectedDay)) {
-      this.setSelectedDay(selectedDay);
-      this.getVerbruik();
+    if (!_.isUndefined(selectedDay) && !this.selectedDay.isSame(this.previouslySelectedDay)) {
+      console.info('dayPickerChanged', selectedDay);
+
+      this.previouslySelectedDay = selectedDay;
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, selectedDay);
     }
   }
 
-  private getVerbruik() {
+  private getAndLoadData() {
+    console.info('getAndLoadData', this.verbruiksoort, this.energiesoorten, this.selectedDay);
+
     this.loadingIndicatorService.open();
 
     this.energieVerbruikService.getVerbruikPerUurOpDag(this.selectedDay).subscribe(
       response => {
         this.verbruikPerUurOpDag = response;
-        this.initGraph();
+        this.loadDataIntoGraph();
       },
       error => this.errorHandlingService.handleError("De meterstanden konden nu niet worden opgehaald", error),
       () => this.loadingIndicatorService.close()
@@ -137,7 +189,8 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   public navigate(numberOfDays: number): void {
-    this.setSelectedDay(this.selectedDay.add(numberOfDays, 'days'));
+    const newSelectedDay = this.selectedDay.clone().add(numberOfDays, 'days');
+    this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, newSelectedDay);
   }
 
   public isMaxSelected(): boolean {
@@ -157,16 +210,16 @@ export class EnergieVerbruikComponent implements OnInit {
   private getKeysGroups(): string[] {
     let keysGroups: string[] = [];
     if (this.energiesoorten.indexOf('gas') > -1) {
-      keysGroups.push('gasVerbruik')
+      keysGroups.push(`gas${_.capitalize(this.verbruiksoort)}`);
     }
     if (this.energiesoorten.indexOf('stroom') > -1) {
-      keysGroups.push('stroomVerbruikDal');
-      keysGroups.push('stroomVerbruikNormaal');
+      keysGroups.push(`stroom${_.capitalize(this.verbruiksoort)}Dal`);
+      keysGroups.push(`stroom${_.capitalize(this.verbruiksoort)}Normaal`);
     }
     return keysGroups;
   }
 
-  private initGraph() {
+  private loadDataIntoGraph() {
     const chartConfiguration: ChartConfiguration = this.getDefaultBarChartConfig();
     const keysGroups = this.getKeysGroups();
     chartConfiguration.data.groups = [keysGroups];
@@ -178,7 +231,8 @@ export class EnergieVerbruikComponent implements OnInit {
           format: (uur: number) => `${this.decimalPipe.transform(uur, '2.0-0')}:00 - ${this.decimalPipe.transform(uur + 1, '2.0-0')}:00`
         }
     };
-    c3.generate(chartConfiguration);
+    this.chart = c3.generate(chartConfiguration);
+    this.chart.resize({height: 500});
   }
 
   public allowMultpleEnergiesoorten(): boolean {
@@ -253,21 +307,37 @@ export class EnergieVerbruikComponent implements OnInit {
   };
 
   public toggleEnergiesoort(energiesoortToToggle) {
-    const index = this.energiesoorten.indexOf(energiesoortToToggle);
+    console.info('toggleEnergiesoort', energiesoortToToggle);
 
-    if (this.verbruiksoort === 'kosten') {
-      if (index < 0) {
-        this.energiesoorten.push(energiesoortToToggle);
-      } else {
-        this.energiesoorten.splice(index, 1);
-      }
-    } else {
-      if (this.energiesoorten[0] !== energiesoortToToggle) {
-        this.energiesoorten.splice(0, this.energiesoorten.length);
-        this.energiesoorten.push(energiesoortToToggle);
-      }
-    }
-    this.getVerbruik();
+    const energiesoortenAfterToggle = this.getEnergiesoortenAfterToggle(this.energiesoorten, energiesoortToToggle);
+    this.navigateTo(this.verbruiksoort, energiesoortenAfterToggle, this.periode, this.selectedDay);
   }
 
+  private getEnergiesoortenAfterToggle(currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
+    let newEnergiesoorten = currentEnergiesoorten.slice();
+
+    const indexOfToggledEnergieSoort = newEnergiesoorten.indexOf(energiesoortToToggle);
+
+    if (this.verbruiksoort === 'kosten') {
+      if (indexOfToggledEnergieSoort < 0) {
+        newEnergiesoorten.push(energiesoortToToggle);
+      } else {
+        newEnergiesoorten.splice(indexOfToggledEnergieSoort, 1);
+      }
+    } else {
+      if (newEnergiesoorten[0] !== energiesoortToToggle) {
+        newEnergiesoorten.splice(0, newEnergiesoorten.length);
+        newEnergiesoorten.push(energiesoortToToggle);
+      }
+    }
+    return newEnergiesoorten;
+  }
+
+  private navigateTo(verbruiksoort: string, energiesoorten: string[], periode: string, datum: Moment) {
+    console.info('Navigate to', verbruiksoort, this.energiesoorten, this.periode, datum);
+
+    const commands = ['/energie', verbruiksoort, this.periode];
+    const extras = {queryParams: { 'energiesoort': energiesoorten, 'datum': datum.format('DD-MM-YYYY') }};
+    this.router.navigate(commands, extras);
+  }
 }
