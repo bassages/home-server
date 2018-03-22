@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
+import * as moment from "moment";
 import {Moment} from "moment";
 import * as _ from "lodash";
 import {EnergieVerbruikService} from "./energie-verbruik.service";
@@ -10,7 +11,6 @@ import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {DecimalPipe} from "@angular/common";
 import {Observable} from "rxjs/Observable";
-import moment = require("moment");
 
 @Component({
   selector: 'energie-verbruik',

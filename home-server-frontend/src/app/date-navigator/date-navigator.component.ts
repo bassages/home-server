@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as moment from "moment";
 import {Moment} from "moment";
 import {IDatePickerConfig} from "ng2-date-picker";
 import * as _ from "lodash";
-import moment = require("moment");
 
 const selectedDayFormat = 'DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';

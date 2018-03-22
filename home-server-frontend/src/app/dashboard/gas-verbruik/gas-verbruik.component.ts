@@ -11,7 +11,7 @@ import * as _ from "lodash";
 import {VerbruikOpDag} from "../../energie-verbruik/verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "../../energie-verbruik/gemiddeldVerbruikInPeriod";
 import {Router} from "@angular/router";
-import moment = require("moment");
+import * as moment from "moment";
 
 @Component({
   selector: 'gas-verbruik',
