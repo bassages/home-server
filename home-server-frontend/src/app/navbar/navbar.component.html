@@ -15,10 +15,10 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuVerbruik">
             <a class="dropdown-item" routerLink="/energie/stroom/opgenomen-vermogen"><i class="fas fa-chart-area"></i> Stroom - opgenomen vermogen</a>
-            <a class="dropdown-item" routerLink="/energie/verbruik/uur"><i class="fas fa-chart-bar"></i> Verbruik per uur</a>
-            <a class="dropdown-item" routerLink="/energie/verbruik/dag"><i class="fas fa-chart-bar"></i> Verbruik per dag</a>
-            <a class="dropdown-item" routerLink="/energie/verbruik/maand"><i class="fas fa-chart-bar"></i> Verbruik per maand</a>
-            <a class="dropdown-item" routerLink="/energie/verbruik/jaar"><i class="fas fa-chart-bar"></i> Verbruik per jaar</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'uur']"><i class="fas fa-chart-bar"></i> Verbruik per uur</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'dag']"><i class="fas fa-chart-bar"></i> Verbruik per dag</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'maand']"><i class="fas fa-chart-bar"></i> Verbruik per maand</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'jaar']"><i class="fas fa-chart-bar"></i> Verbruik per jaar</a>
           </div>
         </li>
         <li class="nav-item dropdown">
@@ -26,10 +26,10 @@
             Energiekosten <span class="caret"></span>
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuKosten">
-            <a class="dropdown-item" routerLink="/energie/kosten/uur"><i class="fas fa-chart-bar"></i> Kosten per uur</a>
-            <a class="dropdown-item" routerLink="/energie/kosten/dag"><i class="fas fa-chart-bar"></i> Kosten per dag</a>
-            <a class="dropdown-item" routerLink="/energie/kosten/maand"><i class="fas fa-chart-bar"></i> Kosten per maand</a>
-            <a class="dropdown-item" routerLink="/energie/kosten/jaar"><i class="fas fa-chart-bar"></i> Kosten per jaar</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'kosten', 'uur']"><i class="fas fa-chart-bar"></i> Kosten per uur</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'kosten', 'dag']"><i class="fas fa-chart-bar"></i> Kosten per dag</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'kosten', 'maand']"><i class="fas fa-chart-bar"></i> Kosten per maand</a>
+            <a class="dropdown-item" [routerLink]="['/energie', 'kosten', 'uur']"><i class="fas fa-chart-bar"></i> Kosten per jaar</a>
           </div>
         </li>
         <li class="nav-item dropdown">
@@ -47,6 +47,9 @@
             <a class="dropdown-item" routerLink="/klimaat/top-charts/luchtvochtigheid"><i class="fas fa-chart-line"></i> Laagste / hoogste</a>
             <a class="dropdown-item" routerLink="/klimaat/average/luchtvochtigheid"> x&#772; Gemiddelde</a>
           </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="http://raspberrypi:5001">Bedien</a>
         </li>
       </ul>
 

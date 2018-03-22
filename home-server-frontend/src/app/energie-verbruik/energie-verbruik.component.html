@@ -3,16 +3,16 @@
   <div class="col-md-11 pl-0 pr-0">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'uur'}" [routerLink]="['/energie', verbruiksoort, 'uur']" queryParamsHandling="preserve" skipLocationChange="true">Uur</a>
+        <a class="nav-link clickable" [ngClass]="{'active': periode == 'uur'}" (click)="setPeriode('uur')">Uur</a>
       </li>
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'dag'}" [routerLink]="['/energie', verbruiksoort, 'dag']" queryParamsHandling="preserve" skipLocationChange="true">Dag</a>
+        <a class="nav-link clickable" [ngClass]="{'active': periode == 'dag'}" (click)="setPeriode('dag')">Dag</a>
       </li>
       <li class="nav-item mr-1">
-        <a class="nav-link" [ngClass]="{'active': periode == 'maand'}" [routerLink]="['/energie', verbruiksoort, 'maand']" queryParamsHandling="preserve" skipLocationChange="true">Maand</a>
+        <a class="nav-link clickable" [ngClass]="{'active': periode == 'maand'}" (click)="setPeriode('maand')">Maand</a>
       </li>
       <li class="nav-item mr-0">
-        <a class="nav-link" [ngClass]="{'active': periode == 'jaar'}" [routerLink]="['/energie', verbruiksoort, 'jaar']" queryParamsHandling="preserve" skipLocationChange="true">Jaar</a>
+        <a class="nav-link clickable" [ngClass]="{'active': periode == 'jaar'}" (click)="setPeriode('jaar')">Jaar</a>
       </li>
 
       <li class="ml-auto mr-auto">
@@ -26,19 +26,7 @@
         </div>
       </li>
       <li class="ml-1">
-        <form>
-          <div class="input-group">
-            <span class="input-group-prepend">
-              <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fa fa-chevron-left"></i></button>
-            </span>
-            <input class="form-control text-center text-capitalize" name="dayPicker" type="text"
-                   [readonly]="true" [(ngModel)]="dayPickerModel" [dpDayPicker]="dayPickerConfiguration"
-                   theme="dp-material" mode="day" (onChange)="dayPickerChanged($event)"/>
-            <span class="input-group-append">
-              <button (click)="navigate(+1)" [disabled]="isMaxSelected()" type="button" class="btn btn-outline-secondary"><i class="fa fa-chevron-right"></i></button>
-            </span>
-          </div>
-        </form>
+        <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)"></date-navigator>
       </li>
     </ul>
   </div>

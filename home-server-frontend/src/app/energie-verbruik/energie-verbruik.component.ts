@@ -3,7 +3,6 @@ import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
 import {Moment} from "moment";
-import {IDatePickerConfig} from "ng2-date-picker";
 import * as _ from "lodash";
 import {EnergieVerbruikService} from "./energie-verbruik.service";
 import {VerbruikInUur} from "./verbruikInUur";
@@ -20,15 +19,12 @@ import moment = require("moment");
 })
 export class EnergieVerbruikComponent implements OnInit {
 
-  public dayPickerConfiguration: IDatePickerConfig;
-  public dayPickerModel: String = '';
-  public selectedDay: Moment = moment();
-  public previouslySelectedDay: Moment;
+  public dateNavigatorMode: string;
+  public selectedDate: Moment = moment();
   public verbruiksoort: string = '';
   public energiesoorten: string[] = [];
-  public periode: string = 'uur';
+  public periode: string = '';
 
-  private selectedDayFormat = 'DD-MM-YYYY';
   private chart: ChartAPI;
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
@@ -49,8 +45,8 @@ export class EnergieVerbruikComponent implements OnInit {
 
                 const verbruiksoortParam = params.get('verbruiksoort');
                 const periodeParam = params.get('periode');
-
                 const energiesoortenParam = queryParams.getAll('energiesoort');
+
                 if (!queryParams.has('datum')) {
                   console.info('navigate because of missing datum parameter');
                   this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, this.getToday());
@@ -58,11 +54,9 @@ export class EnergieVerbruikComponent implements OnInit {
                 }
                 const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
 
-                if (_.isEqual(this.energiesoorten, energiesoortenParam)
-                      && this.verbruiksoort == verbruiksoortParam
-                      && this.selectedDay.isSame(selectedDayParam)
-                      && this.periode == periodeParam) {
-                  console.warn('parameters did not change');
+                if (_.isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort == verbruiksoortParam
+                           && this.selectedDate.isSame(selectedDayParam) && this.periode == periodeParam) {
+                  console.debug('parameters did not change');
                   return;
                 }
 
@@ -74,23 +68,28 @@ export class EnergieVerbruikComponent implements OnInit {
                 this.verbruiksoort = verbruiksoortParam;
                 this.energiesoorten = energiesoortenParam;
                 this.periode = periodeParam;
-                this.selectedDay = selectedDayParam;
-                this.previouslySelectedDay = this.selectedDay.clone();
+                this.selectedDate = selectedDayParam;
 
-                this.dayPickerModel = this.selectedDay.format(this.selectedDayFormat);
+                if (this.periode == 'uur') {
+                  this.dateNavigatorMode = 'day';
+                } else if (this.periode == 'dag') {
+                  this.dateNavigatorMode = 'month';
+                } else if (this.periode == 'maand') {
+                  this.dateNavigatorMode = 'year';
+                } else {
+                  this.dateNavigatorMode = 'off';
+                }
 
-                setTimeout(() => {this.getAndLoadData();},0);
+                console.info('verbruiksoort=[' + this.verbruiksoort + '], ' +
+                             'energiesoorten=[' + this.energiesoorten + '], ' +
+                             'periode=[' + this.periode + '], ' +
+                             'selectedDate=[' + this.selectedDate.format('DD-MM-YYYY') + '], ' +
+                             'dateNavigatorMode=' + this.dateNavigatorMode + ']'
+                );
+
+                setTimeout(() => { this.getAndLoadData(); },0);
                 // this.getAndLoadData();
               });
-
-    this.initDayPicker();
-  }
-
-  private initDayPicker() {
-    this.dayPickerConfiguration = {
-      format: this.selectedDayFormat,
-      max: this.getToday()
-    };
   }
 
   private getDefaultBarChartConfig(): ChartConfiguration {
@@ -104,22 +103,14 @@ export class EnergieVerbruikComponent implements OnInit {
         colors: this.getDataColors(),
         order: (data1: any, data2: any) => data2.id.localeCompare(data1.id)
       },
-      legend: {
-        show: false
-      },
+      legend: { show: false },
       bar: {
-        width: {
-          ratio: 0.8
-        }
+        width: { ratio: 0.8 }
       },
-      transition: {
-        duration: 0
-      },
+      transition: { duration: 0 },
       padding: this.getChartPadding(),
       grid: {
-        y: {
-          show: true
-        }
+        y: { show: true }
       },
       axis: {
         y: {
@@ -150,19 +141,9 @@ export class EnergieVerbruikComponent implements OnInit {
 
   private getChartPadding() {
     return {
-      top: 10,
-      bottom: 25,
-      left: 55,
-      right: 20
+      top: 10, bottom: 25, left: 55, right: 20
     };
   };
-
-  public dayPickerChanged(selectedDay: Moment): void {
-    if (!_.isUndefined(selectedDay)) {
-      this.previouslySelectedDay = selectedDay;
-      this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, selectedDay);
-    }
-  }
 
   private getAndLoadData() {
     if (this.energiesoorten.length === 0) {
@@ -172,7 +153,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
     this.loadingIndicatorService.open();
 
-    this.energieVerbruikService.getVerbruikPerUurOpDag(this.selectedDay).subscribe(
+    this.energieVerbruikService.getVerbruikPerUurOpDag(this.selectedDate).subscribe(
       verbruikPerUurOpDag => {
         this.loadDataIntoChart(verbruikPerUurOpDag);
       },
@@ -181,14 +162,23 @@ export class EnergieVerbruikComponent implements OnInit {
     );
   }
 
-  public navigate(numberOfDays: number): void {
-    const newSelectedDay = this.selectedDay.clone().add(numberOfDays, 'days');
-    this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, newSelectedDay);
+  public navigate(amount: number): void {
+    if (this.periode == 'uur') {
+      const newSelectedDay = this.selectedDate.clone().add(amount, 'days');
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, newSelectedDay);
+    } else if (this.periode == 'dag') {
+      const newSelectedMonth = this.selectedDate.clone().add(amount, 'months');
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, newSelectedMonth);
+    } else if (this.periode == 'maand') {
+      // TODO Extract one year
+    } else {
+      // ignore
+    }
   }
 
   public isMaxSelected(): boolean {
     const now: Moment = moment();
-    return now.date() === this.selectedDay.date() && now.month() === this.selectedDay.month() && now.year() === this.selectedDay.year();
+    return now.date() === this.selectedDate.date() && now.month() === this.selectedDate.month() && now.year() === this.selectedDate.year();
   }
 
   private getToday(): Moment {
@@ -231,23 +221,14 @@ export class EnergieVerbruikComponent implements OnInit {
 
   private getEmptyChartConfig(): ChartConfiguration {
     return {
-      data: {
-        json: {}
-        },
-      legend: {
-        show: false
-      },
+      data: { json: {} },
+      legend: { show: false },
       axis: {
         x: {
-          tick: {
-            values: []
-          }
+          tick: { values: [] }
         },
         y: {
-            tick:
-              {
-                values: []
-              }
+            tick: { values: [] }
           }
         },
       padding: this.getChartPadding()
@@ -324,7 +305,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
   public toggleEnergiesoort(energiesoortToToggle) {
     const energiesoortenAfterToggle = this.getEnergiesoortenAfterToggle(this.energiesoorten, energiesoortToToggle);
-    this.navigateTo(this.verbruiksoort, energiesoortenAfterToggle, this.periode, this.selectedDay);
+    this.navigateTo(this.verbruiksoort, energiesoortenAfterToggle, this.periode, this.selectedDate);
   }
 
   private getEnergiesoortenAfterToggle(currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
@@ -332,7 +313,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
     const indexOfToggledEnergieSoort = newEnergiesoorten.indexOf(energiesoortToToggle);
 
-    if (this.verbruiksoort === 'kosten') {
+    if (this.verbruiksoort == 'kosten') {
       if (indexOfToggledEnergieSoort < 0) {
         newEnergiesoorten.push(energiesoortToToggle);
       } else {
@@ -348,8 +329,20 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   private navigateTo(verbruiksoort: string, energiesoorten: string[], periode: string, datum: Moment) {
-    const commands = ['/energie', verbruiksoort, this.periode];
-    const extras = {queryParams: { 'energiesoort': energiesoorten, 'datum': datum.format('DD-MM-YYYY') }, replaceUrl: true};
+    const commands = ['/energie', verbruiksoort, periode];
+    const extras = { queryParams: { 'energiesoort': energiesoorten, 'datum': datum.format('DD-MM-YYYY') }, replaceUrl: true };
     this.router.navigate(commands, extras);
+  }
+
+  public setPeriode(periode: string) {
+    let correctedDatum: Moment = this.selectedDate;
+    if (periode == 'dag') {
+      correctedDatum.date(1);
+    }
+    this.navigateTo(this.verbruiksoort, this.energiesoorten, periode, correctedDatum);
+  }
+
+  public onDateNavigate(selectedDate: Moment) {
+    this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, selectedDate);
   }
 }

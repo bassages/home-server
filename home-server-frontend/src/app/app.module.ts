@@ -23,6 +23,7 @@ import {EnergieVerbruikComponent} from "./energie-verbruik/energie-verbruik.comp
 import {DecimalPipe} from "@angular/common";
 import {StroomVerbruikComponent} from "./dashboard/stroom-verbruik/stroom-verbruik.component";
 import {GasVerbruikComponent} from "./dashboard/gas-verbruik/gas-verbruik.component";
+import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -61,7 +62,8 @@ const appRoutes: Routes = [
     GasVerbruikComponent,
     LoadingIndicatorComponent,
     ErrorHandlingComponent,
-    EnergieVerbruikComponent
+    EnergieVerbruikComponent,
+    DateNavigatorComponent
   ],
   imports: [
     BrowserModule,
