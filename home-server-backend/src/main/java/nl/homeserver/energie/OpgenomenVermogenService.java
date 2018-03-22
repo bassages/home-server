@@ -1,68 +1,37 @@
 package nl.homeserver.energie;
 
 import static java.time.LocalDateTime.from;
-import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
-import java.time.Clock;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
-import nl.homeserver.cache.CacheService;
 
 @Service
 public class OpgenomenVermogenService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenService.class);
-
-    private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
     public static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
-
-    private static final String ONE_AM = "0 0 1 * * *";
 
     public static final String TOPIC = "/topic/opgenomen-vermogen";
 
-    private final CacheService cacheService;
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
-    private final Clock clock;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public OpgenomenVermogenService(OpgenomenVermogenRepository opgenomenVermogenRepository, CacheService cacheService, Clock clock,
-            SimpMessagingTemplate messagingTemplate) {
-
-        this.cacheService = cacheService;
+    public OpgenomenVermogenService(final OpgenomenVermogenRepository opgenomenVermogenRepository,
+                                    final SimpMessagingTemplate messagingTemplate) {
         this.opgenomenVermogenRepository = opgenomenVermogenRepository;
-        this.clock = clock;
         this.messagingTemplate = messagingTemplate;
-    }
-
-    @Scheduled(cron = ONE_AM)
-    public void dailyCleanup() {
-        LocalDate today = LocalDate.now(clock);
-        IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
-                 .forEach(i -> cleanup(today.minusDays(i)));
-        cacheService.clear(CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
 
     public OpgenomenVermogen save(OpgenomenVermogen opgenomenVermogen) {
@@ -125,45 +94,5 @@ public class OpgenomenVermogenService {
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
         opgenomenVermogen.setWatt(0);
         return opgenomenVermogen;
-    }
-
-    public void cleanup(LocalDate day) {
-        List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
-
-        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByHour = opgenomenVermogensOnDay.stream()
-                                                                                                .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getHour()));
-
-        opgenomenVermogensByHour.values().forEach(this::cleanupHour);
-    }
-
-    private void cleanupHour(List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
-        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
-                                                                                                      .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
-
-        List<OpgenomenVermogen> opgenomenVermogensToKeep = opgenomenVermogensByMinute.values()
-                                                                                     .stream()
-                                                                                     .map(this::getOpgenomenVermogenToKeepInMinute)
-                                                                                     .collect(toList());
-
-        List<OpgenomenVermogen> opgenomenVermogensToDelete = opgenomenVermogensInOneHour.stream()
-                                                                                        .filter(opgenomenVermogen -> !opgenomenVermogensToKeep.contains(opgenomenVermogen))
-                                                                                        .collect(toList());
-
-        log(opgenomenVermogensToDelete, opgenomenVermogensToKeep);
-
-        opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensToDelete);
-    }
-
-    private void log(List<OpgenomenVermogen> opgenomenVermogensToDelete, List<OpgenomenVermogen> opgenomenVermogensToKeep) {
-        if (LOGGER.isInfoEnabled()) {
-            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-        }
-    }
-
-    private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
-        return opgenomenVermogenInOneMinute.stream()
-                                           .max(byHighestWattThenDatumtijd).orElse(null);
     }
 }

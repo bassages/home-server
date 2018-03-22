@@ -34,29 +34,29 @@ import nl.homeserver.MessageContaining;
 import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MeterstandHouseKeepingTest {
+public class MeterstandHousekeepingTest {
 
     @InjectMocks
-    private MeterstandHouseKeeping meterstandHouseKeeping;
+    private MeterstandHousekeeping meterstandHousekeeping;
 
-    @Mock
-    private CacheService cacheService;
     @Mock
     private MeterstandRepository meterstandRepository;
     @Mock
+    private CacheService cacheService;
+    @Mock
     private Clock clock;
-
-    @Rule
-    public LoggingRule loggingRule = new LoggingRule(MeterstandHouseKeeping.class);
 
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
+
+    @Rule
+    public LoggingRule loggingRule = new LoggingRule(MeterstandHousekeeping.class);
 
     @Test
     public void whenCleanUpThenCachesCleared() {
         useSystemDefaultClock(clock);
 
-        meterstandHouseKeeping.dailyCleanup();
+        meterstandHousekeeping.dailyCleanup();
 
         verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
         verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
@@ -71,7 +71,7 @@ public class MeterstandHouseKeepingTest {
         Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(singletonList(meterstand));
 
-        meterstandHouseKeeping.dailyCleanup();
+        meterstandHousekeeping.dailyCleanup();
 
         verify(meterstandRepository, times(3)).findByDateTimeBetween(any(), any());
         verifyNoMoreInteractions(meterstandRepository);
@@ -97,7 +97,7 @@ public class MeterstandHouseKeepingTest {
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 
-        meterstandHouseKeeping.dailyCleanup();
+        meterstandHousekeeping.dailyCleanup();
 
         verify(meterstandRepository, times(2)).deleteInBatch(deletedMeterstandCaptor.capture());
 
@@ -121,7 +121,7 @@ public class MeterstandHouseKeepingTest {
 
         loggingRule.setLevel(INFO);
 
-        meterstandHouseKeeping.dailyCleanup();
+        meterstandHousekeeping.dailyCleanup();
 
         List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
         assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep first in hour 12: Meterstand[id=1"));
@@ -145,7 +145,7 @@ public class MeterstandHouseKeepingTest {
 
         loggingRule.setLevel(Level.OFF);
 
-        meterstandHouseKeeping.dailyCleanup();
+        meterstandHousekeeping.dailyCleanup();
 
         assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
     }

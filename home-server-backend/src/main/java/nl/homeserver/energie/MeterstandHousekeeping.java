@@ -18,21 +18,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import nl.homeserver.HousekeepingSchedule;
 import nl.homeserver.cache.CacheService;
 
 @Service
-public class MeterstandHouseKeeping {
+public class MeterstandHousekeeping {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandHouseKeeping.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandHousekeeping.class);
 
-    private static final String TWO_AM = "0 0 2 * * *";
     private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
 
     private final MeterstandRepository meterstandRepository;
     private final CacheService cacheService;
     private final Clock clock;
 
-    public MeterstandHouseKeeping(final MeterstandRepository meterstandRepository,
+    public MeterstandHousekeeping(final MeterstandRepository meterstandRepository,
                                   final CacheService cacheService,
                                   final Clock clock) {
         this.meterstandRepository = meterstandRepository;
@@ -40,7 +40,7 @@ public class MeterstandHouseKeeping {
         this.clock = clock;
     }
 
-    @Scheduled(cron = TWO_AM)
+    @Scheduled(cron = HousekeepingSchedule.METERSTAND)
     public void dailyCleanup() {
         LocalDate today = now(clock);
         IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
