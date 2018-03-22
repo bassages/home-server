@@ -27,8 +27,9 @@ public class VerbruikKostenOverzichtService {
     protected static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
     protected static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
 
+    // Needed to make use of use caching annotations
     @Autowired
-    private VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching; // Needed to make use of use caching annotations
+    private VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching;
 
     private final EnergiecontractService energiecontractService;
     private final VerbruikRepository verbruikRepository;

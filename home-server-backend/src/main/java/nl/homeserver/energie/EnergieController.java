@@ -19,7 +19,7 @@ public class EnergieController {
 
     private final VerbruikService verbruikService;
 
-    public EnergieController(VerbruikService verbruikService) {
+    public EnergieController(final VerbruikService verbruikService) {
         this.verbruikService = verbruikService;
     }
 
@@ -43,7 +43,6 @@ public class EnergieController {
     @GetMapping(path = "verbruik-per-dag/{van}/{tot}")
     public List<VerbruikKostenOpDag> getVerbruikPerDag(@PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                        @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
-
         return verbruikService.getVerbruikPerDag(aPeriodWithToDate(from, to));
     }
 

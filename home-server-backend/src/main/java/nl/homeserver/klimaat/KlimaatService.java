@@ -56,14 +56,14 @@ public class KlimaatService {
 
     private final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = new ConcurrentHashMap<>();
 
+    // Needed to make use of use caching annotations
     @Autowired
-    private KlimaatService klimaatServiceProxyWithEnabledCaching; // Needed to make use of use caching annotations
+    private KlimaatService klimaatServiceProxyWithEnabledCaching;
 
     private final KlimaatRepos klimaatRepository;
     private final KlimaatSensorRepository klimaatSensorRepository;
     private final KlimaatSensorValueTrendService klimaatSensorValueTrendService;
     private final SimpMessagingTemplate messagingTemplate;
-
     private final Clock clock;
 
     public KlimaatService(final KlimaatRepos klimaatRepository,
@@ -71,7 +71,6 @@ public class KlimaatService {
                           final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
                           final SimpMessagingTemplate messagingTemplate,
                           final Clock clock) {
-
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
         this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
