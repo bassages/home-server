@@ -47,7 +47,7 @@ public class MeterstandHouseKeepingTest {
     private Clock clock;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(MeterstandService.class);
+    public LoggingRule loggingRule = new LoggingRule(MeterstandHouseKeeping.class);
 
     @Captor
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
