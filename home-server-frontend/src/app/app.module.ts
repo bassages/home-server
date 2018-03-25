@@ -24,6 +24,8 @@ import {DecimalPipe} from "@angular/common";
 import {StroomVerbruikComponent} from "./dashboard/stroom-verbruik/stroom-verbruik.component";
 import {GasVerbruikComponent} from "./dashboard/gas-verbruik/gas-verbruik.component";
 import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
+import {EnergieVerbruikUurChartService} from "./energie-verbruik/energie-verbruik-uur-chart.service";
+import {EnergieVerbruikDagChartService} from "./energie-verbruik/energie-verbruik-dag-chart.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -75,13 +77,14 @@ const appRoutes: Routes = [
     )
   ],
   entryComponents: [
-    MeterstandComponent // Don't forget this!!!
   ],
   providers: [
     DecimalPipe,
     MeterstandService,
     OpgenomenVermogenService,
     EnergieVerbruikService,
+    EnergieVerbruikUurChartService,
+    EnergieVerbruikDagChartService,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}
