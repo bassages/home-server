@@ -23,7 +23,7 @@ export class LoadingIndicatorComponent implements OnInit {
   }
 
   open() {
-    this.modal = this.modalService.open(this.loaderTemplate);
+    this.modal = this.modalService.open(this.loaderTemplate, { backdrop: 'static' });
   }
 
   close() {

@@ -13,7 +13,7 @@ import lombok.Setter;
 public class KlimaatSensor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short id;
 
     @Column(unique = true, nullable = false)

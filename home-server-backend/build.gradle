@@ -1,18 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.10.RELEASE'
+    id 'java'
+    id 'org.springframework.boot' version '2.0.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
     id 'com.moowork.gulp' version '1.2.0'
-    id 'com.github.ksoichiro.build.info' version '0.2.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
     id 'jacoco'
     id "org.sonarqube" version '2.6.2'
     id 'net.ltgt.apt' version '0.15' // Needed by Lombok
-}
-
-configurations {
-    // custom configuration that contains all of our front-end modules
-    frontend
-    // custom configuration for all JARs that need to be included in the packaged fat JAR
-    packaged.extendsFrom(compile, runtime, frontend)
 }
 
 jacoco {
@@ -32,14 +26,6 @@ sonarqube {
 
 if (!project.hasProperty("buildtype")) {
     ext.buildtype = 'dev'
-}
-
-buildInfo {
-    // Date format string used to Git committer date.
-    committerDateFormat "yyyy-MM-dd'T'HH:mm:ssZ"
-
-    // Date format string used to build date.
-    buildDateFormat "yyyy-MM-dd'T'HH:mm:ssZ"
 }
 
 repositories {
@@ -62,11 +48,6 @@ compileJava.options.encoding = 'UTF-8'
 
 version = '1.0.0'
 
-springBoot  {
-    // Generates a build-info.properties file
-    buildInfo()
-}
-
 jar {
     baseName = 'home-server'
 }
@@ -79,12 +60,12 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-cache')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-websocket')
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // Needed to make the actuator hypermedia-based “discovery page” for the other endpoints work
     compile('org.springframework.boot:spring-boot-starter-hateoas')
 
     compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('org.springframework.boot:spring-boot-actuator-docs')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-tomcat')
     compile('org.springframework.boot:spring-boot-devtools')
@@ -105,13 +86,10 @@ dependencies {
     runtime('org.hibernate:hibernate-java8')
     runtime('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 
-    frontend project(':home-server-frontend')
 }
 
 springBoot {
-    customConfiguration = 'packaged'
-    // since we're using a custom classifier we don't need to preserve a .original jar
-    backupSource = false
+    buildInfo()
 }
 
 // Take over system properties.
@@ -119,13 +97,6 @@ springBoot {
 // e.g. -Dspring.profiles.active=development-h2db
 bootRun {
     systemProperties System.properties
-}
-
-bootRepackage {
-    mainClass = 'nl.homeserver.HomeServerApplication'
-    classifier = 'fatjar'
-    // ensure that the frontend jars have been built before repackaging
-    dependsOn(':home-server-frontend:jar')
 }
 
 // Cleans up node_modules and nodejs dirs on clean task
@@ -153,7 +124,6 @@ task buildAngularJsApplication(type: GulpTask) {
 // make sure that Gulp generates frontend artifacts for the build
 bootRun.dependsOn 'buildAngularJsApplication'
 processResources.dependsOn 'buildAngularJsApplication'
-
 
 test {
     exclude '**/*IntegrationTest.*'

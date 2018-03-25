@@ -36,8 +36,8 @@ public class OpgenomenVermogenHousekeeping {
     public OpgenomenVermogenHousekeeping(final OpgenomenVermogenRepository opgenomenVermogenRepository,
                                          final CacheService cacheService,
                                          final Clock clock) {
-        this.cacheService = cacheService;
         this.opgenomenVermogenRepository = opgenomenVermogenRepository;
+        this.cacheService = cacheService;
         this.clock = clock;
     }
 

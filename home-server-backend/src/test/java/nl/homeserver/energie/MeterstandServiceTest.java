@@ -20,15 +20,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import nl.homeserver.LoggingRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeterstandServiceTest {
@@ -42,9 +39,6 @@ public class MeterstandServiceTest {
     private Clock clock;
     @Mock
     private SimpMessagingTemplate messagingTemplate;
-
-    @Rule
-    public LoggingRule loggingRule = new LoggingRule(MeterstandService.class);
 
     @Test
     public void whenSaveThenDelegatedToRepositoryAndEventSend() {

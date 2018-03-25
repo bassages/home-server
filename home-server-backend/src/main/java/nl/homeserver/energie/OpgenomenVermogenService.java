@@ -34,7 +34,7 @@ public class OpgenomenVermogenService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public OpgenomenVermogen save(OpgenomenVermogen opgenomenVermogen) {
+    public OpgenomenVermogen save(final OpgenomenVermogen opgenomenVermogen) {
         OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenRepository.save(opgenomenVermogen);
         messagingTemplate.convertAndSend(TOPIC, savedOpgenomenVermogen);
         return savedOpgenomenVermogen;

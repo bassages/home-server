@@ -127,7 +127,7 @@
 
         this.toggleEnergiesoort = function(energiesoorten, energiesoortToToggle, allowMultpleEnergiesoorten) {
             if (allowMultpleEnergiesoorten) {
-                var index = energiesoorten.indexOf(energiesoortToToggle);
+                const index = energiesoorten.indexOf(energiesoortToToggle);
                 if (index >= 0) {
                     energiesoorten.splice(index, 1);
                 } else {

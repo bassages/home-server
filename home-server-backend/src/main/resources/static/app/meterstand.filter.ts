@@ -1,3 +1,4 @@
+
 (function () {
     'use strict';
 
@@ -8,9 +9,11 @@
     meterstand.$inject = [];
 
     function meterstand() {
+
         return function (input, numberOfDecimals) {
+
             if (!input) {
-                return "";
+                return '';
             } else {
                 if (typeof numberOfDecimals !== 'undefined') {
                     let decimalFormat = '';

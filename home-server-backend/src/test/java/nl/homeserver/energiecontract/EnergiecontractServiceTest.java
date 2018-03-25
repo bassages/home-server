@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.cache.CacheService;
@@ -72,7 +72,7 @@ public class EnergiecontractServiceTest {
         long id = 12;
         energiecontractService.delete(id);
 
-        verify(energiecontractRepository).delete(id);
+        verify(energiecontractRepository).deleteById(id);
     }
 
     @Test

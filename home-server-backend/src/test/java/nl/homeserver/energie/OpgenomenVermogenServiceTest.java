@@ -16,17 +16,15 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import nl.homeserver.DatePeriod;
-import nl.homeserver.LoggingRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenServiceTest {
@@ -38,9 +36,6 @@ public class OpgenomenVermogenServiceTest {
     private OpgenomenVermogenRepository opgenomenVermogenRepository;
     @Mock
     private SimpMessagingTemplate messagingTemplate;
-
-    @Rule
-    public LoggingRule loggingRule = new LoggingRule(OpgenomenVermogenService.class);
 
     @Test
     public void givenOneDayPeriodWhenGetHistoryPerHalfDayThenMaxOpgenomenVermogensPerHalfDayReturned() {

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+
+    <title>Home - Aanmelden</title>
+</head>
+<body class="pt-5 pb-5">
+
+<form th:action="@{/login}" method="post">
+    <div class="row">
+        <div class="text-center col-sm-6 offset-sm-3 col-lg-4 offset-lg-4">
+            <div th:if="${param.error}" class="alert alert-danger">
+                Ongeldige gebruiksnaam en/of wachtwoord
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                Je bent afgemeld
+            </div>
+
+            <i class="fas fa-home fa-4x mb-4"></i>
+            <div class="form-group">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                    </div>
+                    <input class="form-control" type="text" id="username" name="username" placeholder="Gebruikersnaam" required/>
+                </div>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><i class="fas fa-key"></i></div>
+                    </div>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="Wachtwoord" required/>
+                </div>
+                <input class="form-control mb-2 btn btn-secondary" type="submit" value="Aanmelden"/>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

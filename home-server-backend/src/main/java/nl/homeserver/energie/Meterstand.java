@@ -18,7 +18,7 @@ import lombok.Setter;
 public class Meterstand {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     @Setter
     private long id;

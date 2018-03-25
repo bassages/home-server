@@ -12,7 +12,7 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence');
 
 var appSourcesRoot = 'src/main/resources/static';
-var appJsDir = appSourcesRoot + '/app';
+var appSourcesDir = appSourcesRoot + '/app';
 var appStylesDir = appSourcesRoot + '/styles';
 
 var buildDir = gutil.env.buildtype === 'prod' ? 'build/resources/main/static' : 'out/production/resources/static';
@@ -37,7 +37,7 @@ gulp.task('build', function(callback) {
 });
 
 gulp.task('build-ts', function () {
-    return gulp.src(appJsDir + '/**/*.ts')
+    return gulp.src(appSourcesDir + '/**/*.ts')
         .pipe(gutil.env.buildtype !== 'prod' ? sourcemaps.init() : gutil.noop())
         .pipe(ts({
             outFile: 'home-min.js',

@@ -20,7 +20,6 @@ public class TimeMachine {
     private static void useClock(Clock mockedClock, Clock realClock) {
         doReturn(realClock.instant()).when(mockedClock).instant();
         doReturn(realClock.getZone()).when(mockedClock).getZone();
-        doReturn(realClock.millis()).when(mockedClock).millis();
     }
 
 }

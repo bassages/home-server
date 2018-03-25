@@ -5,18 +5,16 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import nl.homeserver.Trend;
 
@@ -28,11 +26,6 @@ public class KlimaatSensorValueTrendServiceTest {
 
     @Mock
     private KlimaatSensor klimaatSensor;
-
-    @Before
-    public void setup() {
-        when(klimaatSensor.getCode()).thenReturn("LIVINGROOM");
-    }
 
     @Test
     public void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() throws Exception {

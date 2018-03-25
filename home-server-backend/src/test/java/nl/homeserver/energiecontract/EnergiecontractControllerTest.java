@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EnergiecontractControllerTest {
@@ -46,7 +46,6 @@ public class EnergiecontractControllerTest {
         LocalDate validTo = LocalDate.of(2018, MARCH, 13);
 
         Energiecontract existingEnergiecontract = mock(Energiecontract.class);
-        when(existingEnergiecontract.getId()).thenReturn(id);
         when(existingEnergiecontract.getValidTo()).thenReturn(validTo);
 
         Energiecontract energiecontractToUpdate = mock(Energiecontract.class);

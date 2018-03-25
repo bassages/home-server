@@ -29,15 +29,70 @@
         .module('app')
         .config(Config);
 
-    Config.$inject = ['$routeProvider', '$compileProvider', 'DATETIME_CONSTANTS'];
+    Config.$inject = ['$routeProvider', '$compileProvider', '$httpProvider', 'DATETIME_CONSTANTS'];
 
-    function Config($routeProvider, $compileProvider, DATETIME_CONSTANTS) {
+    function Config($routeProvider, $compileProvider, $httpProvider, DATETIME_CONSTANTS) {
         // See https://docs.angularjs.org/guide/production
         $compileProvider.debugInfoEnabled(false);
         $compileProvider.commentDirectivesEnabled(false);
         $compileProvider.cssClassDirectivesEnabled(false);
 
-        numbro.language('nl-NL');
+        $httpProvider.defaults.withCredentials = true;
+        $httpProvider.defaults.xsrfHeaderName = 'X-XSRF-TOKEN';
+        $httpProvider.defaults.xsrfCookieName = 'XSRF-TOKEN';
+
+        numbro.registerLanguage({
+            languageTag: "nl-NL",
+            delimiters: {
+                thousands: ".",
+                decimal: ","
+            },
+            abbreviations: {
+                thousand: "k",
+                million: "mln",
+                billion: "mrd",
+                trillion: "bln"
+            },
+            ordinal: (number) => {
+                let remainder = number % 100;
+                return (number !== 0 && remainder <= 1 || remainder === 8 || remainder >= 20) ? "ste" : "de";
+            },
+            currency: {
+                symbol: "€",
+                position: "postfix",
+                code: "EUR"
+            },
+            currencyFormat: {
+                thousandSeparated: true,
+                totalLength: 4,
+                spaceSeparated: true,
+                average: true
+            },
+            formats: {
+                fourDigits: {
+                    totalLength: 4,
+                    spaceSeparated: true,
+                    average: true
+                },
+                fullWithTwoDecimals: {
+                    output: "currency",
+                    mantissa: 2,
+                    spaceSeparated: true,
+                    thousandSeparated: true
+                },
+                fullWithTwoDecimalsNoCurrency: {
+                    mantissa: 2,
+                    thousandSeparated: true
+                },
+                fullWithNoDecimals: {
+                    output: "currency",
+                    spaceSeparated: true,
+                    thousandSeparated: true,
+                    mantissa: 0
+                }
+            }
+        });
+        numbro.setLanguage('nl-NL');
 
         let d3Formatters = d3.locale({
             "decimal": ",",

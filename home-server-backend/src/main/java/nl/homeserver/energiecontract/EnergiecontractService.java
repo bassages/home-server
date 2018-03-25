@@ -50,7 +50,7 @@ public class EnergiecontractService {
     }
 
     public void delete(long id) {
-        energiecontractRepository.delete(id);
+        energiecontractRepository.deleteById(id);
         energiecontractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }

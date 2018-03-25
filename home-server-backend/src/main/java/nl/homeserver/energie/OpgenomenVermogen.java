@@ -14,14 +14,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Bevat het opgenomen vermogen op een bepaald moment in tijd.
- */
 @Entity
 public class OpgenomenVermogen {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     @Setter
     private long id;

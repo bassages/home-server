@@ -25,7 +25,7 @@ import nl.homeserver.energie.StroomTariefIndicator;
 public class Energiecontract {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     private Long id;
 
