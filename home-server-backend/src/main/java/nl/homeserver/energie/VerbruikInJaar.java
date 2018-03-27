@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class VerbruikInJaar {
+class VerbruikInJaar {
 
     @Getter
     private final int jaar;

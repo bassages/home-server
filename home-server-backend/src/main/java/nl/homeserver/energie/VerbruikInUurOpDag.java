@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class VerbruikInUurOpDag {
+class VerbruikInUurOpDag {
 
     @Getter
     private final int uur; // Range: 0 - 23
