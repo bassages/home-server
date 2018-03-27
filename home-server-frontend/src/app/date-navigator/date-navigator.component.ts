@@ -22,6 +22,7 @@ export class DateNavigatorComponent implements OnInit {
     this._selectedDate = selectedDate;
     this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
     this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
+    this.yearPickerModel = this._selectedDate.year();
   }
 
   @Output() onNavigate = new EventEmitter<Moment>();
@@ -35,6 +36,8 @@ export class DateNavigatorComponent implements OnInit {
 
   public dayPickerConfiguration: IDatePickerConfig;
   public dayPickerModel: String;
+
+  public yearPickerModel: number;
 
   constructor() { }
 
@@ -84,7 +87,9 @@ export class DateNavigatorComponent implements OnInit {
       this.onNavigate.emit(this._selectedDate.clone().add(amount, 'months'));
 
     } else if (this.mode == 'year') {
-      this.onNavigate.emit(this._selectedDate.clone().add(amount, 'years'));
+      this.yearPickerModel += amount;
+      this.selectedDate = moment(`${this.yearPickerModel}-${this._selectedDate.month()}-${this._selectedDate.date()}`);
+      this.onNavigate.emit(this._selectedDate.clone());
     }
   }
 }

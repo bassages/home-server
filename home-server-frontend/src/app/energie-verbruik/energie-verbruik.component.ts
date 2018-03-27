@@ -5,14 +5,20 @@ import {ChartAPI, ChartConfiguration} from 'c3';
 import * as moment from "moment";
 import {Moment} from "moment";
 import * as _ from "lodash";
-import {EnergieVerbruikService} from "./energie-verbruik.service";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {DecimalPipe} from "@angular/common";
 import {Observable} from "rxjs/Observable";
 import {EnergieVerbruikChartService} from "./energie-verbruik-chart.service";
-import {EnergieVerbruikUurChartService} from "./energie-verbruik-uur-chart.service";
-import {EnergieVerbruikDagChartService} from "./energie-verbruik-dag-chart.service";
+import {EnergieVerbruikChartServiceProvider} from "./energie-verbruik-chart-service-provider";
+
+const periodeToDateNavigatorModeMapping: Map<string, string> =
+  new Map<string, string>([
+    ['uur', 'day'],
+    ['dag', 'month'],
+    ['maand', 'year'],
+    ['jaar', 'off'],
+  ]);
 
 @Component({
   selector: 'energie-verbruik',
@@ -31,9 +37,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
   private energieVerbruikChartService: EnergieVerbruikChartService;
 
-  constructor(private energieVerbruikService: EnergieVerbruikService,
-              private energieVerbruikUurChartService: EnergieVerbruikUurChartService,
-              private energieVerbruikDagChartService: EnergieVerbruikDagChartService,
+  constructor(private energieVerbruikChartServiceProvider: EnergieVerbruikChartServiceProvider,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private decimalPipe: DecimalPipe,
@@ -62,7 +66,6 @@ export class EnergieVerbruikComponent implements OnInit {
 
                 if (_.isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort == verbruiksoortParam
                            && this.selectedDate.isSame(selectedDayParam) && this.periode == periodeParam) {
-                  console.debug('parameters did not change');
                   return;
                 }
 
@@ -75,28 +78,18 @@ export class EnergieVerbruikComponent implements OnInit {
                 this.energiesoorten = energiesoortenParam;
                 this.periode = periodeParam;
                 this.selectedDate = selectedDayParam;
+                this.dateNavigatorMode = periodeToDateNavigatorModeMapping.get(this.periode);
+                this.energieVerbruikChartService = this.energieVerbruikChartServiceProvider.get(this.periode);
 
-                if (this.periode == 'uur') {
-                  this.dateNavigatorMode = 'day';
-                  this.energieVerbruikChartService = this.energieVerbruikUurChartService;
-                } else if (this.periode == 'dag') {
-                  this.dateNavigatorMode = 'month';
-                  this.energieVerbruikChartService = this.energieVerbruikDagChartService;
-                } else if (this.periode == 'maand') {
-                  this.dateNavigatorMode = 'year';
-                } else {
-                  this.dateNavigatorMode = 'off';
-                }
-
-                console.info('verbruiksoort=[' + this.verbruiksoort + '], ' +
-                             'energiesoorten=[' + this.energiesoorten + '], ' +
-                             'periode=[' + this.periode + '], ' +
-                             'selectedDate=[' + this.selectedDate.format('DD-MM-YYYY') + '], ' +
-                             'dateNavigatorMode=' + this.dateNavigatorMode + ']'
-                );
+                this.logConfiguration();
 
                 setTimeout(() => { this.getAndLoadData(); },0);
               });
+  }
+
+  private logConfiguration() {
+    const message = `verbruiksoort=[${this.verbruiksoort}], energiesoorten=[${this.energiesoorten}], periode=[${this.periode}], selectedDate=[${this.selectedDate.format('DD-MM-YYYY')}]}`;
+    console.info(message);
   }
 
   private getAndLoadData() {
@@ -115,7 +108,10 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   private loadDataIntoChart(verbruiken: any[]) {
-    const chartConfiguration: ChartConfiguration = this.energieVerbruikChartService.getChartConfig(this.selectedDate, this.verbruiksoort, this.energiesoorten, verbruiken);
+    const chartConfiguration: ChartConfiguration = this.energieVerbruikChartService.getChartConfig(this.selectedDate,
+                                                                                                   this.verbruiksoort,
+                                                                                                   this.energiesoorten, verbruiken,
+                                                                                        (date: Moment) => this.navigateToDetails(date));
     this.loadChartConfiguration(chartConfiguration);
   }
 
@@ -136,14 +132,22 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   public setPeriode(periode: string) {
-    let correctedDatum: Moment = this.selectedDate;
-    if (periode == 'dag') {
-      correctedDatum.date(1);
-    }
-    this.navigateTo(this.verbruiksoort, this.energiesoorten, periode, correctedDatum);
+    this.navigateTo(this.verbruiksoort, this.energiesoorten, periode, this.selectedDate);
   }
 
   public onDateNavigate(selectedDate: Moment) {
     this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, selectedDate);
+  }
+
+  private navigateToDetails(date: Moment) {
+    if (this.periode == 'uur') {
+      this.router.navigate(['/energie/opgenomen-vermogen']);
+    } else if (this.periode == 'dag') {
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, 'uur', date);
+    } else if (this.periode == 'maand') {
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, 'dag', date);
+    } else if (this.periode == 'jaar') {
+      this.navigateTo(this.verbruiksoort, this.energiesoorten, 'maand', date);
+    }
   }
 }

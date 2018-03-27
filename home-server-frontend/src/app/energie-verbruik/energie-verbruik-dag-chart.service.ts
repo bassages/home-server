@@ -25,19 +25,25 @@ export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartServ
     return this.energieVerbruikService.getVerbruikPerDag(from, to);
   }
 
-  public getChartConfig(selectedDate: moment.Moment, verbruiksoort: string, energiesoorten: string[], verbruiken: any[]): ChartConfiguration {
+  public getChartConfig(selectedDate: Moment,
+                        verbruiksoort: string,
+                        energiesoorten: string[],
+                        verbruiken: any[],
+                        onDataClick: ((date: Moment) => void)): ChartConfiguration {
     const that = this;
+
     const chartConfiguration = super.getDefaultBarChartConfig(verbruiken);
     const keysGroups = super.getKeysGroups(verbruiksoort, energiesoorten);
 
     chartConfiguration.data.groups = [keysGroups];
     chartConfiguration.data.keys = { x: 'dag', value: keysGroups };
     chartConfiguration.data.json = verbruiken;
+    chartConfiguration.data.onclick = (data => onDataClick(moment(data.x)));
     chartConfiguration.axis = {
       x: {
         type: 'timeseries',
         tick: {
-          format: (x: Date) => _.capitalize(moment(x).format('ddd DD')),
+          format: (date: Date) => _.capitalize(moment(date).format('ddd DD')),
           values: this.getTicksForEveryDayInMonth(selectedDate), centered: true, multiline: true, width: 25
         },
         min: this.getPeriodStartDate(selectedDate),
@@ -46,26 +52,31 @@ export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartServ
       },
       y: {
         tick: {
-          format: (x: number) => super.formatWithoutUnitLabel(verbruiksoort, x)
+          format: (value: number) => super.formatWithoutUnitLabel(verbruiksoort, value)
         }
       }
     };
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, defaultValueFormat, color) {
-        const titleFormat = (x: Date) => _.capitalize(moment(x).format('ddd DD-MM'));
+        const titleFormat = (date: Date) => _.capitalize(moment(date).format('ddd DD-MM'));
         return that.getTooltipContent(this, data, titleFormat, defaultValueFormat, color, verbruiksoort, energiesoorten)
       }
     };
-
     return chartConfiguration;
   }
 
   private getPeriodStartDate(selectedDate: Moment): Date {
-    return selectedDate.clone().subtract(12, 'hours').toDate();
+    return selectedDate.clone().date(1)
+                               .subtract(12, 'hours')
+                               .toDate();
   }
 
   private getPeriodEndDate(selectedDate: Moment): Date {
-    return selectedDate.clone().add(1, 'months').subtract(1, 'milliseconds').subtract(12, 'hours').toDate();
+    return selectedDate.clone().date(1)
+                               .add(1, 'months')
+                               .subtract(1, 'milliseconds')
+                               .subtract(12, 'hours')
+                               .toDate();
   }
 
   private getTicksForEveryDayInMonth(selectedDate: Moment): number[] {

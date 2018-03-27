@@ -1,5 +1,5 @@
 import {VerbruikKostenOverzicht} from "./verbruikKostenOverzicht";
 
-export class VerbruikInMaandInJaar extends VerbruikKostenOverzicht {
+export class VerbruikInMaand extends VerbruikKostenOverzicht {
   maand: number;
 }

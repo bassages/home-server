@@ -1,6 +1,7 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
 import {LoadingIndicatorService} from "./loading-indicator.service";
+import * as _ from "lodash";
 
 @Component({
   selector: 'loading-indicator',
@@ -23,12 +24,16 @@ export class LoadingIndicatorComponent implements OnInit {
   }
 
   open() {
+    if (!_.isUndefined(this.modal)) {
+      this.modal.close();
+    }
     this.modal = this.modalService.open(this.loaderTemplate, { backdrop: 'static' });
   }
 
   close() {
     if (this.modal) {
       this.modal.close();
+      this.modal = undefined;
     }
   }
 }

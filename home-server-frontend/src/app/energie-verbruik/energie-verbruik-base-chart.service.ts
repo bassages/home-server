@@ -3,6 +3,19 @@ import {ChartConfiguration} from "c3";
 import * as _ from "lodash";
 import {DecimalPipe} from "@angular/common";
 
+const defaultChartPadding = { top: 10, bottom: 25, left: 55, right: 20 };
+
+const dataColors: {[key: string]: string} = {
+  'stroomVerbruikDal': '#4575b3',
+  'stroomVerbruikNormaal': '#f4b649',
+  'stroomKostenDal': '#4575b3',
+  'stroomKostenNormaal': '#f4b649',
+  'stroomVerbruik': '#4575b3',
+  'stroomKosten': '#4575b3',
+  'gasVerbruik': '#2ca02c',
+  'gasKosten': '#2ca02c'
+};
+
 export abstract class EnergieVerbruikBaseChartService {
 
   constructor(protected decimalPipe: DecimalPipe) {};
@@ -12,14 +25,10 @@ export abstract class EnergieVerbruikBaseChartService {
       data: { json: {} },
       legend: { show: false },
       axis: {
-        x: {
-          tick: { values: [] }
-        },
-        y: {
-          tick: { values: [] }
-        }
+        x: { tick: { values: [] } },
+        y: { tick: { values: [] }}
       },
-      padding: this.getDefaultChartPadding()
+      padding: defaultChartPadding
     };
   };
 
@@ -28,8 +37,7 @@ export abstract class EnergieVerbruikBaseChartService {
       bindto: '#chart',
       data: {
         type: 'bar',
-        json: {},
-        colors: this.getDataColors(),
+        colors: dataColors,
         order: (data1: any, data2: any) => data2.id.localeCompare(data1.id)
       },
       legend: { show: false },
@@ -37,29 +45,10 @@ export abstract class EnergieVerbruikBaseChartService {
         width: { ratio: 0.8 }
       },
       transition: { duration: 0 },
-      padding: this.getDefaultChartPadding(),
+      padding: defaultChartPadding,
       grid: {
         y: { show: true }
       }
-    };
-  };
-
-  private getDataColors () {
-    return {
-      'stroomVerbruikDal': '#4575b3',
-      'stroomVerbruikNormaal': '#f4b649',
-      'stroomKostenDal': '#4575b3',
-      'stroomKostenNormaal': '#f4b649',
-      'stroomVerbruik': '#4575b3',
-      'stroomKosten': '#4575b3',
-      'gasVerbruik': '#2ca02c',
-      'gasKosten': '#2ca02c'
-    };
-  };
-
-  protected getDefaultChartPadding() {
-    return {
-      top: 10, bottom: 25, left: 55, right: 20
     };
   };
 

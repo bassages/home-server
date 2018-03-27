@@ -8,7 +8,11 @@ export interface EnergieVerbruikChartService {
 
   getEmptyChartConfig(): ChartConfiguration;
 
-  getChartConfig(selectedDate: Moment, verbruiksoort: string, energiesoorten: string[], verbruiken: any[]): ChartConfiguration;
+  getChartConfig(selectedDate: Moment,
+                 verbruiksoort: string,
+                 energiesoorten: string[],
+                 verbruiken: any[],
+                 onDataClick: ((date: Moment) => void)): ChartConfiguration;
 
   getEnergiesoortenAfterToggle(verbruiksoort: string, energiesoorten: string[], energiesoortToToggle: string): string[];
 }

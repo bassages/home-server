@@ -12,6 +12,9 @@
            [readonly]="true" [(ngModel)]="monthPickerModel" [dpDayPicker]="monthPickerConfiguration"
            theme="dp-material" mode="month" (onChange)="datePickerChanged($event)"/>
 
+    <input type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
+           [readonly]="true" [(ngModel)]="yearPickerModel" />
+
     <span class="input-group-append">
       <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i
         class="fa fa-chevron-right"></i></button>

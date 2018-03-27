@@ -26,6 +26,9 @@ import {GasVerbruikComponent} from "./dashboard/gas-verbruik/gas-verbruik.compon
 import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
 import {EnergieVerbruikUurChartService} from "./energie-verbruik/energie-verbruik-uur-chart.service";
 import {EnergieVerbruikDagChartService} from "./energie-verbruik/energie-verbruik-dag-chart.service";
+import {EnergieVerbruikMaandChartService} from "./energie-verbruik/energie-verbruik-maand-chart.service";
+import {EnergieVerbruikJaarChartService} from "./energie-verbruik/energie-verbruik-jaar-chart.service";
+import {EnergieVerbruikChartServiceProvider} from "./energie-verbruik/energie-verbruik-chart-service-provider";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -38,11 +41,11 @@ const stompConfig: StompConfig = {
   // How often to heartbeat?
   // Interval in milliseconds, set to 0 to disable
   heartbeat_in: 0, // Typical value 0 - disabled
-  heartbeat_out: 20000, // Typical value 20000 - every 20 seconds
+  heartbeat_out: 30000, // Typical value 20000
+
   // Wait in milliseconds before attempting auto reconnect
   // Set to 0 to disable
-  // Typical value 5000 (5 seconds)
-  reconnect_delay: 5000,
+  reconnect_delay: 10000,
 
   // Will log diagnostics on console
   debug: true
@@ -85,6 +88,9 @@ const appRoutes: Routes = [
     EnergieVerbruikService,
     EnergieVerbruikUurChartService,
     EnergieVerbruikDagChartService,
+    EnergieVerbruikMaandChartService,
+    EnergieVerbruikJaarChartService,
+    EnergieVerbruikChartServiceProvider,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}

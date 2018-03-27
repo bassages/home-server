@@ -6,16 +6,13 @@ import "rxjs/Rx";
 import {VerbruikOpDag} from "./verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "./gemiddeldVerbruikInPeriod";
 import {VerbruikInUur} from "./verbruikInUur";
+import {VerbruikInMaand} from "./verbruikInMaand";
+import {VerbruikInJaar} from "./verbruikInJaar";
 
 @Injectable()
 export class EnergieVerbruikService {
 
   constructor(private http: HttpClient) { }
-
-  public getVerbruikPerDag(from: Moment, to: Moment): Observable<VerbruikOpDag[]> {
-    const url = 'api/energie/verbruik-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
-    return this.http.get<VerbruikOpDag[]>(url);
-  }
 
   public getGemiddeldVerbruikPerDag(from: Moment, to: Moment): Observable<GemiddeldVerbruikInPeriod> {
     const url = 'api/energie/gemiddelde-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
@@ -26,4 +23,20 @@ export class EnergieVerbruikService {
     const url = `api/energie/verbruik-per-uur-op-dag/${dag.format('YYYY-MM-DD')}`;
     return this.http.get<VerbruikInUur[]>(url);
   }
+
+  public getVerbruikPerDag(from: Moment, to: Moment): Observable<VerbruikOpDag[]> {
+    const url = 'api/energie/verbruik-per-dag/' + from.format('YYYY-MM-DD') + '/' + to.format('YYYY-MM-DD');
+    return this.http.get<VerbruikOpDag[]>(url);
+  }
+
+  public getVerbruikPerMaandInJaar(jaar: number): Observable<VerbruikInMaand[]> {
+    const url = `api/energie/verbruik-per-maand-in-jaar/${jaar}`;
+    return this.http.get<VerbruikInMaand[]>(url);
+  }
+
+  public getVerbruikPerJaar(): Observable<VerbruikInJaar[]> {
+    const url = 'api/energie/verbruik-per-jaar';
+    return this.http.get<VerbruikInJaar[]>(url);
+  }
+
 }

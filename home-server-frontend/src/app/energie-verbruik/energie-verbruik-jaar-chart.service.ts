@@ -1,24 +1,25 @@
 import {Injectable} from '@angular/core';
 import "rxjs/Rx";
 import {EnergieVerbruikChartService} from "./energie-verbruik-chart.service";
+import * as moment from "moment";
 import {Moment} from "moment";
 import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {VerbruikInUur} from "./verbruikInUur";
 import {Observable} from "rxjs/Observable";
 import {EnergieVerbruikBaseChartService} from "./energie-verbruik-base-chart.service";
 import {ChartConfiguration} from "c3";
 import {DecimalPipe} from "@angular/common";
+import {VerbruikInJaar} from "./verbruikInJaar";
 
 @Injectable()
-export class EnergieVerbruikUurChartService extends EnergieVerbruikBaseChartService implements EnergieVerbruikChartService {
+export class EnergieVerbruikJaarChartService extends EnergieVerbruikBaseChartService implements EnergieVerbruikChartService {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
     super(decimalPipe);
   }
 
-  public getVerbruik(selectedDate: Moment): Observable<VerbruikInUur[]> {
-    return this.energieVerbruikService.getVerbruikPerUurOpDag(selectedDate);
+  public getVerbruik(selectedDate: Moment): Observable<VerbruikInJaar[]> {
+    return this.energieVerbruikService.getVerbruikPerJaar();
   }
 
   public getChartConfig(selectedDate: Moment,
@@ -28,20 +29,14 @@ export class EnergieVerbruikUurChartService extends EnergieVerbruikBaseChartServ
                         onDataClick: ((date: Moment) => void)): ChartConfiguration {
     const that = this;
 
-    const chartConfiguration: ChartConfiguration = super.getDefaultBarChartConfig(verbruiken);
+    const chartConfiguration = super.getDefaultBarChartConfig(verbruiken);
     const keysGroups = super.getKeysGroups(verbruiksoort, energiesoorten);
 
     chartConfiguration.data.groups = [keysGroups];
-    chartConfiguration.data.keys = { x: 'uur', value: keysGroups };
+    chartConfiguration.data.keys = { x: 'jaar', value: keysGroups };
     chartConfiguration.data.json = verbruiken;
-    chartConfiguration.data.onclick = (data => onDataClick(selectedDate));
+    chartConfiguration.data.onclick = (data => onDataClick(moment(data.x + '-' + selectedDate.format('MM') + '-' + selectedDate.format('DD'))));
     chartConfiguration.axis = {
-      x: {
-        type: 'category',
-        tick: {
-          format: (uur: number) => `${this.decimalPipe.transform(uur, '2.0-0')}:00 - ${this.decimalPipe.transform(uur + 1, '2.0-0')}:00`
-        }
-      },
       y: {
         tick: {
           format: (value: number) => super.formatWithoutUnitLabel(verbruiksoort, value)
@@ -49,11 +44,11 @@ export class EnergieVerbruikUurChartService extends EnergieVerbruikBaseChartServ
       }
     };
     chartConfiguration.tooltip = {
-      contents: function (data, titleFormatter, valueFormatter, color) {
+      contents: function (data, defaultTitleFormat, valueFormatter, color) {
+        const titleFormatter = (year: number) => year;
         return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten)
       }
     };
     return chartConfiguration;
   }
-
 }
