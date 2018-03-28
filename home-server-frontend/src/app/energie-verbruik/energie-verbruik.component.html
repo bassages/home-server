@@ -1,6 +1,6 @@
 <div class="row">
-  <div class="col-md-1 pr-0">&nbsp;</div>
-  <div class="col-md-11 pl-0 pr-0">
+  <div class="col-lg-1 pr-0 d-none d-lg-block ">&nbsp;</div>
+  <div class="col-md-12 col-lg-11 pl-0 pr-0">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
         <a class="nav-link clickable" [ngClass]="{'active': periode == 'uur'}" (click)="setPeriode('uur')">Uur</a>
@@ -25,15 +25,29 @@
           </label>
         </div>
       </li>
-      <li class="ml-1">
+      <li>
         <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)"></date-navigator>
       </li>
     </ul>
   </div>
 </div>
 
+<!-- Kostensoort selection up to (but exluding) large -->
+<div class="row d-xs-block d-lg-none">
+  <div class="col-sm-12 pl-0 pr-0">
+    <ul class="nav nav-pills nav-justified navbar-dark">
+      <li class="nav-item">
+        <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve" skipLocationChange="true">Verbruik</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link mb-0" [ngClass]="{'active': verbruiksoort == 'kosten'}" [routerLink]="['/energie', 'kosten', periode]" queryParamsHandling="preserve" skipLocationChange="true"> Kosten</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <div class="row">
-  <div class="col-md-1 pl-0 pr-0">
+  <div class="col-md-1 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
         <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve" skipLocationChange="true">Verbruik</a>
@@ -44,7 +58,7 @@
     </ul>
   </div>
 
-  <div class="col-md-11 pl-0 pr-0">
+  <div class="col-md-12 col-lg-11 pl-0 pr-0">
     <div id="chart" class="c3 chart"></div>
   </div>
 </div>

@@ -4,7 +4,7 @@ import {Moment} from "moment";
 import {IDatePickerConfig} from "ng2-date-picker";
 import * as _ from "lodash";
 
-const selectedDayFormat = 'DD-MM-YYYY';
+const selectedDayFormat = 'dd. DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';
 
 @Component({
