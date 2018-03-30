@@ -27,7 +27,7 @@
         </div>
       </li>
       <li>
-        <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)"></date-navigator>
+        <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group"></date-navigator>
       </li>
     </ul>
   </div>
@@ -73,7 +73,7 @@
 
   <!-- Date selection  -->
   <div class="row mb-1">
-    <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group"></date-navigator>
+    <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group input-group-sm"></date-navigator>
   </div>
 </div>
 

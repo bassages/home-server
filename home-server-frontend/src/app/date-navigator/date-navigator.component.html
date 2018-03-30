@@ -1,21 +1,19 @@
-<div class="input-group">
-  <span class="input-group-prepend">
-    <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fa fa-chevron-left"></i></button>
-  </span>
+<span class="input-group-prepend">
+  <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fa fa-chevron-left"></i></button>
+</span>
 
-  <input type="text" *ngIf="mode == 'day'" class="form-control text-center text-capitalize" name="dayPicker"
-         [readonly]="true" [(ngModel)]="dayPickerModel" [dpDayPicker]="dayPickerConfiguration"
-         theme="dp-material" mode="day" (onChange)="datePickerChanged($event)"/>
+<input type="text" *ngIf="mode == 'day'" class="form-control text-center text-capitalize" name="dayPicker"
+       [readonly]="true" [(ngModel)]="dayPickerModel" [dpDayPicker]="dayPickerConfiguration"
+       theme="dp-material" mode="day" (onChange)="datePickerChanged($event)"/>
 
-  <input type="text" *ngIf="mode == 'month'" class="form-control text-center text-capitalize" name="monthPicker"
-         [readonly]="true" [(ngModel)]="monthPickerModel" [dpDayPicker]="monthPickerConfiguration"
-         theme="dp-material" mode="month" (onChange)="datePickerChanged($event)"/>
+<input type="text" *ngIf="mode == 'month'" class="form-control text-center text-capitalize" name="monthPicker"
+       [readonly]="true" [(ngModel)]="monthPickerModel" [dpDayPicker]="monthPickerConfiguration"
+       theme="dp-material" mode="month" (onChange)="datePickerChanged($event)"/>
 
-  <input type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
-         [readonly]="true" [(ngModel)]="yearPickerModel" />
+<input type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
+       [readonly]="true" [(ngModel)]="yearPickerModel" />
 
-  <span class="input-group-append">
-    <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i
-      class="fa fa-chevron-right"></i></button>
-  </span>
-</div>
+<span class="input-group-append">
+  <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i
+    class="fa fa-chevron-right"></i></button>
+</span>
