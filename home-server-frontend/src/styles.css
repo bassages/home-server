@@ -7,3 +7,7 @@
 .clickable {
   cursor: pointer;
 }
+
+.form-control:disabled, .form-control[readonly] {
+  background-color: #eee;
+}

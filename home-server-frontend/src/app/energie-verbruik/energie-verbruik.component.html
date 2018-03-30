@@ -1,6 +1,7 @@
 <div class="row">
-  <div class="col-lg-1 pr-0 d-none d-lg-block ">&nbsp;</div>
-  <div class="col-md-12 col-lg-11 pl-0 pr-0">
+  <div class="col-lg-1 pr-0 d-none d-lg-block">&nbsp;</div>
+
+  <div class="col-md-12 col-lg-11 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
         <a class="nav-link clickable" [ngClass]="{'active': periode == 'uur'}" (click)="setPeriode('uur')">Uur</a>
@@ -18,10 +19,10 @@
       <li class="ml-auto mr-auto">
         <div class="btn-group btn-group-toggle">
           <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}">
-            <input type="checkbox" [checked]="energiesoorten.indexOf('stroom') >= 0" (click)="toggleEnergiesoort('stroom')"><i class="fa fa-bolt"></i> Stroom
+            <input type="checkbox" [checked]="energiesoorten.indexOf('stroom') >= 0" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom
           </label>
           <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}">
-            <input type="checkbox" [checked]="energiesoorten.indexOf('gas') >= 0" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fa fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" [checked]="energiesoorten.indexOf('gas') >= 0" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fas fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
           </label>
         </div>
       </li>
@@ -32,17 +33,47 @@
   </div>
 </div>
 
-<!-- Kostensoort selection up to (but exluding) large -->
-<div class="row d-xs-block d-lg-none">
-  <div class="col-sm-12 pl-0 pr-0">
-    <ul class="nav nav-pills nav-justified navbar-dark">
-      <li class="nav-item">
-        <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve" skipLocationChange="true">Verbruik</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link mb-0" [ngClass]="{'active': verbruiksoort == 'kosten'}" [routerLink]="['/energie', 'kosten', periode]" queryParamsHandling="preserve" skipLocationChange="true"> Kosten</a>
-      </li>
-    </ul>
+<!-- Up to (but exluding) large -->
+<div class="d-xs-block d-lg-none">
+  <!-- Kostensoort selection -->
+  <div class="row mb-1">
+    <div class="col-6 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': verbruiksoort == 'verbruik'}" (click)="setVerbruikSoort('verbruik')">Verbruik</button>
+    </div>
+    <div class="col-6 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': verbruiksoort == 'kosten'}" (click)="setVerbruikSoort('kosten')"> Kosten</button>
+    </div>
+  </div>
+
+  <!-- Energiesoort selection  -->
+  <div class="row mb-1">
+    <div class="col-6 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
+    </div>
+    <div class="col-6 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
+    </div>
+  </div>
+
+  <!-- Period selection  -->
+  <div class="row mb-1">
+    <div class="col-3 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'uur'}" (click)="setPeriode('uur')">Uur</button>
+    </div>
+    <div class="col-3 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'dag'}" (click)="setPeriode('dag')">Dag</button>
+    </div>
+    <div class="col-3 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'maand'}" (click)="setPeriode('maand')">Maand</button>
+    </div>
+    <div class="col-3 pl-0 pr-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'jaar'}" (click)="setPeriode('jaar')">Jaar</button>
+    </div>
+  </div>
+
+  <!-- Date selection  -->
+  <div class="row mb-1">
+    <date-navigator *ngIf="dateNavigatorMode != 'off'" [mode]="dateNavigatorMode" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group"></date-navigator>
   </div>
 </div>
 
@@ -50,10 +81,10 @@
   <div class="col-md-1 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
-        <a class="nav-link mb-1" [ngClass]="{'active': verbruiksoort == 'verbruik'}" [routerLink]="['/energie', 'verbruik', periode]" queryParamsHandling="preserve" skipLocationChange="true">Verbruik</a>
+        <a class="nav-link mb-1 clickable" [ngClass]="{'active': verbruiksoort == 'verbruik'}" (click)="setVerbruikSoort('verbruik')">Verbruik</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mb-0" [ngClass]="{'active': verbruiksoort == 'kosten'}" [routerLink]="['/energie', 'kosten', periode]" queryParamsHandling="preserve" skipLocationChange="true"> Kosten</a>
+        <a class="nav-link mb-0 clickable" [ngClass]="{'active': verbruiksoort == 'kosten'}" (click)="setVerbruikSoort('kosten')">Kosten</a>
       </li>
     </ul>
   </div>

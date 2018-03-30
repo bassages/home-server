@@ -135,6 +135,10 @@ export class EnergieVerbruikComponent implements OnInit {
     this.navigateTo(this.verbruiksoort, this.energiesoorten, periode, this.selectedDate);
   }
 
+  public setVerbruikSoort(verbruiksoort: string) {
+    this.navigateTo(verbruiksoort, this.energiesoorten, this.periode, this.selectedDate);
+  }
+
   public onDateNavigate(selectedDate: Moment) {
     this.navigateTo(this.verbruiksoort, this.energiesoorten, this.periode, selectedDate);
   }
