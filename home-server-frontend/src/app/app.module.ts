@@ -24,11 +24,11 @@ import {DecimalPipe} from "@angular/common";
 import {StroomVerbruikComponent} from "./dashboard/stroom-verbruik/stroom-verbruik.component";
 import {GasVerbruikComponent} from "./dashboard/gas-verbruik/gas-verbruik.component";
 import {DateNavigatorComponent} from './date-navigator/date-navigator.component';
-import {EnergieVerbruikUurChartService} from "./energie-verbruik/energie-verbruik-uur-chart.service";
-import {EnergieVerbruikDagChartService} from "./energie-verbruik/energie-verbruik-dag-chart.service";
-import {EnergieVerbruikMaandChartService} from "./energie-verbruik/energie-verbruik-maand-chart.service";
-import {EnergieVerbruikJaarChartService} from "./energie-verbruik/energie-verbruik-jaar-chart.service";
-import {EnergieVerbruikChartServiceProvider} from "./energie-verbruik/energie-verbruik-chart-service-provider";
+import {EnergieVerbruikUurHistorieService} from "./energie-verbruik/energie-verbruik-uur-historie.service";
+import {EnergieVerbruikDagHistorieService} from "./energie-verbruik/energie-verbruik-dag-historie.service";
+import {EnergieVerbruikMaandHistorieService} from "./energie-verbruik/energie-verbruik-maand-historie.service";
+import {EnergieVerbruikJaarHistorieService} from "./energie-verbruik/energie-verbruik-jaar-historie.service";
+import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik/energie-verbruik-historie-service-provider";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -86,11 +86,11 @@ const appRoutes: Routes = [
     MeterstandService,
     OpgenomenVermogenService,
     EnergieVerbruikService,
-    EnergieVerbruikUurChartService,
-    EnergieVerbruikDagChartService,
-    EnergieVerbruikMaandChartService,
-    EnergieVerbruikJaarChartService,
-    EnergieVerbruikChartServiceProvider,
+    EnergieVerbruikUurHistorieService,
+    EnergieVerbruikDagHistorieService,
+    EnergieVerbruikMaandHistorieService,
+    EnergieVerbruikJaarHistorieService,
+    EnergieVerbruikHistorieServiceProvider,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}

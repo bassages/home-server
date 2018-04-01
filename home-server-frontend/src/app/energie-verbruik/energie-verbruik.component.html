@@ -48,10 +48,10 @@
   <!-- Energiesoort selection  -->
   <div class="row mb-1">
     <div class="col-6 pl-0 pr-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : isEnergieSoortSelected('stroom')}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
     </div>
     <div class="col-6 pl-0 pr-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' :isEnergieSoortSelected('gas')}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
     </div>
   </div>
 
@@ -90,6 +90,28 @@
   </div>
 
   <div class="col-md-12 col-lg-11 pl-0 pr-0">
-    <div id="chart" class="c3 chart"></div>
+    <div [hidden]="!showChart" id="chart" class="c3 chart"></div>
+
+    <div [hidden]="!showTable" class="table-responsive">
+      <table class="table table-bordered table-striped table-hover table-sm">
+        <thead>
+        <tr>
+          <th></th>
+          <th class="text-right" *ngIf="isEnergieSoortSelected('gas')">Gas</th>
+          <th class="text-right" *ngIf="isEnergieSoortSelected('stroom')">Stroom</th>
+          <th class="text-right" *ngIf="isEnergieSoortSelected('stroom') && isEnergieSoortSelected('gas') && verbruiksoort == 'kosten'">Totaal</th>
+        </tr>
+        </thead>
+
+        <tr *ngFor="let verbruik of verbruiken">
+          <td class="text-right">{{ getFormattedDate(verbruik) }}</td>
+          <td class="text-right" *ngIf="isEnergieSoortSelected('gas')">{{ getFormattedValue(verbruik, 'gas') }}</td>
+          <td class="text-right" *ngIf="isEnergieSoortSelected('stroom')">{{ getFormattedValue(verbruik, 'stroom') }}</td>
+          <td class="text-right" *ngIf="isEnergieSoortSelected('stroom') && isEnergieSoortSelected('gas') && verbruiksoort == 'kosten'">{{ getFormattedTotalCosts(verbruik) }}</td>
+        </tr>
+      </table>
+    </div>
   </div>
+
 </div>
+

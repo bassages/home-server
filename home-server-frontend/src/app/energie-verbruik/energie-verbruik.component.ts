@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from "@angular/router";
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
@@ -9,8 +9,8 @@ import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {DecimalPipe} from "@angular/common";
 import {Observable} from "rxjs/Observable";
-import {EnergieVerbruikChartService} from "./energie-verbruik-chart.service";
-import {EnergieVerbruikChartServiceProvider} from "./energie-verbruik-chart-service-provider";
+import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
+import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik-historie-service-provider";
 
 const periodeToDateNavigatorModeMapping: Map<string, string> =
   new Map<string, string>([
@@ -26,6 +26,15 @@ const periodeToDateNavigatorModeMapping: Map<string, string> =
   styleUrls: ['./energie-verbruik.component.scss']
 })
 export class EnergieVerbruikComponent implements OnInit {
+  @HostListener('window:resize') onResize() {
+    this.determineChartOrTable();
+    if (this.showChart) {
+      this.energieVerbruikHistorieService.adjustChartHeightToAvailableWindowHeight(this.chart);
+    }
+  }
+
+  public showChart: boolean = false;
+  public showTable: boolean = false;
 
   public dateNavigatorMode: string;
   public selectedDate: Moment = moment();
@@ -34,10 +43,11 @@ export class EnergieVerbruikComponent implements OnInit {
   public periode: string = '';
 
   private chart: ChartAPI;
+  private energieVerbruikHistorieService: EnergieVerbruikHistorieService<any>;
 
-  private energieVerbruikChartService: EnergieVerbruikChartService;
+  public verbruiken: any[] = [];
 
-  constructor(private energieVerbruikChartServiceProvider: EnergieVerbruikChartServiceProvider,
+  constructor(private energieVerbruikChartServiceProvider: EnergieVerbruikHistorieServiceProvider,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private decimalPipe: DecimalPipe,
@@ -79,9 +89,11 @@ export class EnergieVerbruikComponent implements OnInit {
                 this.periode = periodeParam;
                 this.selectedDate = selectedDayParam;
                 this.dateNavigatorMode = periodeToDateNavigatorModeMapping.get(this.periode);
-                this.energieVerbruikChartService = this.energieVerbruikChartServiceProvider.get(this.periode);
+                this.energieVerbruikHistorieService = this.energieVerbruikChartServiceProvider.get(this.periode);
 
                 this.logConfiguration();
+
+                this.determineChartOrTable();
 
                 setTimeout(() => { this.getAndLoadData(); },0);
               });
@@ -93,36 +105,47 @@ export class EnergieVerbruikComponent implements OnInit {
   }
 
   private getAndLoadData() {
-    if (this.energiesoorten.length === 0) {
-      this.loadChartConfiguration(this.energieVerbruikChartService.getEmptyChartConfig());
-      return;
-    }
+    this.verbruiken = [];
 
     this.loadingIndicatorService.open();
 
-    this.energieVerbruikChartService.getVerbruik(this.selectedDate).subscribe(
-      verbruiken => this.loadDataIntoChart(verbruiken),
+    this.energieVerbruikHistorieService.getVerbruiken(this.selectedDate).subscribe(
+      verbruiken => this.loadData(verbruiken),
       error => this.errorHandlingService.handleError("Het verbruik kon niet worden opgehaald", error),
       () => this.loadingIndicatorService.close()
     );
   }
 
+  private loadData(verbruiken: any[]) {
+    this.verbruiken = verbruiken;
+    if (this.showChart) {
+      this.loadDataIntoChart(this.verbruiken);
+    } else if (this.showTable) {
+      this.loadDataIntoTable(this.verbruiken);
+    }
+  }
+
+  private loadDataIntoTable(verbruiken: any[]) {
+    // Nothing special to do here
+  }
+
   private loadDataIntoChart(verbruiken: any[]) {
-    const chartConfiguration: ChartConfiguration = this.energieVerbruikChartService.getChartConfig(this.selectedDate,
+    const chartConfiguration: ChartConfiguration = this.energieVerbruikHistorieService.getChartConfig(this.selectedDate,
                                                                                                    this.verbruiksoort,
-                                                                                                   this.energiesoorten, verbruiken,
+                                                                                                   this.energiesoorten,
+                                                                                                   verbruiken,
                                                                                         (date: Moment) => this.navigateToDetails(date));
     this.loadChartConfiguration(chartConfiguration);
   }
 
   private loadChartConfiguration(chartConfiguration: ChartConfiguration) {
     this.chart = c3.generate(chartConfiguration);
-    this.chart.resize({height: 500});
+    this.energieVerbruikHistorieService.adjustChartHeightToAvailableWindowHeight(this.chart);
   }
 
   public toggleEnergiesoort(energiesoortToToggle) {
-    const energiesoortenAfterToggle = this.energieVerbruikChartService.getEnergiesoortenAfterToggle(this.verbruiksoort, this.energiesoorten, energiesoortToToggle);
-    this.navigateTo(this.verbruiksoort, energiesoortenAfterToggle, this.periode, this.selectedDate);
+    const energiesoorten = this.energieVerbruikHistorieService.toggleEnergiesoort(this.verbruiksoort, this.energiesoorten, energiesoortToToggle);
+    this.navigateTo(this.verbruiksoort, energiesoorten, this.periode, this.selectedDate);
   }
 
   private navigateTo(verbruiksoort: string, energiesoorten: string[], periode: string, datum: Moment) {
@@ -153,5 +176,67 @@ export class EnergieVerbruikComponent implements OnInit {
     } else if (this.periode == 'jaar') {
       this.navigateTo(this.verbruiksoort, this.energiesoorten, 'maand', date);
     }
+  }
+
+  public determineChartOrTable() {
+    const autoChartOrTableThreshold = 500;
+    if (window.innerWidth >= autoChartOrTableThreshold) {
+      this.doShowChart();
+    } else {
+      this.doShowTable();
+    }
+  }
+
+  private doShowChart(): void {
+    if (!this.showChart) {
+      this.showTable = false;
+      this.showChart = true;
+      this.loadDataIntoChart(this.verbruiken);
+    }
+  }
+
+  private doShowTable(): void {
+    if (!this.showTable) {
+      this.showChart = false;
+      this.showTable = true;
+      this.loadDataIntoTable(this.verbruiken);
+    }
+  }
+
+  public isEnergieSoortSelected(energiesoort: string) {
+    return this.energiesoorten.indexOf(energiesoort) >= 0;
+  }
+
+  public getFormattedTotalCosts(verbruik: any) {
+    if (verbruik.stroomKostenDal || verbruik.stroomKostenNormaal || verbruik.gasKosten) {
+      return this.energieVerbruikHistorieService.formatWithUnitLabel(this.verbruiksoort, this.energiesoorten, verbruik.stroomKostenDal + verbruik.stroomKostenNormaal + verbruik.gasKosten);
+    }
+    return '';
+  }
+
+  public getFormattedDate(verbruik: any): string {
+    return this.energieVerbruikHistorieService.getFormattedDate(verbruik);
+  }
+
+  public getFormattedValue(verbruik: any, energiesoort: string) {
+    if (energiesoort == 'stroom') {
+      const dalValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort) + 'Dal'];
+      const normaalValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort) + 'Normaal'];
+
+      if (dalValue || normaalValue) {
+        return this.energieVerbruikHistorieService.formatWithUnitLabel(this.verbruiksoort, this.energiesoorten, dalValue + normaalValue);
+      }
+
+    } else if (energiesoort == 'gas') {
+      const gasValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort)];
+
+      if (gasValue) {
+        return this.energieVerbruikHistorieService.formatWithUnitLabel(this.verbruiksoort, this.energiesoorten, gasValue);
+      }
+
+    } else {
+      throw new Error('Unexpected energiesoort: ' + energiesoort);
+    }
+    return ''
   }
 }

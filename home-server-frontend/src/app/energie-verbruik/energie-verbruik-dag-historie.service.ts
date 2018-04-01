@@ -1,25 +1,25 @@
 import {Injectable} from '@angular/core';
 import "rxjs/Rx";
-import {EnergieVerbruikChartService} from "./energie-verbruik-chart.service";
+import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
 import * as moment from "moment";
 import {Moment} from "moment";
 import {EnergieVerbruikService} from "./energie-verbruik.service";
 import {Observable} from "rxjs/Observable";
 import {VerbruikOpDag} from "./verbruikOpDag";
-import {EnergieVerbruikBaseChartService} from "./energie-verbruik-base-chart.service";
+import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
 import {ChartConfiguration} from "c3";
 import {DecimalPipe} from "@angular/common";
 import * as _ from "lodash";
 
 @Injectable()
-export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartService implements EnergieVerbruikChartService {
+export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikOpDag> {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
     super(decimalPipe);
   }
 
-  public getVerbruik(selectedDate: Moment): Observable<VerbruikOpDag[]> {
+  public getVerbruiken(selectedDate: Moment): Observable<VerbruikOpDag[]> {
     const from = selectedDate.clone().date(1);
     const to = from.clone().add(1, 'months');
     return this.energieVerbruikService.getVerbruikPerDag(from, to);
@@ -44,10 +44,13 @@ export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartServ
         type: 'timeseries',
         tick: {
           format: (date: Date) => _.capitalize(moment(date).format('ddd DD')),
-          values: this.getTicksForEveryDayInMonth(selectedDate), centered: true, multiline: true, width: 25
+          values: this.getTicksForEveryDayInMonth(selectedDate),
+          centered: true,
+          multiline: true,
+          width: 25
         },
-        min: this.getPeriodStartDate(selectedDate),
-        max: this.getPeriodEndDate(selectedDate),
+        min: this.getPeriodStart(selectedDate).subtract(12, 'hours').toDate(),
+        max: this.getPeriodEnd(selectedDate).subtract(12, 'hours').toDate(),
         padding: { left: 0, right: 0 }
       },
       y: {
@@ -58,30 +61,28 @@ export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartServ
     };
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, defaultValueFormat, color) {
-        const titleFormat = (date: Date) => _.capitalize(moment(date).format('ddd DD-MM'));
+        const titleFormat = (date: any) => that.formatDate(date);
         return that.getTooltipContent(this, data, titleFormat, defaultValueFormat, color, verbruiksoort, energiesoorten)
       }
     };
     return chartConfiguration;
   }
 
-  private getPeriodStartDate(selectedDate: Moment): Date {
-    return selectedDate.clone().date(1)
-                               .subtract(12, 'hours')
-                               .toDate();
+  private getPeriodStart(selectedDate: Moment): Moment {
+    return selectedDate.clone()
+                       .date(1);
   }
 
-  private getPeriodEndDate(selectedDate: Moment): Date {
-    return selectedDate.clone().date(1)
-                               .add(1, 'months')
-                               .subtract(1, 'milliseconds')
-                               .subtract(12, 'hours')
-                               .toDate();
+  private getPeriodEnd(selectedDate: Moment): Moment {
+    return selectedDate.clone()
+                       .date(1)
+                       .add(1, 'months')
+                       .subtract(1, 'milliseconds');
   }
 
-  private getTicksForEveryDayInMonth(selectedDate: Moment): number[] {
-    const date = selectedDate.clone();
-    const numberOfDaysInMonth = selectedDate.daysInMonth();
+  private getTicksForEveryDayInMonth(selectedMoment: Moment): number[] {
+    const date: Moment = this.getPeriodStart(selectedMoment);
+    const numberOfDaysInMonth: number = selectedMoment.daysInMonth();
     const tickValues: number[] = [];
 
     for (let i = 0; i < numberOfDaysInMonth; i++) {
@@ -89,5 +90,13 @@ export class EnergieVerbruikDagChartService extends EnergieVerbruikBaseChartServ
       date.add(1, 'days');
     }
     return tickValues;
+  }
+
+  public getFormattedDate(verbruikOpDag: VerbruikOpDag): any {
+    return this.formatDate(verbruikOpDag.dag);
+  }
+
+  private formatDate(date: any) {
+    return _.capitalize(moment(date).format('ddd DD-MM'));
   }
 }

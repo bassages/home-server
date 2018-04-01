@@ -16,7 +16,10 @@ const dataColors: {[key: string]: string} = {
   'gasKosten': '#2ca02c'
 };
 
-export abstract class EnergieVerbruikBaseChartService {
+const minimumChartHeight: number = 220;
+const maximumChartHeight: number = 500;
+
+export abstract class AbstractEnergieVerbruikHistorieService {
 
   constructor(protected decimalPipe: DecimalPipe) {};
 
@@ -56,7 +59,7 @@ export abstract class EnergieVerbruikBaseChartService {
     return this.decimalPipe.transform(value, '1.3-3');
   };
 
-  private formatWithUnitLabel(verbruiksoort: string, energieSoorten: string[], value) {
+  public formatWithUnitLabel(verbruiksoort: string, energieSoorten: string[], value: number) {
     const withoutUnitLabel = this.formatWithoutUnitLabel(verbruiksoort, value);
     if (verbruiksoort === 'verbruik') {
       return withoutUnitLabel + ' ' + this.getVerbruikLabel(energieSoorten[0]);
@@ -131,7 +134,7 @@ export abstract class EnergieVerbruikBaseChartService {
     return keysGroups;
   }
 
-  public getEnergiesoortenAfterToggle(verbruiksoort: string, currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
+  public toggleEnergiesoort(verbruiksoort: string, currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
     let newEnergiesoorten = currentEnergiesoorten.slice();
 
     const indexOfToggledEnergieSoort = newEnergiesoorten.indexOf(energiesoortToToggle);
@@ -150,4 +153,18 @@ export abstract class EnergieVerbruikBaseChartService {
     }
     return newEnergiesoorten;
   }
+
+  public adjustChartHeightToAvailableWindowHeight(chart: any) {
+    const rect = chart.element.getBoundingClientRect();
+
+    let height = window.innerHeight - rect.top - 10;
+
+    if (height < minimumChartHeight) {
+      height = minimumChartHeight;
+    } else if (height > maximumChartHeight) {
+      height = maximumChartHeight;
+    }
+    chart.resize({height: height});
+  }
+
 }
