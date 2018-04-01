@@ -1,0 +1,37 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/scss/bootstrap";
+
+.c3-zoom-rect {
+  opacity: 1 !important;
+  fill: white;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.form-control:disabled, .form-control[readonly] {
+  background-color: #eee;
+}
+
+html {
+  font-size: 0.8rem;
+}
+
+@include media-breakpoint-up(sm) {
+  html {
+    font-size: 0.9rem;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  html {
+    font-size: 1rem;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  html {
+    font-size: 1rem;
+  }
+}
