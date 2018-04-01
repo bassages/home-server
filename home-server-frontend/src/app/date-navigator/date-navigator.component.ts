@@ -19,10 +19,12 @@ export class DateNavigatorComponent implements OnInit {
 
   @Input()
   set selectedDate(selectedDate: Moment) {
-    this._selectedDate = selectedDate;
-    this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
-    this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
-    this.yearPickerModel = this._selectedDate.year();
+    if (!_.isUndefined(selectedDate)) {
+      this._selectedDate = selectedDate;
+      this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
+      this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
+      this.yearPickerModel = this._selectedDate.year();
+    }
   }
 
   @Output() onNavigate = new EventEmitter<Moment>();

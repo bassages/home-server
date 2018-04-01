@@ -14,7 +14,7 @@
             Energieverbruik <span class="caret"></span>
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuVerbruik">
-            <a class="dropdown-item" routerLink="/energie/stroom/opgenomen-vermogen" [queryParams]="{ energiesoort: ['stroom'] }"><i class="fas fa-chart-area"></i> Stroom - opgenomen vermogen</a>
+            <a class="dropdown-item" routerLink="/energie/opgenomen-vermogen"><i class="fas fa-chart-area"></i> Stroom - opgenomen vermogen</a>
             <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'uur']" [queryParams]="{ energiesoort: ['stroom'] }"><i class="fas fa-chart-bar"></i> Verbruik per uur</a>
             <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'dag']" [queryParams]="{ energiesoort: ['stroom'] }"><i class="fas fa-chart-bar"></i> Verbruik per dag</a>
             <a class="dropdown-item" [routerLink]="['/energie', 'verbruik', 'maand']" [queryParams]="{ energiesoort: ['stroom'] }"><i class="fas fa-chart-bar"></i> Verbruik per maand</a>

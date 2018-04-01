@@ -55,10 +55,7 @@ export class EnergieVerbruikComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-    Observable.combineLatest([
-                this.activatedRoute.paramMap,
-                this.activatedRoute.queryParamMap
-              ])
+    Observable.combineLatest([ this.activatedRoute.paramMap, this.activatedRoute.queryParamMap ])
               .subscribe(combined => {
                 const params: ParamMap = <ParamMap>combined[0];
                 const queryParams: ParamMap = <ParamMap>combined[1];
@@ -68,9 +65,7 @@ export class EnergieVerbruikComponent implements OnInit {
                 const energiesoortenParam = queryParams.getAll('energiesoort');
 
                 if (!queryParams.has('datum')) {
-                  console.info('navigate because of missing datum parameter');
-                  this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, moment());
-                  return;
+                  return this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, moment());
                 }
                 const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
 
@@ -80,8 +75,7 @@ export class EnergieVerbruikComponent implements OnInit {
                 }
 
                 if (verbruiksoortParam == 'verbruik' && energiesoortenParam.length > 1) {
-                  this.navigateTo(verbruiksoortParam, ['stroom'], periodeParam, selectedDayParam);
-                  return;
+                  return this.navigateTo(verbruiksoortParam, ['stroom'], periodeParam, selectedDayParam);
                 }
 
                 this.verbruiksoort = verbruiksoortParam;
@@ -91,17 +85,10 @@ export class EnergieVerbruikComponent implements OnInit {
                 this.dateNavigatorMode = periodeToDateNavigatorModeMapping.get(this.periode);
                 this.energieVerbruikHistorieService = this.energieVerbruikChartServiceProvider.get(this.periode);
 
-                this.logConfiguration();
-
                 this.determineChartOrTable();
 
                 setTimeout(() => { this.getAndLoadData(); },0);
               });
-  }
-
-  private logConfiguration() {
-    const message = `verbruiksoort=[${this.verbruiksoort}], energiesoorten=[${this.energiesoorten}], periode=[${this.periode}], selectedDate=[${this.selectedDate.format('DD-MM-YYYY')}]}`;
-    console.info(message);
   }
 
   private getAndLoadData() {
@@ -168,7 +155,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
   private navigateToDetails(date: Moment) {
     if (this.periode == 'uur') {
-      this.router.navigate(['/energie/opgenomen-vermogen']);
+      this.router.navigate(['/energie/opgenomen-vermogen'], {queryParams: {'datum': date.format('DD-MM-YYYY')}, replaceUrl: false});
     } else if (this.periode == 'dag') {
       this.navigateTo(this.verbruiksoort, this.energiesoorten, 'uur', date);
     } else if (this.periode == 'maand') {

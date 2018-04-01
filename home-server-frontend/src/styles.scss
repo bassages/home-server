@@ -6,6 +6,23 @@
   fill: white;
 }
 
+.c3-area-watt-dal {
+  opacity: 1;
+  fill: #4575B3 !important;
+}
+.c3-area-watt-normaal {
+  opacity: 1;
+  fill: #f4b649 !important;
+}
+
+.c3-line-watt-dal {
+  stroke-width: 0px;
+}
+
+.c3-line-watt-normaal {
+  stroke-width: 0px;
+}
+
 .clickable {
   cursor: pointer;
 }
@@ -34,4 +51,68 @@ html {
   html {
     font-size: 1rem;
   }
+}
+
+$light-grey: #f5f5f5;
+
+$active-tab-text-color: #555;
+$active-tab-background-color: #f5f5f5;
+
+$inactive-tab-text-color: #777;
+$inactive-tab-background-color: #e7e7e7;
+
+$inactive-tab-background-color-hover: #eee;
+
+.right-to-h1 {
+  margin-top: .5rem;
+}
+
+.nav-tabs {
+  border-bottom: 0;
+}
+
+.nav-tabs .nav-item {
+  margin-bottom: 0;
+}
+
+.nav-tabs-left .nav-link {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs-left .nav-link.active, .nav-pills .nav-link.active {
+  border-color: transparent;
+  color: $active-tab-text-color;
+  background-color: $active-tab-background-color;
+}
+
+.nav-tabs .nav-link, .nav-tabs-left .nav-link, .nav-pills .nav-link {
+  color: $inactive-tab-text-color;
+  background-color: $inactive-tab-background-color;
+}
+
+.nav-tabs .nav-link:hover, .nav-tabs-left .nav-link:hover, .nav-pills .nav-link:hover {
+  border-color: transparent;
+  background-color: $inactive-tab-background-color-hover;
+}
+
+.nav-tabs .nav-link.active:hover, .nav-tabs-left .nav-link.active:hover, .nav-pills .nav-link.active:hover {
+  background-color: $active-tab-background-color;
+}
+
+.chart {
+  background-color: $light-grey;
+}
+
+.bg-light {
+  background-color: $light-grey !important;
+}
+
+.nav-item .active {
+  cursor: default;
+}
+
+// Remove "blue" border in Chrome...
+.nav-link {
+  outline: 0;
 }

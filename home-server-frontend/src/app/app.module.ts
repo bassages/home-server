@@ -29,6 +29,8 @@ import {EnergieVerbruikDagHistorieService} from "./energie-verbruik/energie-verb
 import {EnergieVerbruikMaandHistorieService} from "./energie-verbruik/energie-verbruik-maand-historie.service";
 import {EnergieVerbruikJaarHistorieService} from "./energie-verbruik/energie-verbruik-jaar-historie.service";
 import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik/energie-verbruik-historie-service-provider";
+import {OpgenomenVermogenComponent} from './opgenomen-vermogen/opgenomen-vermogen.component';
+import {ChartService} from "./chart.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -54,6 +56,7 @@ const stompConfig: StompConfig = {
 const appRoutes: Routes = [
   {path: '', pathMatch: 'full', component: DashboardComponent},
   {path: 'meterstand', component: MeterstandComponent},
+  {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent}
 ];
 
@@ -68,7 +71,8 @@ const appRoutes: Routes = [
     LoadingIndicatorComponent,
     ErrorHandlingComponent,
     EnergieVerbruikComponent,
-    DateNavigatorComponent
+    DateNavigatorComponent,
+    OpgenomenVermogenComponent
   ],
   imports: [
     BrowserModule,
@@ -83,6 +87,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     DecimalPipe,
+    ChartService,
     MeterstandService,
     OpgenomenVermogenService,
     EnergieVerbruikService,

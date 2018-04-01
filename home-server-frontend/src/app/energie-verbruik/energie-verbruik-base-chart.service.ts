@@ -2,8 +2,7 @@ import "rxjs/Rx";
 import {ChartConfiguration} from "c3";
 import * as _ from "lodash";
 import {DecimalPipe} from "@angular/common";
-
-const defaultChartPadding = { top: 10, bottom: 25, left: 55, right: 20 };
+import {ChartService} from "../chart.service";
 
 const dataColors: {[key: string]: string} = {
   'stroomVerbruikDal': '#4575b3',
@@ -19,20 +18,10 @@ const dataColors: {[key: string]: string} = {
 const minimumChartHeight: number = 220;
 const maximumChartHeight: number = 500;
 
-export abstract class AbstractEnergieVerbruikHistorieService {
+export abstract class AbstractEnergieVerbruikHistorieService extends ChartService {
 
-  constructor(protected decimalPipe: DecimalPipe) {};
-
-  public getEmptyChartConfig(): ChartConfiguration {
-    return {
-      data: { json: {} },
-      legend: { show: false },
-      axis: {
-        x: { tick: { values: [] } },
-        y: { tick: { values: [] }}
-      },
-      padding: defaultChartPadding
-    };
+  constructor(protected decimalPipe: DecimalPipe) {
+    super()
   };
 
   public getDefaultBarChartConfig(data: any[]): ChartConfiguration {
@@ -48,7 +37,7 @@ export abstract class AbstractEnergieVerbruikHistorieService {
         width: { ratio: 0.8 }
       },
       transition: { duration: 0 },
-      padding: defaultChartPadding,
+      padding: super.getDefaultChartPadding(),
       grid: {
         y: { show: true }
       }
@@ -153,18 +142,4 @@ export abstract class AbstractEnergieVerbruikHistorieService {
     }
     return newEnergiesoorten;
   }
-
-  public adjustChartHeightToAvailableWindowHeight(chart: any) {
-    const rect = chart.element.getBoundingClientRect();
-
-    let height = window.innerHeight - rect.top - 10;
-
-    if (height < minimumChartHeight) {
-      height = minimumChartHeight;
-    } else if (height > maximumChartHeight) {
-      height = maximumChartHeight;
-    }
-    chart.resize({height: height});
-  }
-
 }

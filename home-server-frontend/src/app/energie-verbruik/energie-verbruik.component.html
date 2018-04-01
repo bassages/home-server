@@ -19,10 +19,10 @@
       <li class="ml-auto mr-auto">
         <div class="btn-group btn-group-toggle">
           <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}">
-            <input type="checkbox" [checked]="energiesoorten.indexOf('stroom') >= 0" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom
+            <input type="checkbox" [checked]="isEnergieSoortSelected('stroom')" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom
           </label>
           <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}">
-            <input type="checkbox" [checked]="energiesoorten.indexOf('gas') >= 0" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fas fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" [checked]="isEnergieSoortSelected('gas')" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fas fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
           </label>
         </div>
       </li>
@@ -51,7 +51,7 @@
       <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : isEnergieSoortSelected('stroom')}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
     </div>
     <div class="col-6 pl-0 pr-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' :isEnergieSoortSelected('gas')}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : isEnergieSoortSelected('gas')}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
     </div>
   </div>
 
@@ -114,4 +114,3 @@
   </div>
 
 </div>
-
