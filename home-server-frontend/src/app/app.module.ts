@@ -5,7 +5,7 @@ import {AppComponent} from './app.component';
 import {MeterstandComponent} from './meterstand/meterstand.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MeterstandService} from "./meterstand/meterstand.service";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {DpDatePickerModule} from "ng2-date-picker";
 import {HttpClientModule} from "@angular/common/http";
 import {NavbarComponent} from './navbar/navbar.component';
@@ -31,6 +31,8 @@ import {EnergieVerbruikJaarHistorieService} from "./energie-verbruik/energie-ver
 import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik/energie-verbruik-historie-service-provider";
 import {OpgenomenVermogenComponent} from './opgenomen-vermogen/opgenomen-vermogen.component';
 import {ChartService} from "./chart.service";
+import {MindergasnlComponent} from './mindergasnl/mindergasnl.component';
+import {MindergasnlService} from "./mindergasnl/mindergasnl.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -57,7 +59,8 @@ const appRoutes: Routes = [
   {path: '', pathMatch: 'full', component: DashboardComponent},
   {path: 'meterstand', component: MeterstandComponent},
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
-  {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent}
+  {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
+  {path: 'mindergasnl', component: MindergasnlComponent}
 ];
 
 @NgModule({
@@ -72,12 +75,14 @@ const appRoutes: Routes = [
     ErrorHandlingComponent,
     EnergieVerbruikComponent,
     DateNavigatorComponent,
-    OpgenomenVermogenComponent
+    OpgenomenVermogenComponent,
+    MindergasnlComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     NgbModule.forRoot(),
     DpDatePickerModule,
     RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true}
@@ -96,6 +101,7 @@ const appRoutes: Routes = [
     EnergieVerbruikMaandHistorieService,
     EnergieVerbruikJaarHistorieService,
     EnergieVerbruikHistorieServiceProvider,
+    MindergasnlService,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}

@@ -15,6 +15,7 @@ export class ErrorHandingService {
   }
 
   public handleError(message: String, causedBy: any) {
+    console.error(message, causedBy);
     this.loadingIndicatorService.close();
     this.errorSubject.next(new Error(message, causedBy));
   }

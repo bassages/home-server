@@ -1,0 +1,45 @@
+<div>
+  <h1>
+    <span>MinderGas.nl</span>
+  </h1>
+</div>
+
+<form [formGroup]="form" class="form-horizontal" autocomplete="off" novalidate>
+  <hr/>
+
+  <div class="form-group row">
+    <label class="col-sm-3 text-nowrap" for="automatischUploaden">Automatisch uploaden</label>
+    <div class="col-sm-6">
+      <input type="checkbox" id="automatischUploaden" formControlName="automatischUploaden" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-3">Authenticatietoken</label>
+    <div class="col-sm-6">
+      <input type="text" id="authenticatietoken" placeholder="Authenticatietoken"
+             class="form-control" [ngClass]="{'is-invalid': authenticatietoken.invalid}"
+             formControlName="authenticatietoken" />
+      <div *ngIf="authenticatietoken.invalid && authenticatietoken.errors.required" class="text-danger">
+        <small>Voor het automatisch uploaden naar MinderGas.nl is een authenticatietoken noodzakelijk</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-3">&nbsp;</div>
+    <div class="col-sm-6">
+      <div class="float-right">
+        <button type="button" class='btn btn-primary' (click)="save()" [disabled]="form.invalid"><i class="fas fa-check"></i> Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" [hidden]="!showSavedMessage">
+    <div class="col-sm-3">&nbsp;</div>
+    <div class="col-sm-6">
+      <ngb-alert type="success" [dismissible]='false'>De instellingen zijn succesvol opgeslagen.</ngb-alert>
+    </div>
+  </div>
+
+</form>

@@ -30,19 +30,19 @@ export class MeterstandComponent implements OnInit {
               private errorHandlingService: ErrorHandingService) {
     }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.initMonthPicker();
   }
 
   private initMonthPicker() {
     this.monthPickerConfig = {
       format: this.selectedMonthFormat,
-      max: this.getStartOfCurrentMonth()
+      max: MeterstandComponent.getStartOfCurrentMonth()
     };
-    this.setSelectedMonth(this.getStartOfCurrentMonth());
+    this.setSelectedMonth(MeterstandComponent.getStartOfCurrentMonth());
   }
 
-  private getStartOfCurrentMonth(): Moment {
+  private static getStartOfCurrentMonth(): Moment {
     return moment().startOf('month');
   }
 
@@ -51,7 +51,7 @@ export class MeterstandComponent implements OnInit {
     this.monthPickerModel = month.format(this.selectedMonthFormat);
   }
 
-  getMeterstanden(): void {
+  private getMeterstanden(): void {
     const from = this.selectedMonth.clone().startOf('month');
     const to = from.clone().add(1, 'month');
 
