@@ -25,5 +25,4 @@ public class MindergasnlSettingsController {
     public MindergasnlSettings save(@RequestBody MindergasnlSettings mindergasnlSettings) {
         return mindergasnlService.save(mindergasnlSettings);
     }
-
 }
