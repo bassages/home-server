@@ -1,1 +1,2 @@
-include 'home-server-backend'
+include 'home-server-frontend',
+        'home-server-backend'
