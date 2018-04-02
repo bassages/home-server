@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json --aot --locale nl",
-    "build": "ng build --prod --deploy-url /frontend --locale nl",
+    "build": "ng build --prod --locale nl",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
