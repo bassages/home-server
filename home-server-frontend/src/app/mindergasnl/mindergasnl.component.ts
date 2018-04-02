@@ -61,7 +61,7 @@ export class MindergasnlComponent implements OnInit {
 
   private flashSavedMessage() {
     this.showSavedMessage = true;
-    setTimeout(() => { this.showSavedMessage = false; },3000);
+    setTimeout(() => { this.showSavedMessage = false; },2500);
   }
 
   private setAuthenticatieTokenRequired(automatischUploaden: boolean) {

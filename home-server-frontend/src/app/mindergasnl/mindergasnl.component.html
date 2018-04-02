@@ -4,7 +4,7 @@
   </h1>
 </div>
 
-<form [formGroup]="form" class="form-horizontal" autocomplete="off" novalidate>
+<form [formGroup]="form" class="form-horizontal" autocomplete="off" novalidate (submit)="save()">
   <hr/>
 
   <div class="form-group row">
@@ -30,7 +30,7 @@
     <div class="col-sm-3">&nbsp;</div>
     <div class="col-sm-6">
       <div class="float-right">
-        <button type="button" class='btn btn-primary' (click)="save()" [disabled]="form.invalid"><i class="fas fa-check"></i> Opslaan</button>
+        <button type="submit" class='btn btn-primary' [disabled]="form.invalid"><i class="fas fa-check"></i> Opslaan</button>
       </div>
     </div>
   </div>
