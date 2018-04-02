@@ -1,8 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MeterstandService} from "./meterstand.service";
 import {MeterstandOpDag} from "./meterstandOpDag";
-
-import {DatePickerComponent, IDatePickerConfig} from 'ng2-date-picker';
 import * as _ from "lodash";
 import * as moment from "moment";
 import {Moment} from "moment";
@@ -15,12 +13,7 @@ import {ErrorHandingService} from "../error-handling/error-handing.service";
   styleUrls: ['./meterstand.component.scss'],
 })
 export class MeterstandComponent implements OnInit {
-  @ViewChild('monthPicker') monthPicker: DatePickerComponent;
 
-  private selectedMonthFormat = "MMMM YYYY";
-
-  monthPickerConfig: IDatePickerConfig;
-  monthPickerModel: String;
   selectedMonth: Moment;
 
   sortedMeterstandenPerDag: MeterstandOpDag[] = [];
@@ -28,27 +21,15 @@ export class MeterstandComponent implements OnInit {
   constructor(private meterstandService: MeterstandService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService) {
-    }
-
-  public ngOnInit() {
-    this.initMonthPicker();
   }
 
-  private initMonthPicker() {
-    this.monthPickerConfig = {
-      format: this.selectedMonthFormat,
-      max: MeterstandComponent.getStartOfCurrentMonth()
-    };
-    this.setSelectedMonth(MeterstandComponent.getStartOfCurrentMonth());
+  public ngOnInit() {
+    this.selectedMonth = MeterstandComponent.getStartOfCurrentMonth();
+    setTimeout(() => { this.getMeterstanden(); },0);
   }
 
   private static getStartOfCurrentMonth(): Moment {
     return moment().startOf('month');
-  }
-
-  private setSelectedMonth(month: Moment) {
-    this.selectedMonth = month;
-    this.monthPickerModel = month.format(this.selectedMonthFormat);
   }
 
   private getMeterstanden(): void {
@@ -65,20 +46,9 @@ export class MeterstandComponent implements OnInit {
     );
   }
 
-  monthPickerChanged(selectedMonth: Moment): void {
-    if (!_.isUndefined(selectedMonth)) {
-      this.setSelectedMonth(selectedMonth);
-      this.getMeterstanden();
-    }
-  }
-
-  navigate(numberOfMonths: number): void {
-    this.setSelectedMonth(this.selectedMonth.add(numberOfMonths, 'months'));
-  }
-
-  isMaxSelected(): boolean {
-    const now: Moment = moment();
-    return now.month() === this.selectedMonth.month() && now.year() === this.selectedMonth.year();
+  public onMonthNavigate(date: Moment) {
+    this.selectedMonth = date;
+    this.getMeterstanden();
   }
 }
 
