@@ -38,7 +38,7 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
     chartConfiguration.data.groups = [keysGroups];
     chartConfiguration.data.keys = { x: 'maand', value: keysGroups };
     chartConfiguration.data.json = verbruiken;
-    chartConfiguration.data.onclick = (data => onDataClick(moment(selectedDate.format('YYYY') + '-' + this.decimalPipe.transform(data.x, '2.0-0') + '-' + selectedDate.format('DD'))));
+    chartConfiguration.data.onclick = (data => onDataClick(this.toMoment(selectedDate, data.x)));
     chartConfiguration.axis = {
       x: {
         tick: {
@@ -64,5 +64,13 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
 
   public getFormattedDate(verbruikInMaand: VerbruikInMaand): any {
     return fullMonthNames[verbruikInMaand.maand - 1];
+  }
+
+  public getMoment(selectedDate: Moment, verbruikInMaand: VerbruikInMaand): Moment {
+    return this.toMoment(selectedDate, verbruikInMaand.maand);
+  }
+
+  private toMoment(selectedDate: Moment, value: number): Moment {
+    return moment(selectedDate.format('YYYY') + '-' + this.decimalPipe.transform(value, '2.0-0') + '-' + selectedDate.format('DD'));
   }
 }

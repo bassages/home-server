@@ -56,11 +56,16 @@ export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHi
     return chartConfiguration;
   }
 
-  public getFormattedDate(verbruikInUur: VerbruikInUur): any {
+  public getFormattedDate(verbruikInUur: VerbruikInUur): string {
     return this.formatUur(verbruikInUur.uur);
   }
 
   private formatUur(uur: number): string {
     return `${this.decimalPipe.transform(uur, '2.0-0')}:00 - ${this.decimalPipe.transform(uur + 1, '2.0-0')}:00`;
   }
+
+  public getMoment(selectedDate: Moment, verbruikInUur: VerbruikInUur): Moment {
+    return selectedDate.clone();
+  }
+
 }

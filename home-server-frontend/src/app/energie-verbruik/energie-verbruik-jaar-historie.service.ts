@@ -35,7 +35,7 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
     chartConfiguration.data.groups = [keysGroups];
     chartConfiguration.data.keys = { x: 'jaar', value: keysGroups };
     chartConfiguration.data.json = verbruiken;
-    chartConfiguration.data.onclick = (data => onDataClick(moment(data.x + '-' + selectedDate.format('MM') + '-' + selectedDate.format('DD'))));
+    chartConfiguration.data.onclick = (data => onDataClick(this.toMoment(selectedDate, data.x)));
     chartConfiguration.axis = {
       y: {
         tick: {
@@ -54,5 +54,14 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
 
   public getFormattedDate(verbruikInJaar: VerbruikInJaar): any {
     return verbruikInJaar.jaar;
+  }
+
+  public getMoment(selectedDate: Moment, verbruikInjaar: VerbruikInJaar): Moment {
+    return this.toMoment(selectedDate, verbruikInjaar.jaar);
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private toMoment(selectedDate: Moment, value: number): Moment {
+    return moment(value + '-' + selectedDate.format('MM') + '-' + selectedDate.format('DD'));
   }
 }

@@ -68,11 +68,13 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
     return chartConfiguration;
   }
 
+  // noinspection JSMethodCanBeStatic
   private getPeriodStart(selectedDate: Moment): Moment {
     return selectedDate.clone()
                        .date(1);
   }
 
+  // noinspection JSMethodCanBeStatic
   private getPeriodEnd(selectedDate: Moment): Moment {
     return selectedDate.clone()
                        .date(1)
@@ -96,7 +98,12 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
     return this.formatDate(verbruikOpDag.dag);
   }
 
+  // noinspection JSMethodCanBeStatic
   private formatDate(date: any) {
     return _.capitalize(moment(date).format('ddd DD-MM'));
+  }
+
+  public getMoment(selectedDate: Moment, verbruikOpDag: VerbruikOpDag): Moment {
+    return moment(verbruikOpDag.dag);
   }
 }

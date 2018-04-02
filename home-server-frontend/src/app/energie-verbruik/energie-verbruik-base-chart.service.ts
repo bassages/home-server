@@ -91,6 +91,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     return tooltipContents;
   }
 
+  // noinspection JSMethodCanBeStatic
   private getTooltipLabel(id) {
     if (_.endsWith(id, 'Dal')) {
       return 'Stroom - Daltarief';
@@ -101,6 +102,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     }
   }
 
+  // noinspection JSMethodCanBeStatic
   private getVerbruikLabel(energiesoort: string) {
     if (energiesoort === 'stroom') {
       return 'kWh';
@@ -111,6 +113,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     }
   }
 
+  // noinspection JSMethodCanBeStatic
   protected getKeysGroups(verbruiksoort: string, energiesoorten: string[]): string[] {
     let keysGroups: string[] = [];
     if (energiesoorten.indexOf('gas') > -1) {
@@ -123,6 +126,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     return keysGroups;
   }
 
+  // noinspection JSMethodCanBeStatic
   public toggleEnergiesoort(verbruiksoort: string, currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
     let newEnergiesoorten = currentEnergiesoorten.slice();
 

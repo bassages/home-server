@@ -1,3 +1,5 @@
+@import "~bootstrap/scss/bootstrap";
+
 .ledbar {
   overflow: auto;
   margin-right: 15px;
@@ -6,9 +8,30 @@
 .led {
   border-radius: 1px;
   margin: 1px;
-  width: 35px;
-  height: 6px;
+  width: 30px;
+  height: 5px;
   overflow: auto;
+}
+
+@include media-breakpoint-up(sm) {
+  .led {
+    width: 35px;
+    height: 5.5px;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .led {
+    width: 35px;
+    height: 6px;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .led {
+    width: 35px;
+    height: 6px;
+  }
 }
 
 .led-off {
