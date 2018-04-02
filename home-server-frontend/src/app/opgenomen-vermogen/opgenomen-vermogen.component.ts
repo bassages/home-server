@@ -117,7 +117,7 @@ export class OpgenomenVermogenComponent implements OnInit {
       axis: {
         x: {
           type: "timeseries",
-          tick: { format: "%H:%M", values: tickValues, rotate: -30 },
+          tick: { format: "%H:%M", values: tickValues, rotate: -45 },
           min: this.selectedDate.toDate(), max: this.getTo().toDate(),
           padding: {left: 0, right: 10}
         }
