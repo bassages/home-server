@@ -1,5 +1,7 @@
 import "rxjs/Rx";
-import {ChartConfiguration} from "c3";
+import {ChartConfiguration, LineOptions} from "c3";
+import {Statistics} from "./statistics";
+import * as _ from "lodash";
 
 const defaultChartPadding = { top: 10, bottom: 25, left: 55, right: 20 };
 
@@ -8,6 +10,7 @@ const maximumChartHeight: number = 500;
 
 export class ChartService {
 
+  // noinspection JSMethodCanBeStatic
   public getEmptyChartConfig(): ChartConfiguration {
     return {
       data: { json: {} },
@@ -18,8 +21,9 @@ export class ChartService {
       },
       padding: defaultChartPadding
     };
-  };
+  }
 
+  // noinspection JSMethodCanBeStatic
   public adjustChartHeightToAvailableWindowHeight(chart: any) {
     const rect = chart.element.getBoundingClientRect();
 
@@ -33,7 +37,24 @@ export class ChartService {
     chart.resize({height: height});
   }
 
+  // noinspection JSMethodCanBeStatic
   public getDefaultChartPadding() {
     return defaultChartPadding;
   }
+
+  public createStatisticsChartLines(statistics: Statistics): LineOptions[] {
+    return _.filter( [
+      this.createStatisticChartLine(statistics.avg, 'avg'),
+      this.createStatisticChartLine(statistics.min, 'min'),
+      this.createStatisticChartLine(statistics.max, 'max')
+    ], _.isObject);
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private createStatisticChartLine(value: number, clazz: string): LineOptions {
+    if (value) {
+      return { value: value, class: clazz };
+    }
+  }
+
 }

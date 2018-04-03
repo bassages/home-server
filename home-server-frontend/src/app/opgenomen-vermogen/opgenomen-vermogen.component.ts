@@ -5,10 +5,12 @@ import {OpgenomenVermogenService} from "./opgenomenVermogen.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import * as c3 from "c3";
 import {ChartAPI, ChartConfiguration} from "c3";
+import * as _ from "lodash";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {OpgenomenVermogen} from "./opgenomenVermogen";
 import {ChartService} from "../chart.service";
+import {Statistics} from "../statistics";
 
 const periodLengthInMilliseconds = moment.duration(1, 'minutes').asSeconds();
 
@@ -23,6 +25,7 @@ export class OpgenomenVermogenComponent implements OnInit {
   }
 
   public selectedDate: Moment;
+  public statistics: Statistics;
 
   private chart: ChartAPI;
 
@@ -65,9 +68,10 @@ export class OpgenomenVermogenComponent implements OnInit {
     this.navigateTo(selectedDate);
   }
 
-  private loadDataIntoChart(data) {
-    let chartData = OpgenomenVermogenComponent.transformData(data);
-    this.chart = c3.generate(this.getChartConfiguration(chartData));
+  private loadDataIntoChart(opgenomenVermogens: OpgenomenVermogen[]) {
+    let chartData = OpgenomenVermogenComponent.transformData(opgenomenVermogens);
+    this.statistics = this.getStatistics(opgenomenVermogens);
+    this.chart = c3.generate(this.getChartConfiguration(chartData, this.statistics));
     this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
   }
 
@@ -97,12 +101,13 @@ export class OpgenomenVermogenComponent implements OnInit {
     return transformedData;
   }
 
-  private getChartConfiguration(chartData): ChartConfiguration {
+  private getChartConfiguration(chartData: any[], statistics: Statistics): ChartConfiguration {
     if (chartData.length === 0) {
       return this.chartService.getEmptyChartConfig();
     }
 
-    const tickValues = OpgenomenVermogenComponent.getTicksForEveryHourInPeriod(this.selectedDate, this.getTo());
+    const tickValues = this.getTicksForEveryHourInPeriod(this.selectedDate, this.getTo());
+    const statisticsChartLines = this.chartService.createStatisticsChartLines(statistics);
 
     return {
       bindto: '#chart',
@@ -129,13 +134,20 @@ export class OpgenomenVermogenComponent implements OnInit {
       padding: this.chartService.getDefaultChartPadding(),
       grid: {
         y: {
-          show: true
+          show: true,
+          lines: statisticsChartLines
         }
       }
     }
   }
 
-  private static getTicksForEveryHourInPeriod(from: Moment, to: Moment) {
+  // noinspection JSMethodCanBeStatic
+  public formatWithoutUnitLabel(watt: number): string {
+    return _.isUndefined(watt) || isNaN(watt) || watt === null ? '-' : Math.round(watt).toString();
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private getTicksForEveryHourInPeriod(from: Moment, to: Moment) {
     const numberOfHoursInDay = ((to.toDate().getTime() - from.toDate().getTime()) / 1000) / 60 / 60;
 
     let tickValues: number[] = [];
@@ -148,5 +160,16 @@ export class OpgenomenVermogenComponent implements OnInit {
 
   private getTo() {
     return this.selectedDate.clone().add(1, 'days');
+  }
+
+  // noinspection JSMethodCanBeStatic
+  private getStatistics(opgenomenVermogens: OpgenomenVermogen[]): Statistics {
+    const watts: number[] = _.filter(_.map(opgenomenVermogens, 'watt'), (watt: number) => watt !== null && watt > 0);
+
+    let mean: number = _.mean(watts);
+    let min: number = _.min(watts);
+    let max: number = _.max(watts);
+
+    return new Statistics(min, max, mean);
   }
 }

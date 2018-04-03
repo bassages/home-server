@@ -24,6 +24,24 @@
   stroke-width: 0px;
 }
 
+.c3-ygrid-line.avg line {
+  stroke: #5bc0de;
+  stroke-width: 1.2px;
+  stroke-dasharray: 10,0;
+}
+
+.c3-ygrid-line.min line {
+  stroke: #5cb85c;
+  stroke-width: 1.2px;
+  stroke-dasharray: 10,0;
+}
+
+.c3-ygrid-line.max line {
+  stroke: #d9534f;
+  stroke-width: 1.2px;
+  stroke-dasharray: 10,0;
+}
+
 .clickable {
   cursor: pointer;
 }
@@ -56,13 +74,18 @@ html {
 
 $light-grey: #f5f5f5;
 
-$active-tab-text-color: #555;
-$active-tab-background-color: #f5f5f5;
+$active-text-color: #555;
+$active-background-color: #f5f5f5;
 
-$inactive-tab-text-color: #777;
-$inactive-tab-background-color: #e7e7e7;
+$inactive-text-color: #777;
+$inactive-background-color: #e7e7e7;
 
-$inactive-tab-background-color-hover: #eee;
+$inactive-background-color-hover: #eee;
+
+.activated {
+  background-color: $active-background-color;
+  color: $active-text-color;
+}
 
 .right-to-h1 {
   margin-top: .5rem;
@@ -84,22 +107,22 @@ $inactive-tab-background-color-hover: #eee;
 
 .nav-tabs .nav-link.active, .nav-tabs-left .nav-link.active, .nav-pills .nav-link.active {
   border-color: transparent;
-  color: $active-tab-text-color;
-  background-color: $active-tab-background-color;
+  color: $active-text-color;
+  background-color: $active-background-color;
 }
 
 .nav-tabs .nav-link, .nav-tabs-left .nav-link, .nav-pills .nav-link {
-  color: $inactive-tab-text-color;
-  background-color: $inactive-tab-background-color;
+  color: $inactive-text-color;
+  background-color: $inactive-background-color;
 }
 
 .nav-tabs .nav-link:hover, .nav-tabs-left .nav-link:hover, .nav-pills .nav-link:hover {
   border-color: transparent;
-  background-color: $inactive-tab-background-color-hover;
+  background-color: $inactive-background-color-hover;
 }
 
 .nav-tabs .nav-link.active:hover, .nav-tabs-left .nav-link.active:hover, .nav-pills .nav-link.active:hover {
-  background-color: $active-tab-background-color;
+  background-color: $active-background-color;
 }
 
 .chart {
@@ -117,4 +140,19 @@ $inactive-tab-background-color-hover: #eee;
 // Remove "blue" border in Chrome...
 .nav-link {
   outline: 0;
+}
+
+.badge-statistics-avg {
+  background: #5bc0de;
+  color: white;
+}
+
+.badge-statistics-min {
+  background: #5cb85c;
+  color: white;
+}
+
+.badge-statistics-max {
+  background: #d9534f;
+  color: white;
 }

@@ -1,11 +1,12 @@
 <div class="row">
 
+  <!-- Up to (but excluding) small -->
   <div class="col-12 pl-2 pr-2 d-xs-block d-sm-none">
-    <!-- Up to (but excluding) large -->
     <h4>Opgenomen vermogen (Watt)</h4>
     <date-navigator mode="day" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group input-group-sm mb-2"></date-navigator>
   </div>
 
+  <!-- Small and above -->
   <div class="col-12 pl-0 pr-0 d-none d-sm-block">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-auto">
@@ -16,6 +17,7 @@
       </li>
     </ul>
   </div>
+
 </div>
 
 <div class="row">
@@ -24,3 +26,15 @@
   </div>
 </div>
 
+<div class="row">
+  <div *ngIf="statistics" class="col-12 pl-2 pr-2 pl-sm-0 pr-sm-0">
+    <div class="activated pt-2 pb-3">
+      <div class="row">
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-min">Laagste: <span class="text-nowrap">{{ formatWithoutUnitLabel(statistics.min) }}</span></span></div>
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-max">Hoogste: <span class="text-nowrap">{{ formatWithoutUnitLabel(statistics.max) }}</span></span></div>
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-avg">Gemiddelde: <span class="text-nowrap">{{ formatWithoutUnitLabel(statistics.avg) }}</span></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
