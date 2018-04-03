@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header clickable" (click)="navigateToVerbruikDetails()">
+  <div class="card-header h3 clickable" (click)="navigateToVerbruikDetails()">
     <i class="fas fa-bolt"></i> Stroom
   </div>
   <div class="card-body">
@@ -10,8 +10,8 @@
     <p class="h3">Op dit moment</p>
     <div class="h3">
       {{opgenomenVermogen ? opgenomenVermogen.watt : '-'}} Wattt
-      <i *ngIf="opgenomenVermogen?.tariefIndicator === 'DAL'" class="fas fa-moon" ngbTooltip="Daltarief"></i>
-      <i *ngIf="opgenomenVermogen?.tariefIndicator === 'NORMAAL'" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
+      <i *ngIf="opgenomenVermogen?.tariefIndicator == 'DAL'" class="fas fa-moon" ngbTooltip="Daltarief"></i>
+      <i *ngIf="opgenomenVermogen?.tariefIndicator == 'NORMAAL'" class="fas fa-sun" ngbTooltip="Normaaltarief"></i>
     </div>
 
     <hr />

@@ -1,8 +1,15 @@
 <div class="row">
-  <div class="col-12 pl-0 pr-0">
+
+  <div class="col-12 pl-2 pr-2 d-xs-block d-sm-none">
+    <!-- Up to (but excluding) large -->
+    <h4>Opgenomen vermogen (Watt)</h4>
+    <date-navigator mode="day" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group input-group-sm mb-2"></date-navigator>
+  </div>
+
+  <div class="col-12 pl-0 pr-0 d-none d-sm-block">
     <ul class="nav nav-tabs">
-      <li class="nav-item mr-auto mr-0">
-        <a class="nav-link active">Opgenomen vermogen</a>
+      <li class="nav-item mr-auto">
+        <a class="nav-link active">Opgenomen vermogen (Watt)</a>
       </li>
       <li class="nav-item">
         <date-navigator mode="day" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group"></date-navigator>
@@ -12,7 +19,7 @@
 </div>
 
 <div class="row">
-  <div class="col-12 pl-0 pr-0">
+  <div class="col-12 pl-2 pr-2 pl-sm-0 pr-sm-0">
     <div id="chart" class="c3 chart"></div>
   </div>
 </div>

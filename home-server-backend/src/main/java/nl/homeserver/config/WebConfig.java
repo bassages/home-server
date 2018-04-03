@@ -15,6 +15,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
+    private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
+            "classpath:/META-INF/resources/", "classpath:/resources/",
+            "classpath:/static/", "classpath:/public/" };
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
@@ -47,11 +51,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
                 .setCacheControl(CacheControl.noStore());
 
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
+                .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
                 .setCachePeriod((int) TimeUnit.DAYS.toSeconds(365L));
-
-        registry.addResourceHandler("/frontend/**")
-                .addResourceLocations("classpath:/frontend/")
-                .setCacheControl(CacheControl.noStore());
     }
 }
