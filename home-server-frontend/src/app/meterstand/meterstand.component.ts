@@ -23,7 +23,7 @@ export class MeterstandComponent implements OnInit {
               private errorHandlingService: ErrorHandingService) {
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.selectedMonth = MeterstandComponent.getStartOfCurrentMonth();
     setTimeout(() => { this.getMeterstanden(); },0);
   }
@@ -46,7 +46,7 @@ export class MeterstandComponent implements OnInit {
     );
   }
 
-  public onMonthNavigate(date: Moment) {
+  public onMonthNavigate(date: Moment): void {
     this.selectedMonth = date;
     this.getMeterstanden();
   }

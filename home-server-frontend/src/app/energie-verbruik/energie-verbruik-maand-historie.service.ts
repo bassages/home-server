@@ -10,8 +10,8 @@ import {ChartConfiguration} from "c3";
 import {DecimalPipe} from "@angular/common";
 import {VerbruikInMaand} from "./verbruikInMaand";
 
-const shortMonthNames = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei.", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
-const fullMonthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+const capitalizedShortMonthNames = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
+const capitalizedFullMonthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
 
 @Injectable()
 export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikInMaand> {
@@ -42,7 +42,7 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
     chartConfiguration.axis = {
       x: {
         tick: {
-          format: (month: number) => shortMonthNames[month - 1],
+          format: (month: number) => capitalizedShortMonthNames[month - 1],
           values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
           centered: true
         },
@@ -55,15 +55,15 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
     };
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, valueFormatter, color) {
-        const titleFormatter = (month: number) => fullMonthNames[month - 1];
+        const titleFormatter = (month: number) => capitalizedFullMonthNames[month - 1];
         return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten)
       }
     };
     return chartConfiguration;
   }
 
-  public getFormattedDate(verbruikInMaand: VerbruikInMaand): any {
-    return fullMonthNames[verbruikInMaand.maand - 1];
+  public getFormattedDate(verbruikInMaand: VerbruikInMaand): string {
+    return capitalizedFullMonthNames[verbruikInMaand.maand - 1];
   }
 
   public getMoment(selectedDate: Moment, verbruikInMaand: VerbruikInMaand): Moment {

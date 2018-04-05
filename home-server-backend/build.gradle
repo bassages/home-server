@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.0.0.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.4.RELEASE'
+    id 'org.springframework.boot' version '2.0.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
     id 'com.moowork.gulp' version '1.2.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
     id 'jacoco'
@@ -80,7 +80,7 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.assertj:assertj-core:3.9.1')
-    testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.3');
+    testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.5');
 
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')

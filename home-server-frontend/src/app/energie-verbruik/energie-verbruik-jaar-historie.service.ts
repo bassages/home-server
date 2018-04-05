@@ -52,8 +52,8 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
     return chartConfiguration;
   }
 
-  public getFormattedDate(verbruikInJaar: VerbruikInJaar): any {
-    return verbruikInJaar.jaar;
+  public getFormattedDate(verbruikInJaar: VerbruikInJaar): string {
+    return verbruikInJaar.jaar.toString();
   }
 
   public getMoment(selectedDate: Moment, verbruikInjaar: VerbruikInJaar): Moment {

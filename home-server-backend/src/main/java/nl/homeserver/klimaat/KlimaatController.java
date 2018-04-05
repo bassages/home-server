@@ -30,6 +30,11 @@ public class KlimaatController {
         this.klimaatService = klimaatService;
     }
 
+    @GetMapping("sensors")
+    public List<KlimaatSensor> getAllKlimaatSensors() {
+        return klimaatService.getAllKlimaatSensors();
+    }
+
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@PathVariable("sensorCode") String sensorCode, @RequestBody Klimaat klimaat) {

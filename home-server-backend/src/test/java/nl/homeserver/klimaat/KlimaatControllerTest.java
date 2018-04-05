@@ -173,4 +173,12 @@ public class KlimaatControllerTest {
                 .isThrownBy(() -> klimaatController.findAllInPeriod(NOT_EXISTING_SENSOR_CODE, now(), now()))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
+
+    @Test
+    public void whenGetAllKlimaatSensorsThenDelegatedToService() {
+        List<KlimaatSensor> allKlimaatSensors = singletonList(klimaatSensor);
+        when(klimaatService.getAllKlimaatSensors()).thenReturn(allKlimaatSensors);
+
+        assertThat(klimaatController.getAllKlimaatSensors()).isEqualTo(allKlimaatSensors);
+    }
 }

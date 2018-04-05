@@ -21,7 +21,7 @@ export interface EnergieVerbruikHistorieService<T> {
 
   formatWithUnitLabel(verbruiksoort: string, energieSoorten: string[], value: number);
 
-  adjustChartHeightToAvailableWindowHeight(chart: any);
+  adjustChartHeightToAvailableWindowHeight(chart: any): void;
 
   getMoment(selectedDate: Moment, T): Moment;
 }

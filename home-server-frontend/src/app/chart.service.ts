@@ -24,7 +24,7 @@ export class ChartService {
   }
 
   // noinspection JSMethodCanBeStatic
-  public adjustChartHeightToAvailableWindowHeight(chart: any) {
+  public adjustChartHeightToAvailableWindowHeight(chart: any): void {
     const rect = chart.element.getBoundingClientRect();
 
     let height = window.innerHeight - rect.top - 10;

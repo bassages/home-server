@@ -33,6 +33,8 @@ import {OpgenomenVermogenComponent} from './opgenomen-vermogen/opgenomen-vermoge
 import {ChartService} from "./chart.service";
 import {MindergasnlComponent} from './mindergasnl/mindergasnl.component';
 import {MindergasnlService} from "./mindergasnl/mindergasnl.service";
+import {KlimaatHistorieComponent} from './klimaat/klimaat-historie/klimaat-historie.component';
+import {KlimaatService} from "./klimaat/klimaat.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -60,7 +62,8 @@ const appRoutes: Routes = [
   {path: 'meterstand', component: MeterstandComponent},
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
-  {path: 'mindergasnl', component: MindergasnlComponent}
+  {path: 'mindergasnl', component: MindergasnlComponent},
+  {path: 'klimaat/historie/:sensorType', component: KlimaatHistorieComponent}
 ];
 
 @NgModule({
@@ -76,7 +79,8 @@ const appRoutes: Routes = [
     EnergieVerbruikComponent,
     DateNavigatorComponent,
     OpgenomenVermogenComponent,
-    MindergasnlComponent
+    MindergasnlComponent,
+    KlimaatHistorieComponent
   ],
   imports: [
     BrowserModule,
@@ -102,6 +106,7 @@ const appRoutes: Routes = [
     EnergieVerbruikJaarHistorieService,
     EnergieVerbruikHistorieServiceProvider,
     MindergasnlService,
+    KlimaatService,
     LoadingIndicatorService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}

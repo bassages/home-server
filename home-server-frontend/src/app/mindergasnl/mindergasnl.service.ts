@@ -9,12 +9,12 @@ export class MindergasnlService {
   constructor(private http: HttpClient) { }
 
   public get(): Observable<MindergasnlSettings> {
-    const url = 'api/mindergasnl';
+    const url = '/api/mindergasnl';
     return this.http.get<MindergasnlSettings>(url);
   }
 
   public update(mindergasnlSettings: MindergasnlSettings): Observable<MindergasnlSettings> {
-    const url = 'api/mindergasnl';
+    const url = '/api/mindergasnl';
     return this.http.post<MindergasnlSettings>(url, mindergasnlSettings);
   }
 }

@@ -94,12 +94,12 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
     return tickValues;
   }
 
-  public getFormattedDate(verbruikOpDag: VerbruikOpDag): any {
+  public getFormattedDate(verbruikOpDag: VerbruikOpDag): string {
     return this.formatDate(verbruikOpDag.dag);
   }
 
   // noinspection JSMethodCanBeStatic
-  private formatDate(date: any) {
+  private formatDate(date: any): string {
     return _.capitalize(moment(date).format('ddd DD-MM'));
   }
 
