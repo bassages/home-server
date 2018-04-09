@@ -16,21 +16,21 @@ export class LoadingIndicatorComponent implements OnInit {
   modal: NgbModalRef;
 
   constructor(private modalService: NgbModal,
-              private loadingIndicatorService: LoadingIndicatorService) { }
+              private loadingIndicatorService: LoadingIndicatorService) {
+  }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.loadingIndicatorService.onOpen().subscribe(() => this.open());
     this.loadingIndicatorService.onClose().subscribe(() => this.close());
   }
 
-  open() {
-    if (!_.isUndefined(this.modal)) {
-      this.modal.close();
+  public open(): void {
+    if (_.isUndefined(this.modal)) {
+      this.modal = this.modalService.open(this.loaderTemplate, { backdrop: 'static' });
     }
-    this.modal = this.modalService.open(this.loaderTemplate, { backdrop: 'static' });
   }
 
-  close() {
+  public close(): void {
     if (this.modal) {
       this.modal.close();
       this.modal = undefined;

@@ -38,16 +38,8 @@
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuTemperatuur" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Klimaat <span class="caret"></span>
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuTemperatuur">
-            <h6 class="dropdown-header"><i class="fas fa-thermometer-half"></i> Temperatuur</h6>
-            <a class="dropdown-item" routerLink="/klimaat/historie/temperatuur" (click)="collapse()"><i class="fas fa-chart-line"></i> Per dag</a>
-            <a class="dropdown-item" routerLink="/klimaat/top-charts/temperatuur" (click)="collapse()"><i class="fas fa-chart-line"></i> Laagste / hoogste</a>
-            <a class="dropdown-item" routerLink="/klimaat/average/temperatuur" (click)="collapse()"> x&#772; Gemiddelde</a>
-            <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header"><i class="fas fa-tint" aria-hidden="true"></i> Luchtvochtigheid</h6>
-            <a class="dropdown-item" routerLink="/klimaat/historie/luchtvochtigheid" (click)="collapse()"><i class="fas fa-chart-line"></i> Per dag</a>
-            <a class="dropdown-item" routerLink="/klimaat/top-charts/luchtvochtigheid" (click)="collapse()"><i class="fas fa-chart-line"></i> Laagste / hoogste</a>
-            <a class="dropdown-item" routerLink="/klimaat/average/luchtvochtigheid" (click)="collapse()"> x&#772; Gemiddelde</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenu">
+            <a class="dropdown-item" routerLink="/klimaat/historie" (click)="collapse()"><i class="fas fa-chart-line"></i> Per dag</a>
           </div>
         </li>
         <li class="nav-item">

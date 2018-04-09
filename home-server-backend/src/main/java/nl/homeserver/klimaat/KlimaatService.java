@@ -35,10 +35,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.DatePeriod;
 
-@Slf4j
 @Service
 public class KlimaatService {
 

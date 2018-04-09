@@ -3,7 +3,6 @@ import {StompService} from "@stomp/ng2-stompjs";
 import {Subscription} from "rxjs/Subscription";
 import {Observable} from "rxjs/Observable";
 import {Message} from '@stomp/stompjs';
-import {Klimaat} from "../klimaat/klimaat";
 
 @Component({
   selector: 'dashboard',
@@ -28,7 +27,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public subscribeToKlimaatUpdates() {
     this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
     this.klimaatSubscription = this.klimaatObserver.subscribe(
-      (message) => console.info(new Klimaat(message.body))
+      (message) => console.info(message.body)
     );
   }
 }

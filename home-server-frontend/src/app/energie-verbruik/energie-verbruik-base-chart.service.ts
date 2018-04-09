@@ -2,7 +2,7 @@ import "rxjs/Rx";
 import {ChartConfiguration} from "c3";
 import * as _ from "lodash";
 import {DecimalPipe} from "@angular/common";
-import {ChartService} from "../chart.service";
+import {ChartService} from "../chart/chart.service";
 
 const dataColors: {[key: string]: string} = {
   'stroomVerbruikDal': '#4575b3',

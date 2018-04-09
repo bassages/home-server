@@ -1,0 +1,11 @@
+<div class="row">
+  <div *ngIf="statistics" class="col-12">
+    <div class="activated pt-2 pb-3">
+      <div class="row">
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-min">Laagste: <span class="text-nowrap">{{ format(statistics.min) }}</span></span></div>
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-max">Hoogste: <span class="text-nowrap">{{ format(statistics.max) }}</span></span></div>
+        <div class="col-4 text-center pl-0 pr-0"><span class="badge badge-statistics-avg">Gemiddelde: <span class="text-nowrap">{{ format(statistics.avg) }}</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>

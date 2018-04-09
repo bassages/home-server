@@ -30,11 +30,13 @@ import {EnergieVerbruikMaandHistorieService} from "./energie-verbruik/energie-ve
 import {EnergieVerbruikJaarHistorieService} from "./energie-verbruik/energie-verbruik-jaar-historie.service";
 import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik/energie-verbruik-historie-service-provider";
 import {OpgenomenVermogenComponent} from './opgenomen-vermogen/opgenomen-vermogen.component';
-import {ChartService} from "./chart.service";
+import {ChartService} from "./chart/chart.service";
 import {MindergasnlComponent} from './mindergasnl/mindergasnl.component';
 import {MindergasnlService} from "./mindergasnl/mindergasnl.service";
 import {KlimaatHistorieComponent} from './klimaat/klimaat-historie/klimaat-historie.component';
 import {KlimaatService} from "./klimaat/klimaat.service";
+import {ChartStatisticsComponent} from './chart/chart-statistics/chart-statistics.component';
+import {ChartStatisticsService} from "./chart/chart-statistics/chart-statistics.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -63,7 +65,7 @@ const appRoutes: Routes = [
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
   {path: 'mindergasnl', component: MindergasnlComponent},
-  {path: 'klimaat/historie/:sensorType', component: KlimaatHistorieComponent}
+  {path: 'klimaat/historie', component: KlimaatHistorieComponent}
 ];
 
 @NgModule({
@@ -80,7 +82,8 @@ const appRoutes: Routes = [
     DateNavigatorComponent,
     OpgenomenVermogenComponent,
     MindergasnlComponent,
-    KlimaatHistorieComponent
+    KlimaatHistorieComponent,
+    ChartStatisticsComponent
   ],
   imports: [
     BrowserModule,
@@ -97,6 +100,7 @@ const appRoutes: Routes = [
   providers: [
     DecimalPipe,
     ChartService,
+    ChartStatisticsService,
     MeterstandService,
     OpgenomenVermogenService,
     EnergieVerbruikService,

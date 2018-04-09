@@ -9,13 +9,14 @@ import * as _ from "lodash";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {OpgenomenVermogen} from "./opgenomenVermogen";
-import {ChartService} from "../chart.service";
+import {ChartService} from "../chart/chart.service";
 import {Statistics} from "../statistics";
+import {ChartStatisticsService} from "../chart/chart-statistics/chart-statistics.service";
 
 const periodLengthInMilliseconds = moment.duration(1, 'minutes').asSeconds();
 
 @Component({
-  selector: 'app-opgenomen-vermogen',
+  selector: 'opgenomen-vermogen',
   templateUrl: './opgenomen-vermogen.component.html',
   styleUrls: ['./opgenomen-vermogen.component.scss']
 })
@@ -31,6 +32,7 @@ export class OpgenomenVermogenComponent implements OnInit {
 
   constructor(private opgenomenVermogenService: OpgenomenVermogenService,
               private chartService: ChartService,
+              private chartStatisticsService: ChartStatisticsService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private router: Router,
@@ -107,7 +109,7 @@ export class OpgenomenVermogenComponent implements OnInit {
     }
 
     const tickValues = this.getTicksForEveryHourInPeriod(this.selectedDate, this.getTo());
-    const statisticsChartLines = this.chartService.createStatisticsChartLines(statistics);
+    const statisticsChartLines = this.chartStatisticsService.createStatisticsChartLines(statistics);
 
     return {
       bindto: '#chart',
