@@ -13,7 +13,7 @@ import {ChartService} from "../../chart/chart.service";
 import {Klimaat} from "../klimaat";
 import {DecimalPipe} from "@angular/common";
 import {Statistics} from "../../statistics";
-import {ChartStatisticsService} from "../../chart/chart-statistics/chart-statistics.service";
+import {ChartStatisticsService} from "../../chart/statistics/chart-statistics.service";
 
 const sensorTypeToDecimalFormatMapping: Map<string, string> =
   new Map<string, string>([
@@ -47,7 +47,7 @@ export class KlimaatHistorieComponent implements OnInit {
   public sensors: KlimaatSensor[];
   public showTable: boolean = false;
   public showChart: boolean = false;
-  public klimaat: Klimaat[] = [];
+  public klimaats: Klimaat[] = [];
   public statistics: Statistics;
   private chart: ChartAPI;
 
@@ -61,7 +61,7 @@ export class KlimaatHistorieComponent implements OnInit {
               private decimalPipe: DecimalPipe) {
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(queryParams => {
         const sensorCodeParam = queryParams.get('sensorCode');
         const sensorTypeParam = queryParams.get('sensorType');
@@ -107,12 +107,13 @@ export class KlimaatHistorieComponent implements OnInit {
     );
   }
 
-  private loadData(klimaat: Klimaat[]) {
-    this.klimaat = klimaat;
+  private loadData(klimaats: Klimaat[]) {
+    this.klimaats = klimaats;
+    this.statistics = this.getStatistics(klimaats);
     if (this.showChart) {
-      this.loadDataIntoChart(this.klimaat);
+      this.loadDataIntoChart(this.klimaats);
     } else if (this.showTable) {
-      this.loadDataIntoTable(this.klimaat);
+      this.loadDataIntoTable(this.klimaats);
     }
   }
 
@@ -137,7 +138,7 @@ export class KlimaatHistorieComponent implements OnInit {
     if (!this.showChart) {
       this.showTable = false;
       this.showChart = true;
-      this.loadDataIntoChart(this.klimaat);
+      this.loadDataIntoChart(this.klimaats);
     }
   }
 
@@ -145,7 +146,7 @@ export class KlimaatHistorieComponent implements OnInit {
     if (!this.showTable) {
       this.showChart = false;
       this.showTable = true;
-      this.loadDataIntoTable(this.klimaat);
+      this.loadDataIntoTable(this.klimaats);
     }
   }
 
@@ -157,9 +158,6 @@ export class KlimaatHistorieComponent implements OnInit {
 
   private loadDataIntoChart(klimaat: Klimaat[]): void {
     const chartConfiguration: ChartConfiguration = this.getChartConfig(klimaat);
-
-    console.log(chartConfiguration);
-
     this.chart = c3.generate(chartConfiguration);
     this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
   }
@@ -186,7 +184,7 @@ export class KlimaatHistorieComponent implements OnInit {
       return this.chartService.getEmptyChartConfig();
     }
 
-    this.statistics = this.getStatistics(klimaat);
+    const that = this;
 
     const tickValues = this.getTicksForEveryHourInDay();
 
@@ -216,7 +214,7 @@ export class KlimaatHistorieComponent implements OnInit {
         },
         y: {
           tick: {
-            format: (value: number) => this.formatWithUnitLabel(this.sensorType, value)
+            format: (value: number) => this.formatWithoutUnitLabel(this.sensorType, value)
           }
         }
       },
@@ -231,17 +229,13 @@ export class KlimaatHistorieComponent implements OnInit {
           show: true,
           lines: this.chartStatisticsService.createStatisticsChartLines(this.statistics)
         }
+      },
+      tooltip: {
+        format: {
+          name: (name, ratio, id, index) => moment(name, 'DD-MM-YYYY').format('DD-MM-YYYY'),
+          value: (value: number) => this.formatWithUnitLabel(that.sensorType, value)
+        }
       }
-
-      // chartConfig.tooltip = {
-      //   format: {
-      //     name: function (name, ratio, id, index) {
-      //       var theDate = d3.time.format('%d-%m-%Y').parse(name);
-      //       return d3.time.format(vm.getD3DateFormat())(theDate);
-      //     }
-      //   }
-      // };
-      //
     };
   }
 
@@ -268,16 +262,20 @@ export class KlimaatHistorieComponent implements OnInit {
     // return new Date('01-01-2016');
   }
 
-  private formatWithUnitLabel(sensorType: string, value: number): string {
+  public formatWithoutUnitLabel(sensorType: string, value: number): string {
     return this.decimalPipe.transform(value, this.getDecimalFormat(this.sensorType));
   }
 
+  public formatWithUnitLabel(sensorType: string, value: number): string {
+    return this.formatWithoutUnitLabel(sensorType, value) + this.getValuePostFix(sensorType);
+  }
+
   public getDecimalFormat(sensorType: string) {
-    return sensorTypeToDecimalFormatMapping.has(sensorType) ?  sensorTypeToDecimalFormatMapping.get(sensorType) : '0.0-0';
+    return sensorTypeToDecimalFormatMapping.has(sensorType) ? sensorTypeToDecimalFormatMapping.get(sensorType) : '0.0-0';
   }
 
   public getValuePostFix(sensorType: string) {
-    return sensorTypeToPostfixMapping.has(sensorType) ?  sensorTypeToPostfixMapping.get(sensorType) : '';
+    return sensorTypeToPostfixMapping.has(sensorType) ? sensorTypeToPostfixMapping.get(sensorType) : '';
   }
 
   private transformServerdata(serverresponses) {
@@ -287,7 +285,7 @@ export class KlimaatHistorieComponent implements OnInit {
       const serverresponse = serverresponses[i]; // Values on a specific date
 
       for (let j = 0; j < serverresponse.data.length; j++) {
-        const datumtijd = moment(serverresponse.data[j].dateTime);
+        const datumtijd = serverresponse.data[j].dateTime;
 
         const datumtijdKey = datumtijd.format('DD-MM-YYYY');
         const datumtijdValue = serverresponse.data[j][this.sensorType];
@@ -329,5 +327,9 @@ export class KlimaatHistorieComponent implements OnInit {
     let max: number = _.max(values);
 
     return new Statistics(min, max, mean);
+  }
+
+  public getFormattedTime(klimaat: Klimaat) {
+    return klimaat.dateTime.format('HH:mm');
   }
 }

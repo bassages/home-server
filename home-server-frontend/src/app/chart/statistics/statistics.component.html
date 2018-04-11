@@ -1,0 +1,11 @@
+<div *ngIf="statistics" class="row no-gutters pt-2 pb-3" [ngClass]="additionalClasses">
+  <div class="col-4 text-right pr-0">
+    <span class="badge badge-statistics-min">Laagste: <span class="text-nowrap">{{ format(statistics.min) }}</span></span>
+  </div>
+  <div class="col-4 text-center">
+    <span class="badge badge-statistics-max">Hoogste: <span class="text-nowrap">{{ format(statistics.max) }}</span></span>
+  </div>
+  <div class="col-4 text-left pl-0">
+    <span class="badge badge-statistics-avg">Gemiddelde: <span class="text-nowrap">{{ format(statistics.avg) }}</span></span>
+  </div>
+</div>

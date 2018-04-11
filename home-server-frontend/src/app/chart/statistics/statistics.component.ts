@@ -4,11 +4,11 @@ import {DecimalPipe} from "@angular/common";
 import {isNull, isUndefined} from "util";
 
 @Component({
-  selector: 'chart-statistics',
-  templateUrl: './chart-statistics.component.html',
-  styleUrls: ['./chart-statistics.component.scss']
+  selector: 'statistics',
+  templateUrl: './statistics.component.html',
+  styleUrls: ['./statistics.component.scss']
 })
-export class ChartStatisticsComponent {
+export class StatisticsComponent {
 
   @Input()
   public statistics: Statistics;
@@ -20,6 +20,9 @@ export class ChartStatisticsComponent {
   public valuePrefix: string = '';
   @Input()
   public valuePostfix: string = '';
+
+  @Input()
+  public additionalClasses: string = '';
 
   constructor(private decimalPipe: DecimalPipe) { }
 

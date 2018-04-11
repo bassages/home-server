@@ -11,7 +11,7 @@ import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {OpgenomenVermogen} from "./opgenomenVermogen";
 import {ChartService} from "../chart/chart.service";
 import {Statistics} from "../statistics";
-import {ChartStatisticsService} from "../chart/chart-statistics/chart-statistics.service";
+import {ChartStatisticsService} from "../chart/statistics/chart-statistics.service";
 
 const periodLengthInMilliseconds = moment.duration(1, 'minutes').asSeconds();
 

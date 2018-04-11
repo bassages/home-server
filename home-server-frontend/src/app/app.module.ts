@@ -35,8 +35,8 @@ import {MindergasnlComponent} from './mindergasnl/mindergasnl.component';
 import {MindergasnlService} from "./mindergasnl/mindergasnl.service";
 import {KlimaatHistorieComponent} from './klimaat/klimaat-historie/klimaat-historie.component';
 import {KlimaatService} from "./klimaat/klimaat.service";
-import {ChartStatisticsComponent} from './chart/chart-statistics/chart-statistics.component';
-import {ChartStatisticsService} from "./chart/chart-statistics/chart-statistics.service";
+import {StatisticsComponent} from './chart/statistics/statistics.component';
+import {ChartStatisticsService} from "./chart/statistics/chart-statistics.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -83,7 +83,7 @@ const appRoutes: Routes = [
     OpgenomenVermogenComponent,
     MindergasnlComponent,
     KlimaatHistorieComponent,
-    ChartStatisticsComponent
+    StatisticsComponent
   ],
   imports: [
     BrowserModule,

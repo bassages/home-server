@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs/Observable";
 import {KlimaatSensor} from "./klimaatSensor";
+import * as moment from "moment";
 import {Moment} from "moment";
 import {Klimaat} from "./klimaat";
-import moment = require("moment");
 
 @Injectable()
 export class KlimaatService {
@@ -26,7 +26,7 @@ export class KlimaatService {
 
     for (let backendKlimaat of backendKlimaats) {
       const klimaat: Klimaat = new Klimaat();
-      klimaat.dateTime = moment(backendKlimaat.datumtijd).toDate();
+      klimaat.dateTime = moment(backendKlimaat.datumtijd);
       klimaat.temperatuur = backendKlimaat.temperatuur;
       klimaat.luchtvochtigheid = backendKlimaat.luchtvochtigheid;
       klimaats.push(klimaat);

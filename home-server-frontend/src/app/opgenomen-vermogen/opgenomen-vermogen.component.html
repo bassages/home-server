@@ -17,13 +17,15 @@
       </li>
     </ul>
   </div>
-
 </div>
 
 <div class="row">
   <div class="col-12 pl-2 pr-2 pl-sm-0 pr-sm-0">
     <div id="chart" class="c3 chart"></div>
-    <chart-statistics [statistics]="statistics" decimalFormat="0.0-0"></chart-statistics>
+
+    <div class="activated">
+      <statistics [statistics]="statistics" decimalFormat="0.0-0"></statistics>
+    </div>
   </div>
 </div>
 

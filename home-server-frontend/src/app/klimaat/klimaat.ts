@@ -1,5 +1,7 @@
+import {Moment} from "moment";
+
 export class Klimaat {
-  dateTime: Date;
+  dateTime: Moment;
 
   temperatuur: number;
   luchtvochtigheid: number;

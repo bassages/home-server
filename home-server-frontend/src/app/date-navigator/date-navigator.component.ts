@@ -27,7 +27,8 @@ export class DateNavigatorComponent implements OnInit {
     }
   }
 
-  @Output() onNavigate = new EventEmitter<Moment>();
+  @Output()
+  public onNavigate = new EventEmitter<Moment>();
 
   private _selectedDate: Moment;
 

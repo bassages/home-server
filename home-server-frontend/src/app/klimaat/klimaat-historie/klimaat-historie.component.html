@@ -4,56 +4,73 @@
   <div class="col-md-12 col-lg-11 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
-        <select #sensor class="form-control" id="sensor" name="sensor" (change)="changeSensor(sensor.value)">
+        <select #sensor class="form-control" name="sensor" (change)="changeSensor(sensor.value)">
           <option *ngIf="!sensorCode">Selecteer een locatie...</option>
-          <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensor?.code == _sensor.code">{{_sensor.omschrijving}}</option>
+          <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensor?.code === _sensor.code">{{_sensor.omschrijving}}</option>
         </select>
       </li>
 
-      <li class="ml-auto mr-auto">
-      </li>
-
-      <li>
+      <li class="ml-auto">
         <date-navigator mode="day" [selectedDate]="date" (onNavigate)="onDateNavigate($event)" class="input-group mb-2"></date-navigator>
       </li>
     </ul>
   </div>
 </div>
 
+<!-- Up to (but excluding) large -->
+<div class="d-xs-block d-lg-none">
+
+  <!-- Sensor selection -->
+  <div class="row mb-2 pl-2 pr-2 pl-sm-0 pr-sm-0">
+    <select #sensor class="form-control form-control-sm" name="sensor" (change)="changeSensor(sensor.value)">
+      <option *ngIf="!sensorCode">Selecteer een locatie...</option>
+      <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensor?.code === _sensor.code">{{_sensor.omschrijving}}</option>
+    </select>
+  </div>
+
+  <!-- Energiesoort selection  -->
+  <div class="row mb-2">
+    <div class="col-6 pl-2 pr-1 pl-sm-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': sensorType === 'temperatuur'}" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> Temperatuur (&#8451;)</button>
+    </div>
+    <div class="col-6 pl-1 pr-2 pr-sm-0">
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': sensorType === 'luchtvochtigheid'}" (click)="setSensorType('luchtvochtigheid')"><i class="fas fa-tint"></i> Luchtvochtigheid (%)</button>
+    </div>
+  </div>
+
+  <!-- Date selection  -->
+  <div class="row mb-2 pl-2 pr-2 pl-sm-0 pr-sm-0">
+    <date-navigator mode="day" [selectedDate]="date" (onNavigate)="onDateNavigate($event)" class="input-group input-group-sm"></date-navigator>
+  </div>
+</div>
+
+
 <div class="row">
   <div class="col-md-1 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
-        <a class="nav-link mb-1 clickable text-center" [ngClass]="{'active': sensorType == 'temperatuur'}" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"> &#8451;</i></a>
+        <a class="nav-link mb-1 clickable text-center" [ngClass]="{'active': sensorType === 'temperatuur'}" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> &#8451;</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mb-0 clickable text-center" [ngClass]="{'active': sensorType == 'luchtvochtigheid'}" (click)="setSensorType('luchtvochtigheid')"><i class="fas fa-tint"> %</i></a>
+        <a class="nav-link mb-0 clickable text-center" [ngClass]="{'active': sensorType === 'luchtvochtigheid'}" (click)="setSensorType('luchtvochtigheid')"><i class="fas fa-tint"></i> %</a>
       </li>
     </ul>
   </div>
   <div class="col-md-12 col-lg-11 pl-2 pr-2 pl-sm-0 pr-sm-0">
     <div [hidden]="!showChart" id="chart" class="c3 chart"></div>
-    <chart-statistics [statistics]="statistics" [decimalFormat]="getDecimalFormat(sensorType)" [valuePostfix]="getValuePostFix(sensorType)"></chart-statistics>
-
     <div [hidden]="!showTable" class="table-responsive">
-      <!--<table class="table table-bordered table-striped table-hover table-sm">-->
-        <!--<thead>-->
-        <!--<tr>-->
-          <!--<th></th>-->
-          <!--<th class="text-right" *ngIf="isEnergieSoortSelected('gas')">Gas</th>-->
-          <!--<th class="text-right" *ngIf="isEnergieSoortSelected('stroom')">Stroom</th>-->
-          <!--<th class="text-right" *ngIf="isEnergieSoortSelected('stroom') && isEnergieSoortSelected('gas') && verbruiksoort == 'kosten'">Totaal</th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-        <!--<tr *ngFor="let verbruik of verbruiken" class="clickable" (click)="navigateToDetailsOfVerbruik(verbruik)">-->
-          <!--<td class="text-right">{{ getFormattedDate(verbruik) }}</td>-->
-          <!--<td class="text-right" *ngIf="isEnergieSoortSelected('gas')">{{ getFormattedValue(verbruik, 'gas') }}</td>-->
-          <!--<td class="text-right" *ngIf="isEnergieSoortSelected('stroom')">{{ getFormattedValue(verbruik, 'stroom') }}</td>-->
-          <!--<td class="text-right" *ngIf="isEnergieSoortSelected('stroom') && isEnergieSoortSelected('gas') && verbruiksoort == 'kosten'">{{ getFormattedTotalCosts(verbruik) }}</td>-->
-        <!--</tr>-->
-      <!--</table>-->
+      <table class="table table-bordered table-striped table-hover table-sm">
+        <tr *ngFor="let klimaat of klimaats" class="clickable'">
+          <td class="text-right">{{ getFormattedTime(klimaat) }}</td>
+          <td class="text-right">{{ formatWithUnitLabel(sensorType, klimaat[sensorType]) }}</td>
+        </tr>
+      </table>
     </div>
   </div>
-
 </div>
-
+<div class="row">
+  <div class="col-lg-1 pr-0 d-none d-lg-block">&nbsp;</div>
+  <div class="col-md-12 col-lg-11 pl-2 pr-2 pl-sm-0 pr-sm-0">
+    <statistics [statistics]="statistics" [decimalFormat]="getDecimalFormat(sensorType)" [valuePostfix]="getValuePostFix(sensorType)" [additionalClasses]="{'activated': showChart}"></statistics>
+  </div>
+</div>
