@@ -36,7 +36,7 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
               private meterstandService: MeterstandService,
               private energieVerbruikService: EnergieVerbruikService) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.subscribeToMeterstandUpdates();
 
     this.getGemiddeldVerbruikAfgelopenWeek();

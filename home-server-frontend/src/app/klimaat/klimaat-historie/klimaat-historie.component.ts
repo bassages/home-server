@@ -100,10 +100,10 @@ export class KlimaatHistorieComponent implements OnInit {
             setTimeout(() => { this.getAndLoadData(); },0);
           } else {
             this.loadData([]);
+            this.loadingIndicatorService.close()
           }
       },
       error => this.errorHandlingService.handleError("De klimaat sensors konden nu niet worden opgehaald", error),
-      () => this.loadingIndicatorService.close()
     );
   }
 
@@ -232,7 +232,7 @@ export class KlimaatHistorieComponent implements OnInit {
       },
       tooltip: {
         format: {
-          name: (name, ratio, id, index) => moment(name, 'DD-MM-YYYY').format('DD-MM-YYYY'),
+          name: (name: string, ratio: number, id: string, index: number) => moment(name, 'DD-MM-YYYY').format('DD-MM-YYYY'),
           value: (value: number) => this.formatWithUnitLabel(that.sensorType, value)
         }
       }

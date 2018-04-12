@@ -29,12 +29,12 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
   public opgenomenVermogenObserver: Observable<Message>;
   public opgenomenVermogenSubscription: Subscription;
 
-  constructor(private stompService: StompService,
-              private router: Router,
-              private opgenomenVermogenService: OpgenomenVermogenService,
-              private meterstandService: MeterstandService) { }
+  constructor(private opgenomenVermogenService: OpgenomenVermogenService,
+              private meterstandService: MeterstandService,
+              private stompService: StompService,
+              private router: Router) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.subscribeToMeterstandUpdates();
     this.subscribeToOpgenomenVermogenUpdates();
 

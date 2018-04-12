@@ -37,6 +37,8 @@ import {KlimaatHistorieComponent} from './klimaat/klimaat-historie/klimaat-histo
 import {KlimaatService} from "./klimaat/klimaat.service";
 import {StatisticsComponent} from './chart/statistics/statistics.component';
 import {ChartStatisticsService} from "./chart/statistics/chart-statistics.service";
+import {KlimaatTemperatuurComponent} from './dashboard/klimaat-temperatuur/klimaat-temperatuur.component';
+import {KlimaatLuchtvochtigheidComponent} from './dashboard/klimaat-luchtvochtigheid/klimaat-luchtvochtigheid.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -83,7 +85,9 @@ const appRoutes: Routes = [
     OpgenomenVermogenComponent,
     MindergasnlComponent,
     KlimaatHistorieComponent,
-    StatisticsComponent
+    StatisticsComponent,
+    KlimaatTemperatuurComponent,
+    KlimaatLuchtvochtigheidComponent
   ],
   imports: [
     BrowserModule,

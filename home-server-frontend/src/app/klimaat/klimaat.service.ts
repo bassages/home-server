@@ -5,6 +5,7 @@ import {KlimaatSensor} from "./klimaatSensor";
 import * as moment from "moment";
 import {Moment} from "moment";
 import {Klimaat} from "./klimaat";
+import {RealtimeKlimaat} from "./realtimeKlimaat";
 
 @Injectable()
 export class KlimaatService {
@@ -18,21 +19,33 @@ export class KlimaatService {
 
   public getKlimaat(sensorCode: string, from: Moment, to: Moment): Observable<Klimaat[]> {
     const url: string = `/api/klimaat/${sensorCode}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}`;
-    return this.http.get<BackendKlimaat[]>(url).map(this.mapToKlimaat);
+    return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
   }
 
-  private mapToKlimaat(backendKlimaats: BackendKlimaat[]): Klimaat[] {
-    let klimaats: Klimaat[] = [];
+  public getMostRecent(sensorCode: string): Observable<RealtimeKlimaat> {
+    return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`).map(KlimaatService.toRealTimeKlimaat);
+  }
 
-    for (let backendKlimaat of backendKlimaats) {
-      const klimaat: Klimaat = new Klimaat();
-      klimaat.dateTime = moment(backendKlimaat.datumtijd);
-      klimaat.temperatuur = backendKlimaat.temperatuur;
-      klimaat.luchtvochtigheid = backendKlimaat.luchtvochtigheid;
-      klimaats.push(klimaat);
-    }
+  private static mapAllToKlimaat(backendKlimaats: BackendKlimaat[]): Klimaat[] {
+    return backendKlimaats.map(KlimaatService.mapToKlimaat);
+  }
 
-    return klimaats;
+  private static mapToKlimaat(backendKlimaat: BackendKlimaat): Klimaat {
+    const klimaat: Klimaat = new Klimaat();
+    klimaat.dateTime = moment(backendKlimaat.datumtijd);
+    klimaat.temperatuur = backendKlimaat.temperatuur;
+    klimaat.luchtvochtigheid = backendKlimaat.luchtvochtigheid;
+    return klimaat;
+  }
+
+  public static toRealTimeKlimaat(source: any): RealtimeKlimaat {
+    const realtimeKlimaat: RealtimeKlimaat = new RealtimeKlimaat();
+    realtimeKlimaat.dateTime = moment(source.datumtijd);
+    realtimeKlimaat.temperatuur = source.temperatuur;
+    realtimeKlimaat.luchtvochtigheid = source.luchtvochtigheid;
+    realtimeKlimaat.temperatuurTrend = source.temperatuurTrend;
+    realtimeKlimaat.luchtvochtigheidTrend = source.luchtvochtigheidTrend;
+    return realtimeKlimaat;
   }
 }
 
@@ -40,4 +53,9 @@ class BackendKlimaat {
   datumtijd: string;
   temperatuur: number;
   luchtvochtigheid: number;
+}
+
+export class BackendRealtimeKlimaat extends BackendKlimaat{
+  temperatuurTrend: number;
+  luchtvochtigheidTrend: string;
 }

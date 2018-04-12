@@ -5,7 +5,4 @@ export class Klimaat {
 
   temperatuur: number;
   luchtvochtigheid: number;
-
-  temperatuurTrend: string;
-  luchtvochtigheidTrend: string;
 }

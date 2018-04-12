@@ -1,0 +1,51 @@
+@import "../ledbar";
+
+.temperatuur-led-9 {
+  @extend .led;
+  background: #d53F27;
+}
+
+.temperatuur-led-8 {
+  @extend .led;
+  background: #d15419;
+}
+
+.temperatuur-led-7 {
+  @extend .led;
+  background: #e37c2e;
+}
+
+.temperatuur-led-6 {
+  @extend .led;
+  background: #f19b2c;
+}
+
+.temperatuur-led-5 {
+  @extend .led;
+  background: #efc22f;
+}
+
+.temperatuur-led-4 {
+  @extend .led;
+  background: #baca42;
+}
+
+.temperatuur-led-3 {
+  @extend .led;
+  background: #7fc93e;
+}
+
+.temperatuur-led-2 {
+  @extend .led;
+  background: #38b5a2;
+}
+
+.temperatuur-led-1 {
+  @extend .led;
+  background: #3aa3c0;
+}
+
+.temperatuur-led-0 {
+  @extend .led;
+  background: #3d91de;
+}

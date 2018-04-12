@@ -1,0 +1,16 @@
+<div class="card">
+  <div class="card-header h3 clickable" (click)="navigateToKlimaatHistory()">
+    <i class="fas fa-tint"></i> Luchtvochtigheid
+  </div>
+  <div class="card-body">
+    <div class="ledbar float-left">
+      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="leds[i]?.state == LedState.ON ? 'luchtvochtigheid-led-' + i : 'led-off'"></div>
+    </div>
+
+    <p class="h3">{{ sensorCode.charAt(0).toUpperCase() + sensorCode.slice(1).toLowerCase() }}</p>
+    <div class="h3">
+      <span *ngIf="klimaat">{{ klimaat.luchtvochtigheid | number: '1.2-2' }}%</span>
+      <span *ngIf="!klimaat">-%</span>
+    </div>
+  </div>
+</div>
