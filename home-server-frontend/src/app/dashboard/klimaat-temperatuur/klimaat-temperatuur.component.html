@@ -11,6 +11,16 @@
     <div class="h3">
       <span *ngIf="klimaat">{{ klimaat.temperatuur | number: '1.2-2' }}&#8451;</span>
       <span *ngIf="!klimaat">-&#8451;</span>
+
+      <span *ngIf="klimaat?.temperatuurTrend=='UP'">
+        <i data-fa-transform="rotate-45" class="fas fa-arrow-up text-danger"></i>
+      </span>
+      <span *ngIf="klimaat?.temperatuurTrend=='DOWN'">
+        <i data-fa-transform="rotate--45" class="fas fa-arrow-down text-primary"></i>
+      </span>
+      <span *ngIf="klimaat?.temperatuurTrend==='STABLE'" class="text-success">
+        <strong>&asymp;</strong>
+      </span>
     </div>
   </div>
 </div>

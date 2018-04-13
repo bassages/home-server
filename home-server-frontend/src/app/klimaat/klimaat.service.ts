@@ -55,7 +55,7 @@ class BackendKlimaat {
   luchtvochtigheid: number;
 }
 
-export class BackendRealtimeKlimaat extends BackendKlimaat{
-  temperatuurTrend: number;
+class BackendRealtimeKlimaat extends BackendKlimaat{
+  temperatuurTrend: string;
   luchtvochtigheidTrend: string;
 }

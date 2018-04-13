@@ -11,6 +11,16 @@
     <div class="h3">
       <span *ngIf="klimaat">{{ klimaat.luchtvochtigheid | number: '1.2-2' }}%</span>
       <span *ngIf="!klimaat">-%</span>
+
+      <span *ngIf="klimaat?.luchtvochtigheidTrend=='UP'">
+        <i data-fa-transform="rotate-45" class="fas fa-arrow-up text-danger"></i>
+      </span>
+      <span *ngIf="klimaat?.luchtvochtigheidTrend=='DOWN'">
+        <i data-fa-transform="rotate--45" class="fas fa-arrow-down text-primary"></i>
+      </span>
+      <span *ngIf="klimaat?.luchtvochtigheidTrend==='STABLE'" class="text-success">
+        <strong>&asymp;</strong>
+      </span>
     </div>
   </div>
 </div>

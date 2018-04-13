@@ -50,10 +50,12 @@ export class KlimaatTemperatuurComponent implements OnInit, OnDestroy {
   }
 
   private setLeds(temperatuur): void {
-    this.leds.push(new Led(LedState.ON));
+    const leds: Led[] = [];
+    leds.push(new Led(LedState.ON));
     for (let i = 1; i < 10; i++) {
-      this.leds.push(new Led(temperatuur >= (i + 16) ? LedState.ON : LedState.OFF));
+      leds.push(new Led(temperatuur >= (i + 16) ? LedState.ON : LedState.OFF));
     }
+    this.leds = leds;
   }
 
   private getMostRecentKlimaat(): void {

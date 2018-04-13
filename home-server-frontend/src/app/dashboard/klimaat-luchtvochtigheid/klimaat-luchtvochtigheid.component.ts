@@ -46,14 +46,16 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
 
   private setKlimaat(klimaat: RealtimeKlimaat): void {
     this.klimaat = klimaat;
-    this.setLeds(this.klimaat.temperatuur);
+    this.setLeds(this.klimaat.luchtvochtigheid);
   }
 
   private setLeds(luchtvochtigheid): void {
-    this.leds.push(new Led(LedState.ON));
+    const leds: Led[] = [];
+    leds.push(new Led(LedState.ON));
     for (let i = 1; i < 10; i++) {
-      this.leds.push(new Led(luchtvochtigheid >= (i * 10) ? LedState.ON : LedState.OFF));
+      leds.push(new Led(luchtvochtigheid >= (i * 10) ? LedState.ON : LedState.OFF));
     }
+    this.leds = leds;
   }
 
   private getMostRecentKlimaat(): void {
