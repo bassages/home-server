@@ -6,6 +6,7 @@ import * as moment from "moment";
 import {Moment} from "moment";
 import {Klimaat} from "./klimaat";
 import {RealtimeKlimaat} from "./realtimeKlimaat";
+import {isUndefined} from "util";
 
 @Injectable()
 export class KlimaatService {
@@ -23,7 +24,9 @@ export class KlimaatService {
   }
 
   public getMostRecent(sensorCode: string): Observable<RealtimeKlimaat> {
-    return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`).map(KlimaatService.toRealTimeKlimaat);
+    return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`)
+                    .filter(value => !isUndefined(value) && value !== null)
+                    .map(KlimaatService.toRealtimeKlimaat);
   }
 
   private static mapAllToKlimaat(backendKlimaats: BackendKlimaat[]): Klimaat[] {
@@ -38,7 +41,7 @@ export class KlimaatService {
     return klimaat;
   }
 
-  public static toRealTimeKlimaat(source: any): RealtimeKlimaat {
+  public static toRealtimeKlimaat(source: any): RealtimeKlimaat {
     const realtimeKlimaat: RealtimeKlimaat = new RealtimeKlimaat();
     realtimeKlimaat.dateTime = moment(source.datumtijd);
     realtimeKlimaat.temperatuur = source.temperatuur;

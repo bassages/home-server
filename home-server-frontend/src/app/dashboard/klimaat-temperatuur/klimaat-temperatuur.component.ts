@@ -41,7 +41,7 @@ export class KlimaatTemperatuurComponent implements OnInit, OnDestroy {
 
   private subscribeToKlimaatUpdates(): void {
     this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
-    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => this.setKlimaat(KlimaatService.toRealTimeKlimaat(JSON.parse(message.body))));
+    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => this.setKlimaat(KlimaatService.toRealtimeKlimaat(JSON.parse(message.body))));
   }
 
   private setKlimaat(klimaat: RealtimeKlimaat): void {

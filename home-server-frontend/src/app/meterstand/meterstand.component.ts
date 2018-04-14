@@ -37,7 +37,6 @@ export class MeterstandComponent implements OnInit {
     const to = from.clone().add(1, 'month');
 
     this.loadingIndicatorService.open();
-    this.sortedMeterstandenPerDag = [];
 
     this.meterstandService.getMeterstanden(from, to).subscribe(
       response => this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(response, ['dag']),

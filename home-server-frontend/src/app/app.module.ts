@@ -40,6 +40,7 @@ import {ChartStatisticsService} from "./chart/statistics/chart-statistics.servic
 import {KlimaatTemperatuurComponent} from './dashboard/klimaat-temperatuur/klimaat-temperatuur.component';
 import {KlimaatLuchtvochtigheidComponent} from './dashboard/klimaat-luchtvochtigheid/klimaat-luchtvochtigheid.component';
 import {EnergiecontractComponent} from './energiecontract/energiecontract.component';
+import {EnergiecontractService} from "./energiecontract/energiecontract.service";
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -116,6 +117,7 @@ const appRoutes: Routes = [
     EnergieVerbruikMaandHistorieService,
     EnergieVerbruikJaarHistorieService,
     EnergieVerbruikHistorieServiceProvider,
+    EnergiecontractService,
     MindergasnlService,
     KlimaatService,
     LoadingIndicatorService,

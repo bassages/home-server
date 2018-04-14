@@ -1,3 +1,33 @@
-<p>
-  energiecontract works!
-</p>
+<div class="row">
+  <div class="col-5">
+    <p class="h1">Energiecontracten</p>
+  </div>
+
+  <div class="col-7 text-right right-to-h1">
+    <button class='btn btn-primary' (click)="startAdd()">
+      <span class="d-none d-sm-block"><i class="fas fa-plus-circle"></i> Toevoegen</span>
+      <span class="d-block d-sm-none"><i class="fas fa-plus-circle"></i></span>
+    </button>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover table-sm">
+    <thead>
+      <tr>
+        <th>Vanaf</th>
+        <th>Leverancier</th>
+        <th>Gas per m<sup>3</sup></th>
+        <th>Stroom per kWh (normaaltarief)</th>
+        <th>Stroom per kWh (daltarief)</th>
+      </tr>
+    </thead>
+    <tr *ngFor="let energiecontract of energiecontracten" (click)="startEdit(energiecontract)">
+      <td class="text-nowrap">{{ energiecontract.validFrom | date : 'dd-MM-yyyy' }}</td>
+      <td>{{ energiecontract.leverancier }}</td>
+      <td class="text-right">{{ energiecontract.gasPerKuub | currency:'EUR':'symbol':'1.6-6' }}</td>
+      <td class="text-right">{{ energiecontract.stroomPerKwhNormaalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
+      <td class="text-right">{{ energiecontract.stroomPerKwhDalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
+    </tr>
+  </table>
+</div>
