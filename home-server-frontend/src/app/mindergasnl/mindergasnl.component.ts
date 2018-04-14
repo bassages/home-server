@@ -18,9 +18,13 @@ export class MindergasnlComponent implements OnInit {
 
   private _editmode: boolean;
 
+  private originalAutomatischUploaden: boolean;
+  private originalAuthenticatietoken: string;
+
   set editMode(editmode: boolean) {
     this._editmode = editmode;
     if (editmode) {
+      this.saveOriginalValues();
       this.automatischUploaden.enable();
       this.authenticatietoken.enable();
     } else {
@@ -78,6 +82,21 @@ export class MindergasnlComponent implements OnInit {
         }
       );
     }
+  }
+
+  private saveOriginalValues() {
+    this.originalAutomatischUploaden = this.automatischUploaden.value;
+    this.originalAuthenticatietoken = this.authenticatietoken.value;
+  }
+
+  private restoreOriginalValues() {
+    this.automatischUploaden.setValue(this.originalAutomatischUploaden);
+    this.authenticatietoken.setValue(this.originalAuthenticatietoken);
+  }
+
+  public cancel(): void {
+    this.restoreOriginalValues();
+    this.editMode = false;
   }
 
   private flashSavedMessage(): void {
