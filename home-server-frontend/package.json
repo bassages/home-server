@@ -26,7 +26,7 @@
     "@fortawesome/fontawesome-free-regular": "^5.0.10",
     "@fortawesome/fontawesome-free-solid": "^5.0.10",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.6",
-    "@ng-bootstrap/ng-bootstrap": "^1.1.1",
+    "@ng-bootstrap/ng-bootstrap": "^1.1.2",
     "@stomp/ng2-stompjs": "^0.6.4",
     "@types/c3": "^0.4.54",
     "bootstrap": "^4.1.0",

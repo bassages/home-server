@@ -29,7 +29,7 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
                         onDataClick: ((date: Moment) => void)): ChartConfiguration {
     const that = this;
 
-    const chartConfiguration = super.getDefaultBarChartConfig(verbruiken);
+    const chartConfiguration = super.getDefaultBarChartConfig();
     const keysGroups = super.getKeysGroups(verbruiksoort, energiesoorten);
 
     chartConfiguration.data.groups = [keysGroups];

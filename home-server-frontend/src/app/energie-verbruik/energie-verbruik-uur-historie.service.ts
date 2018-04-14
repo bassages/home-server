@@ -28,7 +28,7 @@ export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHi
                         onDataClick: ((date: Moment) => void)): ChartConfiguration {
     const that = this;
 
-    const chartConfiguration: ChartConfiguration = super.getDefaultBarChartConfig(verbruiken);
+    const chartConfiguration: ChartConfiguration = super.getDefaultBarChartConfig();
     const keysGroups = super.getKeysGroups(verbruiksoort, energiesoorten);
 
     chartConfiguration.data.groups = [keysGroups];
@@ -45,7 +45,7 @@ export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHi
       y: {
         tick: {
           format: (value: number) => super.formatWithoutUnitLabel(verbruiksoort, value)
-        }
+        },
       }
     };
     chartConfiguration.tooltip = {
@@ -67,5 +67,4 @@ export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHi
   public getMoment(selectedDate: Moment, verbruikInUur: VerbruikInUur): Moment {
     return selectedDate.clone();
   }
-
 }

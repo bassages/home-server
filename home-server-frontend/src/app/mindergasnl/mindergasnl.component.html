@@ -15,8 +15,8 @@
   <div class="form-group row">
     <label class="col-sm-4 col-md-3">Authenticatietoken</label>
     <div class="col-sm-6">
-      <input type="text" id="authenticatietoken" placeholder="Authenticatietoken"
-             class="form-control" [ngClass]="{'is-invalid': authenticatietoken.invalid}"
+      <input type="text" id="authenticatietoken"
+             class="form-control" [ngClass]="{'is-invalid': authenticatietoken.invalid, 'readonly': !editMode}"
              formControlName="authenticatietoken" />
       <div *ngIf="authenticatietoken.invalid && authenticatietoken.errors.required" class="text-danger">
         <small>Voor het automatisch uploaden naar MinderGas.nl is een authenticatietoken noodzakelijk</small>
@@ -28,7 +28,8 @@
     <div class="col-sm-4 col-md-3">&nbsp;</div>
     <div class="col-sm-6">
       <div class="float-right">
-        <button type="submit" class='btn btn-primary' [disabled]="form.invalid"><i class="fas fa-check"></i> Opslaan</button>
+        <button *ngIf="!editMode" type="button" class='btn btn-primary' (click)="editMode = true"><i class="fas fa-edit"></i> Wijzig</button>
+        <button *ngIf="editMode" type="submit" class='btn btn-primary' [disabled]="form.invalid"><i class="fas fa-check"></i> Opslaan</button>
       </div>
     </div>
   </div>

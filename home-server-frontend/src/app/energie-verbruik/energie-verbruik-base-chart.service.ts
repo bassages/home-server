@@ -15,16 +15,13 @@ const dataColors: {[key: string]: string} = {
   'gasKosten': '#2ca02c'
 };
 
-const minimumChartHeight: number = 220;
-const maximumChartHeight: number = 500;
-
 export abstract class AbstractEnergieVerbruikHistorieService extends ChartService {
 
   constructor(protected decimalPipe: DecimalPipe) {
-    super()
-  };
+    super();
+  }
 
-  public getDefaultBarChartConfig(data: any[]): ChartConfiguration {
+  public getDefaultBarChartConfig(): ChartConfiguration {
     return {
       bindto: '#chart',
       data: {
@@ -32,14 +29,22 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
         colors: dataColors,
         order: (data1: any, data2: any) => data2.id.localeCompare(data1.id)
       },
-      legend: { show: false },
-      bar: {
-        width: { ratio: 0.8 }
+      legend: {
+        show: false
       },
-      transition: { duration: 0 },
+      bar: {
+        width: {
+          ratio: 0.8
+        }
+      },
+      transition: {
+        duration: 0
+      },
       padding: super.getDefaultChartPadding(),
       grid: {
-        y: { show: true }
+        y: {
+          show: true
+        }
       }
     };
   };
@@ -127,8 +132,8 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
   }
 
   // noinspection JSMethodCanBeStatic
-  public toggleEnergiesoort(verbruiksoort: string, currentEnergiesoorten: string[], energiesoortToToggle: string): string[] {
-    let newEnergiesoorten = currentEnergiesoorten.slice();
+  public toggleEnergiesoort(verbruiksoort: string, energiesoorten: string[], energiesoortToToggle: string): string[] {
+    let newEnergiesoorten = energiesoorten.slice();
 
     const indexOfToggledEnergieSoort = newEnergiesoorten.indexOf(energiesoortToToggle);
 

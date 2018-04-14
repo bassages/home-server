@@ -39,6 +39,7 @@ import {StatisticsComponent} from './chart/statistics/statistics.component';
 import {ChartStatisticsService} from "./chart/statistics/chart-statistics.service";
 import {KlimaatTemperatuurComponent} from './dashboard/klimaat-temperatuur/klimaat-temperatuur.component';
 import {KlimaatLuchtvochtigheidComponent} from './dashboard/klimaat-luchtvochtigheid/klimaat-luchtvochtigheid.component';
+import {EnergiecontractComponent} from './energiecontract/energiecontract.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -48,14 +49,14 @@ const stompConfig: StompConfig = {
   url: socketProvider,
   headers: {},
 
-  // How often to heartbeat?
+  // Heartbeat interval
   // Interval in milliseconds, set to 0 to disable
   heartbeat_in: 0, // Typical value 0 - disabled
-  heartbeat_out: 30000, // Typical value 20000
+  heartbeat_out: 60000, // Typical value 20000
 
   // Wait in milliseconds before attempting auto reconnect
   // Set to 0 to disable
-  reconnect_delay: 10000,
+  reconnect_delay: 15000,
 
   // Will log diagnostics on console
   debug: true
@@ -67,7 +68,8 @@ const appRoutes: Routes = [
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
   {path: 'mindergasnl', component: MindergasnlComponent},
-  {path: 'klimaat/historie', component: KlimaatHistorieComponent}
+  {path: 'klimaat/historie', component: KlimaatHistorieComponent},
+  {path: 'energiecontract', component: EnergiecontractComponent}
 ];
 
 @NgModule({
@@ -87,7 +89,8 @@ const appRoutes: Routes = [
     KlimaatHistorieComponent,
     StatisticsComponent,
     KlimaatTemperatuurComponent,
-    KlimaatLuchtvochtigheidComponent
+    KlimaatLuchtvochtigheidComponent,
+    EnergiecontractComponent
   ],
   imports: [
     BrowserModule,

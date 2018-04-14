@@ -16,7 +16,7 @@
     <p class="h3">Meterstand</p>
 
     <p class="h6" *ngIf="meterstand">
-      <i class="fas fa-moon" ngbTooltip="Dal- en normaaltarief"></i> <i ngbTooltip="Dal- en normaaltarief" class="fas fa-sun"></i> {{meterstand.gas | number: '1.3-3'}}
+      <span ngbTooltip="Normaaltarief"><i class="fas fa-moon" ngbTooltip="Dal- en normaaltarief"></i> <i class="fas fa-sun"></i> {{meterstand.gas | number: '1.3-3'}}</span>
     </p>
     <p class="h6" *ngIf="!meterstand">
       -

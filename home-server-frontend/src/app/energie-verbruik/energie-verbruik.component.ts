@@ -43,9 +43,9 @@ export class EnergieVerbruikComponent implements OnInit {
   public periode: string = '';
 
   private chart: ChartAPI;
-  private energieVerbruikHistorieService: EnergieVerbruikHistorieService<any>;
-
   public verbruiken: any[] = [];
+
+  private energieVerbruikHistorieService: EnergieVerbruikHistorieService<any>;
 
   constructor(private energieVerbruikChartServiceProvider: EnergieVerbruikHistorieServiceProvider,
               private loadingIndicatorService: LoadingIndicatorService,
@@ -106,22 +106,22 @@ export class EnergieVerbruikComponent implements OnInit {
   private loadData(verbruiken: any[]) {
     this.verbruiken = verbruiken;
     if (this.showChart) {
-      this.loadDataIntoChart(this.verbruiken);
+      this.loadDataIntoChart();
     } else if (this.showTable) {
-      this.loadDataIntoTable(this.verbruiken);
+      this.loadDataIntoTable();
     }
   }
 
-  private loadDataIntoTable(verbruiken: any[]) {
+  private loadDataIntoTable() {
     // Nothing special to do here
   }
 
-  private loadDataIntoChart(verbruiken: any[]) {
+  private loadDataIntoChart(): void {
     const chartConfiguration: ChartConfiguration = this.energieVerbruikHistorieService.getChartConfig(this.selectedDate,
-                                                                                                   this.verbruiksoort,
-                                                                                                   this.energiesoorten,
-                                                                                                   verbruiken,
-                                                                                        (date: Moment) => this.navigateToDetails(date));
+                                                                                                      this.verbruiksoort,
+                                                                                                      this.energiesoorten,
+                                                                                                      this.verbruiken,
+                                                                                           (date: Moment) => this.navigateToDetails(date));
     this.loadChartConfiguration(chartConfiguration);
   }
 
@@ -182,7 +182,7 @@ export class EnergieVerbruikComponent implements OnInit {
     if (!this.showChart) {
       this.showTable = false;
       this.showChart = true;
-      this.loadDataIntoChart(this.verbruiken);
+      this.loadDataIntoChart();
     }
   }
 
@@ -190,7 +190,7 @@ export class EnergieVerbruikComponent implements OnInit {
     if (!this.showTable) {
       this.showChart = false;
       this.showTable = true;
-      this.loadDataIntoTable(this.verbruiken);
+      this.loadDataIntoTable();
     }
   }
 

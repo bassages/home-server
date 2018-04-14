@@ -3,7 +3,6 @@ import {MindergasnlService} from "./mindergasnl.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {AbstractControl} from "@angular/forms/src/model";
 
 const authenticatieTokenMaxLengthValidator = Validators.maxLength(255);
 
@@ -17,6 +16,23 @@ export class MindergasnlComponent implements OnInit {
   public form: FormGroup;
   public showSavedMessage: boolean = false;
 
+  private _editmode: boolean;
+
+  set editMode(editmode: boolean) {
+    this._editmode = editmode;
+    if (editmode) {
+      this.automatischUploaden.enable();
+      this.authenticatietoken.enable();
+    } else {
+      this.automatischUploaden.disable();
+      this.authenticatietoken.disable();
+    }
+  }
+
+  get editMode(): boolean {
+    return this._editmode;
+  }
+
   constructor(private mindergasnlService: MindergasnlService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService) { }
@@ -28,16 +44,17 @@ export class MindergasnlComponent implements OnInit {
     });
 
     this.automatischUploaden.valueChanges.subscribe(value => this.setAuthenticatieTokenValidators(value));
+    this.editMode = false;
 
     setTimeout(() => { this.getMinderGasNlSettings(); },0);
   }
 
-  get automatischUploaden(): AbstractControl {
-    return this.form.get('automatischUploaden');
+  get automatischUploaden(): FormControl {
+    return this.form.get('automatischUploaden') as FormControl;
   }
 
-  get authenticatietoken(): AbstractControl {
-    return this.form.get('authenticatietoken');
+  get authenticatietoken(): FormControl {
+    return this.form.get('authenticatietoken') as FormControl;
   }
 
   private getMinderGasNlSettings(): void {
@@ -54,8 +71,11 @@ export class MindergasnlComponent implements OnInit {
       this.loadingIndicatorService.open();
       this.mindergasnlService.update(this.form.getRawValue()).subscribe(
         () => this.flashSavedMessage(),
-        error => this.errorHandlingService.handleError("De instellingen konden nu niet opgeslagen", error),
-        () => this.loadingIndicatorService.close()
+        error => this.errorHandlingService.handleError("De instellingen konden niet opgeslagen worden", error),
+        () => {
+          this.loadingIndicatorService.close();
+          this.editMode = false;
+        }
       );
     }
   }

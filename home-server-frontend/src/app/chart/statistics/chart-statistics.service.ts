@@ -6,6 +6,10 @@ import {Statistics} from "../../statistics";
 export class ChartStatisticsService {
 
   public createStatisticsChartLines(statistics: Statistics): LineOptions[] {
+    if (!statistics) {
+      return [];
+    }
+
     return _.filter( [
       this.createStatisticChartLine(statistics.avg, 'avg'),
       this.createStatisticChartLine(statistics.min, 'min'),
