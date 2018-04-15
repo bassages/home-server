@@ -283,6 +283,7 @@ public class KlimaatService {
         realtimeKlimaat.setDatumtijd(klimaat.getDatumtijd());
         realtimeKlimaat.setLuchtvochtigheid(klimaat.getLuchtvochtigheid());
         realtimeKlimaat.setTemperatuur(klimaat.getTemperatuur());
+        realtimeKlimaat.setSensorCode(klimaat.getKlimaatSensor().getCode());
 
         List<Klimaat> klimaatsToDetermineTrendFor = getKlimaatsReceivedInLastNumberOfMinutes(klimaat.getKlimaatSensor().getCode(),
                 NR_OF_MINUTES_TO_DETERMINE_TREND_FOR);

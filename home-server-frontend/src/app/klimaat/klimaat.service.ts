@@ -48,6 +48,7 @@ export class KlimaatService {
     realtimeKlimaat.luchtvochtigheid = source.luchtvochtigheid;
     realtimeKlimaat.temperatuurTrend = source.temperatuurTrend;
     realtimeKlimaat.luchtvochtigheidTrend = source.luchtvochtigheidTrend;
+    realtimeKlimaat.sensorCode = source.sensorCode;
     return realtimeKlimaat;
   }
 }

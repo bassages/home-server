@@ -45,8 +45,10 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
   }
 
   private setKlimaat(klimaat: RealtimeKlimaat): void {
-    this.klimaat = klimaat;
-    this.setLeds(this.klimaat.luchtvochtigheid);
+    if (klimaat.sensorCode === this.sensorCode) {
+      this.klimaat = klimaat;
+      this.setLeds(this.klimaat.luchtvochtigheid);
+    }
   }
 
   private setLeds(luchtvochtigheid): void {

@@ -28,4 +28,8 @@ public class RealtimeKlimaat {
     @Getter
     @Setter
     private Trend luchtvochtigheidTrend;
+
+    @Getter
+    @Setter
+    private String sensorCode;
 }

@@ -130,6 +130,7 @@ public class KlimaatServiceTest {
         assertThat(realtimeKlimaat.getTemperatuur()).isEqualTo(klimaat.getTemperatuur());
         assertThat(realtimeKlimaat.getLuchtvochtigheidTrend()).isEqualTo(Trend.UP);
         assertThat(realtimeKlimaat.getTemperatuurTrend()).isEqualTo(Trend.DOWN);
+        assertThat(realtimeKlimaat.getSensorCode()).isEqualTo(klimaatSensor.getCode());
     }
 
     @Test
