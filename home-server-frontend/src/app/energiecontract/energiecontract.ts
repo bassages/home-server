@@ -1,6 +1,6 @@
 import {Moment} from "moment";
 
-export class EnergieContract {
+export class Energiecontract {
   id: number;
   validFrom: Moment;
   validTo: Moment;

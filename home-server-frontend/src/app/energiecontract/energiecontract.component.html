@@ -11,18 +11,24 @@
   </div>
 </div>
 
-<div class="table-responsive">
+<div *ngIf="energiecontracten && energiecontracten.length == 0" class="table-responsive">
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Er zijn nog geen energiecontracten. <strong>Tip</strong>: Je kunt er één toevoegen door rechtsboven op de knop "Toevoegen" te klikken.
+  </div>
+</div>
+
+<div *ngIf="energiecontracten && energiecontracten.length > 0" class="table-responsive">
   <table class="table table-bordered table-striped table-hover table-sm">
     <thead>
       <tr>
         <th>Vanaf</th>
         <th>Leverancier</th>
         <th>Gas per m<sup>3</sup></th>
-        <th>Stroom per kWh (normaaltarief)</th>
-        <th>Stroom per kWh (daltarief)</th>
+        <th>Stroom normaaltarief (kWh)</th>
+        <th>Stroom daltarief (kWh)</th>
       </tr>
     </thead>
-    <tr *ngFor="let energiecontract of energiecontracten" (click)="startEdit(energiecontract)">
+    <tr *ngFor="let energiecontract of energiecontracten" (click)="startEdit(energiecontract)" class="clickable" [ngClass]="{'table-primary': energiecontract.id === selectedEnergiecontract?.id}">
       <td class="text-nowrap">{{ energiecontract.validFrom | date : 'dd-MM-yyyy' }}</td>
       <td>{{ energiecontract.leverancier }}</td>
       <td class="text-right">{{ energiecontract.gasPerKuub | currency:'EUR':'symbol':'1.6-6' }}</td>
@@ -31,3 +37,76 @@
     </tr>
   </table>
 </div>
+
+<form [formGroup]="form" [hidden]="!editMode" class="form-horizontal" autocomplete="off" novalidate (submit)="save()">
+  <hr/>
+
+  <div class="form-group row">
+    <label for="fromDate" class="col-md-4 col-lg-3 control-label">Vanaf *</label>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <div class="input-group">
+        <input #datePicker="dpDayPicker" type="text" class="form-control" id="fromDate" name="datePicker" [readonly]="true"
+               [(ngModel)]="datePickerModel" [ngModelOptions]="{standalone: true}" [dpDayPicker]="datePickerConfiguration"
+               theme="dp-material" mode="day" (onChange)="datePickerChanged($event)" />
+        <span class="input-group-append">
+          <button type="button" class="btn btn-outline-secondary" (click)="openDatePicker()"><i class="fas fa-calendar"></i></button>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="leverancier" class="col-md-4 col-lg-3 control-label">Leverancier *</label>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <input type="text" class="form-control" [ngClass]="{'is-invalid': leverancier.invalid}" id="leverancier" name="leverancier" formControlName="leverancier">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="gas" class="col-md-4 col-lg-3 control-label">Gas (m<sup>3</sup>) *</label>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">&euro;</span>
+        </div>
+        <input type="text" class="form-control" [ngClass]="{'is-invalid': gas.invalid}" id="gas" name="gas" formControlName="gas">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="stroomNormaaltarief" class="col-md-4 col-lg-3 control-label">Stroom normaaltarief (kWh) *</label>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">&euro;</span>
+        </div>
+        <input type="text" class="form-control" [ngClass]="{'is-invalid': stroomNormaalTarief.invalid}" id="stroomNormaaltarief" name="stroomNormaaltarief" formControlName="stroomNormaalTarief">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="stroomDaltarief" class="col-md-4 col-lg-3 control-label">Stroom daltarief (kWh)</label>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">&euro;</span>
+        </div>
+        <input type="text" class="form-control" [ngClass]="{'is-invalid': stroomDalTarief.invalid}" id="stroomDaltarief" name="stroomDaltarief" formControlName="stroomDalTarief">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-md-4 col-lg-3">&nbsp;</div>
+    <div class="col-sm-9 col-md-7 col-lg-5">
+      <button type="button" class="btn btn-primary float-left" [hidden]="!selectedEnergiecontract" (click)="delete()"><i class="fa fa-trash"></i> Verwijderen</button>
+      <div class="float-right">
+        <button type="button" class="btn btn-primary" (click)="cancelEdit()"><i class="fa fa-ban"></i> Annuleren</button>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid"><i class="fa fa-check"></i> Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+</form>

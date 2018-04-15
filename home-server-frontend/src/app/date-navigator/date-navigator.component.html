@@ -1,5 +1,5 @@
 <span class="input-group-prepend">
-  <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fa fa-chevron-left"></i></button>
+  <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fas fa-chevron-left"></i></button>
 </span>
 
 <input type="text" *ngIf="mode == 'day'" class="form-control text-center text-capitalize" name="dayPicker"
@@ -14,6 +14,5 @@
        [readonly]="true" [(ngModel)]="yearPickerModel" />
 
 <span class="input-group-append">
-  <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i
-    class="fa fa-chevron-right"></i></button>
+  <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i class="fas fa-chevron-right"></i></button>
 </span>

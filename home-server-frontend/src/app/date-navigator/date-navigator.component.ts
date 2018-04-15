@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as moment from "moment";
 import {Moment} from "moment";
 import {IDatePickerConfig} from "ng2-date-picker";
-import * as _ from "lodash";
+import {isUndefined} from "util";
 
 const selectedDayFormat = 'dd. DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';
@@ -19,7 +19,7 @@ export class DateNavigatorComponent implements OnInit {
 
   @Input()
   set selectedDate(selectedDate: Moment) {
-    if (!_.isUndefined(selectedDate)) {
+    if (!isUndefined(selectedDate)) {
       this._selectedDate = selectedDate;
       this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
       this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
@@ -44,7 +44,7 @@ export class DateNavigatorComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.initDatePickers();
   }
 
@@ -60,7 +60,7 @@ export class DateNavigatorComponent implements OnInit {
   }
 
   public datePickerChanged(selectedDate: Moment): void {
-    if (!_.isUndefined(selectedDate) && !_.isUndefined(this.previouslySelectedDate)
+    if (!isUndefined(selectedDate) && !isUndefined(this.previouslySelectedDate)
           && !selectedDate.isSame(this.previouslySelectedDate)) {
       this.onNavigate.emit(selectedDate);
     }
@@ -68,7 +68,7 @@ export class DateNavigatorComponent implements OnInit {
   }
 
   public isUpNavigationDisabled(): boolean {
-    if (_.isUndefined(this._selectedDate)) {
+    if (isUndefined(this._selectedDate)) {
       return true;
     }
 
@@ -91,7 +91,7 @@ export class DateNavigatorComponent implements OnInit {
 
     } else if (this.mode == 'year') {
       this.yearPickerModel += amount;
-      this.selectedDate = moment(`${this.yearPickerModel}-${this._selectedDate.month()}-${this._selectedDate.date()}`);
+      this.selectedDate = moment(`${this.yearPickerModel}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
       this.onNavigate.emit(this._selectedDate.clone());
     }
   }

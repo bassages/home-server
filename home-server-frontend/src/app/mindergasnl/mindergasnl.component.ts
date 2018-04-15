@@ -16,7 +16,7 @@ export class MindergasnlComponent implements OnInit {
   public form: FormGroup;
   public showSavedMessage: boolean = false;
 
-  private _editmode: boolean;
+  private _editmode: boolean = false;
 
   private originalAutomatischUploaden: boolean;
   private originalAuthenticatietoken: string;
@@ -41,16 +41,17 @@ export class MindergasnlComponent implements OnInit {
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService) { }
 
-  ngOnInit() {
-    this.form  = new FormGroup({
+  public ngOnInit(): void {
+    this.createForm();
+    setTimeout(() => { this.getMinderGasNlSettings(); },0);
+  }
+
+  private createForm(): void {
+    this.form = new FormGroup({
       automatischUploaden: new FormControl(),
       authenticatietoken: new FormControl('', authenticatieTokenMaxLengthValidator)
     });
-
     this.automatischUploaden.valueChanges.subscribe(value => this.setAuthenticatieTokenValidators(value));
-    this.editMode = false;
-
-    setTimeout(() => { this.getMinderGasNlSettings(); },0);
   }
 
   get automatischUploaden(): FormControl {
