@@ -16,7 +16,7 @@ export class MindergasnlComponent implements OnInit {
   public form: FormGroup;
   public showSavedMessage: boolean = false;
 
-  private _editmode: boolean = false;
+  private _editmode: boolean;
 
   private originalAutomatischUploaden: boolean;
   private originalAuthenticatietoken: string;
@@ -52,6 +52,7 @@ export class MindergasnlComponent implements OnInit {
       authenticatietoken: new FormControl('', authenticatieTokenMaxLengthValidator)
     });
     this.automatischUploaden.valueChanges.subscribe(value => this.setAuthenticatieTokenValidators(value));
+    this.editMode = false;
   }
 
   get automatischUploaden(): FormControl {
