@@ -6,7 +6,6 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.17.0'
     id 'jacoco'
     id "org.sonarqube" version '2.6.2'
-    id 'net.ltgt.apt' version '0.15' // Needed by Lombok
 }
 
 jacoco {
@@ -46,6 +45,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
+compileJava {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+}
+
+compileTestJava {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
+}
+
 version = '1.0.0'
 
 jar {
@@ -53,8 +60,8 @@ jar {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.16.20'
-    apt "org.projectlombok:lombok:1.16.20"
+    annotationProcessor("org.projectlombok:lombok:1.16.20")
+    compileOnly("org.projectlombok:lombok:1.16.20")
 
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-cache')
@@ -85,7 +92,6 @@ dependencies {
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')
     runtime('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-
 }
 
 springBoot {
@@ -121,9 +127,27 @@ task buildAngularJsApplication(type: GulpTask) {
     options = ['--max-old-space-size=512']
 }
 
-// make sure that Gulp generates frontend artifacts for the build
+// make sure that Gulp generates frontend artifacts
 bootRun.dependsOn 'buildAngularJsApplication'
 processResources.dependsOn 'buildAngularJsApplication'
+
+processResources.dependsOn getRootProject().project('home-server-frontend')
+                                           .getTasksByName('buildAngularApplication', false)[0]
+processResources.doLast {
+    def frontendArtifacts = '../home-server-frontend/dist'
+    def resourcesDirectory = 'build/resources/main/public'
+
+    println '-----------------------------------------------------------------------------------'
+    println 'Copy front-end artifacts'
+    println 'From: [' + frontendArtifacts + '] To: [' + resourcesDirectory + ']'
+    println '-----------------------------------------------------------------------------------'
+
+    copy {
+        from frontendArtifacts
+        into resourcesDirectory
+        rename('index.html', 'ng5.html')
+    }
+}
 
 test {
     exclude '**/*IntegrationTest.*'
