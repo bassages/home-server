@@ -87,7 +87,7 @@ public class KlimaatController {
         return klimaatService.getAveragePerMonthInYears(sensorCode, toSensorType(sensorType), jaren);
     }
 
-    private KlimaatSensor getKlimaatSensorExpectingOne(@PathVariable("klimaatSensorCode") String klimaatSensorCode) {
+    private KlimaatSensor getKlimaatSensorExpectingOne(String klimaatSensorCode) {
         return klimaatService.getKlimaatSensorByCode(klimaatSensorCode)
                              .orElseThrow(() -> new ResourceNotFoundException("KlimaatSensor", klimaatSensorCode));
     }
