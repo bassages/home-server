@@ -4,6 +4,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +15,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -53,7 +53,7 @@ public class MeterstandControllerTest {
         LocalDate to = LocalDate.of(2018, FEBRUARY, 2);
 
         List<MeterstandOpDag> meterstandenByDay = asList(mock(MeterstandOpDag.class), mock(MeterstandOpDag.class));
-        when(meterstandService.getPerDag(Matchers.eq(DatePeriod.aPeriodWithToDate(from, to)))).thenReturn(meterstandenByDay);
+        when(meterstandService.getPerDag(eq(DatePeriod.aPeriodWithToDate(from, to)))).thenReturn(meterstandenByDay);
 
         Assertions.assertThat(meterstandController.perDag(from, to)).isEqualTo(meterstandenByDay);
     }

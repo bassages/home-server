@@ -14,9 +14,9 @@ import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -109,7 +109,7 @@ public class KlimaatServiceTest {
         klimaat.setLuchtvochtigheid(new BigDecimal("56.13"));
         klimaat.setTemperatuur(new BigDecimal("21.51"));
 
-        when(klimaatSensorValueTrendService.determineValueTrend(anyListOf(Klimaat.class), any(Function.class))).then(invocation -> {
+        when(klimaatSensorValueTrendService.determineValueTrend(anyList(), any(Function.class))).then(invocation -> {
             Function<Klimaat, BigDecimal> sensorValueGetter = (Function<Klimaat, BigDecimal>) invocation.getArguments()[1];
             BigDecimal resultOfFunction = sensorValueGetter.apply(klimaat);
             if (resultOfFunction.equals(klimaat.getLuchtvochtigheid())) {
