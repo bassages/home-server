@@ -97,7 +97,7 @@ export class KlimaatHistorieComponent implements OnInit {
           }
 
           if (this.sensorCode && this.sensorType && this.date) {
-            setTimeout(() => { this.getAndLoadData(); },0);
+            this.getAndLoadData();
           } else {
             this.loadData([]);
             this.loadingIndicatorService.close()
