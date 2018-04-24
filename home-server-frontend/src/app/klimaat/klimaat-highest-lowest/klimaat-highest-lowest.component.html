@@ -1,0 +1,58 @@
+<div class="row">
+
+  <div class="offset-md-1 col-md-10 col-lg-5">
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-arrow-down text-info"></i> Laagst gemeten</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-sm">
+            <thead>
+            <tr>
+              <th class="text-right"></th>
+              <th class="text-right">Datum/tijd</th>
+              <th class="text-right text-capitalize">{{sensorType}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let klimaat of lowestKlimaats; let index = index">
+              <td class="text-right">{{ index + 1 }}.</td>
+              <td class="text-right">{{ klimaat.dateTime.toDate() | date: 'dd-MM-yyyy HH:mm:ss'}}</td>
+              <td class="text-right">{{ klimaat[sensorType] | number: '1.2-2' }}{{ getValuePostFix(sensorType) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-10 col-lg-5">
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-arrow-up text-danger"></i> Hoogst gemeten</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-sm">
+            <thead>
+            <tr>
+              <th class="text-right"></th>
+              <th class="text-right">Datum/tijd</th>
+              <th class="text-right text-capitalize">{{sensorType}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let klimaat of highestKlimaats; let index = index">
+              <td class="text-right">{{ index + 1 }}.</td>
+              <td class="text-right">{{ klimaat.dateTime.toDate() | date: 'dd-MM-yyyy HH:mm:ss'}}</td>
+              <td class="text-right">{{ klimaat[sensorType] | number: '1.2-2' }}{{ getValuePostFix(sensorType) }}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

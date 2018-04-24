@@ -1,33 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {StompService} from "@stomp/ng2-stompjs";
-import {Subscription} from "rxjs/Subscription";
-import {Observable} from "rxjs/Observable";
-import {Message} from '@stomp/stompjs';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent {
 
-  private klimaatObserver: Observable<Message>;
-  private klimaatSubscription: Subscription;
-
-  constructor(private stompService: StompService) { }
-
-  ngOnInit(): void {
-    this.subscribeToKlimaatUpdates();
-  }
-
-  public ngOnDestroy() {
-    this.klimaatSubscription.unsubscribe();
-  }
-
-  public subscribeToKlimaatUpdates() {
-    this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
-    this.klimaatSubscription = this.klimaatObserver.subscribe(
-      (message) => console.info(message.body)
-    );
+  constructor() {
   }
 }

@@ -41,6 +41,7 @@ import {KlimaatTemperatuurComponent} from './dashboard/klimaat-temperatuur/klima
 import {KlimaatLuchtvochtigheidComponent} from './dashboard/klimaat-luchtvochtigheid/klimaat-luchtvochtigheid.component';
 import {EnergiecontractComponent} from './energiecontract/energiecontract.component';
 import {EnergiecontractService} from "./energiecontract/energiecontract.service";
+import {KlimaatHighestLowestComponent} from './klimaat/klimaat-highest-lowest/klimaat-highest-lowest.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -57,7 +58,7 @@ const stompConfig: StompConfig = {
 
   // Wait in milliseconds before attempting auto reconnect
   // Set to 0 to disable
-  reconnect_delay: 15000,
+  reconnect_delay: 20000,
 
   // Will log diagnostics on console
   debug: true
@@ -70,6 +71,7 @@ const appRoutes: Routes = [
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
   {path: 'mindergasnl', component: MindergasnlComponent},
   {path: 'klimaat/historie', component: KlimaatHistorieComponent},
+  {path: 'klimaat/hoogste-laagste', component: KlimaatHighestLowestComponent},
   {path: 'energiecontract', component: EnergiecontractComponent}
 ];
 
@@ -91,7 +93,8 @@ const appRoutes: Routes = [
     StatisticsComponent,
     KlimaatTemperatuurComponent,
     KlimaatLuchtvochtigheidComponent,
-    EnergiecontractComponent
+    EnergiecontractComponent,
+    KlimaatHighestLowestComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {StompService} from "@stomp/ng2-stompjs";
 import {KlimaatService} from "../../klimaat/klimaat.service";
 import {RealtimeKlimaat} from "../../klimaat/realtimeKlimaat";
+import {Trend} from "../../klimaat/trend";
 
 @Component({
   selector: 'klimaat-temperatuur',
@@ -16,6 +17,7 @@ import {RealtimeKlimaat} from "../../klimaat/realtimeKlimaat";
 export class KlimaatTemperatuurComponent implements OnInit, OnDestroy {
 
   public LedState = LedState;
+  public Trend = Trend;
 
   @Input()
   public sensorCode: string;

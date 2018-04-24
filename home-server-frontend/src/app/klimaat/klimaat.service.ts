@@ -7,6 +7,13 @@ import {Moment} from "moment";
 import {Klimaat} from "./klimaat";
 import {RealtimeKlimaat} from "./realtimeKlimaat";
 import {isUndefined} from "util";
+import {Trend} from "./trend";
+
+const sensorTypeToPostfixMapping: Map<string, string> =
+  new Map<string, string>([
+    ['temperatuur', '℃'],
+    ['luchtvochtigheid', '%'],
+  ]);
 
 @Injectable()
 export class KlimaatService {
@@ -29,6 +36,15 @@ export class KlimaatService {
                     .map(KlimaatService.toRealtimeKlimaat);
   }
 
+  public getTop(sensorCode: string, sensorType: string, topType: string, from: Moment, to: Moment, limit: number): Observable<Klimaat[]> {
+    const url = `api/klimaat/${sensorCode}/${topType}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}&sensorType=${sensorType}&limit=${limit}`;
+    return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
+  }
+
+  public getValuePostFix(sensorType: string) {
+    return sensorTypeToPostfixMapping.has(sensorType) ? sensorTypeToPostfixMapping.get(sensorType) : '';
+  }
+
   private static mapAllToKlimaat(backendKlimaats: BackendKlimaat[]): Klimaat[] {
     return backendKlimaats.map(KlimaatService.mapToKlimaat);
   }
@@ -46,8 +62,8 @@ export class KlimaatService {
     realtimeKlimaat.dateTime = moment(source.datumtijd);
     realtimeKlimaat.temperatuur = source.temperatuur;
     realtimeKlimaat.luchtvochtigheid = source.luchtvochtigheid;
-    realtimeKlimaat.temperatuurTrend = source.temperatuurTrend;
-    realtimeKlimaat.luchtvochtigheidTrend = source.luchtvochtigheidTrend;
+    realtimeKlimaat.temperatuurTrend = Trend[source.temperatuurTrend as string];
+    realtimeKlimaat.luchtvochtigheidTrend = Trend[source.luchtvochtigheidTrend as string];
     realtimeKlimaat.sensorCode = source.sensorCode;
     return realtimeKlimaat;
   }

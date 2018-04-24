@@ -21,12 +21,6 @@ const sensorTypeToDecimalFormatMapping: Map<string, string> =
     ['luchtvochtigheid', '1.1-1'],
   ]);
 
-const sensorTypeToPostfixMapping: Map<string, string> =
-  new Map<string, string>([
-    ['temperatuur', '℃'],
-    ['luchtvochtigheid', '%'],
-  ]);
-
 @Component({
   selector: 'klimaat-historie',
   templateUrl: './klimaat-historie.component.html',
@@ -239,6 +233,7 @@ export class KlimaatHistorieComponent implements OnInit {
     };
   }
 
+  // noinspection JSMethodCanBeStatic
   private getTo(from: Date): Date {
     return moment(from).add(1, 'days').toDate();
   }
@@ -270,12 +265,13 @@ export class KlimaatHistorieComponent implements OnInit {
     return this.formatWithoutUnitLabel(sensorType, value) + this.getValuePostFix(sensorType);
   }
 
+  // noinspection JSMethodCanBeStatic
   public getDecimalFormat(sensorType: string) {
     return sensorTypeToDecimalFormatMapping.has(sensorType) ? sensorTypeToDecimalFormatMapping.get(sensorType) : '0.0-0';
   }
 
   public getValuePostFix(sensorType: string) {
-    return sensorTypeToPostfixMapping.has(sensorType) ? sensorTypeToPostfixMapping.get(sensorType) : '';
+    return this.klimaatService.getValuePostFix(this.sensorType);
   }
 
   private transformServerdata(serverresponses) {
@@ -302,6 +298,7 @@ export class KlimaatHistorieComponent implements OnInit {
     return result;
   }
 
+  // noinspection JSMethodCanBeStatic
   private getOrCreateCombinedRow(currentRows, datumtijd) {
     let row = null;
 
@@ -329,6 +326,7 @@ export class KlimaatHistorieComponent implements OnInit {
     return new Statistics(min, max, mean);
   }
 
+  // noinspection JSMethodCanBeStatic
   public getFormattedTime(klimaat: Klimaat) {
     return klimaat.dateTime.format('HH:mm');
   }

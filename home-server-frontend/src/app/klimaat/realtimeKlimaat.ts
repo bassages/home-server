@@ -1,7 +1,8 @@
 import {Klimaat} from "./klimaat";
+import {Trend} from "./trend";
 
 export class RealtimeKlimaat extends Klimaat {
-  temperatuurTrend: string;
-  luchtvochtigheidTrend: string;
+  temperatuurTrend: Trend;
+  luchtvochtigheidTrend: Trend;
   sensorCode: string;
 }
