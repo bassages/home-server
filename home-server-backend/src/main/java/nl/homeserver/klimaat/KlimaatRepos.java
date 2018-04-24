@@ -30,8 +30,7 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "                      WHERE ks.code = :sensorCode "
                  + "                   GROUP BY k.datum "
                  + "                     HAVING k.datum >= :van AND k.datum < :tot "
-                 + "                   ORDER BY temperatuur "
-                 + "                   DESC LIMIT :limit "
+                 + "                   ORDER BY temperatuur DESC LIMIT :limit"
                  + "                  ) datums", nativeQuery = true)
     List<Date> getPeakHighTemperatureDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
@@ -48,8 +47,7 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "                      WHERE ks.code = :sensorCode"
                  + "                   GROUP BY k.datum"
                  + "                     HAVING k.datum >= :van AND k.datum < :tot"
-                 + "                   ORDER BY temperatuur"
-                 + "                   DESC LIMIT :limit"
+                 + "                   ORDER BY temperatuur ASC LIMIT :limit"
                  + "                  ) datums", nativeQuery = true)
     List<Date> getPeakLowTemperatureDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
