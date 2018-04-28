@@ -7,6 +7,9 @@ import {Moment} from "moment";
 import {Klimaat} from "../klimaat";
 import {KlimaatSensor} from "../klimaatSensor";
 import * as _ from "lodash";
+import {zip} from 'rxjs/observable/zip';
+
+const datePickerFormat: string = 'DD-MM-YYYY';
 
 @Component({
   selector: 'klimaat-highest-lowest',
@@ -14,13 +17,11 @@ import * as _ from "lodash";
   styleUrls: ['./klimaat-highest-lowest.component.scss']
 })
 export class KlimaatHighestLowestComponent implements OnInit {
-
   public sensors: KlimaatSensor[];
-  public sensorCode: string = 'WOONKAMER';
+  public sensorCode: string;
   public sensorType: string = 'temperatuur';
-  public limit: number = 25;
-  public from: Moment = moment().set('month', 0).set('date', 1);
-  public to: Moment = moment().set('month', 11).set('date', 31);
+  public limit: number = 10;
+  public year: Moment = moment();
 
   public highestKlimaats: Klimaat[];
   public lowestKlimaats: Klimaat[];
@@ -52,19 +53,41 @@ export class KlimaatHighestLowestComponent implements OnInit {
   private getAndLoadData() {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.getTop(this.sensorCode, this.sensorType, 'laagste', this.from, this.to, this.limit).subscribe(
-      klimaats => this.lowestKlimaats = klimaats,
-      error => this.errorHandlingService.handleError("Laagste klimaat kon niet worden opgehaald", error),
-      () => this.loadingIndicatorService.close()
-    );
-    this.klimaatService.getTop(this.sensorCode, this.sensorType, 'hoogste', this.from, this.to, this.limit).subscribe(
-      klimaats => this.highestKlimaats = klimaats,
-      error => this.errorHandlingService.handleError("Hoogste klimaat kon niet worden opgehaald", error),
+    const from: Moment = this.getFrom();
+    const to: Moment = this.getTo();
+
+    const getLowest = this.klimaatService.getTop(this.sensorCode, this.sensorType, 'laagste', from, to, this.limit);
+    const getHighest = this.klimaatService.getTop(this.sensorCode, this.sensorType, 'hoogste', from, to, this.limit);
+
+    zip(getLowest, getHighest).subscribe(klimaats => { this.lowestKlimaats = klimaats[0]; this.highestKlimaats = klimaats[1];},
+      error => this.errorHandlingService.handleError("Hoogste/laagste klimaat kon niet worden opgehaald", error),
       () => this.loadingIndicatorService.close()
     );
   }
 
-  public getValuePostFix(sensorType: string) {
+  private getFrom(): Moment {
+    return this.year.clone().month(0).date(1);
+  }
+
+  private getTo(): Moment {
+    return this.year.clone().month(11).date(31);
+  }
+
+  public getValuePostFix(sensorType: string): string {
     return this.klimaatService.getValuePostFix(this.sensorType);
+  }
+
+  public setLimit(limit: string) {
+    this.limit = +limit;
+    this.getAndLoadData();
+  }
+
+  public setSensorCode(sensorCode: string): void {
+    this.sensorCode = sensorCode;
+  }
+
+  public yearPickerChanged(selectedYear: Moment): void {
+      this.year = selectedYear;
+      this.getAndLoadData();
   }
 }

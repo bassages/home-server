@@ -68,6 +68,7 @@ export class EnergiecontractComponent implements OnInit {
     );
   }
 
+  // noinspection JSMethodCanBeStatic
   private sort(energiecontracten: Energiecontract[]): Energiecontract[] {
     return _.sortBy<Energiecontract>(energiecontracten, ['validFrom']);
   }
@@ -173,6 +174,7 @@ export class EnergiecontractComponent implements OnInit {
     this.datePicker.api.open();
   }
 
+  // noinspection JSMethodCanBeStatic
   private toFloat(value: string): number {
     if (isNullOrUndefined(value)) {
       return null;
