@@ -8,6 +8,7 @@ import {Klimaat} from "../klimaat";
 import {KlimaatSensor} from "../klimaatSensor";
 import * as _ from "lodash";
 import {zip} from 'rxjs/observable/zip';
+import {Router} from "@angular/router";
 
 const datePickerFormat: string = 'DD-MM-YYYY';
 
@@ -28,7 +29,9 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
   constructor(private klimaatService: KlimaatService,
               private loadingIndicatorService: LoadingIndicatorService,
-              private errorHandlingService: ErrorHandingService) { }
+              private errorHandlingService: ErrorHandingService,
+              private router: Router) {
+  }
 
   public ngOnInit(): void {
     setTimeout(() => { this.getKlimaatSensors(); },0);
@@ -98,5 +101,11 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
   public setSensorType(sensorType: string): void {
     this.sensorType = sensorType;
+  }
+
+  public navigateToDetailsOfDate(dateTime: Moment) {
+    const commands = ['/klimaat/historie'];
+    const extras = { queryParams: { 'sensorCode': this.sensorCode, 'sensorType': this.sensorType, 'datum': dateTime.format('DD-MM-YYYY') } };
+    this.router.navigate(commands, extras);
   }
 }
