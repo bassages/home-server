@@ -96,8 +96,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
       this.getAndLoadData();
   }
 
-  public toggleSensorType(sensorType: string): void {
+  public setSensorType(sensorType: string): void {
     this.sensorType = sensorType;
-    this.getAndLoadData();
   }
 }

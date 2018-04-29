@@ -2,10 +2,10 @@
   <div class="col-md-2 mb-2">
     <div class="btn-group btn-group-toggle d-flex">
       <label class="btn btn-outline-secondary w-100" [ngClass]="{'active': sensorType === 'temperatuur'}">
-        <input type="checkbox" [checked]="sensorType === 'temperatuur'" (click)="toggleSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> &#8451;
+        <input type="checkbox" [checked]="sensorType === 'temperatuur'" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> &#8451;
       </label>
       <label class="btn btn-outline-secondary w-100" [ngClass]="{'active': sensorType === 'luchtvochtigheid'}">
-        <input type="checkbox" [checked]="sensorType === 'luchtvochtigheid'" (change)="toggleSensorType('luchtvochtigheid')"><i class="fas fa-tint"></i> %
+        <input type="checkbox" [checked]="sensorType === 'luchtvochtigheid'" (change)="setSensorType('luchtvochtigheid')"><i class="fas fa-tint"></i> %
       </label>
     </div>
   </div>
