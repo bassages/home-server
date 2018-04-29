@@ -152,6 +152,22 @@ public class KlimaatServiceTest {
         assertThat(recentlyReceivedKlimaatsPerKlimaatSensorCode.get(klimaatSensor.getCode())).containsExactly(klimaat);
     }
 
+    @Test
+    public void givenKlimaatWithoutDatumtijdwhenAddThenDatumtijdIsSetToCurrent() {
+        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
+
+        Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                    .withDatumtijd(null)
+                                    .build();
+
+        klimaatService.add(klimaat);
+
+        assertThat(klimaat.getDatumtijd()).isEqualTo(currentDateTime);
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenOldItemsRemovedFromRecentlyReceivedKlimaatsPerSensorCode() {

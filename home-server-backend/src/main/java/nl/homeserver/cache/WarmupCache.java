@@ -43,8 +43,12 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${warmupCache.on-application-start}")
     private boolean warmupCacheOnApplicationStart;
 
-    public WarmupCache(OpgenomenVermogenController opgenomenVermogenController, EnergieController energieController, KlimaatController klimaatController,
-            KlimaatService klimaatService, MeterstandController meterstandController, Clock clock) {
+    public WarmupCache(final OpgenomenVermogenController opgenomenVermogenController,
+                       final EnergieController energieController,
+                       final KlimaatController klimaatController,
+                       final KlimaatService klimaatService,
+                       final MeterstandController meterstandController,
+                       final Clock clock) {
         this.opgenomenVermogenController = opgenomenVermogenController;
         this.energieController = energieController;
         this.klimaatController = klimaatController;

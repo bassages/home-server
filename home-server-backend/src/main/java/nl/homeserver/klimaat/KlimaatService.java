@@ -178,6 +178,9 @@ public class KlimaatService {
     }
 
     public void add(Klimaat klimaat) {
+        if (klimaat.getDatumtijd() == null) {
+            klimaat.setDatumtijd(now(clock));
+        }
         publishEvent(klimaat);
         recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(), klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
