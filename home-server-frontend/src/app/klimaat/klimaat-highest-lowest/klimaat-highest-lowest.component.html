@@ -1,5 +1,5 @@
 <div class="form-row mb-3">
-  <div class="col-md-2 mb-2">
+  <div class="col-md-3 mb-2">
     <div class="btn-group btn-group-toggle d-flex">
       <label class="btn btn-outline-secondary w-100" [ngClass]="{'active': sensorType === 'temperatuur'}">
         <input type="checkbox" [checked]="sensorType === 'temperatuur'" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> &#8451;
@@ -17,9 +17,9 @@
   <div class="col-md-3 mb-2">
     <date-navigator mode="year" [selectedDate]="year" (onNavigate)="yearPickerChanged($event)"class="input-group"></date-navigator>
   </div>
-  <div class="col-md-2">
+  <div class="col-md-1">
     <select #limitSelect class="form-control form-control" id="limit" name="limit" (change)="setLimit(limitSelect.value)">
-      <option *ngFor="let _limit of [5, 10, 25, 50]" [value]="_limit" [selected]="_limit === limit">{{ _limit }}</option>
+      <option *ngFor="let _limit of [5, 10, 25, 50, 100]" [value]="_limit" [selected]="_limit === limit">{{ _limit }}</option>
     </select>
   </div>
 </div>
