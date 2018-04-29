@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import nl.homeserver.HousekeepingSchedule;
 import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
 
 @Service
 public class OpgenomenVermogenHousekeeping {

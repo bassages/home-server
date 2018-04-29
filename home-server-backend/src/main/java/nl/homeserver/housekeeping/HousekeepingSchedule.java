@@ -1,4 +1,4 @@
-package nl.homeserver;
+package nl.homeserver.housekeeping;
 
 public final class HousekeepingSchedule {
     private static final String ONE_AM = "0 0 1 * * *";

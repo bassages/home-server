@@ -5,8 +5,7 @@
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
         <select #sensor class="form-control" name="sensor" (change)="changeSensor(sensor.value)">
-          <option *ngIf="!sensorCode">Selecteer een locatie...</option>
-          <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensor?.code === _sensor.code">{{_sensor.omschrijving}}</option>
+          <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensorCode === _sensor.code">{{_sensor.omschrijving}}</option>
         </select>
       </li>
 
@@ -20,11 +19,9 @@
 <!-- Up to (but excluding) large -->
 <div class="d-xs-block d-lg-none">
 
-  <!-- Sensor selection -->
   <div class="row mb-2 pl-2 pr-2 pl-sm-0 pr-sm-0">
-    <select #sensor class="form-control form-control-sm" name="sensor" (change)="changeSensor(sensor.value)">
-      <option *ngIf="!sensorCode">Selecteer een locatie...</option>
-      <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensor?.code === _sensor.code">{{_sensor.omschrijving}}</option>
+    <select class="form-control form-control-sm" name="sensor" [ngModel]="sensor" (ngModelChange)="changeSensor($event)">
+      <option *ngFor="let _sensor of sensors" [ngValue]="_sensor">{{_sensor.omschrijving}}</option>
     </select>
   </div>
 

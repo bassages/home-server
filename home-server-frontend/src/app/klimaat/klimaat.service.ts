@@ -15,6 +15,12 @@ const sensorTypeToPostfixMapping: Map<string, string> =
     ['luchtvochtigheid', '%'],
   ]);
 
+const sensorTypeToDecimalFormatMapping: Map<string, string> =
+  new Map<string, string>([
+    ['temperatuur', '1.2-2'],
+    ['luchtvochtigheid', '1.1-1'],
+  ]);
+
 @Injectable()
 export class KlimaatService {
 
@@ -41,8 +47,14 @@ export class KlimaatService {
     return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
   }
 
+  // noinspection JSMethodCanBeStatic
   public getValuePostFix(sensorType: string) {
     return sensorTypeToPostfixMapping.has(sensorType) ? sensorTypeToPostfixMapping.get(sensorType) : '';
+  }
+
+  // noinspection JSMethodCanBeStatic
+  public getDecimalFormat(sensorType: string) {
+    return sensorTypeToDecimalFormatMapping.has(sensorType) ? sensorTypeToDecimalFormatMapping.get(sensorType) : '0.0-0';
   }
 
   private static mapAllToKlimaat(backendKlimaats: BackendKlimaat[]): Klimaat[] {

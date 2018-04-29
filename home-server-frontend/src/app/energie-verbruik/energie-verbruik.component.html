@@ -18,10 +18,10 @@
 
       <li class="ml-auto mr-auto">
         <div class="btn-group btn-group-toggle">
-          <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('stroom') >= 0}">
+          <label class="btn btn-outline-secondary" [ngClass]="{'active': isEnergieSoortSelected('stroom')}">
             <input type="checkbox" [checked]="isEnergieSoortSelected('stroom')" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom
           </label>
-          <label class="btn btn-outline-secondary" [ngClass]="{'active' : energiesoorten.indexOf('gas') >= 0}">
+          <label class="btn btn-outline-secondary" [ngClass]="{'active': isEnergieSoortSelected('gas')}">
             <input type="checkbox" [checked]="isEnergieSoortSelected('gas')" (change)="toggleEnergiesoort('gas')">&nbsp;&nbsp; <i class="fas fa-fire"></i> Gas&nbsp;&nbsp;&nbsp;
           </label>
         </div>
@@ -49,26 +49,26 @@
   <!-- Energiesoort selection  -->
   <div class="row mb-2">
     <div class="col-6 pl-2 pr-1 pl-sm-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : isEnergieSoortSelected('stroom')}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': isEnergieSoortSelected('stroom')}" (click)="toggleEnergiesoort('stroom')"><i class="fas fa-bolt"></i> Stroom</button>
     </div>
     <div class="col-6 pl-1 pr-2 pr-sm-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active' : isEnergieSoortSelected('gas')}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': isEnergieSoortSelected('gas')}" (click)="toggleEnergiesoort('gas')"><i class="fas fa-fire"></i> Gas</button>
     </div>
   </div>
 
   <!-- Period selection  -->
   <div class="row mb-2">
     <div class="col-3 pl-2 pr-1 pl-sm-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'uur'}" (click)="setPeriode('uur')">Uur</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode === 'uur'}" (click)="setPeriode('uur')">Uur</button>
     </div>
     <div class="col-3 pl-1 pr-1">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'dag'}" (click)="setPeriode('dag')">Dag</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode === 'dag'}" (click)="setPeriode('dag')">Dag</button>
     </div>
     <div class="col-3 pl-1 pr-1">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'maand'}" (click)="setPeriode('maand')">Maand</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode === 'maand'}" (click)="setPeriode('maand')">Maand</button>
     </div>
     <div class="col-3 pl-1 pr-2 pr-sm-0">
-      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode == 'jaar'}" (click)="setPeriode('jaar')">Jaar</button>
+      <button class="btn btn-outline-secondary btn-sm btn-block" [ngClass]="{'active': periode === 'jaar'}" (click)="setPeriode('jaar')">Jaar</button>
     </div>
   </div>
 
@@ -82,10 +82,10 @@
   <div class="col-md-1 pl-0 pr-0 d-none d-lg-block">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
-        <a class="nav-link mb-1 clickable" [ngClass]="{'active': verbruiksoort == 'verbruik'}" (click)="setVerbruikSoort('verbruik')">Verbruik</a>
+        <a class="nav-link mb-1 clickable" [ngClass]="{'active': verbruiksoort === 'verbruik'}" (click)="setVerbruikSoort('verbruik')">Verbruik</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link mb-0 clickable" [ngClass]="{'active': verbruiksoort == 'kosten'}" (click)="setVerbruikSoort('kosten')">Kosten</a>
+        <a class="nav-link mb-0 clickable" [ngClass]="{'active': verbruiksoort === 'kosten'}" (click)="setVerbruikSoort('kosten')">Kosten</a>
       </li>
     </ul>
   </div>

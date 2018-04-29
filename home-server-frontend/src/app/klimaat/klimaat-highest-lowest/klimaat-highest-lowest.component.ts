@@ -74,7 +74,11 @@ export class KlimaatHighestLowestComponent implements OnInit {
   }
 
   public getValuePostFix(sensorType: string): string {
-    return this.klimaatService.getValuePostFix(this.sensorType);
+    return this.klimaatService.getValuePostFix(sensorType);
+  }
+
+  public getDecimalFormat(sensorType: string): string {
+    return this.klimaatService.getDecimalFormat(sensorType);
   }
 
   public setLimit(limit: string) {
@@ -84,10 +88,16 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
   public setSensorCode(sensorCode: string): void {
     this.sensorCode = sensorCode;
+    this.getAndLoadData();
   }
 
   public yearPickerChanged(selectedYear: Moment): void {
       this.year = selectedYear;
       this.getAndLoadData();
+  }
+
+  public toggleSensorType(sensorType: string): void {
+    this.sensorType = sensorType;
+    this.getAndLoadData();
   }
 }

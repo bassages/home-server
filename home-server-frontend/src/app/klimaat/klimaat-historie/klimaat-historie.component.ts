@@ -15,12 +15,6 @@ import {DecimalPipe} from "@angular/common";
 import {Statistics} from "../../statistics";
 import {ChartStatisticsService} from "../../chart/statistics/chart-statistics.service";
 
-const sensorTypeToDecimalFormatMapping: Map<string, string> =
-  new Map<string, string>([
-    ['temperatuur', '1.2-2'],
-    ['luchtvochtigheid', '1.1-1'],
-  ]);
-
 @Component({
   selector: 'klimaat-historie',
   templateUrl: './klimaat-historie.component.html',
@@ -57,26 +51,26 @@ export class KlimaatHistorieComponent implements OnInit {
 
   public ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(queryParams => {
-        const sensorCodeParam = queryParams.get('sensorCode');
-        const sensorTypeParam = queryParams.get('sensorType');
+      const sensorCodeParam = queryParams.get('sensorCode');
+      const sensorTypeParam = queryParams.get('sensorType');
 
-        if (queryParams.has('datum')) {
-          this.date = moment(queryParams.get('datum'), "DD-MM-YYYY");
-        } else {
-          return this.navigateTo(sensorCodeParam, sensorTypeParam, moment());
-        }
+      if (queryParams.has('datum')) {
+        this.date = moment(queryParams.get('datum'), "DD-MM-YYYY");
+      } else {
+        return this.navigateTo(sensorCodeParam, sensorTypeParam, moment());
+      }
 
-        if (!queryParams.has('sensorType')) {
-          return this.navigateTo(sensorCodeParam, 'temperatuur', this.date);
-        }
+      if (!queryParams.has('sensorType')) {
+        return this.navigateTo(sensorCodeParam, 'temperatuur', this.date);
+      }
 
-        this.sensorType = sensorTypeParam;
-        this.sensorCode = sensorCodeParam;
+      this.sensorCode = sensorCodeParam;
+      this.sensorType = sensorTypeParam;
 
-        this.determineChartOrTable();
+      this.determineChartOrTable();
 
-        setTimeout(() => { this.getKlimaatSensors(); },0);
-      });
+      this.getKlimaatSensors();
+    });
   }
 
   private getKlimaatSensors(): void {
@@ -86,7 +80,7 @@ export class KlimaatHistorieComponent implements OnInit {
       response => {
           this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
 
-          if (this.sensors.length === 1) {
+          if (!this.sensorCode && this.sensors.length > 0) {
             this.sensorCode = this.sensors[0].code;
           }
 
@@ -265,9 +259,8 @@ export class KlimaatHistorieComponent implements OnInit {
     return this.formatWithoutUnitLabel(sensorType, value) + this.getValuePostFix(sensorType);
   }
 
-  // noinspection JSMethodCanBeStatic
   public getDecimalFormat(sensorType: string) {
-    return sensorTypeToDecimalFormatMapping.has(sensorType) ? sensorTypeToDecimalFormatMapping.get(sensorType) : '0.0-0';
+    return this.klimaatService.getDecimalFormat(sensorType);
   }
 
   public getValuePostFix(sensorType: string) {

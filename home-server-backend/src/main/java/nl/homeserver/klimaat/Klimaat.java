@@ -29,7 +29,7 @@ public class Klimaat {
     @Column
     private LocalDate datum;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Getter
     private LocalDateTime datumtijd;
 
