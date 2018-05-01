@@ -8,6 +8,7 @@ import {Klimaat} from "./klimaat";
 import {RealtimeKlimaat} from "./realtimeKlimaat";
 import {isUndefined} from "util";
 import {Trend} from "./trend";
+import {GemiddeldeKlimaatPerMaand} from "./gemiddeldeKlimaatPerMaand";
 
 const sensorTypeToPostfixMapping: Map<string, string> =
   new Map<string, string>([
@@ -39,12 +40,17 @@ export class KlimaatService {
   public getMostRecent(sensorCode: string): Observable<RealtimeKlimaat> {
     return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`)
                     .filter(value => !isUndefined(value) && value !== null)
-                    .map(KlimaatService.toRealtimeKlimaat);
+                    .map(KlimaatService.mapToRealtimeKlimaat);
   }
 
   public getTop(sensorCode: string, sensorType: string, topType: string, from: Moment, to: Moment, limit: number): Observable<Klimaat[]> {
     const url = `api/klimaat/${sensorCode}/${topType}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}&sensorType=${sensorType}&limit=${limit}`;
     return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
+  }
+
+  public getGemiddeldeKlimaatPerMaand(sensorCode: string, sensorType: string, year: number): Observable<GemiddeldeKlimaatPerMaand[]> {
+    const url = `api/klimaat/${sensorCode}/gemiddeld-per-maand-in-jaar?jaar=${year}&sensorType=${sensorType}`;
+    return this.http.get<BackendGemiddeldeKlimaatPerMaand[][]>(url).map(KlimaatService.mapAllToGemiddeldeKlimaatPerMaand);
   }
 
   // noinspection JSMethodCanBeStatic
@@ -69,7 +75,7 @@ export class KlimaatService {
     return klimaat;
   }
 
-  public static toRealtimeKlimaat(source: any): RealtimeKlimaat {
+  public static mapToRealtimeKlimaat(source: any): RealtimeKlimaat {
     const realtimeKlimaat: RealtimeKlimaat = new RealtimeKlimaat();
     realtimeKlimaat.dateTime = moment(source.datumtijd);
     realtimeKlimaat.temperatuur = source.temperatuur;
@@ -78,6 +84,17 @@ export class KlimaatService {
     realtimeKlimaat.luchtvochtigheidTrend = Trend[source.luchtvochtigheidTrend as string];
     realtimeKlimaat.sensorCode = source.sensorCode;
     return realtimeKlimaat;
+  }
+
+  private static mapAllToGemiddeldeKlimaatPerMaand(backendGemiddeldeKlimaatPerMaand: BackendGemiddeldeKlimaatPerMaand[][]): GemiddeldeKlimaatPerMaand[] {
+    return backendGemiddeldeKlimaatPerMaand[0].map(KlimaatService.mapToGemiddeldeKlimaatPerMaand);
+  }
+
+  public static mapToGemiddeldeKlimaatPerMaand(backendGemiddeldeKlimaatPerMaand: BackendGemiddeldeKlimaatPerMaand): GemiddeldeKlimaatPerMaand {
+    const gemiddeldeKlimaatPerMaand: GemiddeldeKlimaatPerMaand = new GemiddeldeKlimaatPerMaand();
+    gemiddeldeKlimaatPerMaand.maand = moment(backendGemiddeldeKlimaatPerMaand.maand);
+    gemiddeldeKlimaatPerMaand.gemiddelde = backendGemiddeldeKlimaatPerMaand.gemiddelde;
+    return gemiddeldeKlimaatPerMaand;
   }
 }
 
@@ -90,4 +107,9 @@ class BackendKlimaat {
 class BackendRealtimeKlimaat extends BackendKlimaat{
   temperatuurTrend: string;
   luchtvochtigheidTrend: string;
+}
+
+class BackendGemiddeldeKlimaatPerMaand {
+  maand: string;
+  gemiddelde: number;
 }

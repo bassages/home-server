@@ -52,7 +52,7 @@ export class OpgenomenVermogenComponent implements OnInit {
 
   private navigateTo(date: Moment) {
     const commands = ['/energie/opgenomen-vermogen'];
-    const extras = {queryParams: {'datum': date.format('DD-MM-YYYY')}, replaceUrl: true};
+    const extras = {queryParams: { datum: date.format('DD-MM-YYYY')}, replaceUrl: true};
     this.router.navigate(commands, extras);
   }
 

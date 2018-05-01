@@ -82,6 +82,6 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
   }
 
   public navigateToVerbruikDetails() {
-    this.router.navigate(['/energie', 'verbruik', 'uur'], {queryParams: { 'energiesoort': 'stroom' }});
+    this.router.navigate(['/energie', 'verbruik', 'uur'], {queryParams: { energiesoort: 'stroom' }});
   }
 }

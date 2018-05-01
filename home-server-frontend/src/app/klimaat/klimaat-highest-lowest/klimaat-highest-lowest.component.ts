@@ -105,7 +105,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
   public navigateToDetailsOfDate(dateTime: Moment) {
     const commands = ['/klimaat/historie'];
-    const extras = { queryParams: { 'sensorCode': this.sensorCode, 'sensorType': this.sensorType, 'datum': dateTime.format('DD-MM-YYYY') } };
+    const extras = { queryParams: { sensorCode: this.sensorCode, sensorType: this.sensorType, datum: dateTime.format('DD-MM-YYYY') } };
     this.router.navigate(commands, extras);
   }
 }

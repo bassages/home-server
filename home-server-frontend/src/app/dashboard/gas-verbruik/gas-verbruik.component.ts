@@ -106,6 +106,6 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
   }
 
   public navigateToVerbruikDetails() {
-    this.router.navigate(['/energie', 'verbruik', 'uur'], {queryParams: { 'energiesoort': 'gas' }});
+    this.router.navigate(['/energie', 'verbruik', 'uur'], {queryParams: { energiesoort: 'gas' }});
   }
 }

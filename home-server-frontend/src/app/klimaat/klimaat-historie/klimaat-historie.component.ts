@@ -81,7 +81,7 @@ export class KlimaatHistorieComponent implements OnInit {
           this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
 
           if (!this.sensorCode && this.sensors.length > 0) {
-            this.sensorCode = this.sensors[0].code;
+            return this.navigateTo(this.sensors[0].code, this.sensorType, this.date);
           }
 
           if (this.sensorCode && this.sensorType && this.date) {
@@ -140,7 +140,7 @@ export class KlimaatHistorieComponent implements OnInit {
 
   private navigateTo(sensorCode: string, sensorType: string, datum: Moment): void {
     const commands = ['/klimaat/historie'];
-    const extras = { queryParams: { 'sensorCode': sensorCode, 'sensorType': sensorType, 'datum': datum.format('DD-MM-YYYY') }, replaceUrl: true };
+    const extras = { queryParams: { sensorCode: sensorCode, sensorType: sensorType, datum: datum.format('DD-MM-YYYY') }, replaceUrl: true };
     this.router.navigate(commands, extras);
   }
 

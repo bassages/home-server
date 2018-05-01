@@ -43,7 +43,7 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
 
   private subscribeToKlimaatUpdates(): void {
     this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
-    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => this.setKlimaat(KlimaatService.toRealtimeKlimaat(JSON.parse(message.body))));
+    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => this.setKlimaat(KlimaatService.mapToRealtimeKlimaat(JSON.parse(message.body))));
   }
 
   private setKlimaat(klimaat: RealtimeKlimaat): void {
@@ -67,6 +67,6 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
   }
 
   public navigateToKlimaatHistory(): void {
-    this.router.navigate(['/klimaat/historie'], {queryParams: { 'sensorType': 'luchtvochtigheid' }});
+    this.router.navigate(['/klimaat/historie'], { queryParams: { sensorCode: this.sensorCode, sensorType: 'luchtvochtigheid' } });
   }
 }

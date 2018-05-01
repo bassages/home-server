@@ -159,7 +159,7 @@ export class EnergieVerbruikComponent implements OnInit {
 
   private navigateToDetails(date: Moment) {
     if (this.periode == 'uur') {
-      this.router.navigate(['/energie/opgenomen-vermogen'], {queryParams: {'datum': date.format('DD-MM-YYYY')}, replaceUrl: false});
+      this.router.navigate(['/energie/opgenomen-vermogen'], { queryParams: {datum: date.format('DD-MM-YYYY')}, replaceUrl: false });
     } else if (this.periode == 'dag') {
       this.navigateTo(this.verbruiksoort, this.energiesoorten, 'uur', date);
     } else if (this.periode == 'maand') {

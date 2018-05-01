@@ -42,6 +42,7 @@ import {KlimaatLuchtvochtigheidComponent} from './dashboard/klimaat-luchtvochtig
 import {EnergiecontractComponent} from './energiecontract/energiecontract.component';
 import {EnergiecontractService} from "./energiecontract/energiecontract.service";
 import {KlimaatHighestLowestComponent} from './klimaat/klimaat-highest-lowest/klimaat-highest-lowest.component';
+import {KlimaatAverageComponent} from './klimaat/klimaat-average/klimaat-average.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -61,7 +62,7 @@ const stompConfig: StompConfig = {
   reconnect_delay: 20000,
 
   // Will log diagnostics on console
-  debug: true
+  debug: false
 };
 
 const appRoutes: Routes = [
@@ -72,6 +73,7 @@ const appRoutes: Routes = [
   {path: 'mindergasnl', component: MindergasnlComponent},
   {path: 'klimaat/historie', component: KlimaatHistorieComponent},
   {path: 'klimaat/hoogste-laagste', component: KlimaatHighestLowestComponent},
+  {path: 'klimaat/gemiddelde', component: KlimaatAverageComponent},
   {path: 'energiecontract', component: EnergiecontractComponent}
 ];
 
@@ -94,7 +96,8 @@ const appRoutes: Routes = [
     KlimaatTemperatuurComponent,
     KlimaatLuchtvochtigheidComponent,
     EnergiecontractComponent,
-    KlimaatHighestLowestComponent
+    KlimaatHighestLowestComponent,
+    KlimaatAverageComponent
   ],
   imports: [
     BrowserModule,
@@ -103,11 +106,9 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     NgbModule.forRoot(),
     DpDatePickerModule,
-    RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true}
-    )
+    RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true})
   ],
-  entryComponents: [
-  ],
+  entryComponents: [],
   providers: [
     DecimalPipe,
     ChartService,
