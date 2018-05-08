@@ -43,10 +43,9 @@ export class OpgenomenVermogenComponent implements OnInit {
       if (!queryParams.has('datum')) {
         return this.navigateTo(moment());
       }
-
       this.selectedDate = moment(queryParams.get('datum'), "DD-MM-YYYY");
 
-      setTimeout(() => { this.getAndLoadData(); },0);
+      setTimeout(() => this.getAndLoadData() );
     });
   }
 
@@ -141,11 +140,6 @@ export class OpgenomenVermogenComponent implements OnInit {
         }
       }
     }
-  }
-
-  // noinspection JSMethodCanBeStatic
-  public formatWithoutUnitLabel(watt: number): string {
-    return _.isUndefined(watt) || isNaN(watt) || watt === null ? '-' : Math.round(watt).toString();
   }
 
   // noinspection JSMethodCanBeStatic

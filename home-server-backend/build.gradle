@@ -23,10 +23,6 @@ sonarqube {
     }
 }
 
-if (!project.hasProperty("buildtype")) {
-    ext.buildtype = 'dev'
-}
-
 repositories {
     jcenter()
 }
@@ -105,36 +101,30 @@ bootRun {
     systemProperties System.properties
 }
 
-// Cleans up node_modules and nodejs dirs on clean task
-clean.doFirst {
-    delete "${rootDir}/node_modules"
-    delete "${rootDir}/.gradle/nodejs"
-}
-
-task buildAngularJsApplication(type: GulpTask) {
-    description = 'Triggers Gulp to build the AngularJS application. ' +
-                  'Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
-
-    // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
-    npmInstall.outputs.upToDateWhen { false }
-
-    // make sure npm install has been performed before calling the build task in gulpfile.js
-    dependsOn = [ npmInstall ]
-
-    args = ['build', "--buildtype=${project.buildtype}" ]
-
-    // limit memory usage
-    options = ['--max-old-space-size=512']
-}
-
-// make sure that Gulp generates frontend artifacts
-bootRun.dependsOn 'buildAngularJsApplication'
-processResources.dependsOn 'buildAngularJsApplication'
-
+// ------------ AngularJS (5.x.x) ------------
 processResources.dependsOn getRootProject().project('home-server-frontend')
                                            .getTasksByName('buildAngularApplication', false)[0]
 processResources.doLast {
     def frontendArtifacts = '../home-server-frontend/dist'
+    def resourcesDirectory = 'build/resources/main/static'
+
+    println '-----------------------------------------------------------------------------------'
+    println 'Copy front-end artifacts'
+    println 'From: [' + frontendArtifacts + '] To: [' + resourcesDirectory + ']'
+    println '-----------------------------------------------------------------------------------'
+
+    copy {
+        from frontendArtifacts
+        into resourcesDirectory
+    }
+}
+
+// ------------ AngularJS (1.x.x) ------------
+processResources.dependsOn getRootProject().project('home-server-frontend-ng1')
+                                           .getTasksByName('buildAngularJsApplication', false)[0]
+
+processResources.doLast {
+    def frontendArtifacts = '../home-server-frontend-ng1/dist'
     def resourcesDirectory = 'build/resources/main/public'
 
     println '-----------------------------------------------------------------------------------'
@@ -145,7 +135,7 @@ processResources.doLast {
     copy {
         from frontendArtifacts
         into resourcesDirectory
-        rename('index.html', 'ng5.html')
+        rename('index.html', 'ng1.html')
     }
 }
 

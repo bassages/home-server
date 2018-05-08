@@ -3,6 +3,10 @@ plugins {
     id 'com.moowork.gulp' version '1.2.0'
 }
 
+if (!project.hasProperty("buildtype")) {
+    ext.buildtype = 'dev'
+}
+
 repositories {
     jcenter()
 }
@@ -17,14 +21,18 @@ node {
     download = true
 }
 
+version = '1.0.0'
+
 clean.doFirst {
-//    println "Clean projectDir ${projectDir}"
+    println "Clean projectDir ${projectDir}"
 //    delete "${projectDir}/node_modules"
 //    delete "${projectDir}/.gradle/nodejs"
+    delete "${projectDir}/dist"
 }
 
-task buildAngularApplication(type: NpmTask) {
-    description = 'npm run build'
+task buildAngularJsApplication(type: GulpTask) {
+    description = 'Triggers Gulp to build the AngularJS application. ' +
+            'Adding -Pbuildtype=prod to the gradle command will build frontend resources minified and uglified.'
 
     // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
     npmInstall.outputs.upToDateWhen { false }
@@ -32,7 +40,10 @@ task buildAngularApplication(type: NpmTask) {
     // make sure npm install has been performed before calling the build task in gulpfile.js
     dependsOn = [ npmInstall ]
 
-    args = ['run', 'build']
+    args = ['build', "--buildtype=${project.buildtype}" ]
+
+    // limit memory usage
+    options = ['--max-old-space-size=512']
 }
 
-jar.dependsOn 'buildAngularApplication';
+jar.dependsOn 'buildAngularJsApplication';
