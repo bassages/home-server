@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import {ErrorHandingService} from "../error-handling/error-handing.service";
 import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
 import {DecimalPipe} from "@angular/common";
-import {Observable} from "rxjs/Observable";
+import {combineLatest} from "rxjs";
 import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
 import {EnergieVerbruikHistorieServiceProvider} from "./energie-verbruik-historie-service-provider";
 
@@ -55,40 +55,39 @@ export class EnergieVerbruikComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-    Observable.combineLatest([ this.activatedRoute.paramMap, this.activatedRoute.queryParamMap ])
-              .subscribe(combined => {
-                const params: ParamMap = <ParamMap>combined[0];
-                const queryParams: ParamMap = <ParamMap>combined[1];
+      combineLatest([ this.activatedRoute.paramMap, this.activatedRoute.queryParamMap ]).subscribe(combined => {
+        const params: ParamMap = <ParamMap>combined[0];
+        const queryParams: ParamMap = <ParamMap>combined[1];
 
-                const verbruiksoortParam = params.get('verbruiksoort');
-                const periodeParam = params.get('periode');
-                const energiesoortenParam = queryParams.getAll('energiesoort');
+        const verbruiksoortParam = params.get('verbruiksoort');
+        const periodeParam = params.get('periode');
+        const energiesoortenParam = queryParams.getAll('energiesoort');
 
-                if (!queryParams.has('datum')) {
-                  return this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, moment());
-                }
-                const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
+        if (!queryParams.has('datum')) {
+          return this.navigateTo(verbruiksoortParam, energiesoortenParam, periodeParam, moment());
+        }
+        const selectedDayParam = moment(queryParams.get('datum'), "DD-MM-YYYY");
 
-                if (_.isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort == verbruiksoortParam
-                           && this.selectedDate.isSame(selectedDayParam) && this.periode == periodeParam) {
-                  return;
-                }
+        if (_.isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort == verbruiksoortParam
+                   && this.selectedDate.isSame(selectedDayParam) && this.periode == periodeParam) {
+          return;
+        }
 
-                if (verbruiksoortParam == 'verbruik' && energiesoortenParam.length > 1) {
-                  return this.navigateTo(verbruiksoortParam, ['stroom'], periodeParam, selectedDayParam);
-                }
+        if (verbruiksoortParam == 'verbruik' && energiesoortenParam.length > 1) {
+          return this.navigateTo(verbruiksoortParam, ['stroom'], periodeParam, selectedDayParam);
+        }
 
-                this.verbruiksoort = verbruiksoortParam;
-                this.energiesoorten = energiesoortenParam;
-                this.periode = periodeParam;
-                this.selectedDate = selectedDayParam;
-                this.dateNavigatorMode = periodeToDateNavigatorModeMapping.get(this.periode);
-                this.energieVerbruikHistorieService = this.energieVerbruikChartServiceProvider.get(this.periode);
+        this.verbruiksoort = verbruiksoortParam;
+        this.energiesoorten = energiesoortenParam;
+        this.periode = periodeParam;
+        this.selectedDate = selectedDayParam;
+        this.dateNavigatorMode = periodeToDateNavigatorModeMapping.get(this.periode);
+        this.energieVerbruikHistorieService = this.energieVerbruikChartServiceProvider.get(this.periode);
 
-                this.determineChartOrTable();
+        this.determineChartOrTable();
 
-                setTimeout(() => { this.getAndLoadData(); },0);
-              });
+        setTimeout(() => { this.getAndLoadData(); },0);
+      });
   }
 
   private getAndLoadData() {

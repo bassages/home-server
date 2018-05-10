@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Moment} from "moment";
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import "rxjs/Rx";
 import {VerbruikOpDag} from "./verbruikOpDag";
 import {GemiddeldVerbruikInPeriod} from "./gemiddeldVerbruikInPeriod";

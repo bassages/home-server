@@ -7,7 +7,7 @@ import {Moment} from "moment";
 import {Klimaat} from "../klimaat";
 import {KlimaatSensor} from "../klimaatSensor";
 import * as _ from "lodash";
-import {zip} from 'rxjs/observable/zip';
+import {zip} from 'rxjs';
 import {Router} from "@angular/router";
 
 const datePickerFormat: string = 'DD-MM-YYYY';

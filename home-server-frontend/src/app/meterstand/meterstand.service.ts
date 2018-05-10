@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {MeterstandOpDag} from "./meterstandOpDag";
 import {Moment} from "moment";
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import "rxjs/Rx";
 import {Meterstand} from "./meterstand";
 

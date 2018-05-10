@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {Energiecontract} from "./energiecontract";
 import * as moment from "moment";
+import {map} from "rxjs/operators";
 
 @Injectable()
 export class EnergiecontractService {
@@ -11,7 +12,7 @@ export class EnergiecontractService {
 
   public getAll(): Observable<Energiecontract[]> {
     return this.http.get<BackendEnergiecontract[]>('/api/energiecontract')
-                    .map(EnergiecontractService.allToEnergieContract);
+                    .pipe(map(EnergiecontractService.allToEnergieContract));
   }
 
   public delete(id: number): Observable<Object> {
@@ -20,7 +21,7 @@ export class EnergiecontractService {
 
   public save(energieContract: Energiecontract): Observable<Energiecontract> {
     return this.http.post<BackendEnergiecontract>('/api/energiecontract', EnergiecontractService.toBackendEnergieContract(energieContract))
-                    .map(EnergiecontractService.toEnergieContract);
+      .pipe(map(EnergiecontractService.toEnergieContract));
   }
 
   static toEnergieContract(backendEnergieContract: BackendEnergiecontract): Energiecontract {

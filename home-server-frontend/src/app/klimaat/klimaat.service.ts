@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
+import {filter, map} from 'rxjs/operators';
 import {KlimaatSensor} from "./klimaatSensor";
 import * as moment from "moment";
 import {Moment} from "moment";
@@ -34,23 +35,25 @@ export class KlimaatService {
 
   public getKlimaat(sensorCode: string, from: Moment, to: Moment): Observable<Klimaat[]> {
     const url: string = `/api/klimaat/${sensorCode}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}`;
-    return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
+    return this.http.get<BackendKlimaat[]>(url).pipe(map(KlimaatService.mapAllToKlimaat));
   }
 
   public getMostRecent(sensorCode: string): Observable<RealtimeKlimaat> {
     return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`)
-                    .filter(value => !isUndefined(value) && value !== null)
-                    .map(KlimaatService.mapToRealtimeKlimaat);
+                    .pipe(filter(value => !isUndefined(value) && value !== null))
+                    .pipe(map(KlimaatService.mapToRealtimeKlimaat));
   }
 
   public getTop(sensorCode: string, sensorType: string, topType: string, from: Moment, to: Moment, limit: number): Observable<Klimaat[]> {
     const url = `api/klimaat/${sensorCode}/${topType}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}&sensorType=${sensorType}&limit=${limit}`;
-    return this.http.get<BackendKlimaat[]>(url).map(KlimaatService.mapAllToKlimaat);
+    return this.http.get<BackendKlimaat[]>(url)
+                    .pipe(map(KlimaatService.mapAllToKlimaat));
   }
 
   public getGemiddeldeKlimaatPerMaand(sensorCode: string, sensorType: string, year: number): Observable<GemiddeldeKlimaatPerMaand[]> {
     const url = `api/klimaat/${sensorCode}/gemiddeld-per-maand-in-jaar?jaar=${year}&sensorType=${sensorType}`;
-    return this.http.get<BackendGemiddeldeKlimaatPerMaand[][]>(url).map(KlimaatService.mapAllToGemiddeldeKlimaatPerMaand);
+    return this.http.get<BackendGemiddeldeKlimaatPerMaand[][]>(url)
+                    .pipe(map(KlimaatService.mapAllToGemiddeldeKlimaatPerMaand));
   }
 
   // noinspection JSMethodCanBeStatic

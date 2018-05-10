@@ -4,7 +4,7 @@ import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.servic
 import * as moment from "moment";
 import {Moment} from "moment";
 import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {Observable} from "rxjs/Observable";
+import {Observable} from "rxjs";
 import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
 import {ChartConfiguration} from "c3";
 import {DecimalPipe} from "@angular/common";

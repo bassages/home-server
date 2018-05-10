@@ -108,7 +108,6 @@ const appRoutes: Routes = [
     DpDatePickerModule,
     RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true})
   ],
-  entryComponents: [],
   providers: [
     DecimalPipe,
     ChartService,
@@ -132,5 +131,4 @@ const appRoutes: Routes = [
 })
 
 export class AppModule {
-
 }

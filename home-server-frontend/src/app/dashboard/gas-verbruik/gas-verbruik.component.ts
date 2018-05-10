@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {StompService} from "@stomp/ng2-stompjs";
-import {Subscription} from "rxjs/Subscription";
-import {Observable} from "rxjs/Observable";
+import {Observable, Subscription} from "rxjs";
 import {Message} from '@stomp/stompjs';
 import {Meterstand} from "../../meterstand/meterstand";
 import {Led, LedState} from "../led";
