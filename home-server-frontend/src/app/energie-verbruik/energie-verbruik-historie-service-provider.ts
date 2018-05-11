@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
-import "rxjs/Rx";
-import {EnergieVerbruikJaarHistorieService} from "./energie-verbruik-jaar-historie.service";
-import {EnergieVerbruikUurHistorieService} from "./energie-verbruik-uur-historie.service";
-import {EnergieVerbruikDagHistorieService} from "./energie-verbruik-dag-historie.service";
-import {EnergieVerbruikMaandHistorieService} from "./energie-verbruik-maand-historie.service";
-import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
+import {EnergieVerbruikJaarHistorieService} from './energie-verbruik-jaar-historie.service';
+import {EnergieVerbruikUurHistorieService} from './energie-verbruik-uur-historie.service';
+import {EnergieVerbruikDagHistorieService} from './energie-verbruik-dag-historie.service';
+import {EnergieVerbruikMaandHistorieService} from './energie-verbruik-maand-historie.service';
+import {EnergieVerbruikHistorieService} from './energie-verbruik-historie.service';
 
 @Injectable()
 export class EnergieVerbruikHistorieServiceProvider {

@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
-import "rxjs/Rx";
-import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
-import {Moment} from "moment";
-import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {VerbruikInUur} from "./verbruikInUur";
-import {Observable} from "rxjs";
-import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
-import {ChartConfiguration} from "c3";
-import {DecimalPipe} from "@angular/common";
+import {EnergieVerbruikHistorieService} from './energie-verbruik-historie.service';
+import {Moment} from 'moment';
+import {EnergieVerbruikService} from './energie-verbruik.service';
+import {VerbruikInUur} from './verbruikInUur';
+import {Observable} from 'rxjs';
+import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-chart.service';
+import {ChartConfiguration} from 'c3';
+import {DecimalPipe} from '@angular/common';
 
 @Injectable()
-export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikInUur> {
+export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHistorieService
+                                               implements EnergieVerbruikHistorieService<VerbruikInUur> {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
@@ -50,7 +50,7 @@ export class EnergieVerbruikUurHistorieService extends AbstractEnergieVerbruikHi
     };
     chartConfiguration.tooltip = {
       contents: function (data, titleFormatter, valueFormatter, color) {
-        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten)
+        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten);
       }
     };
     return chartConfiguration;

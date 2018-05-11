@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
-import "rxjs/Rx";
-import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
-import * as moment from "moment";
-import {Moment} from "moment";
-import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {Observable} from "rxjs";
-import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
-import {ChartConfiguration} from "c3";
-import {DecimalPipe} from "@angular/common";
-import {VerbruikInJaar} from "./verbruikInJaar";
-import {isNullOrUndefined} from "util";
+import {EnergieVerbruikHistorieService} from './energie-verbruik-historie.service';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {EnergieVerbruikService} from './energie-verbruik.service';
+import {Observable} from 'rxjs';
+import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-chart.service';
+import {ChartConfiguration} from 'c3';
+import {DecimalPipe} from '@angular/common';
+import {VerbruikInJaar} from './verbruikInJaar';
+import {isNullOrUndefined} from 'util';
 
 @Injectable()
-export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikInJaar> {
+export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikHistorieService
+                                                implements EnergieVerbruikHistorieService<VerbruikInJaar> {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
@@ -47,7 +47,7 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, valueFormatter, color) {
         const titleFormatter = (year: number) => year;
-        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten)
+        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten);
       }
     };
     return chartConfiguration;

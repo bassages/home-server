@@ -3,7 +3,7 @@
   <!-- Up to (but excluding) small -->
   <div class="col-12 pl-2 pr-2 d-xs-block d-sm-none">
     <h4>Opgenomen vermogen (Watt)</h4>
-    <date-navigator mode="day" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group input-group-sm mb-2"></date-navigator>
+    <home-date-navigator mode="day" [selectedDate]="selectedDate" (navigation)="onDateNavigate($event)" class="input-group input-group-sm mb-2"></home-date-navigator>
   </div>
 
   <!-- Small and above -->
@@ -13,7 +13,7 @@
         <a class="nav-link active">Opgenomen vermogen (Watt)</a>
       </li>
       <li class="nav-item">
-        <date-navigator mode="day" [selectedDate]="selectedDate" (onNavigate)="onDateNavigate($event)" class="input-group"></date-navigator>
+        <home-date-navigator mode="day" [selectedDate]="selectedDate" (navigation)="onDateNavigate($event)" class="input-group"></home-date-navigator>
       </li>
     </ul>
   </div>
@@ -23,7 +23,7 @@
   <div class="col-12 pl-2 pr-2 pl-sm-0 pr-sm-0">
     <div id="chart" class="c3 chart"></div>
     <div class="activated">
-      <statistics [statistics]="statistics" decimalFormat="0.0-0"></statistics>
+      <home-statistics [statistics]="statistics" decimalFormat="0.0-0"></home-statistics>
     </div>
   </div>
 </div>

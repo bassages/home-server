@@ -15,10 +15,9 @@
       "severity": "warn"
     },
     "eofline": true,
-    "forin": true,
+    "forin": false,
     "import-blacklist": [
       true,
-      "rxjs",
       "rxjs/Rx"
     ],
     "import-spacing": true,
@@ -120,13 +119,13 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      "home",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
-      "app",
+      "home",
       "kebab-case"
     ],
     "no-output-on-prefix": true,

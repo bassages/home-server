@@ -15,7 +15,7 @@
     </select>
   </div>
   <div class="col-md-4 col-lg-3 mb-2">
-    <date-navigator mode="year" [selectedDate]="year" (onNavigate)="yearPickerChanged($event)"class="input-group"></date-navigator>
+    <home-date-navigator mode="year" [selectedDate]="year" (navigation)="yearPickerChanged($event)" class="input-group"></home-date-navigator>
   </div>
 </div>
 

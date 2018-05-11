@@ -1,30 +1,24 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
-import {Energiecontract} from "./energiecontract";
-import * as moment from "moment";
-import {map} from "rxjs/operators";
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {Energiecontract} from './energiecontract';
+import * as moment from 'moment';
+import {map} from 'rxjs/operators';
+
+class BackendEnergiecontract {
+  id: number;
+  validFrom: string;
+  validTo: string;
+  stroomPerKwhNormaalTarief: number;
+  stroomPerKwhDalTarief: number;
+  gasPerKuub: number;
+  leverancier: string;
+}
 
 @Injectable()
 export class EnergiecontractService {
 
-  constructor(private http: HttpClient) { }
-
-  public getAll(): Observable<Energiecontract[]> {
-    return this.http.get<BackendEnergiecontract[]>('/api/energiecontract')
-                    .pipe(map(EnergiecontractService.allToEnergieContract));
-  }
-
-  public delete(id: number): Observable<Object> {
-    return this.http.delete(`/api/energiecontract/${id}`);
-  }
-
-  public save(energieContract: Energiecontract): Observable<Energiecontract> {
-    return this.http.post<BackendEnergiecontract>('/api/energiecontract', EnergiecontractService.toBackendEnergieContract(energieContract))
-      .pipe(map(EnergiecontractService.toEnergieContract));
-  }
-
-  static toEnergieContract(backendEnergieContract: BackendEnergiecontract): Energiecontract {
+static toEnergieContract(backendEnergieContract: BackendEnergiecontract): Energiecontract {
     const energiecontract: Energiecontract = new Energiecontract();
     energiecontract.id = backendEnergieContract.id;
     energiecontract.leverancier = backendEnergieContract.leverancier;
@@ -50,14 +44,20 @@ export class EnergiecontractService {
     backendEnergiecontract.stroomPerKwhDalTarief = energieContract.stroomPerKwhDalTarief;
     return backendEnergiecontract;
   }
-}
 
-class BackendEnergiecontract {
-  id: number;
-  validFrom: string;
-  validTo: string;
-  stroomPerKwhNormaalTarief: number;
-  stroomPerKwhDalTarief: number;
-  gasPerKuub: number;
-  leverancier: string;
+  constructor(private http: HttpClient) { }
+
+  public getAll(): Observable<Energiecontract[]> {
+    return this.http.get<BackendEnergiecontract[]>('/api/energiecontract')
+                    .pipe(map(EnergiecontractService.allToEnergieContract));
+  }
+
+  public delete(id: number): Observable<Object> {
+    return this.http.delete(`/api/energiecontract/${id}`);
+  }
+
+  public save(energieContract: Energiecontract): Observable<Energiecontract> {
+    return this.http.post<BackendEnergiecontract>('/api/energiecontract', EnergiecontractService.toBackendEnergieContract(energieContract))
+      .pipe(map(EnergiecontractService.toEnergieContract));
+  }
 }

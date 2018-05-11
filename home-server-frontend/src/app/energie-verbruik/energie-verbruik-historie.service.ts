@@ -1,7 +1,6 @@
-import "rxjs/Rx";
-import {Moment} from "moment";
-import {ChartConfiguration} from "c3";
-import {Observable} from "rxjs";
+import {Moment} from 'moment';
+import {ChartConfiguration} from 'c3';
+import {Observable} from 'rxjs';
 
 export interface EnergieVerbruikHistorieService<T> {
 

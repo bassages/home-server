@@ -1,7 +1,6 @@
-import "rxjs/Rx";
-import {LineOptions} from "c3";
-import * as _ from "lodash";
-import {Statistics} from "../../statistics";
+import {LineOptions} from 'c3';
+import * as _ from 'lodash';
+import {Statistics} from '../../statistics';
 
 export class ChartStatisticsService {
 

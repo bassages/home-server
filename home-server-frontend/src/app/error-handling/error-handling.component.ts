@@ -1,10 +1,10 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
-import {ErrorHandingService} from "./error-handing.service";
-import {Error} from "./error";
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {ErrorHandingService} from './error-handing.service';
+import {Error} from './error';
 
 @Component({
-  selector: 'error-handler',
+  selector: 'home-error-handler',
   templateUrl: './error-handling.component.html',
   styleUrls: ['./error-handling.component.scss']
 })

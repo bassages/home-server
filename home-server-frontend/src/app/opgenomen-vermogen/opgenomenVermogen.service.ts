@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
-import "rxjs/Rx";
-import {OpgenomenVermogen} from "./opgenomenVermogen";
-import {Moment} from "moment";
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {OpgenomenVermogen} from './opgenomenVermogen';
+import {Moment} from 'moment';
 
 @Injectable()
 export class OpgenomenVermogenService {
@@ -16,7 +15,9 @@ export class OpgenomenVermogenService {
   }
 
   public getHistory(from: Moment, to: Moment, periodLengthInMilliseconds: number): Observable<OpgenomenVermogen[]> {
-    const url = `/api/opgenomen-vermogen/historie/${from.format('YYYY-MM-DD')}/${to.format('YYYY-MM-DD')}?subPeriodLength=${periodLengthInMilliseconds}`;
+    const formattedFrom = from.format('YYYY-MM-DD');
+    const formattedTo = to.format('YYYY-MM-DD');
+    const url = `/api/opgenomen-vermogen/historie/${formattedFrom}/${formattedTo}?subPeriodLength=${periodLengthInMilliseconds}`;
     return this.http.get<OpgenomenVermogen[]>(url);
   }
 }

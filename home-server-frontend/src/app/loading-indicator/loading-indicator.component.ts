@@ -1,10 +1,10 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {NgbModal, NgbModalRef} from "@ng-bootstrap/ng-bootstrap";
-import {LoadingIndicatorService} from "./loading-indicator.service";
-import * as _ from "lodash";
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {LoadingIndicatorService} from './loading-indicator.service';
+import * as _ from 'lodash';
 
 @Component({
-  selector: 'loading-indicator',
+  selector: 'home-loading-indicator',
   templateUrl: './loading-indicator.component.html',
   styleUrls: ['./loading-indicator.component.scss']
 })

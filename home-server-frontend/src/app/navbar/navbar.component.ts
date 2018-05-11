@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
 
 @Component({
-  selector: 'navbar',
+  selector: 'home-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-  public isCollapsed: boolean = true;
+  public isCollapsed = true;
 
   constructor() { }
 

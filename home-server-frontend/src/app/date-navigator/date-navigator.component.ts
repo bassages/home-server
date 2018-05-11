@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as moment from "moment";
-import {Moment} from "moment";
-import {IDatePickerConfig} from "ng2-date-picker";
-import {isUndefined} from "util";
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {IDatePickerConfig} from 'ng2-date-picker';
+import {isUndefined} from 'util';
 
 const selectedDayFormat = 'dd. DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';
 
 @Component({
-  selector: 'date-navigator',
+  selector: 'home-date-navigator',
   templateUrl: './date-navigator.component.html',
   styleUrls: ['./date-navigator.component.scss']
 })
@@ -28,7 +28,7 @@ export class DateNavigatorComponent implements OnInit {
   }
 
   @Output()
-  public onNavigate = new EventEmitter<Moment>();
+  public navigation = new EventEmitter<Moment>();
 
   private _selectedDate: Moment;
 
@@ -62,7 +62,7 @@ export class DateNavigatorComponent implements OnInit {
   public datePickerChanged(selectedDate: Moment): void {
     if (!isUndefined(selectedDate) && !isUndefined(this.previouslySelectedDate)
           && !selectedDate.isSame(this.previouslySelectedDate)) {
-      this.onNavigate.emit(selectedDate);
+      this.navigation.emit(selectedDate);
     }
     this.previouslySelectedDate = selectedDate;
   }
@@ -73,26 +73,28 @@ export class DateNavigatorComponent implements OnInit {
     }
 
     const now: Moment = moment();
-    if (this.mode == 'day') {
-      return now.date() === this._selectedDate.date() && now.month() === this._selectedDate.month() && now.year() === this._selectedDate.year();
-    } else if (this.mode == 'month') {
+    if (this.mode === 'day') {
+      return now.date() === this._selectedDate.date()
+        && now.month() === this._selectedDate.month()
+        && now.year() === this._selectedDate.year();
+    } else if (this.mode === 'month') {
       return now.month() === this._selectedDate.month() && now.year() === this._selectedDate.year();
-    } else if (this.mode == 'year') {
+    } else if (this.mode === 'year') {
       return now.year() === this._selectedDate.year();
     }
   }
 
   public navigate(amount: number): void {
-    if (this.mode == 'day') {
-      this.onNavigate.emit(this._selectedDate.clone().add(amount, 'days'));
+    if (this.mode === 'day') {
+      this.navigation.emit(this._selectedDate.clone().add(amount, 'days'));
 
-    } else if (this.mode == 'month') {
-      this.onNavigate.emit(this._selectedDate.clone().add(amount, 'months'));
+    } else if (this.mode === 'month') {
+      this.navigation.emit(this._selectedDate.clone().add(amount, 'months'));
 
-    } else if (this.mode == 'year') {
+    } else if (this.mode === 'year') {
       this.yearPickerModel += amount;
       this.selectedDate = moment(`${this.yearPickerModel}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
-      this.onNavigate.emit(this._selectedDate.clone());
+      this.navigation.emit(this._selectedDate.clone());
     }
   }
 }

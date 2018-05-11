@@ -1,27 +1,27 @@
 import {Component, OnInit} from '@angular/core';
-import {KlimaatService} from "../klimaat.service";
-import {LoadingIndicatorService} from "../../loading-indicator/loading-indicator.service";
-import {ErrorHandingService} from "../../error-handling/error-handing.service";
-import * as moment from "moment";
-import {Moment} from "moment";
-import {Klimaat} from "../klimaat";
-import {KlimaatSensor} from "../klimaatSensor";
-import * as _ from "lodash";
+import {KlimaatService} from '../klimaat.service';
+import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
+import {ErrorHandingService} from '../../error-handling/error-handing.service';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {Klimaat} from '../klimaat';
+import {KlimaatSensor} from '../klimaatSensor';
+import * as _ from 'lodash';
 import {zip} from 'rxjs';
-import {Router} from "@angular/router";
+import {Router} from '@angular/router';
 
-const datePickerFormat: string = 'DD-MM-YYYY';
+const datePickerFormat = 'DD-MM-YYYY';
 
 @Component({
-  selector: 'klimaat-highest-lowest',
+  selector: 'home-klimaat-highest-lowest',
   templateUrl: './klimaat-highest-lowest.component.html',
   styleUrls: ['./klimaat-highest-lowest.component.scss']
 })
 export class KlimaatHighestLowestComponent implements OnInit {
   public sensors: KlimaatSensor[];
-  public sensorCode: string;
-  public sensorType: string = 'temperatuur';
-  public limit: number = 10;
+  public sensorCode;
+  public sensorType = 'temperatuur';
+  public limit = 10;
   public year: Moment = moment();
 
   public highestKlimaats: Klimaat[];
@@ -34,7 +34,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    setTimeout(() => { this.getKlimaatSensors(); },0);
+    setTimeout(() => this.getKlimaatSensors());
   }
 
   private getKlimaatSensors(): void {
@@ -49,7 +49,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
         }
         this.getAndLoadData();
       },
-      error => this.errorHandlingService.handleError("De klimaat sensors konden nu niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('De klimaat sensors konden nu niet worden opgehaald', error),
     );
   }
 
@@ -62,8 +62,11 @@ export class KlimaatHighestLowestComponent implements OnInit {
     const getLowest = this.klimaatService.getTop(this.sensorCode, this.sensorType, 'laagste', from, to, this.limit);
     const getHighest = this.klimaatService.getTop(this.sensorCode, this.sensorType, 'hoogste', from, to, this.limit);
 
-    zip(getLowest, getHighest).subscribe(klimaats => { this.lowestKlimaats = klimaats[0]; this.highestKlimaats = klimaats[1];},
-      error => this.errorHandlingService.handleError("Hoogste/laagste klimaat kon niet worden opgehaald", error),
+    zip(getLowest, getHighest).subscribe(klimaats => {
+        this.lowestKlimaats = klimaats[0];
+        this.highestKlimaats = klimaats[1];
+      },
+      error => this.errorHandlingService.handleError('Hoogste/laagste klimaat kon niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );
   }

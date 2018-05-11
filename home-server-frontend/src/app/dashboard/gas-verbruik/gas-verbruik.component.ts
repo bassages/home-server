@@ -1,19 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {StompService} from "@stomp/ng2-stompjs";
-import {Observable, Subscription} from "rxjs";
+import {StompService} from '@stomp/ng2-stompjs';
+import {Observable, Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';
-import {Meterstand} from "../../meterstand/meterstand";
-import {Led, LedState} from "../led";
-import {MeterstandService} from "../../meterstand/meterstand.service";
-import {EnergieVerbruikService} from "../../energie-verbruik/energie-verbruik.service";
-import * as _ from "lodash";
-import {VerbruikOpDag} from "../../energie-verbruik/verbruikOpDag";
-import {GemiddeldVerbruikInPeriod} from "../../energie-verbruik/gemiddeldVerbruikInPeriod";
-import {Router} from "@angular/router";
-import * as moment from "moment";
+import {Meterstand} from '../../meterstand/meterstand';
+import {Led, LedState} from '../led';
+import {MeterstandService} from '../../meterstand/meterstand.service';
+import {EnergieVerbruikService} from '../../energie-verbruik/energie-verbruik.service';
+import * as _ from 'lodash';
+import {VerbruikOpDag} from '../../energie-verbruik/verbruikOpDag';
+import {GemiddeldVerbruikInPeriod} from '../../energie-verbruik/gemiddeldVerbruikInPeriod';
+import {Router} from '@angular/router';
+import * as moment from 'moment';
 
 @Component({
-  selector: 'gas-verbruik',
+  selector: 'home-gas-verbruik',
   templateUrl: './gas-verbruik.component.html',
   styleUrls: ['./gas-verbruik.component.scss']
 })
@@ -84,10 +84,11 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
 
   private setGasVerbruikVandaagLeds() {
     if (this.verbruikVandaag && _.isNumber(this.verbruikVandaag.gasVerbruik)
-        && this.gemiddeldVerbruikPerDagInAfgelopenWeek && _.isNumber(this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)) {
-      const procentueleVeranderingTovAfgelopenWeek: number = ((this.verbruikVandaag.gasVerbruik - this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik) / this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik) * 100;
+      && this.gemiddeldVerbruikPerDagInAfgelopenWeek && _.isNumber(this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)) {
 
-      let gasLeds: Led[] = new Array<Led>(10);
+      const procentueleVeranderingTovAfgelopenWeek: number = this.getProcentueleVeranderingTovAfgelopenWeek();
+
+      const gasLeds: Led[] = new Array<Led>(10);
 
       gasLeds[9] = new Led(procentueleVeranderingTovAfgelopenWeek >= 50 ? LedState.ON : LedState.OFF);
       gasLeds[8] = new Led(procentueleVeranderingTovAfgelopenWeek >= 40 ? LedState.ON : LedState.OFF);
@@ -102,6 +103,11 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
 
       this.gasLeds = gasLeds;
     }
+  }
+
+  private getProcentueleVeranderingTovAfgelopenWeek() {
+    return ((this.verbruikVandaag.gasVerbruik - this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)
+      / this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik) * 100;
   }
 
   public navigateToVerbruikDetails() {

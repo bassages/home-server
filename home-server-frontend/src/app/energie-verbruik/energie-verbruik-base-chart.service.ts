@@ -1,8 +1,7 @@
-import "rxjs/Rx";
-import {ChartConfiguration} from "c3";
-import * as _ from "lodash";
-import {DecimalPipe} from "@angular/common";
-import {ChartService} from "../chart/chart.service";
+import {ChartConfiguration} from 'c3';
+import * as _ from 'lodash';
+import {DecimalPipe} from '@angular/common';
+import {ChartService} from '../chart/chart.service';
 
 const dataColors: {[key: string]: string} = {
   'stroomVerbruikDal': '#4575b3',
@@ -47,11 +46,11 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
         }
       }
     };
-  };
+  }
 
   protected formatWithoutUnitLabel(verbruiksoort: string, value: any) {
     return this.decimalPipe.transform(value, '1.3-3');
-  };
+  }
 
   public formatWithUnitLabel(verbruiksoort: string, energieSoorten: string[], value: number) {
     const withoutUnitLabel = this.formatWithoutUnitLabel(verbruiksoort, value);
@@ -60,10 +59,10 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     } else if (verbruiksoort === 'kosten') {
       return '\u20AC ' + withoutUnitLabel;
     }
-  };
+  }
 
   protected getTooltipContent(c3, data, titleFormatter, valueFormatter, color, verbruiksoort: string, energiesoorten: string[]) {
-    let tooltipContents: string = '';
+    let tooltipContents = '';
 
     data = _.sortBy(data, 'id');
 
@@ -85,13 +84,13 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     }
 
     if (data.length > 1) {
-      let total: number = _.sumBy(data, 'value');
+      const total: number = _.sumBy(data, 'value');
       tooltipContents += '<tr>';
       tooltipContents += '<td class=\'name\'><strong>Totaal</strong></td>';
       tooltipContents += `<td class='value'><strong>${this.formatWithUnitLabel(verbruiksoort, energiesoorten, total)}</strong></td>`;
-      tooltipContents += "</tr>";
+      tooltipContents += '</tr>';
     }
-    tooltipContents += "</table>";
+    tooltipContents += '</table>';
 
     return tooltipContents;
   }
@@ -120,7 +119,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
 
   // noinspection JSMethodCanBeStatic
   protected getKeysGroups(verbruiksoort: string, energiesoorten: string[]): string[] {
-    let keysGroups: string[] = [];
+    const keysGroups: string[] = [];
     if (energiesoorten.indexOf('gas') > -1) {
       keysGroups.push(`gas${_.capitalize(verbruiksoort)}`);
     }
@@ -133,11 +132,11 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
 
   // noinspection JSMethodCanBeStatic
   public toggleEnergiesoort(verbruiksoort: string, energiesoorten: string[], energiesoortToToggle: string): string[] {
-    let newEnergiesoorten = energiesoorten.slice();
+    const newEnergiesoorten = energiesoorten.slice();
 
     const indexOfToggledEnergieSoort = newEnergiesoorten.indexOf(energiesoortToToggle);
 
-    if (verbruiksoort == 'kosten') {
+    if (verbruiksoort === 'kosten') {
       if (indexOfToggledEnergieSoort < 0) {
         newEnergiesoorten.push(energiesoortToToggle);
       } else {

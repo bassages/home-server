@@ -1,22 +1,22 @@
 import {Component, OnInit} from '@angular/core';
-import * as moment from "moment";
-import {Moment} from "moment";
-import {ErrorHandingService} from "../../error-handling/error-handing.service";
-import {KlimaatService} from "../klimaat.service";
-import {LoadingIndicatorService} from "../../loading-indicator/loading-indicator.service";
-import {KlimaatSensor} from "../klimaatSensor";
-import {GemiddeldeKlimaatPerMaand} from "../gemiddeldeKlimaatPerMaand";
-import * as _ from "lodash";
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {ErrorHandingService} from '../../error-handling/error-handing.service';
+import {KlimaatService} from '../klimaat.service';
+import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
+import {KlimaatSensor} from '../klimaatSensor';
+import {GemiddeldeKlimaatPerMaand} from '../gemiddeldeKlimaatPerMaand';
+import * as _ from 'lodash';
 
 @Component({
-  selector: 'klimaat-average',
+  selector: 'home-klimaat-average',
   templateUrl: './klimaat-average.component.html',
   styleUrls: ['./klimaat-average.component.scss']
 })
 export class KlimaatAverageComponent implements OnInit {
 
   public sensors: KlimaatSensor[];
-  public sensorType: string = 'temperatuur';
+  public sensorType = 'temperatuur';
   public sensorCode: string;
   public year: Moment = moment();
 
@@ -43,7 +43,7 @@ export class KlimaatAverageComponent implements OnInit {
         }
         this.getAndLoadData();
       },
-      error => this.errorHandlingService.handleError("De klimaat sensors konden nu niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('De klimaat sensors konden nu niet worden opgehaald', error),
     );
   }
 
@@ -52,7 +52,7 @@ export class KlimaatAverageComponent implements OnInit {
 
     this.klimaatService.getGemiddeldeKlimaatPerMaand(this.sensorCode, this.sensorType, this.year.year()).subscribe(
       gemiddeldeKlimaatPerMaand => { this.gemiddeldeKlimaatPerMaand = gemiddeldeKlimaatPerMaand; },
-      error => this.errorHandlingService.handleError("Gemiddelde klimaat kon niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('Gemiddelde klimaat kon niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );
   }

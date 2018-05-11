@@ -1,20 +1,20 @@
 import {Component, OnInit} from '@angular/core';
-import {MindergasnlService} from "./mindergasnl.service";
-import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
-import {ErrorHandingService} from "../error-handling/error-handing.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {MindergasnlService} from './mindergasnl.service';
+import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
+import {ErrorHandingService} from '../error-handling/error-handing.service';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 const authenticatieTokenMaxLengthValidator = Validators.maxLength(255);
 
 @Component({
-  selector: 'mindergasnl',
+  selector: 'home-mindergasnl',
   templateUrl: './mindergasnl.component.html',
   styleUrls: ['./mindergasnl.component.scss']
 })
 export class MindergasnlComponent implements OnInit {
 
   public form: FormGroup;
-  public showSavedMessage: boolean = false;
+  public showSavedMessage = false;
 
   private _editmode: boolean;
 
@@ -43,7 +43,7 @@ export class MindergasnlComponent implements OnInit {
 
   public ngOnInit(): void {
     this.createForm();
-    setTimeout(() => { this.getMinderGasNlSettings(); },0);
+    setTimeout(() => this.getMinderGasNlSettings());
   }
 
   private createForm(): void {
@@ -67,7 +67,7 @@ export class MindergasnlComponent implements OnInit {
     this.loadingIndicatorService.open();
     this.mindergasnlService.get().subscribe(
       minderGasNlSettings => this.form.setValue(minderGasNlSettings),
-      error => this.errorHandlingService.handleError("De instellingen voor MinderGas.nl konden nu niet opgehaald worden", error),
+      error => this.errorHandlingService.handleError('De instellingen voor MinderGas.nl konden nu niet opgehaald worden', error),
       () => this.loadingIndicatorService.close()
     );
   }
@@ -77,7 +77,7 @@ export class MindergasnlComponent implements OnInit {
       this.loadingIndicatorService.open();
       this.mindergasnlService.update(this.form.getRawValue()).subscribe(
         () => this.flashSavedMessage(),
-        error => this.errorHandlingService.handleError("De instellingen konden niet opgeslagen worden", error),
+        error => this.errorHandlingService.handleError('De instellingen konden niet opgeslagen worden', error),
         () => {
           this.loadingIndicatorService.close();
           this.editMode = false;
@@ -103,7 +103,7 @@ export class MindergasnlComponent implements OnInit {
 
   private flashSavedMessage(): void {
     this.showSavedMessage = true;
-    setTimeout(() => { this.showSavedMessage = false; },2500);
+    setTimeout(() => { this.showSavedMessage = false; }, 2500);
   }
 
   private setAuthenticatieTokenValidators(automatischUploaden: boolean): void {

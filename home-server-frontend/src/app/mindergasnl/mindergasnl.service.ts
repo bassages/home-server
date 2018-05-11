@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable} from "rxjs";
-import {HttpClient} from "@angular/common/http";
-import {MindergasnlSettings} from "./mindergasnlSettings";
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {MindergasnlSettings} from './mindergasnlSettings';
 
 @Injectable()
 export class MindergasnlService {

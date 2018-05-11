@@ -1,13 +1,12 @@
 import {Injectable} from '@angular/core';
-import {Moment} from "moment";
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
-import "rxjs/Rx";
-import {VerbruikOpDag} from "./verbruikOpDag";
-import {GemiddeldVerbruikInPeriod} from "./gemiddeldVerbruikInPeriod";
-import {VerbruikInUur} from "./verbruikInUur";
-import {VerbruikInMaand} from "./verbruikInMaand";
-import {VerbruikInJaar} from "./verbruikInJaar";
+import {Moment} from 'moment';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {VerbruikOpDag} from './verbruikOpDag';
+import {GemiddeldVerbruikInPeriod} from './gemiddeldVerbruikInPeriod';
+import {VerbruikInUur} from './verbruikInUur';
+import {VerbruikInMaand} from './verbruikInMaand';
+import {VerbruikInJaar} from './verbruikInJaar';
 
 @Injectable()
 export class EnergieVerbruikService {

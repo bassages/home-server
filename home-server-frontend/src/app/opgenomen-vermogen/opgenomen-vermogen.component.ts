@@ -1,29 +1,26 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import * as moment from "moment";
-import {Moment} from "moment";
-import {OpgenomenVermogenService} from "./opgenomenVermogen.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import * as c3 from "c3";
-import {ChartAPI, ChartConfiguration} from "c3";
-import * as _ from "lodash";
-import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
-import {ErrorHandingService} from "../error-handling/error-handing.service";
-import {OpgenomenVermogen} from "./opgenomenVermogen";
-import {ChartService} from "../chart/chart.service";
-import {Statistics} from "../statistics";
-import {ChartStatisticsService} from "../chart/statistics/chart-statistics.service";
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {OpgenomenVermogenService} from './opgenomenVermogen.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import * as c3 from 'c3';
+import {ChartAPI, ChartConfiguration} from 'c3';
+import * as _ from 'lodash';
+import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
+import {ErrorHandingService} from '../error-handling/error-handing.service';
+import {OpgenomenVermogen} from './opgenomenVermogen';
+import {ChartService} from '../chart/chart.service';
+import {Statistics} from '../statistics';
+import {ChartStatisticsService} from '../chart/statistics/chart-statistics.service';
 
 const periodLengthInMilliseconds = moment.duration(1, 'minutes').asSeconds();
 
 @Component({
-  selector: 'opgenomen-vermogen',
+  selector: 'home-opgenomen-vermogen',
   templateUrl: './opgenomen-vermogen.component.html',
   styleUrls: ['./opgenomen-vermogen.component.scss']
 })
 export class OpgenomenVermogenComponent implements OnInit {
-  @HostListener('window:resize') onResize() {
-    this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
-  }
 
   public selectedDate: Moment;
   public statistics: Statistics;
@@ -38,14 +35,18 @@ export class OpgenomenVermogenComponent implements OnInit {
               private router: Router,
               private activatedRoute: ActivatedRoute) { }
 
-  ngOnInit() {
+  @HostListener('window:resize') onResize() {
+    this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
+  }
+
+  public ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe((queryParams) => {
       if (!queryParams.has('datum')) {
         return this.navigateTo(moment());
       }
-      this.selectedDate = moment(queryParams.get('datum'), "DD-MM-YYYY");
+      this.selectedDate = moment(queryParams.get('datum'), 'DD-MM-YYYY');
 
-      setTimeout(() => this.getAndLoadData() );
+      setTimeout(() => this.getAndLoadData());
     });
   }
 
@@ -58,9 +59,12 @@ export class OpgenomenVermogenComponent implements OnInit {
   private getAndLoadData() {
     this.loadingIndicatorService.open();
 
-    this.opgenomenVermogenService.getHistory(this.selectedDate, this.selectedDate.clone().add(1, 'days'), periodLengthInMilliseconds).subscribe(
+    const from = this.selectedDate;
+    const to = from.clone().add(1, 'days');
+
+    this.opgenomenVermogenService.getHistory(from, to, periodLengthInMilliseconds).subscribe(
       opgenomenVermogens => this.loadDataIntoChart(opgenomenVermogens),
-      error => this.errorHandlingService.handleError("Opgenomen vermogen kon niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('Opgenomen vermogen kon niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );
   }
@@ -70,20 +74,21 @@ export class OpgenomenVermogenComponent implements OnInit {
   }
 
   private loadDataIntoChart(opgenomenVermogens: OpgenomenVermogen[]) {
-    let chartData = OpgenomenVermogenComponent.transformData(opgenomenVermogens);
+    const chartData = this.transformData(opgenomenVermogens);
     this.statistics = this.getStatistics(opgenomenVermogens);
     this.chart = c3.generate(this.getChartConfiguration(chartData, this.statistics));
     this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
   }
 
-  private static transformData(opgenomenVermogens: OpgenomenVermogen[]) {
-    let transformedData = [];
+  // noinspection JSMethodCanBeStatic
+  private transformData(opgenomenVermogens: OpgenomenVermogen[]) {
+    const transformedData = [];
 
     let previousTarief = null;
     for (let i = 0; i < opgenomenVermogens.length; i++) {
-      let transformedDataItem: any = {};
+      const transformedDataItem: any = {};
 
-      let tarief = opgenomenVermogens[i].tariefIndicator.toLowerCase();
+      const tarief = opgenomenVermogens[i].tariefIndicator.toLowerCase();
       transformedDataItem.datumtijd = new Date(opgenomenVermogens[i].datumtijd).getTime();
       transformedDataItem['watt-' + tarief] = opgenomenVermogens[i].watt;
 
@@ -122,8 +127,8 @@ export class OpgenomenVermogenComponent implements OnInit {
       },
       axis: {
         x: {
-          type: "timeseries",
-          tick: { format: "%H:%M", values: tickValues, rotate: -45 },
+          type: 'timeseries',
+          tick: { format: '%H:%M', values: tickValues, rotate: -45 },
           min: this.selectedDate.toDate(), max: this.getTo().toDate(),
           padding: {left: 0, right: 10}
         }
@@ -139,16 +144,16 @@ export class OpgenomenVermogenComponent implements OnInit {
           lines: statisticsChartLines
         }
       }
-    }
+    };
   }
 
   // noinspection JSMethodCanBeStatic
   private getTicksForEveryHourInPeriod(from: Moment, to: Moment) {
     const numberOfHoursInDay = ((to.toDate().getTime() - from.toDate().getTime()) / 1000) / 60 / 60;
 
-    let tickValues: number[] = [];
+    const tickValues: number[] = [];
     for (let i = 0; i <= numberOfHoursInDay; i++) {
-      let tickValue = from.toDate().getTime() + (i * 60 * 60 * 1000);
+      const tickValue = from.toDate().getTime() + (i * 60 * 60 * 1000);
       tickValues.push(tickValue);
     }
     return tickValues;
@@ -162,9 +167,9 @@ export class OpgenomenVermogenComponent implements OnInit {
   private getStatistics(opgenomenVermogens: OpgenomenVermogen[]): Statistics {
     const watts: number[] = _.filter(_.map(opgenomenVermogens, 'watt'), (watt: number) => watt !== null && watt > 0);
 
-    let mean: number = _.mean(watts);
-    let min: number = _.min(watts);
-    let max: number = _.max(watts);
+    const mean: number = _.mean(watts);
+    const min: number = _.min(watts);
+    const max: number = _.max(watts);
 
     return new Statistics(min, max, mean);
   }

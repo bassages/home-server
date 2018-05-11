@@ -1,26 +1,25 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {Energiecontract} from "./energiecontract";
-import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
-import {ErrorHandingService} from "../error-handling/error-handing.service";
-import {EnergiecontractService} from "./energiecontract.service";
-import * as _ from "lodash";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import * as moment from "moment";
-import {Moment} from "moment";
-import {DatePickerDirective, IDatePickerConfig} from "ng2-date-picker";
-import {DecimalPipe} from "@angular/common";
-import {isNullOrUndefined} from "util";
+import {Energiecontract} from './energiecontract';
+import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
+import {ErrorHandingService} from '../error-handling/error-handing.service';
+import {EnergiecontractService} from './energiecontract.service';
+import * as _ from 'lodash';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {DatePickerDirective, IDatePickerConfig} from 'ng2-date-picker';
+import {DecimalPipe} from '@angular/common';
+import {isNullOrUndefined} from 'util';
 
-const datePickerFormat: string = 'dddd DD-MM-YYYY';
+const datePickerFormat = 'dddd DD-MM-YYYY';
 const pricePattern = /^\d(,\d{1,6})*$/;
 
 @Component({
-  selector: 'energiecontract',
+  selector: 'home-energiecontract',
   templateUrl: './energiecontract.component.html',
   styleUrls: ['./energiecontract.component.scss']
 })
 export class EnergiecontractComponent implements OnInit {
-  @ViewChild('datePicker') datePicker: DatePickerDirective;
 
   public energiecontracten: Energiecontract[];
 
@@ -30,7 +29,7 @@ export class EnergiecontractComponent implements OnInit {
   public datePickerConfiguration: IDatePickerConfig;
   public datePickerModel: String;
 
-  public editMode: boolean = false;
+  public editMode = false;
 
   public selectedEnergiecontract: Energiecontract;
 
@@ -40,20 +39,22 @@ export class EnergiecontractComponent implements OnInit {
               private decimalPipe: DecimalPipe) {
   }
 
+  @ViewChild('datePicker') datePicker: DatePickerDirective;
+
   public ngOnInit(): void {
     this.datePickerConfiguration = {
       format: datePickerFormat,
       max: moment()
     };
     this.createForm();
-    setTimeout(() => { this.getEnergieContracten(); },0);
+    setTimeout(() => this.getEnergieContracten());
   }
 
   private createForm(): void {
     this.form = new FormGroup({
-      leverancier: new FormControl('',[Validators.required, Validators.maxLength(255)]),
+      leverancier: new FormControl('', [Validators.required, Validators.maxLength(255)]),
       gas: new FormControl('', [Validators.required, Validators.pattern(pricePattern)]),
-      stroomNormaalTarief: new FormControl('',[Validators.required, Validators.pattern(pricePattern)]),
+      stroomNormaalTarief: new FormControl('', [Validators.required, Validators.pattern(pricePattern)]),
       stroomDalTarief: new FormControl('', Validators.pattern(pricePattern)),
     });
   }
@@ -63,7 +64,7 @@ export class EnergiecontractComponent implements OnInit {
 
     this.energiecontractService.getAll().subscribe(
       response => this.energiecontracten = this.sort(response),
-      error => this.errorHandlingService.handleError("De energiecontracten konden nu niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('De energiecontracten konden nu niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );
   }
@@ -116,7 +117,7 @@ export class EnergiecontractComponent implements OnInit {
   }
 
   private formatPrice(price: number): string {
-    return this.decimalPipe.transform(price, '1.6-6')
+    return this.decimalPipe.transform(price, '1.6-6');
   }
 
   public cancelEdit(): void {
@@ -140,18 +141,18 @@ export class EnergiecontractComponent implements OnInit {
     energiecontract.stroomPerKwhDalTarief = this.toFloat(this.stroomDalTarief.value);
 
     this.energiecontractService.save(energiecontract).subscribe(
-      energiecontract => {
+      savedEnergiecontract => {
         if (this.selectedEnergiecontract) {
-          this.selectedEnergiecontract.id = energiecontract.id
+          this.selectedEnergiecontract.id = savedEnergiecontract.id;
         } else {
-         this.energiecontracten.push(energiecontract);
+         this.energiecontracten.push(savedEnergiecontract);
          this.sort(this.energiecontracten);
         }
         this.editMode = false;
         this.selectedEnergiecontract = null;
       },
       error => {
-        this.errorHandlingService.handleError("Het energiecontract kon nu niet worden opgeslagen", error);
+        this.errorHandlingService.handleError('Het energiecontract kon nu niet worden opgeslagen', error);
       },
       () => this.loadingIndicatorService.close()
     );
@@ -165,7 +166,7 @@ export class EnergiecontractComponent implements OnInit {
         this.energiecontracten.splice(index, 1);
         this.editMode = false;
       },
-      error => this.errorHandlingService.handleError("Het energiecontract kon niet worden verwijderd", error),
+      error => this.errorHandlingService.handleError('Het energiecontract kon niet worden verwijderd', error),
       () => this.loadingIndicatorService.close()
     );
   }
@@ -179,7 +180,7 @@ export class EnergiecontractComponent implements OnInit {
     if (isNullOrUndefined(value)) {
       return null;
     }
-    let parsed: number = parseFloat(value.replace(',', '.'));
+    const parsed: number = parseFloat(value.replace(',', '.'));
     if (isNaN(parsed)) {
       return null;
     }

@@ -1,10 +1,10 @@
 import {Component, Input} from '@angular/core';
-import {Statistics} from "../../statistics";
-import {DecimalPipe} from "@angular/common";
-import {isNull, isUndefined} from "util";
+import {Statistics} from '../../statistics';
+import {DecimalPipe} from '@angular/common';
+import {isNull, isUndefined} from 'util';
 
 @Component({
-  selector: 'statistics',
+  selector: 'home-statistics',
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.scss']
 })
@@ -17,18 +17,18 @@ export class StatisticsComponent {
   public decimalFormat: string;
 
   @Input()
-  public valuePrefix: string = '';
+  public valuePrefix = '';
   @Input()
-  public valuePostfix: string = '';
+  public valuePostfix = '';
 
   @Input()
-  public additionalClasses: string = '';
+  public additionalClasses = '';
 
   constructor(private decimalPipe: DecimalPipe) { }
 
   public format(value: number): string {
     if (isUndefined(value) || isNull(value) || isNaN(value)) {
-      return '-'
+      return '-';
     }
     return this.valuePrefix + this.decimalPipe.transform(value, this.decimalFormat) + this.valuePostfix;
   }

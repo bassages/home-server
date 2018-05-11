@@ -1,16 +1,16 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {StompService} from "@stomp/ng2-stompjs";
-import {Observable, Subscription} from "rxjs";
+import {StompService} from '@stomp/ng2-stompjs';
+import {Observable, Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';
-import {Meterstand} from "../../meterstand/meterstand";
-import {OpgenomenVermogen} from "../../opgenomen-vermogen/opgenomenVermogen";
-import {OpgenomenVermogenService} from "../../opgenomen-vermogen/opgenomenVermogen.service";
-import {Led, LedState} from "../led";
-import {MeterstandService} from "../../meterstand/meterstand.service";
-import {Router} from "@angular/router";
+import {Meterstand} from '../../meterstand/meterstand';
+import {OpgenomenVermogen} from '../../opgenomen-vermogen/opgenomenVermogen';
+import {OpgenomenVermogenService} from '../../opgenomen-vermogen/opgenomenVermogen.service';
+import {Led, LedState} from '../led';
+import {MeterstandService} from '../../meterstand/meterstand.service';
+import {Router} from '@angular/router';
 
 @Component({
-  selector: 'stroom-verbruik',
+  selector: 'home-stroom-verbruik',
   templateUrl: './stroom-verbruik.component.html',
   styleUrls: ['./stroom-verbruik.component.scss']
 })
@@ -36,13 +36,14 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.subscribeToMeterstandUpdates();
     this.subscribeToOpgenomenVermogenUpdates();
-
     this.getMostRecentOpgenomenVermogen();
     this.getMostRecentMeterstand();
   }
 
   private getMostRecentOpgenomenVermogen() {
-    this.opgenomenVermogenService.getMostRecent().subscribe(mostRecentOpgenomenVermogen => this.setOpgenomenVermogen(mostRecentOpgenomenVermogen));
+    this.opgenomenVermogenService.getMostRecent().subscribe(mostRecentOpgenomenVermogen => {
+      this.setOpgenomenVermogen(mostRecentOpgenomenVermogen);
+    });
   }
 
   private getMostRecentMeterstand() {
@@ -72,10 +73,10 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
   }
 
   private setOpgenomenVermogenLeds(opgenomenVermogen: OpgenomenVermogen) {
-    let opgenomenVermogenLeds: Led[] = [];
-      opgenomenVermogenLeds.push(new Led(opgenomenVermogen.watt > 0 ? LedState.ON : LedState.OFF));
-      for (let i = 1; i <= 9; i++) {
-        opgenomenVermogenLeds.push(new Led(opgenomenVermogen.watt >= (i * 150) ? LedState.ON : LedState.OFF));
+    const opgenomenVermogenLeds: Led[] = [];
+    opgenomenVermogenLeds.push(new Led(opgenomenVermogen.watt > 0 ? LedState.ON : LedState.OFF));
+    for (let i = 1; i <= 9; i++) {
+      opgenomenVermogenLeds.push(new Led(opgenomenVermogen.watt >= (i * 150) ? LedState.ON : LedState.OFF));
     }
     this.opgenomenVermogenLeds = opgenomenVermogenLeds;
   }

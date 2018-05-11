@@ -15,7 +15,7 @@
     </select>
   </div>
   <div class="col-md-3 mb-2">
-    <date-navigator mode="year" [selectedDate]="year" (onNavigate)="yearPickerChanged($event)"class="input-group"></date-navigator>
+    <home-date-navigator mode="year" [selectedDate]="year" (navigation)="yearPickerChanged($event)" class="input-group"></home-date-navigator>
   </div>
   <div class="col-md-2">
     <select #limitSelect class="form-control form-control" id="limit" name="limit" (change)="setLimit(limitSelect.value)">

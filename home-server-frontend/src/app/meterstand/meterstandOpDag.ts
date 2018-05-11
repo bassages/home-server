@@ -1,4 +1,4 @@
-import {Meterstand} from "./meterstand";
+import {Meterstand} from './meterstand';
 
 export class MeterstandOpDag {
   dag: Date;

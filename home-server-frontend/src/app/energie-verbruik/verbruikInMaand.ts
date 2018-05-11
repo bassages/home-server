@@ -1,4 +1,4 @@
-import {VerbruikKostenOverzicht} from "./verbruikKostenOverzicht";
+import {VerbruikKostenOverzicht} from './verbruikKostenOverzicht';
 
 export class VerbruikInMaand extends VerbruikKostenOverzicht {
   maand: number;

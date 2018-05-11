@@ -1,10 +1,9 @@
-import "rxjs/Rx";
-import {ChartConfiguration} from "c3";
+import {ChartConfiguration} from 'c3';
 
 const defaultChartPadding = { top: 10, bottom: 25, left: 55, right: 20 };
 
-const minimumChartHeight: number = 220;
-const maximumChartHeight: number = 500;
+const minimumChartHeight = 220;
+const maximumChartHeight = 500;
 
 export class ChartService {
 

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from "rxjs";
-import {LoadingIndicatorService} from "../loading-indicator/loading-indicator.service";
-import {Error} from "./error";
+import {Observable, Subject} from 'rxjs';
+import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
+import {Error} from './error';
 
 @Injectable()
 export class ErrorHandingService {
@@ -9,7 +9,7 @@ export class ErrorHandingService {
 
   constructor(private loadingIndicatorService: LoadingIndicatorService) { }
 
-  onError(): Observable<Error> {
+  public onError(): Observable<Error> {
     return this.errorSubject.asObservable();
   }
 

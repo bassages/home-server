@@ -1,15 +1,15 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {KlimaatService} from "../../klimaat/klimaat.service";
-import {Led, LedState} from "../led";
-import {RealtimeKlimaat} from "../../klimaat/realtimeKlimaat";
-import {Observable, Subscription} from "rxjs";
-import {Router} from "@angular/router";
-import {StompService} from "@stomp/ng2-stompjs";
+import {KlimaatService} from '../../klimaat/klimaat.service';
+import {Led, LedState} from '../led';
+import {RealtimeKlimaat} from '../../klimaat/realtimeKlimaat';
+import {Observable, Subscription} from 'rxjs';
+import {Router} from '@angular/router';
+import {StompService} from '@stomp/ng2-stompjs';
 import {Message} from '@stomp/stompjs';
-import {Trend} from "../../klimaat/trend";
+import {Trend} from '../../klimaat/trend';
 
 @Component({
-  selector: 'klimaat-luchtvochtigheid',
+  selector: 'home-klimaat-luchtvochtigheid',
   templateUrl: './klimaat-luchtvochtigheid.component.html',
   styleUrls: ['./klimaat-luchtvochtigheid.component.scss']
 })
@@ -42,7 +42,9 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
 
   private subscribeToKlimaatUpdates(): void {
     this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
-    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => this.setKlimaat(KlimaatService.mapToRealtimeKlimaat(JSON.parse(message.body))));
+    this.klimaatSubscription = this.klimaatObserver.subscribe((message) => {
+      this.setKlimaat(KlimaatService.mapToRealtimeKlimaat(JSON.parse(message.body)));
+    });
   }
 
   private setKlimaat(klimaat: RealtimeKlimaat): void {

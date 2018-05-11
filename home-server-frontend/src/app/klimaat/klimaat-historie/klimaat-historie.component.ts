@@ -1,40 +1,34 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {KlimaatSensor} from "../klimaatSensor";
-import {KlimaatService} from "../klimaat.service";
-import {LoadingIndicatorService} from "../../loading-indicator/loading-indicator.service";
-import {ErrorHandingService} from "../../error-handling/error-handing.service";
-import * as _ from "lodash";
-import {ActivatedRoute, Router} from "@angular/router";
-import * as moment from "moment";
-import {Moment} from "moment";
-import * as c3 from "c3";
-import {ChartAPI, ChartConfiguration} from "c3";
-import {ChartService} from "../../chart/chart.service";
-import {Klimaat} from "../klimaat";
-import {DecimalPipe} from "@angular/common";
-import {Statistics} from "../../statistics";
-import {ChartStatisticsService} from "../../chart/statistics/chart-statistics.service";
+import {KlimaatSensor} from '../klimaatSensor';
+import {KlimaatService} from '../klimaat.service';
+import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
+import {ErrorHandingService} from '../../error-handling/error-handing.service';
+import * as _ from 'lodash';
+import {ActivatedRoute, Router} from '@angular/router';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import * as c3 from 'c3';
+import {ChartAPI, ChartConfiguration} from 'c3';
+import {ChartService} from '../../chart/chart.service';
+import {Klimaat} from '../klimaat';
+import {DecimalPipe} from '@angular/common';
+import {Statistics} from '../../statistics';
+import {ChartStatisticsService} from '../../chart/statistics/chart-statistics.service';
 
 @Component({
-  selector: 'klimaat-historie',
+  selector: 'home-klimaat-historie',
   templateUrl: './klimaat-historie.component.html',
   styleUrls: ['./klimaat-historie.component.scss']
 })
 export class KlimaatHistorieComponent implements OnInit {
-  @HostListener('window:resize') onResize() {
-    this.determineChartOrTable();
-    if (this.showChart) {
-      this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
-    }
-  }
 
   public sensorCode: string;
   public sensorType: string;
   public date: Moment;
 
   public sensors: KlimaatSensor[];
-  public showTable: boolean = false;
-  public showChart: boolean = false;
+  public showTable = false;
+  public showChart = false;
   public klimaats: Klimaat[] = [];
   public statistics: Statistics;
   private chart: ChartAPI;
@@ -49,13 +43,20 @@ export class KlimaatHistorieComponent implements OnInit {
               private decimalPipe: DecimalPipe) {
   }
 
+  @HostListener('window:resize') onResize() {
+    this.determineChartOrTable();
+    if (this.showChart) {
+      this.chartService.adjustChartHeightToAvailableWindowHeight(this.chart);
+    }
+  }
+
   public ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe(queryParams => {
       const sensorCodeParam = queryParams.get('sensorCode');
       const sensorTypeParam = queryParams.get('sensorType');
 
       if (queryParams.has('datum')) {
-        this.date = moment(queryParams.get('datum'), "DD-MM-YYYY");
+        this.date = moment(queryParams.get('datum'), 'DD-MM-YYYY');
       } else {
         return this.navigateTo(sensorCodeParam, sensorTypeParam, moment());
       }
@@ -88,10 +89,10 @@ export class KlimaatHistorieComponent implements OnInit {
             this.getAndLoadData();
           } else {
             this.loadData([]);
-            this.loadingIndicatorService.close()
+            this.loadingIndicatorService.close();
           }
       },
-      error => this.errorHandlingService.handleError("De klimaat sensors konden nu niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('De klimaat sensors konden nu niet worden opgehaald', error),
     );
   }
 
@@ -158,7 +159,7 @@ export class KlimaatHistorieComponent implements OnInit {
     this.loadingIndicatorService.open();
     this.klimaatService.getKlimaat(this.sensorCode, this.date, this.date.clone().add(1, 'days')).subscribe(
       klimaat => this.loadData(klimaat),
-      error => this.errorHandlingService.handleError("Klimaat historie kon niet worden opgehaald", error),
+      error => this.errorHandlingService.handleError('Klimaat historie kon niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );
   }
@@ -176,10 +177,10 @@ export class KlimaatHistorieComponent implements OnInit {
 
     const tickValues = this.getTicksForEveryHourInDay();
 
-    let value: any = [];
+    const values: any = [];
     // for (var i = 0; i < vm.selection.length; i++) {
-      value.push(this.date.format('DD-MM-YYYY'));
-      // value.push(d3.time.format('%d-%m-%Y')(vm.selection[i]));
+      values.push(this.date.format('DD-MM-YYYY'));
+      // values.push(d3.time.format('%d-%m-%Y')(vm.selection[i]));
     // }
 
     return {
@@ -188,15 +189,15 @@ export class KlimaatHistorieComponent implements OnInit {
         type: 'spline',
         json: this.transformServerdata([{data: klimaat}]),
         keys: {
-          x: "datumtijd",
-          value: value
+          x: 'datumtijd',
+          value: values
         }
       },
       line: { connectNull: true },
       axis: {
         x: {
-          type: "timeseries",
-          tick: { format: "%H:%M", values: tickValues, rotate: -45 },
+          type: 'timeseries',
+          tick: { format: '%H:%M', values: tickValues, rotate: -45 },
           min: this.getFixedDate(), max: this.getTo(this.getFixedDate()),
           padding: { left: 0, right: 10 }
         },
@@ -312,9 +313,9 @@ export class KlimaatHistorieComponent implements OnInit {
   private getStatistics(klimaats: Klimaat[]): Statistics {
     const values: number[] = _.filter(_.map(klimaats, this.sensorType), (value: number) => value !== null && value > 0);
 
-    let mean: number = _.mean(values);
-    let min: number = _.min(values);
-    let max: number = _.max(values);
+    const mean: number = _.mean(values);
+    const min: number = _.min(values);
+    const max: number = _.max(values);
 
     return new Statistics(min, max, mean);
   }

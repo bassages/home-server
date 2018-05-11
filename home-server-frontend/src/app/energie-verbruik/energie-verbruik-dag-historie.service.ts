@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
-import "rxjs/Rx";
-import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
-import * as moment from "moment";
-import {Moment} from "moment";
-import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {Observable} from "rxjs";
-import {VerbruikOpDag} from "./verbruikOpDag";
-import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
-import {ChartConfiguration} from "c3";
-import {DecimalPipe} from "@angular/common";
-import * as _ from "lodash";
+import {EnergieVerbruikHistorieService} from './energie-verbruik-historie.service';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {EnergieVerbruikService} from './energie-verbruik.service';
+import {Observable} from 'rxjs';
+import {VerbruikOpDag} from './verbruikOpDag';
+import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-chart.service';
+import {ChartConfiguration} from 'c3';
+import {DecimalPipe} from '@angular/common';
+import * as _ from 'lodash';
 
 @Injectable()
-export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikOpDag> {
+export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHistorieService
+                                               implements EnergieVerbruikHistorieService<VerbruikOpDag> {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
@@ -62,7 +62,7 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, defaultValueFormat, color) {
         const titleFormat = (date: any) => that.formatDate(date);
-        return that.getTooltipContent(this, data, titleFormat, defaultValueFormat, color, verbruiksoort, energiesoorten)
+        return that.getTooltipContent(this, data, titleFormat, defaultValueFormat, color, verbruiksoort, energiesoorten);
       }
     };
     return chartConfiguration;

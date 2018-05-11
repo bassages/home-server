@@ -1,20 +1,21 @@
 import {Injectable} from '@angular/core';
-import "rxjs/Rx";
-import {EnergieVerbruikHistorieService} from "./energie-verbruik-historie.service";
-import * as moment from "moment";
-import {Moment} from "moment";
-import {EnergieVerbruikService} from "./energie-verbruik.service";
-import {Observable} from "rxjs";
-import {AbstractEnergieVerbruikHistorieService} from "./energie-verbruik-base-chart.service";
-import {ChartConfiguration} from "c3";
-import {DecimalPipe} from "@angular/common";
-import {VerbruikInMaand} from "./verbruikInMaand";
+import {EnergieVerbruikHistorieService} from './energie-verbruik-historie.service';
+import * as moment from 'moment';
+import {Moment} from 'moment';
+import {EnergieVerbruikService} from './energie-verbruik.service';
+import {Observable} from 'rxjs';
+import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-chart.service';
+import {ChartConfiguration} from 'c3';
+import {DecimalPipe} from '@angular/common';
+import {VerbruikInMaand} from './verbruikInMaand';
 
-const capitalizedShortMonthNames = ["Jan.", "Feb.", "Maa.", "Apr.", "Mei", "Jun.", "Jul.", "Aug.", "Sep.", "Okt.", "Nov.", "Dec."];
-const capitalizedFullMonthNames = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+const capitalizedShortMonthNames = ['Jan.', 'Feb.', 'Maa.', 'Apr.', 'Mei', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Okt.', 'Nov.', 'Dec.'];
+const capitalizedFullMonthNames = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+                                   'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
 
 @Injectable()
-export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruikHistorieService implements EnergieVerbruikHistorieService<VerbruikInMaand> {
+export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruikHistorieService
+                                                 implements EnergieVerbruikHistorieService<VerbruikInMaand> {
 
   constructor(private energieVerbruikService: EnergieVerbruikService,
               protected decimalPipe: DecimalPipe) {
@@ -56,7 +57,7 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
     chartConfiguration.tooltip = {
       contents: function (data, defaultTitleFormat, valueFormatter, color) {
         const titleFormatter = (month: number) => capitalizedFullMonthNames[month - 1];
-        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten)
+        return that.getTooltipContent(this, data, titleFormatter, valueFormatter, color, verbruiksoort, energiesoorten);
       }
     };
     return chartConfiguration;
@@ -71,6 +72,9 @@ export class EnergieVerbruikMaandHistorieService extends AbstractEnergieVerbruik
   }
 
   private toMoment(selectedDate: Moment, value: number): Moment {
-    return moment(selectedDate.format('YYYY') + '-' + this.decimalPipe.transform(value, '2.0-0') + '-' + selectedDate.format('DD'));
+    const year = selectedDate.format('YYYY');
+    const month = this.decimalPipe.transform(value, '2.0-0');
+    const day = selectedDate.format('DD');
+    return moment(year + '-' + month + '-' + day);
   }
 }

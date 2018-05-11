@@ -1,5 +1,5 @@
-import {Klimaat} from "./klimaat";
-import {Trend} from "./trend";
+import {Klimaat} from './klimaat';
+import {Trend} from './trend';
 
 export class RealtimeKlimaat extends Klimaat {
   temperatuurTrend: Trend;
