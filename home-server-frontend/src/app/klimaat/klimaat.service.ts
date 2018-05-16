@@ -94,6 +94,14 @@ export class KlimaatService {
                     .pipe(map(KlimaatService.mapAllToGemiddeldeKlimaatPerMaand));
   }
 
+  public updateKlimaatSensor(klimaatSensor: KlimaatSensor): Observable<KlimaatSensor> {
+    return this.http.put<KlimaatSensor>(`/api/klimaat/sensors/${klimaatSensor.code}`, klimaatSensor);
+  }
+
+  public deleteKlimaatSensor(klimaatSensor: KlimaatSensor) {
+    return this.http.delete(`/api/klimaat/sensors/${klimaatSensor.code}`);
+  }
+
   // noinspection JSMethodCanBeStatic
   public getValuePostFix(sensorType: string) {
     return sensorTypeToPostfixMapping.has(sensorType) ? sensorTypeToPostfixMapping.get(sensorType) : '';

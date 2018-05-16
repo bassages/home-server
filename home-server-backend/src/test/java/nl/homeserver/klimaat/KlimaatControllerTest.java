@@ -1,5 +1,16 @@
 package nl.homeserver.klimaat;
 
+import nl.homeserver.ResourceNotFoundException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import static java.time.LocalDate.now;
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
@@ -11,21 +22,7 @@ import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import nl.homeserver.ResourceNotFoundException;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatControllerTest {
@@ -180,5 +177,51 @@ public class KlimaatControllerTest {
         when(klimaatService.getAllKlimaatSensors()).thenReturn(allKlimaatSensors);
 
         assertThat(klimaatController.getAllKlimaatSensors()).isEqualTo(allKlimaatSensors);
+    }
+
+    @Test
+    public void givenExistingKlimaatSensorCodeWhenUpdateThenUpdatedByServiceAndReturned() {
+        KlimaatSensor existingKlimaatSensor = mock(KlimaatSensor.class);
+
+        String omschrijving = "The new Description";
+
+        when(klimaatSensor.getOmschrijving()).thenReturn(omschrijving);
+        when(klimaatService.getKlimaatSensorByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(existingKlimaatSensor));
+
+        KlimaatSensor updatedKlimaatSensor = mock(KlimaatSensor.class);
+        when(klimaatService.update(existingKlimaatSensor)).thenReturn(updatedKlimaatSensor);
+
+        assertThat(klimaatController.update(EXISTING_SENSOR_CODE, klimaatSensor)).isSameAs(updatedKlimaatSensor);
+
+        verify(existingKlimaatSensor).setOmschrijving(omschrijving);
+    }
+
+    @Test
+    public void givenNonExistingKlimaatSensorCodeWhenUpdateThenException() {
+        when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+            .isThrownBy(() -> klimaatController.update(NOT_EXISTING_SENSOR_CODE, klimaatSensor))
+            .withMessage("KlimaatSensor [DOES_NOT_EXISTS] does not exist");
+    }
+
+    @Test
+    public void givenExistingKlimaatSensorCodeWhenDeleteThenDeletedByService() {
+        when(klimaatSensor.getCode()).thenReturn(EXISTING_SENSOR_CODE);
+        when(klimaatService.getKlimaatSensorByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
+
+        klimaatController.delete(klimaatSensor.getCode());
+
+        verify(klimaatService).delete(klimaatSensor);
+    }
+
+    @Test
+    public void givenNonExistingKlimaatSensorCodeWheDeleteThenException() {
+        when(klimaatSensor.getCode()).thenReturn(NOT_EXISTING_SENSOR_CODE);
+        when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> klimaatController.delete(klimaatSensor.getCode()))
+                .withMessage("KlimaatSensor [DOES_NOT_EXISTS] does not exist");
     }
 }

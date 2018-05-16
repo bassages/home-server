@@ -1,27 +1,16 @@
 package nl.homeserver.klimaat;
 
-import static java.math.BigDecimal.ZERO;
-import static java.time.Month.JANUARY;
-import static java.time.Month.JULY;
-import static java.time.Month.JUNE;
-import static java.time.Month.SEPTEMBER;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
-import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
-import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.ReflectionTestUtils.getField;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.Trend;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -35,18 +24,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import nl.homeserver.DatePeriod;
-import nl.homeserver.Trend;
+import static java.math.BigDecimal.ZERO;
+import static java.time.Month.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
+import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.ReflectionTestUtils.getField;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {
@@ -504,6 +498,27 @@ public class KlimaatServiceTest {
                 .thenReturn(klimaatsFromRepository);
 
         assertThat(klimaatService.getPotentiallyCachedAllInPeriod(klimaatSensorCode, period)).isSameAs(klimaatsFromRepository);
+    }
+
+    @Test
+    public void whenUpdateKlimaatSensorTHenSavedByRepositoryAndReturned() {
+        KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
+        KlimaatSensor savedKlimaatSensor = mock(KlimaatSensor.class);
+        when(klimaatSensorRepository.save(klimaatSensor)).thenReturn(savedKlimaatSensor);
+
+        assertThat(klimaatService.update(klimaatSensor)).isSameAs(savedKlimaatSensor);
+    }
+
+    @Test
+    public void whenDeleteKlimaatSensorThenDataAndSensorDeletedByRepositories() {
+        String klimaatSensorCode = "someKlimaatSensor";
+        KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
+        when(klimaatSensor.getCode()).thenReturn(klimaatSensorCode);
+
+        klimaatService.delete(klimaatSensor);
+
+        verify(klimaatRepository).deleteByKlimaatSensorCode(klimaatSensorCode);
+        verify(klimaatSensorRepository).delete(klimaatSensor);
     }
 
     private KlimaatSensor createKlimaatSensor(String sensorCode) {

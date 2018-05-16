@@ -13,28 +13,28 @@ export class ErrorHandlingComponent implements OnInit {
   @ViewChild('errorDialogTemplate')
   private errorDialogTemplate: TemplateRef<any>;
 
-  modal: NgbModalRef;
-  message: String;
+  public message: String;
+  private modal: NgbModalRef;
 
   constructor(private modalService: NgbModal,
               private errorHandlingService: ErrorHandingService) {
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.errorHandlingService.onError()
                              .subscribe((error: Error) => this.handleError(error));
   }
 
-  handleError(error: Error) {
+  public handleError(error: Error): void {
     this.message = error.message;
-    this.openErrorDialog();
+    this.openDialog();
   }
 
-  openErrorDialog() {
+  public openDialog(): void {
     this.modal = this.modalService.open(this.errorDialogTemplate);
   }
 
-  close() {
+  public closeDialog(): void {
     if (this.modal) {
       this.modal.close();
     }

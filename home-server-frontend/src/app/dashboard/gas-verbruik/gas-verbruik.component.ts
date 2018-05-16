@@ -60,8 +60,7 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
     const from = moment().startOf('day');
     const to = from.clone().add(1, 'day');
 
-    this.energieVerbruikService.getVerbruikPerDag(from, to).subscribe(
-      (verbruikPerDag: VerbruikOpDag[]) => {
+    this.energieVerbruikService.getVerbruikPerDag(from, to).subscribe((verbruikPerDag: VerbruikOpDag[]) => {
         if (verbruikPerDag) {
           this.verbruikVandaag = verbruikPerDag[0];
           this.setGasVerbruikVandaagLeds();

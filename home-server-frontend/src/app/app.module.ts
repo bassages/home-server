@@ -43,6 +43,7 @@ import {EnergiecontractComponent} from './energiecontract/energiecontract.compon
 import {EnergiecontractService} from './energiecontract/energiecontract.service';
 import {KlimaatHighestLowestComponent} from './klimaat/klimaat-highest-lowest/klimaat-highest-lowest.component';
 import {KlimaatAverageComponent} from './klimaat/klimaat-average/klimaat-average.component';
+import {KlimaatSensorsComponent} from './klimaat/klimaat-sensors/klimaat-sensors.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -71,6 +72,7 @@ const appRoutes: Routes = [
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
   {path: 'mindergasnl', component: MindergasnlComponent},
+  {path: 'klimaat/sensors', component: KlimaatSensorsComponent},
   {path: 'klimaat/historie', component: KlimaatHistorieComponent},
   {path: 'klimaat/hoogste-laagste', component: KlimaatHighestLowestComponent},
   {path: 'klimaat/gemiddelde', component: KlimaatAverageComponent},
@@ -97,7 +99,8 @@ const appRoutes: Routes = [
     KlimaatLuchtvochtigheidComponent,
     EnergiecontractComponent,
     KlimaatHighestLowestComponent,
-    KlimaatAverageComponent
+    KlimaatAverageComponent,
+    KlimaatSensorsComponent
   ],
   imports: [
     BrowserModule,

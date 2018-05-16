@@ -1,16 +1,15 @@
 package nl.homeserver.klimaat;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
@@ -105,4 +104,6 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + " WHERE k.klimaatSensor.code = :sensorCode "
                  + "   AND k.datumtijd >= :van AND k.datumtijd < :tot")
     BigDecimal getAverageLuchtvochtigheid(@Param("sensorCode") String sensorCode, @Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
+
+    void deleteByKlimaatSensorCode(String klimaatSensorCode);
 }

@@ -1,5 +1,22 @@
 package nl.homeserver.klimaat;
 
+import nl.homeserver.DatePeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
@@ -9,33 +26,6 @@ import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
-
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.DatePeriod;
 
 @Service
 public class KlimaatService {
@@ -315,5 +305,14 @@ public class KlimaatService {
 
     public List<KlimaatSensor> getAllKlimaatSensors() {
         return klimaatSensorRepository.findAll();
+    }
+
+    public KlimaatSensor update(KlimaatSensor klimaatSensor) {
+        return klimaatSensorRepository.save(klimaatSensor);
+    }
+
+    public void delete(KlimaatSensor klimaatSensor) {
+        this.klimaatRepository.deleteByKlimaatSensorCode(klimaatSensor.getCode());
+        this.klimaatSensorRepository.delete(klimaatSensor);
     }
 }

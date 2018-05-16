@@ -30,7 +30,6 @@ export class EnergiecontractComponent implements OnInit {
   public datePickerModel: String;
 
   public editMode = false;
-
   public selectedEnergiecontract: Energiecontract;
 
   constructor(private energiecontractService: EnergiecontractService,

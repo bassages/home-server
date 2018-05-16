@@ -1,24 +1,16 @@
 package nl.homeserver.klimaat;
 
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.klimaat.SensorType.toSensorType;
+import nl.homeserver.ResourceNotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
-import nl.homeserver.ResourceNotFoundException;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.SensorType.toSensorType;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -41,6 +33,19 @@ public class KlimaatController {
         KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
+    }
+
+    @PutMapping("sensors/{sensorCode}")
+    public KlimaatSensor update(@PathVariable("sensorCode") String sensorCode, @RequestBody KlimaatSensor klimaatSensor) {
+        KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+        existingKlimaatSensor.setOmschrijving(klimaatSensor.getOmschrijving());
+        return klimaatService.update(existingKlimaatSensor);
+    }
+
+    @DeleteMapping("sensors/{sensorCode}")
+    public void delete(@PathVariable("sensorCode") String sensorCode) {
+        KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+        klimaatService.delete(existingKlimaatSensor);
     }
 
     @GetMapping(path = "{sensorCode}/meest-recente")
