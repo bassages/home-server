@@ -10,6 +10,7 @@ import {Moment} from 'moment';
 import {DatePickerDirective, IDatePickerConfig} from 'ng2-date-picker';
 import {DecimalPipe} from '@angular/common';
 import {isNullOrUndefined} from 'util';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 const datePickerFormat = 'dddd DD-MM-YYYY';
 const pricePattern = /^\d(,\d{1,6})*$/;
@@ -35,7 +36,8 @@ export class EnergiecontractComponent implements OnInit {
   constructor(private energiecontractService: EnergiecontractService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
-              private decimalPipe: DecimalPipe) {
+              private decimalPipe: DecimalPipe,
+              private modalService: NgbModal) {
   }
 
   @ViewChild('datePicker') datePicker: DatePickerDirective;
@@ -184,5 +186,11 @@ export class EnergiecontractComponent implements OnInit {
       return null;
     }
     return parsed;
+  }
+
+  public openDeletionConformationDialog(deletionConformationDialogTemplate) {
+    this.modalService.open(deletionConformationDialogTemplate).result.then(
+      (result) => this.delete(),
+      (reason) => console.info('Cancel deletion'));
   }
 }

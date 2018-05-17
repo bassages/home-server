@@ -20,7 +20,7 @@
     </thead>
     <tr *ngFor="let sensor of sensors" (click)="startEdit(sensor)" class="clickable" [ngClass]="{'table-primary': sensor.code === selectedSensor?.code}">
       <td>{{ sensor.code }}</td>
-      <td class="text-right">{{ sensor.omschrijving }}</td>
+      <td>{{ sensor.omschrijving }}</td>
     </tr>
   </table>
 </div>
@@ -56,10 +56,10 @@
 
 <ng-template #deletionConformationDialog let-close="close" let-dismiss="dismiss">
   <div class="modal-header bg-warning text-light">
-    <h4 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Bevestig verwijderen</h4>
+    <h4 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Bevestig</h4>
   </div>
   <div class="modal-body">
-    <p>Weet je het zeker? Alle historie van de klimaatsensor zal worden verwijderd.</p>
+    <p>Weet je het zeker?</p><p>Alle historie van de klimaatsensor <strong>{{selectedSensor.code}}</strong> zal worden verwijderd.</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-primary" (click)="dismiss('CANCEL')">Nee, niet verwijderen</button>

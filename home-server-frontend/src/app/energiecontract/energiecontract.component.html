@@ -101,7 +101,7 @@
   <div class="form-group row">
     <div class="col-md-4 col-lg-3">&nbsp;</div>
     <div class="col-sm-9 col-md-7 col-lg-5">
-      <button type="button" class="btn btn-primary float-left" [hidden]="!selectedEnergiecontract" (click)="delete()"><i class="fa fa-trash"></i> Verwijderen</button>
+      <button type="button" class="btn btn-primary float-left" [hidden]="!selectedEnergiecontract" (click)="openDeletionConformationDialog(deletionConformationDialog)"><i class="fa fa-trash"></i> Verwijderen</button>
       <div class="float-right">
         <button type="button" class="btn btn-primary" (click)="cancelEdit()"><i class="fa fa-ban"></i> Annuleren</button>
         <button type="submit" class="btn btn-primary ml-1" [disabled]="form.invalid"><i class="fa fa-check"></i> Opslaan</button>
@@ -110,3 +110,16 @@
   </div>
 
 </form>
+
+<ng-template #deletionConformationDialog let-close="close" let-dismiss="dismiss">
+  <div class="modal-header bg-warning text-light">
+    <h4 class="modal-title"><i class="fas fa-exclamation-triangle"></i> Bevestig</h4>
+  </div>
+  <div class="modal-body">
+    <p>Weet je zeker dat je energiecontract met <strong>{{selectedEnergiecontract.leverancier}}</strong> (vanaf {{selectedEnergiecontract.validFrom | date:'dd-MM-yyyy'}}) wilt verwijderen?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="dismiss('CANCEL')">Nee, niet verwijderen</button>
+    <button type="button" class="btn btn-primary ml-1" (click)="close('CONFIRM')">Ja, wel verwijderen</button>
+  </div>
+</ng-template>

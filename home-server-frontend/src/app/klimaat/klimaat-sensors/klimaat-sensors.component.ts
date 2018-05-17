@@ -107,8 +107,9 @@ export class KlimaatSensorsComponent implements OnInit {
     this.selectedSensor = null;
   }
 
-  public openDeletionConformationDialog(content) {
-    this.modalService.open(content).result.then(
-    (result) => this.delete());
+  public openDeletionConformationDialog(deletionConformationDialogTemplate) {
+    this.modalService.open(deletionConformationDialogTemplate).result.then(
+    (result) => this.delete(),
+    (reason) => console.info('Cancel deletion'));
   }
 }
