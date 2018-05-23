@@ -14,6 +14,7 @@ import {Klimaat} from '../klimaat';
 import {DecimalPipe} from '@angular/common';
 import {Statistics} from '../../statistics';
 import {ChartStatisticsService} from '../../chart/statistics/chart-statistics.service';
+import * as chroma from 'chroma-js';
 
 @Component({
   selector: 'home-klimaat-historie',
@@ -27,6 +28,10 @@ export class KlimaatHistorieComponent implements OnInit {
   public date: Moment;
 
   public sensors: KlimaatSensor[];
+
+  private sortedUniqueValues: number[];
+  private colorScale: string[];
+
   public showTable = false;
   public showChart = false;
   public klimaats: Klimaat[] = [];
@@ -70,7 +75,7 @@ export class KlimaatHistorieComponent implements OnInit {
 
       this.determineChartOrTable();
 
-      this.getKlimaatSensors();
+      setTimeout(() => this.getKlimaatSensors());
     });
   }
 
@@ -152,7 +157,10 @@ export class KlimaatHistorieComponent implements OnInit {
   }
 
   private loadDataIntoTable(klimaat: Klimaat[]) {
-    // Nothing special to do here
+    this.sortedUniqueValues = _.sortBy(_.uniq(_.map(this.klimaats, this.sensorType)));
+    this.colorScale = chroma.scale(['#3e7fcd', 'white', '#e83b26'])
+                            .mode('lch')
+                            .colors(this.sortedUniqueValues.length);
   }
 
   private getAndLoadData(): void {
@@ -323,5 +331,11 @@ export class KlimaatHistorieComponent implements OnInit {
   // noinspection JSMethodCanBeStatic
   public getFormattedTime(klimaat: Klimaat) {
     return klimaat.dateTime.format('HH:mm');
+  }
+
+  // noinspection JSMethodCanBeStatic
+  public getColor(value: number) {
+    const indexOfValue = this.sortedUniqueValues.indexOf(value);
+    return this.colorScale[indexOfValue];
   }
 }

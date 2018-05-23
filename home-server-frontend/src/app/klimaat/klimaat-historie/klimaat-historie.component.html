@@ -59,6 +59,7 @@
         <tr *ngFor="let klimaat of klimaats" class="clickable'">
           <td class="text-right">{{ getFormattedTime(klimaat) }}</td>
           <td class="text-right">{{ formatWithUnitLabel(sensorType, klimaat[sensorType]) }}</td>
+          <td [style.background-color]="getColor(klimaat[sensorType])" style="width:12px;"></td>
         </tr>
       </table>
     </div>
