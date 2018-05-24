@@ -104,6 +104,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
   public setSensorType(sensorType: string): void {
     this.sensorType = sensorType;
+    this.getAndLoadData();
   }
 
   public navigateToDetailsOfDate(dateTime: Moment) {
