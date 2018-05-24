@@ -63,8 +63,8 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "                      WHERE ks.code = :sensorCode"
                  + "                   GROUP BY k.datum"
                  + "                     HAVING k.datum >= :van AND k.datum < :tot"
-                 + "                   ORDER BY luchtvochtigheid"
-                 + "                   DESC LIMIT :limit"
+                 + "                   ORDER BY luchtvochtigheid DESC "
+                 + "                      LIMIT :limit "
                  + "                  ) datums", nativeQuery = true)
     List<Date> getPeakHighHumidityDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
@@ -81,8 +81,8 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "                      WHERE ks.code = :sensorCode"
                  + "                   GROUP BY k.datum"
                  + "                     HAVING k.datum >= :van AND k.datum < :tot"
-                 + "                   ORDER BY luchtvochtigheid"
-                 + "                   DESC LIMIT :limit"
+                 + "                   ORDER BY luchtvochtigheid ASC "
+                 + "                      LIMIT :limit "
                  + "                  ) datums", nativeQuery = true)
     List<Date> getPeakLowHumidityDates(@Param("sensorCode") String sensorCode, @Param("van") LocalDate van, @Param("tot") LocalDate tot, @Param("limit") int limit);
 
@@ -90,7 +90,8 @@ public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "    FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id "
                  + "   WHERE k.datum = :date "
                  + "     AND ks.code = :sensorCode "
-                 + "ORDER BY k.luchtvochtigheid ASC, k.datumtijd ASC LIMIT 1", nativeQuery = true)
+                 + "ORDER BY k.luchtvochtigheid ASC, k.datumtijd ASC "
+                 + " LIMIT 1", nativeQuery = true)
     Klimaat earliestLowestHumidityOnDay(@Param("sensorCode") String sensorCode, @Param("date") LocalDate day);
 
     @Query(value = "SELECT AVG(k.temperatuur) "
