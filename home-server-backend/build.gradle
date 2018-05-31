@@ -56,8 +56,8 @@ jar {
 }
 
 dependencies {
-    annotationProcessor("org.projectlombok:lombok:1.16.20")
-    compileOnly("org.projectlombok:lombok:1.16.20")
+    annotationProcessor("org.projectlombok:lombok:1.16.22")
+    compileOnly("org.projectlombok:lombok:1.16.22")
 
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-cache')
@@ -82,8 +82,8 @@ dependencies {
     compile('javax.inject:javax.inject:1')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.assertj:assertj-core:3.9.1')
-    testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.5');
+    testCompile('org.assertj:assertj-core:3.10.0')
+    testCompile('nl.jqno.equalsverifier:equalsverifier:2.4.6');
 
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')
