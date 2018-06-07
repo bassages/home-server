@@ -1,39 +1,37 @@
 package nl.homeserver.cache;
 
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.YearMonth;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-
 import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
 import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;
+import nl.homeserver.klimaat.SensorType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.YearMonth;
+
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JUNE;
+import static java.util.Collections.singletonList;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WarmupCacheTest {
+
+    private final String SOME_KLIMAATSENSOR_CODE = "SOME_NICE_CODE";
 
     @InjectMocks
     private WarmupCache warmupCache;
@@ -253,7 +251,7 @@ public class WarmupCacheTest {
     @Test
     public void givenWarmupEnabledWhenApplicationStartedThenClimatePerDayWarmedup() {
         setWarmupCacheEnabled();
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         KlimaatSensor klimaatSensor = new KlimaatSensor();
         String sensorCode = "SOME_NICE_CODE";
@@ -265,24 +263,38 @@ public class WarmupCacheTest {
         verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode), fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 23),
-                LocalDate.of(2017, 12, 24),
-                LocalDate.of(2017, 12, 25),
-                LocalDate.of(2017, 12, 26),
-                LocalDate.of(2017, 12, 27),
-                LocalDate.of(2017, 12, 28),
-                LocalDate.of(2017, 12, 29)
+                LocalDate.of(2017, DECEMBER, 23),
+                LocalDate.of(2017, DECEMBER, 24),
+                LocalDate.of(2017, DECEMBER, 25),
+                LocalDate.of(2017, DECEMBER, 26),
+                LocalDate.of(2017, DECEMBER, 27),
+                LocalDate.of(2017, DECEMBER, 28),
+                LocalDate.of(2017, DECEMBER, 29)
         );
 
         assertThat(toDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 24),
-                LocalDate.of(2017, 12, 25),
-                LocalDate.of(2017, 12, 26),
-                LocalDate.of(2017, 12, 27),
-                LocalDate.of(2017, 12, 28),
-                LocalDate.of(2017, 12, 29),
-                LocalDate.of(2017, 12, 30)
+                LocalDate.of(2017, DECEMBER, 24),
+                LocalDate.of(2017, DECEMBER, 25),
+                LocalDate.of(2017, DECEMBER, 26),
+                LocalDate.of(2017, DECEMBER, 27),
+                LocalDate.of(2017, DECEMBER, 28),
+                LocalDate.of(2017, DECEMBER, 29),
+                LocalDate.of(2017, DECEMBER, 30)
         );
+    }
+
+    @Test
+    public void givenWarmupEnabledWhenApplicationStartedThenClimateAveragesWarmedup() {
+        setWarmupCacheEnabled();
+        timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
+
+        when(klimaatService.getAllKlimaatSensors())
+                           .thenReturn(singletonList(aKlimaatSensor().withCode(SOME_KLIMAATSENSOR_CODE).build()));
+
+        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+
+        verify(klimaatController).getAverage(eq(SOME_KLIMAATSENSOR_CODE), eq(SensorType.TEMPERATUUR.name()), AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
+        verify(klimaatController).getAverage(eq(SOME_KLIMAATSENSOR_CODE), eq(SensorType.LUCHTVOCHTIGHEID.name()), AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
     }
 
     private void setWarmupCacheDisabled() {

@@ -12,4 +12,5 @@
     <cache name="opgenomenVermogenHistory" />
     <cache name="meestRecenteMeterstandOpDag" />
     <cache name="klimaatInPeriod" />
+    <cache name="averageKlimaatInMonth" />
 </ehcache>

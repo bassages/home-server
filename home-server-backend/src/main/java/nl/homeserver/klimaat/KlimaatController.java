@@ -18,7 +18,7 @@ public class KlimaatController {
 
     private final KlimaatService klimaatService;
 
-    public KlimaatController(KlimaatService klimaatService) {
+    public KlimaatController(final KlimaatService klimaatService) {
         this.klimaatService = klimaatService;
     }
 
@@ -29,70 +29,71 @@ public class KlimaatController {
 
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@PathVariable("sensorCode") String sensorCode, @RequestBody Klimaat klimaat) {
-        KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+    public void add(@PathVariable("sensorCode") final String sensorCode, @RequestBody final Klimaat klimaat) {
+        final KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         klimaat.setKlimaatSensor(klimaatSensor);
         klimaatService.add(klimaat);
     }
 
     @PutMapping("sensors/{sensorCode}")
-    public KlimaatSensor update(@PathVariable("sensorCode") String sensorCode, @RequestBody KlimaatSensor klimaatSensor) {
-        KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensor klimaatSensor) {
+        final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         existingKlimaatSensor.setOmschrijving(klimaatSensor.getOmschrijving());
         return klimaatService.update(existingKlimaatSensor);
     }
 
     @DeleteMapping("sensors/{sensorCode}")
-    public void delete(@PathVariable("sensorCode") String sensorCode) {
-        KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+    public void delete(@PathVariable("sensorCode") final String sensorCode) {
+        final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         klimaatService.delete(existingKlimaatSensor);
     }
 
     @GetMapping(path = "{sensorCode}/meest-recente")
-    public RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") String sensorCode) {
+    public RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") final String sensorCode) {
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getMostRecent(sensorCode);
     }
 
     @GetMapping(path = "{sensorCode}/hoogste")
-    public List<Klimaat> getHighest(@PathVariable("sensorCode") String sensorCode,
-                                    @RequestParam("sensorType") String sensorType,
-                                    @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
-                                    @RequestParam("limit") int limit) {
+    public List<Klimaat> getHighest(@PathVariable("sensorCode") final String sensorCode,
+                                    @RequestParam("sensorType") final String sensorType,
+                                    @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
+                                    @RequestParam("limit") final int limit) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getHighest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);
     }
 
     @GetMapping(path = "{sensorCode}/laagste")
-    public List<Klimaat> getLowest(@PathVariable("sensorCode") String sensorCode,
-                                   @RequestParam("sensorType") String sensorType,
-                                   @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                   @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
-                                   @RequestParam("limit") int limit) {
+    public List<Klimaat> getLowest(@PathVariable("sensorCode") final String sensorCode,
+                                   @RequestParam("sensorType") final String sensorType,
+                                   @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                                   @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
+                                   @RequestParam("limit") final int limit) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getLowest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);
     }
 
     @GetMapping(path = "{sensorCode}")
-    public List<Klimaat> findAllInPeriod(@PathVariable("sensorCode") String sensorCode,
-                                         @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                         @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+    public List<Klimaat> findAllInPeriod(@PathVariable("sensorCode") final String sensorCode,
+                                         @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                                         @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getInPeriod(sensorCode, aPeriodWithToDate(from, to));
     }
 
     @GetMapping(path = "{sensorCode}/gemiddeld-per-maand-in-jaar")
-    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") String sensorCode,
-                                                            @RequestParam("sensorType") String sensorType, @RequestParam("jaar") int[] jaren) {
+    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") final String sensorCode,
+                                                            @RequestParam("sensorType") final String sensorType,
+                                                            @RequestParam("jaar") final int[] years) {
         getKlimaatSensorExpectingOne(sensorCode);
-        return klimaatService.getAveragePerMonthInYears(sensorCode, toSensorType(sensorType), jaren);
+        return klimaatService.getAveragePerMonthInYears(sensorCode, toSensorType(sensorType), years);
     }
 
-    private KlimaatSensor getKlimaatSensorExpectingOne(String klimaatSensorCode) {
+    private KlimaatSensor getKlimaatSensorExpectingOne(final String klimaatSensorCode) {
         return klimaatService.getKlimaatSensorByCode(klimaatSensorCode)
                              .orElseThrow(() -> new ResourceNotFoundException("KlimaatSensor", klimaatSensorCode));
     }

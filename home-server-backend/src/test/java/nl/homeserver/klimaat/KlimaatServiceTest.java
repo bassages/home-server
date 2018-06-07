@@ -30,6 +30,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
 import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -44,6 +45,8 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {
+
+    private static final String SOME_SENSOR_CODE = "someSensorCode";
 
     @InjectMocks
     private KlimaatService klimaatService;
@@ -73,17 +76,16 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
-        String sensorCode = "MasterBedroom";
-        KlimaatSensor klimaatSensor = createKlimaatSensor(sensorCode);
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        when(klimaatSensorRepository.findFirstByCode(sensorCode)).thenReturn(Optional.of(klimaatSensor));
+        when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
-        assertThat(klimaatService.getKlimaatSensorByCode(sensorCode)).contains(klimaatSensor);
+        assertThat(klimaatService.getKlimaatSensorByCode(SOME_SENSOR_CODE)).contains(klimaatSensor);
     }
 
     @Test
     public void whenGetAllKlimaatSensorshenDelegatedToRepository() {
-        List<KlimaatSensor> klimaatSensors = asList(mock(KlimaatSensor.class), mock(KlimaatSensor.class));
+        final List<KlimaatSensor> klimaatSensors = asList(mock(KlimaatSensor.class), mock(KlimaatSensor.class));
         when(klimaatSensorRepository.findAll()).thenReturn(klimaatSensors);
 
         assertThat(klimaatService.getAllKlimaatSensors()).isSameAs(klimaatSensors);
@@ -92,20 +94,20 @@ public class KlimaatServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatSensor klimaatSensor = createKlimaatSensor("Attic");
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        Klimaat klimaat = new Klimaat();
+        final Klimaat klimaat = new Klimaat();
         klimaat.setDatumtijd(currentDateTime);
         klimaat.setKlimaatSensor(klimaatSensor);
         klimaat.setLuchtvochtigheid(new BigDecimal("56.13"));
         klimaat.setTemperatuur(new BigDecimal("21.51"));
 
         when(klimaatSensorValueTrendService.determineValueTrend(anyList(), any(Function.class))).then(invocation -> {
-            Function<Klimaat, BigDecimal> sensorValueGetter = (Function<Klimaat, BigDecimal>) invocation.getArguments()[1];
-            BigDecimal resultOfFunction = sensorValueGetter.apply(klimaat);
+            final Function<Klimaat, BigDecimal> sensorValueGetter = (Function<Klimaat, BigDecimal>) invocation.getArguments()[1];
+            final BigDecimal resultOfFunction = sensorValueGetter.apply(klimaat);
             if (resultOfFunction.equals(klimaat.getLuchtvochtigheid())) {
                 return Trend.UP;
             } else if (resultOfFunction.equals(klimaat.getTemperatuur())) {
@@ -118,7 +120,7 @@ public class KlimaatServiceTest {
 
         verify(simpMessagingTemplate).convertAndSend(eq(KlimaatService.REALTIME_KLIMAAT_TOPIC), realtimeKlimaatCaptor.capture());
 
-        RealtimeKlimaat realtimeKlimaat = realtimeKlimaatCaptor.getValue();
+        final RealtimeKlimaat realtimeKlimaat = realtimeKlimaatCaptor.getValue();
         assertThat(realtimeKlimaat.getDatumtijd()).isEqualTo(klimaat.getDatumtijd());
         assertThat(realtimeKlimaat.getLuchtvochtigheid()).isEqualTo(klimaat.getLuchtvochtigheid());
         assertThat(realtimeKlimaat.getTemperatuur()).isEqualTo(klimaat.getTemperatuur());
@@ -129,16 +131,16 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenAddThenAddedToRecentlyReceivedKlimaatsPerSensorCode() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
+        final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
-        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                    .withDatumtijd(currentDateTime)
-                                    .build();
+        final Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                          .withDatumtijd(currentDateTime)
+                                          .build();
 
         klimaatService.add(klimaat);
 
@@ -148,14 +150,14 @@ public class KlimaatServiceTest {
 
     @Test
     public void givenKlimaatWithoutDatumtijdwhenAddThenDatumtijdIsSetToCurrent() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                    .withDatumtijd(null)
-                                    .build();
+        final Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                          .withDatumtijd(null)
+                                          .build();
 
         klimaatService.add(klimaat);
 
@@ -165,29 +167,29 @@ public class KlimaatServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenOldItemsRemovedFromRecentlyReceivedKlimaatsPerSensorCode() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatSensor klimaatSensor = createKlimaatSensor("Basement");
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        Klimaat oldKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                       .withDatumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
-                                       .build();
+        final Klimaat oldKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                            .withDatumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
+                                           .build();
 
-        Klimaat recentKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
+        final Klimaat recentKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
                                           .withDatumtijd(currentDateTime.minusMinutes(18))
                                           .build();
 
-        List<Klimaat> recentlyReceivedKlimaats = new ArrayList<>();
+        final List<Klimaat> recentlyReceivedKlimaats = new ArrayList<>();
         recentlyReceivedKlimaats.add(oldKlimaat);
         recentlyReceivedKlimaats.add(recentKlimaat);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
+        final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensor.getCode(), recentlyReceivedKlimaats);
 
-        Klimaat klimaatToAdd = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                         .withDatumtijd(currentDateTime)
-                                         .build();
+        final Klimaat klimaatToAdd = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                               .withDatumtijd(currentDateTime)
+                                               .build();
 
         klimaatService.add(klimaatToAdd);
 
@@ -197,60 +199,59 @@ public class KlimaatServiceTest {
 
     @Test
     public void givenKlimaatOfUnUnknowSensorWhenSaveThenKlimaatSensorCreated() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        String klimaatSensorCode = "This one is unknown";
-        KlimaatSensor klimaatSensor = createKlimaatSensor(klimaatSensorCode);
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        Klimaat klimaatToSave = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                          .withDatumtijd(currentDateTime)
-                                          .build();
+        final Klimaat klimaatToSave = aKlimaat().withKlimaatSensor(klimaatSensor)
+                                                .withDatumtijd(currentDateTime)
+                                                .build();
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
-        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorCode, singletonList(klimaatToSave));
+        final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(SOME_SENSOR_CODE, singletonList(klimaatToSave));
 
-        when(klimaatSensorRepository.findFirstByCode(klimaatSensorCode)).thenReturn(Optional.empty());
+        when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.empty());
 
         klimaatService.save();
 
         verify(klimaatSensorRepository).save(klimaatSensorCaptor.capture());
-        KlimaatSensor createdKlimaatSensor = klimaatSensorCaptor.getValue();
-        assertThat(createdKlimaatSensor.getCode()).isEqualTo(klimaatSensorCode);
+        final KlimaatSensor createdKlimaatSensor = klimaatSensorCaptor.getValue();
+        assertThat(createdKlimaatSensor.getCode()).isEqualTo(SOME_SENSOR_CODE);
         assertThat(createdKlimaatSensor.getOmschrijving()).isNull();
     }
 
     @Test
     public void whenSaveThenOneKlimaatPerSensorSavedWithAverageSensorValues() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 2);
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 2);
         timeTravelTo(clock, currentDateTime);
 
-        Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
+        final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
-        KlimaatSensor klimaatSensorBasement = createKlimaatSensor("Basement");
+        final KlimaatSensor klimaatSensorBasement = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
         when(klimaatSensorRepository.findFirstByCode(klimaatSensorBasement.getCode())).thenReturn(Optional.of(klimaatSensorBasement));
 
-        Klimaat recentValidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                .withDatumtijd(currentDateTime.minusMinutes(10))
-                                                .withLuchtvochtigheid(new BigDecimal("25.00"))
-                                                .withTemperatuur(new BigDecimal("20.00"))
-                                                .build();
-        Klimaat recentValidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                .withDatumtijd(currentDateTime.minusMinutes(5))
-                                                .withLuchtvochtigheid(new BigDecimal("75.00"))
-                                                .withTemperatuur(new BigDecimal("10.00"))
-                                                .build();
-        Klimaat recentInvalidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                  .withDatumtijd(currentDateTime.minusMinutes(4))
-                                                  .withLuchtvochtigheid(ZERO)
-                                                  .withTemperatuur(ZERO)
-                                                  .build();
-        Klimaat recentInvalidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
-                                                  .withDatumtijd(currentDateTime.minusMinutes(3))
-                                                  .withLuchtvochtigheid(null)
-                                                  .withTemperatuur(null)
-                                                  .build();
+        final Klimaat recentValidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                      .withDatumtijd(currentDateTime.minusMinutes(10))
+                                                      .withLuchtvochtigheid(new BigDecimal("25.00"))
+                                                      .withTemperatuur(new BigDecimal("20.00"))
+                                                      .build();
+        final Klimaat recentValidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                      .withDatumtijd(currentDateTime.minusMinutes(5))
+                                                      .withLuchtvochtigheid(new BigDecimal("75.00"))
+                                                      .withTemperatuur(new BigDecimal("10.00"))
+                                                      .build();
+        final Klimaat recentInvalidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                        .withDatumtijd(currentDateTime.minusMinutes(4))
+                                                        .withLuchtvochtigheid(ZERO)
+                                                        .withTemperatuur(ZERO)
+                                                        .build();
+        final  Klimaat recentInvalidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensorBasement)
+                                                         .withDatumtijd(currentDateTime.minusMinutes(3))
+                                                         .withLuchtvochtigheid(null)
+                                                         .withTemperatuur(null)
+                                                         .build();
 
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorBasement.getCode(),
                                                          asList(recentValidKlimaat1, recentValidKlimaat2, recentInvalidKlimaat1, recentInvalidKlimaat2));
@@ -259,7 +260,7 @@ public class KlimaatServiceTest {
 
         verify(klimaatRepository).save(klimaatCaptor.capture());
 
-        Klimaat savedKlimaat = klimaatCaptor.getValue();
+        final Klimaat savedKlimaat = klimaatCaptor.getValue();
         assertThat(savedKlimaat.getDatumtijd()).isEqualTo(LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0));
         assertThat(savedKlimaat.getLuchtvochtigheid()).isEqualTo(new BigDecimal("50.0"));
         assertThat(savedKlimaat.getTemperatuur()).isEqualTo(new BigDecimal("15.00"));
@@ -267,127 +268,120 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenGetHighestTemperatureThenDelegatedToRepository() {
-        String sensorCode = "DogHouse";
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
-        Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakHighTemperatureDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
-        when(klimaatRepository.earliestHighestTemperatureOnDay(sensorCode, from)).thenReturn(klimaat);
+        final Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakHighTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestHighestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
-        List<Klimaat> highest = klimaatService.getHighest(sensorCode, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
+        final List<Klimaat> highest = klimaatService.getHighest(SOME_SENSOR_CODE, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
 
         assertThat(highest).containsExactly(klimaat);
     }
 
     @Test
     public void whenGetLowestTemperatureThenDelegatedToRepository() {
-        String sensorCode = "DogHouse";
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
-        Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakLowTemperatureDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
-        when(klimaatRepository.earliestLowestTemperatureOnDay(sensorCode, from)).thenReturn(klimaat);
+        final Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakLowTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestLowestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
-        List<Klimaat> lowest = klimaatService.getLowest(sensorCode, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
+        final List<Klimaat> lowest = klimaatService.getLowest(SOME_SENSOR_CODE, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
 
         assertThat(lowest).containsExactly(klimaat);
     }
 
     @Test
     public void whenGetHighestHumidityThenDelegatedToRepository() {
-        String sensorCode = "DogHouse";
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
-        Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakHighHumidityDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
-        when(klimaatRepository.earliestHighestHumidityOnDay(sensorCode, from)).thenReturn(klimaat);
+        final Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakHighHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestHighestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
-        List<Klimaat> highest = klimaatService.getHighest(sensorCode, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
+        final List<Klimaat> highest = klimaatService.getHighest(SOME_SENSOR_CODE, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
 
         assertThat(highest).containsExactly(klimaat);
     }
 
     @Test
     public void whenGetLowestHumidityThenDelegatedToRepository() {
-        String sensorCode = "DogHouse";
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
-        Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakLowHumidityDates(sensorCode, from, to, limit)).thenReturn(singletonList(day));
-        when(klimaatRepository.earliestLowestHumidityOnDay(sensorCode, from)).thenReturn(klimaat);
+        final Date day = Date.valueOf(from);
+        when(klimaatRepository.getPeakLowHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.earliestLowestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
-        List<Klimaat> lowest = klimaatService.getLowest(sensorCode, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
+        final List<Klimaat> lowest = klimaatService.getLowest(SOME_SENSOR_CODE, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
 
         assertThat(lowest).containsExactly(klimaat);
     }
 
     @Test
     public void givenUnexpectedSensorTypewhenGetHighestThenException() {
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 10);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 10);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        SensorType unexpectedSensorType = null;
+        final SensorType unexpectedSensorType = null;
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> klimaatService.getLowest("someSensorCode", unexpectedSensorType, aPeriodWithToDate(from, to), limit))
+                .isThrownBy(() -> klimaatService.getLowest(SOME_SENSOR_CODE, unexpectedSensorType, aPeriodWithToDate(from, to), limit))
                 .withMessage("Unexpected SensorType [null]");
     }
 
     @Test
     public void givenUnexpectedSensorTypewhenGetLowestThenException() {
-        LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        LocalDate to = from.plusDays(1);
-        int limit = 100;
+        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate to = from.plusDays(1);
+        final int limit = 100;
 
-        SensorType unexpectedSensorType = null;
+        final SensorType unexpectedSensorType = null;
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> klimaatService.getHighest("someSensorCode", unexpectedSensorType, aPeriodWithToDate(from, to), limit))
+                .isThrownBy(() -> klimaatService.getHighest(SOME_SENSOR_CODE, unexpectedSensorType, aPeriodWithToDate(from, to), limit))
                 .withMessage("Unexpected SensorType [null]");
     }
 
     @Test
     public void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
-        String sensorCode = "Barn";
-
-        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(sensorCode);
+        final RealtimeKlimaat mostRecent = klimaatService.getMostRecent(SOME_SENSOR_CODE);
 
         assertThat(mostRecent).isNull();
     }
 
     @Test
     public void givenMultipleRecentlyReceivedKLimaatWhenGetMostRecentThenMostRecentIsReturned() {
-        LocalDate date = LocalDate.of(2016, SEPTEMBER, 1);
+        final LocalDate date = LocalDate.of(2016, SEPTEMBER, 1);
         timeTravelTo(clock, date.atStartOfDay());
 
-        String sensorCode = "Kitchen";
 
-        Klimaat klimaat1 = aKlimaat().withDatumtijd(date.atTime(12, 14, 41)).build();
-        Klimaat klimaat2 = aKlimaat().withKlimaatSensor(createKlimaatSensor(sensorCode))
-                                     .withDatumtijd(date.atTime(23, 26, 8))
-                                     .withTemperatuur(new BigDecimal("23.7"))
-                                     .withLuchtvochtigheid(new BigDecimal("45.7"))
-                                     .build();
-        Klimaat klimaat3 = aKlimaat().withDatumtijd(date.atTime(2, 0, 45)).build();
+        final Klimaat klimaat1 = aKlimaat().withDatumtijd(date.atTime(12, 14, 41)).build();
+        final Klimaat klimaat2 = aKlimaat().withKlimaatSensor(aKlimaatSensor().withCode(SOME_SENSOR_CODE).build())
+                                           .withDatumtijd(date.atTime(23, 26, 8))
+                                           .withTemperatuur(new BigDecimal("23.7"))
+                                           .withLuchtvochtigheid(new BigDecimal("45.7"))
+                                           .build();
+        final Klimaat klimaat3 = aKlimaat().withDatumtijd(date.atTime(2, 0, 45)).build();
 
-        getRecentlyReceivedKlimaatPerSensorCode().put(sensorCode, asList(klimaat1, klimaat2, klimaat3));
+        getRecentlyReceivedKlimaatPerSensorCode().put(SOME_SENSOR_CODE, asList(klimaat1, klimaat2, klimaat3));
 
-        RealtimeKlimaat mostRecent = klimaatService.getMostRecent(sensorCode);
+        final RealtimeKlimaat mostRecent = klimaatService.getMostRecent(SOME_SENSOR_CODE);
         assertThat(mostRecent.getDatumtijd()).isEqualTo(klimaat2.getDatumtijd());
         assertThat(mostRecent.getTemperatuur()).isEqualTo(klimaat2.getTemperatuur());
         assertThat(mostRecent.getLuchtvochtigheid()).isEqualTo(klimaat2.getLuchtvochtigheid());
@@ -395,47 +389,51 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenGetAverageHumidityPerMonthInYearsThenAveragesReturned() {
-        String sensorCode = "MasterBedroom";
-        int[] years = {2017, 2018};
+        final LocalDate date = LocalDate.of(2019, JANUARY, 1);
+        timeTravelTo(clock, date.atStartOfDay());
 
-        BigDecimal averageHumidityInJune2017 = new BigDecimal("22.18");
-        when(klimaatRepository.getAverageLuchtvochtigheid(sensorCode, LocalDate.of(2017, JUNE, 1).atStartOfDay(), LocalDate.of(2017, JULY, 1).atStartOfDay()))
+        final int[] years = {2017, 2018};
+
+        final BigDecimal averageHumidityInJune2017 = new BigDecimal("22.18");
+        when(klimaatRepository.getAverageLuchtvochtigheid(SOME_SENSOR_CODE, LocalDate.of(2017, JUNE, 1).atStartOfDay(), LocalDate.of(2017, JULY, 1).atStartOfDay()))
                               .thenReturn(averageHumidityInJune2017);
 
-        List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(sensorCode, SensorType.LUCHTVOCHTIGHEID, years);
+        final List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, SensorType.LUCHTVOCHTIGHEID, years);
 
         assertThat(averagePerMonthInYears).hasSize(2);
 
-        List<GemiddeldeKlimaatPerMaand> averagesIn2017 = averagePerMonthInYears.get(0);
+        final List<GemiddeldeKlimaatPerMaand> averagesIn2017 = averagePerMonthInYears.get(0);
         assertThat(averagesIn2017).hasSize(12);
-        for (Month month : Month.values()) {
+        for (final Month month : Month.values()) {
             assertThat(averagesIn2017.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2017, month, 1));
         }
         assertThat(averagesIn2017.get(JUNE.ordinal()).getGemiddelde()).isEqualTo(averageHumidityInJune2017);
 
-        List<GemiddeldeKlimaatPerMaand> averagesIn2018 = averagePerMonthInYears.get(1);
+        final List<GemiddeldeKlimaatPerMaand> averagesIn2018 = averagePerMonthInYears.get(1);
         assertThat(averagesIn2018).hasSize(12);
-        for (Month month : Month.values()) {
+        for (final Month month : Month.values()) {
             assertThat(averagesIn2018.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2018, month, 1));
         }
     }
 
     @Test
     public void whenGetAverageTemperaturePerMonthInYearsThenAveragesReturned() {
-        String sensorCode = "MasterBedroom";
-        int[] years = {2016};
+        final LocalDate date = LocalDate.of(2019, JANUARY, 1);
+        timeTravelTo(clock, date.atStartOfDay());
 
-        BigDecimal averageTemperatureInJune2016 = new BigDecimal("22.18");
-        when(klimaatRepository.getAverageTemperatuur(sensorCode, LocalDate.of(2016, JUNE, 1).atStartOfDay(), LocalDate.of(2016, JULY, 1).atStartOfDay()))
+        final int[] years = {2016};
+
+        final BigDecimal averageTemperatureInJune2016 = new BigDecimal("22.18");
+        when(klimaatRepository.getAverageTemperatuur(SOME_SENSOR_CODE, LocalDate.of(2016, JUNE, 1).atStartOfDay(), LocalDate.of(2016, JULY, 1).atStartOfDay()))
                               .thenReturn(averageTemperatureInJune2016);
 
-        List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(sensorCode, SensorType.TEMPERATUUR, years);
+        final List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, SensorType.TEMPERATUUR, years);
 
         assertThat(averagePerMonthInYears).hasSize(1);
 
-        List<GemiddeldeKlimaatPerMaand> averagesIn2016 = averagePerMonthInYears.get(0);
+        final List<GemiddeldeKlimaatPerMaand> averagesIn2016 = averagePerMonthInYears.get(0);
         assertThat(averagesIn2016).hasSize(12);
-        for (Month month : Month.values()) {
+        for (final Month month : Month.values()) {
             assertThat(averagesIn2016.get(month.ordinal()).getMaand()).isEqualTo(LocalDate.of(2016, month, 1));
         }
 
@@ -443,67 +441,67 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void givenInvalidSensortypewhenGetAverageTemperaturePerMonthInYearsThenExceptionThrown() {
-        int[] someYears = {2015};
+    public void givenInvalidSensortypeWhenGetAverageTemperaturePerMonthInYearsThenExceptionThrown() {
+        final LocalDate date = LocalDate.of(2019, JANUARY, 1);
+        timeTravelTo(clock, date.atStartOfDay());
 
-        SensorType invalidSensorType = null;
+        final int[] someYears = {2015};
+
+        final SensorType invalidSensorType = null;
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> klimaatService.getAveragePerMonthInYears("SomeSomeSensor", invalidSensorType, someYears))
+            .isThrownBy(() -> klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, invalidSensorType, someYears))
             .withMessage("Unexpected SensorType [null]");
     }
 
     @Test
     public void whenGetInPeriodBeforeCurrentDateTimeThenRetrievedFromCache() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        KlimaatService cachedProxy = mock(KlimaatService.class);
+        final KlimaatService cachedProxy = mock(KlimaatService.class);
         setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", cachedProxy);
 
-        String klimaatSensorCode = "someKlimaatSensor";
-        DatePeriod period = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        final DatePeriod period = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
 
-        List<Klimaat> cachedKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
-        when(cachedProxy.getPotentiallyCachedAllInPeriod(eq(klimaatSensorCode), eq(period))).thenReturn(cachedKlimaats);
+        final List<Klimaat> cachedKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(cachedProxy.getPotentiallyCachedAllInPeriod(eq(SOME_SENSOR_CODE), eq(period))).thenReturn(cachedKlimaats);
 
-        assertThat(klimaatService.getInPeriod(klimaatSensorCode, period)).isSameAs(cachedKlimaats);
+        assertThat(klimaatService.getInPeriod(SOME_SENSOR_CODE, period)).isSameAs(cachedKlimaats);
     }
 
     @Test
     public void whenGetInPeriodIncludingCurrentDateThenRetrievedFromRepository() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        String klimaatSensorCode = "someKlimaatSensor";
-        DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
+        final DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
 
-        List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
-        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
+        final List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(SOME_SENSOR_CODE, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
                               .thenReturn(klimaatsFromRepository);
 
-        assertThat(klimaatService.getInPeriod(klimaatSensorCode, period)).isSameAs(klimaatsFromRepository);
+        assertThat(klimaatService.getInPeriod(SOME_SENSOR_CODE, period)).isSameAs(klimaatsFromRepository);
     }
 
     @Test
     public void whenGetPotentiallyCachedAllInPeriodThenRetrievedFromRepository() {
-        LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        String klimaatSensorCode = "someKlimaatSensor";
-        DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
+        final DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
 
-        List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
-        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(klimaatSensorCode, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
+        final List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(SOME_SENSOR_CODE, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
                 .thenReturn(klimaatsFromRepository);
 
-        assertThat(klimaatService.getPotentiallyCachedAllInPeriod(klimaatSensorCode, period)).isSameAs(klimaatsFromRepository);
+        assertThat(klimaatService.getPotentiallyCachedAllInPeriod(SOME_SENSOR_CODE, period)).isSameAs(klimaatsFromRepository);
     }
 
     @Test
-    public void whenUpdateKlimaatSensorTHenSavedByRepositoryAndReturned() {
-        KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
-        KlimaatSensor savedKlimaatSensor = mock(KlimaatSensor.class);
+    public void whenUpdateKlimaatSensorThenSavedByRepositoryAndReturned() {
+        final KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
+        final KlimaatSensor savedKlimaatSensor = mock(KlimaatSensor.class);
         when(klimaatSensorRepository.save(klimaatSensor)).thenReturn(savedKlimaatSensor);
 
         assertThat(klimaatService.update(klimaatSensor)).isSameAs(savedKlimaatSensor);
@@ -511,20 +509,50 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenDeleteKlimaatSensorThenDataAndSensorDeletedByRepositories() {
-        String klimaatSensorCode = "someKlimaatSensor";
-        KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
-        when(klimaatSensor.getCode()).thenReturn(klimaatSensorCode);
+        final KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
+        when(klimaatSensor.getCode()).thenReturn(SOME_SENSOR_CODE);
 
         klimaatService.delete(klimaatSensor);
 
-        verify(klimaatRepository).deleteByKlimaatSensorCode(klimaatSensorCode);
+        verify(klimaatRepository).deleteByKlimaatSensorCode(SOME_SENSOR_CODE);
         verify(klimaatSensorRepository).delete(klimaatSensor);
     }
 
-    private KlimaatSensor createKlimaatSensor(String sensorCode) {
-        KlimaatSensor klimaatSensorBasement = new KlimaatSensor();
-        klimaatSensorBasement.setCode(sensorCode);
-        return klimaatSensorBasement;
+    @Test
+    public void givenRequestedYearIsInFutureWhenGetAveragePerMonthInYearsThenResultsAreEmpty() {
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+
+        timeTravelTo(clock, currentDateTime);
+
+        final KlimaatService cachedProxy = mock(KlimaatService.class);
+        setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", cachedProxy);
+
+        final List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, SensorType.TEMPERATUUR, new int[]{2018});
+        assertThat(averagePerMonthInYears).hasSize(1);
+
+        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.get(0);
+        assertThat(monthsInOneYear).hasSize(12);
+        assertThat(monthsInOneYear).extracting(GemiddeldeKlimaatPerMaand::getGemiddelde).containsOnlyNulls();
+
+        verifyZeroInteractions(klimaatRepository, cachedProxy);
+    }
+
+    @Test
+    public void givenRequestedYearIsInPastWhenGetAveragePerMonthInYearsThenResultsRequestedFromRepository() {
+        final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
+
+        timeTravelTo(clock, currentDateTime);
+
+        final KlimaatService cachedProxy = mock(KlimaatService.class);
+        setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", cachedProxy);
+
+        final List<List<GemiddeldeKlimaatPerMaand>> averagePerMonthInYears = klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, SensorType.TEMPERATUUR, new int[]{2015});
+        assertThat(averagePerMonthInYears).hasSize(1);
+
+        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.get(0);
+        assertThat(monthsInOneYear).hasSize(12);
+
+        verify(cachedProxy, times(12)).getPotentiallyCachedAverageInMonthOfYear(eq(SOME_SENSOR_CODE), any(), any());
     }
 
     @SuppressWarnings("unchecked")
