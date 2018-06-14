@@ -1,52 +1,40 @@
 package nl.homeserver.energiecontract;
 
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
-import static java.time.Month.NOVEMBER;
-import static nl.homeserver.energie.EnergiecontractBuilder.anEnergiecontract;
-import static org.assertj.core.api.Assertions.assertThat;
+import nl.homeserver.RepositoryIntegrationTest;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import static java.time.Month.*;
+import static nl.homeserver.energie.EnergiecontractBuilder.anEnergiecontract;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@TestPropertySource("/integrationtests.properties")
-public class EnergiecontractRepositoryIntegrationTest {
-
-    @Autowired
-    private TestEntityManager entityManager;
+public class EnergiecontractRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
     private EnergiecontractRepository energiecontractRepository;
 
     @Test
     public void givenNoEnergieContractsExistsWhenFindAllInInPeriodThenNothingFound() {
-        LocalDate from = LocalDate.of(2018, NOVEMBER, 23);
-        LocalDate to = LocalDate.of(2018, DECEMBER, 12);
+        final LocalDate from = LocalDate.of(2018, NOVEMBER, 23);
+        final LocalDate to = LocalDate.of(2018, DECEMBER, 12);
 
         assertThat(energiecontractRepository.findValidInPeriod(from, to)).isEmpty();
     }
 
     @Test
     public void givenMultipleEnergycontractsWhenFindValidInInPeriodThenFound() {
-        Energiecontract energiecontract2017 = anEnergiecontract().withValidFrom(LocalDate.of(2017, JANUARY, 1))
-                                                                 .withValidTo(LocalDate.of(2018, JANUARY, 1)).build();
+        final Energiecontract energiecontract2017 = anEnergiecontract().withValidFrom(LocalDate.of(2017, JANUARY, 1))
+                                                                       .withValidTo(LocalDate.of(2018, JANUARY, 1)).build();
         entityManager.persist(energiecontract2017);
 
-        Energiecontract energiecontract2018 = anEnergiecontract().withValidFrom(LocalDate.of(2018, JANUARY, 1))
-                                                                 .withValidTo(LocalDate.of(2019, JANUARY, 1)).build();
+        final Energiecontract energiecontract2018 = anEnergiecontract().withValidFrom(LocalDate.of(2018, JANUARY, 1))
+                                                                       .withValidTo(LocalDate.of(2019, JANUARY, 1)).build();
         entityManager.persist(energiecontract2018);
 
-        Energiecontract energiecontractFrom2019 = anEnergiecontract().withValidFrom(LocalDate.of(2019, JANUARY, 1))
-                                                                     .withValidTo(null).build();
+        final Energiecontract energiecontractFrom2019 = anEnergiecontract().withValidFrom(LocalDate.of(2019, JANUARY, 1))
+                                                                           .withValidTo(null).build();
         entityManager.persist(energiecontractFrom2019);
 
         assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2016, JANUARY, 1), LocalDate.of(2017, JANUARY, 1)))

@@ -10,7 +10,7 @@ public class CacheController {
 
     private final CacheService cacheService;
 
-    public CacheController(CacheService cacheService) {
+    public CacheController(final CacheService cacheService) {
         this.cacheService = cacheService;
     }
 

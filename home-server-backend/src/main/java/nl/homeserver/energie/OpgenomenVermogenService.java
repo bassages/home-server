@@ -1,22 +1,21 @@
 package nl.homeserver.energie;
 
-import static java.time.LocalDateTime.from;
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.DateTimePeriod;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.LongStream;
 
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimePeriod;
+import static java.time.LocalDateTime.from;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
 @Service
 public class OpgenomenVermogenService {
@@ -41,7 +40,7 @@ public class OpgenomenVermogenService {
     }
 
     public OpgenomenVermogen getMostRecent() {
-        return opgenomenVermogenRepository.getMeestRecente();
+        return opgenomenVermogenRepository.getMostRecent();
     }
 
     @Cacheable(cacheNames = CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY)

@@ -1,34 +1,23 @@
 package nl.homeserver.klimaat;
 
+import nl.homeserver.RepositoryIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
 import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@TestPropertySource("/integrationtests.properties")
-public class KlimaatRepositoryIntegrationTest {
-
-    @Autowired
-    private TestEntityManager entityManager;
+public class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
     private KlimaatRepos klimaatRepository;
 
     @Test
     public void whenDeleteByKlimaatSensorThenDeleted() {
-        String klimaatSensorCode = "GARDEN";
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        klimaatSensor.setCode(klimaatSensorCode);
+        final String klimaatSensorCode = "GARDEN";
+        final KlimaatSensor klimaatSensor = KlimaatSensorBuilder.aKlimaatSensor().withCode(klimaatSensorCode).build();
 
         entityManager.persist(klimaatSensor);
 

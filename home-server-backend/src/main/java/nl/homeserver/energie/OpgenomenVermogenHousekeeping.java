@@ -1,10 +1,12 @@
 package nl.homeserver.energie;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -13,14 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.housekeeping.HousekeepingSchedule;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 @Service
 public class OpgenomenVermogenHousekeeping {
@@ -42,7 +41,7 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN)
-    public void dailyCleanup() {
+    public void start() {
         LocalDate today = LocalDate.now(clock);
         IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
                  .forEach(i -> cleanup(today.minusDays(i)));

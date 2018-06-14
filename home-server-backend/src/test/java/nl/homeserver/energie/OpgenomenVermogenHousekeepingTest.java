@@ -1,18 +1,10 @@
 package nl.homeserver.energie;
 
-import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
-import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
-import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.LoggingRule;
+import nl.homeserver.MessageContaining;
+import nl.homeserver.cache.CacheService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,11 +14,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.MessageContaining;
-import nl.homeserver.cache.CacheService;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+
+import static java.time.Month.JANUARY;
+import static java.util.Arrays.asList;
+import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenHousekeepingTest {
@@ -51,7 +48,7 @@ public class OpgenomenVermogenHousekeepingTest {
     public void whenDailyCleanupThenCacheCleared() {
         useSystemDefaultClock(clock);
 
-        opgenomenVermogenHousekeeping.dailyCleanup();
+        opgenomenVermogenHousekeeping.start();
 
         verify(cacheService).clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
