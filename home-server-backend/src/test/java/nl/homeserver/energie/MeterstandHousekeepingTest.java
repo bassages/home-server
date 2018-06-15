@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ch.qos.logback.classic.Level.INFO;
+import static ch.qos.logback.classic.Level.DEBUG;
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -126,7 +126,7 @@ public class MeterstandHousekeepingTest {
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
-                .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                 .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -136,27 +136,27 @@ public class MeterstandHousekeepingTest {
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(asList(meterstand1, meterstand2, meterstand3));
 
-        loggingRule.setLevel(INFO);
+        loggingRule.setLevel(DEBUG);
 
         meterstandHousekeeping.start();
 
         final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep first in hour 12: Meterstand[id=1"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep last in hour 12: Meterstand[id=3"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Delete: Meterstand[id=2"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep first in hour 12: Meterstand[id=1"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep last in hour 12: Meterstand[id=3"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Delete: Meterstand[id=2"));
     }
 
     @Test
     public void givenLogLevelIsOffWhenCleanupThenNothingLogged() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
-                .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();

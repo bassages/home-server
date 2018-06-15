@@ -14,13 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -55,16 +59,24 @@ public class OpgenomenVermogenHousekeepingTest {
 
     @Test
     public void givengivenMultipleOpgenomenVermogenInOneMinuteWithSameWattWhenCleanupThenMostRecentInMinuteIsKept() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(1).build();
-        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(1).build();
-        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
-                .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
+        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 1440))
+                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
-        opgenomenVermogenHousekeeping.cleanup(date);
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+
+        opgenomenVermogenHousekeeping.start();
 
         verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
@@ -73,16 +85,24 @@ public class OpgenomenVermogenHousekeepingTest {
 
     @Test
     public void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentWattWhenCleanupThenHighestWattIsKept() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 0)).withWatt(3).build();
-        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 10)).withWatt(2).build();
-        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(0, 0, 20)).withWatt(1).build();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
-                .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
+        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 1440))
+                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
-        opgenomenVermogenHousekeeping.cleanup(date);
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(3).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(2).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
+
+        opgenomenVermogenHousekeeping.start();
 
         verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
@@ -90,22 +110,30 @@ public class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    public void whenCleanUpThenCleanUpPerMinuteAndDeletePerHour() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+    public void whenCleanUpThenCleanUpPerMinuteØAndDeletePerHour() {
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 0)).build();
-        OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 0, 10)).build();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
 
-        OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 1, 0)).build();
-        OpgenomenVermogen opgenomenVermogen4 = aOpgenomenVermogen().withDatumTijd(date.atTime(12, 1, 10)).build();
+        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
+        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 1440))
+                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
-        OpgenomenVermogen opgenomenVermogen5 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 0)).build();
-        OpgenomenVermogen opgenomenVermogen6 = aOpgenomenVermogen().withDatumTijd(date.atTime(13, 1, 10)).build();
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 0, 10)).build();
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
-                .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 1, 0)).build();
+        final OpgenomenVermogen opgenomenVermogen4 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 1, 10)).build();
 
-        opgenomenVermogenHousekeeping.cleanup(date);
+        final OpgenomenVermogen opgenomenVermogen5 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(13, 1, 0)).build();
+        final OpgenomenVermogen opgenomenVermogen6 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(13, 1, 10)).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
+                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
+
+        opgenomenVermogenHousekeeping.start();
 
         verify(opgenomenVermogenRepository, times(2)).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
 
@@ -114,37 +142,53 @@ public class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    public void givenLogLevelIsInfoWhenCleanupThenKeptAndDeletedOpgenomensAreLoggedAtThatLevel() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+    public void givenLogLevelIsDebugWhenCleanupThenKeptAndDeletedOpgenomensAreLoggedAtThatLevel() {
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(date.atTime(0, 0, 0)).build();
-        OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(date.atTime(0, 0, 1)).build();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
+        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 1440))
+                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+
+        final OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).build();
+        final OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(dayToCleanup.atTime(0, 0, 1)).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                 .thenReturn(asList(deleted, kept));
 
-        loggingRule.setLevel(Level.INFO);
+        loggingRule.setLevel(Level.DEBUG);
 
-        opgenomenVermogenHousekeeping.cleanup(date);
+        opgenomenVermogenHousekeeping.start();
 
-        List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Keep: OpgenomenVermogen[id=2"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[INFO] Delete: OpgenomenVermogen[id=1"));
+        final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep: OpgenomenVermogen[id=2"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Delete: OpgenomenVermogen[id=1"));
     }
 
     @Test
     public void givenLogLevelIsOffWhenCleanupThenKeptAndDeletedOpgenomensAreNotLogged() {
-        LocalDate date = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
-        OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(date.atTime(0, 0, 0)).build();
-        OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(date.atTime(0, 0, 1)).build();
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
+        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 1440))
+                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+
+        final OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).build();
+        final OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(dayToCleanup.atTime(0, 0, 1)).build();
+
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                 .thenReturn(asList(deleted, kept));
 
         loggingRule.setLevel(Level.OFF);
 
-        opgenomenVermogenHousekeeping.cleanup(date);
+        opgenomenVermogenHousekeeping.start();
 
         assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
     }

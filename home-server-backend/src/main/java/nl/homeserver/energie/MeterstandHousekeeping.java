@@ -41,18 +41,23 @@ public class MeterstandHousekeeping {
 
     @Scheduled(cron = HousekeepingSchedule.METERSTAND)
     public void start() {
+        LOGGER.info("Start housekeeping of Meterstand");
         findDaysToCleanup().forEach(this::cleanup);
         clearCachesThatUsesPossibleDeletedMeterstanden();
+        LOGGER.info("Finished housekeeping of Meterstand");
     }
 
     private List<LocalDate> findDaysToCleanup() {
-        return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(LocalDate.now(clock), MAX_NR_OF_ROWS_PER_DAY)
+        final LocalDate today = LocalDate.now(clock);
+        return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(today, MAX_NR_OF_ROWS_PER_DAY)
                                    .stream()
                                    .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
                                    .collect(toList());
     }
 
     private void cleanup(final LocalDate day) {
+        LOGGER.info("Cleanup day {}", day);
+
         final LocalDateTime start = day.atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
 
@@ -61,7 +66,7 @@ public class MeterstandHousekeeping {
         final Map<Integer, List<Meterstand>> meterstandenByHour = meterstandenOnDay.stream()
                                                                                   .collect(groupingBy(meterstand -> meterstand.getDateTime().getHour()));
 
-        meterstandenByHour.values().forEach(this::cleanupMeterStandenInOneHour);
+        meterstandenByHour.forEach(this::cleanupMeterStandenInOneHour);
     }
 
     private void clearCachesThatUsesPossibleDeletedMeterstanden() {
@@ -69,7 +74,8 @@ public class MeterstandHousekeeping {
         cacheService.clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
 
-    private void cleanupMeterStandenInOneHour(final List<Meterstand> meterstandenInOneHour) {
+    private void cleanupMeterStandenInOneHour(final int hour, final List<Meterstand> meterstandenInOneHour) {
+        LOGGER.info("Cleanup hour {}", hour);
 
         if (meterstandenInOneHour.size() > NR_OF_ROWS_TO_KEEP_PER_HOUR) {
             meterstandenInOneHour.sort(comparing(Meterstand::getDateTime));
@@ -80,10 +86,10 @@ public class MeterstandHousekeeping {
             final Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Keep first in hour {}: {}", firstMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
-                LOGGER.info("Keep last in hour {}: {}", lastMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
-                meterstandenInOneHour.forEach(meterstand -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Keep first in hour {}: {}", firstMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(firstMeterstandInHour, SHORT_PREFIX_STYLE));
+                LOGGER.debug("Keep last in hour {}: {}", lastMeterstandInHour.getDateTime().getHour(), ReflectionToStringBuilder.toString(lastMeterstandInHour, SHORT_PREFIX_STYLE));
+                meterstandenInOneHour.forEach(meterstand -> LOGGER.debug("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
             }
 
             meterstandRepository.deleteInBatch(meterstandenInOneHour);

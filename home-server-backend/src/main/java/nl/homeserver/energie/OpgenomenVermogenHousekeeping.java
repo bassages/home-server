@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
@@ -26,7 +25,9 @@ public class OpgenomenVermogenHousekeeping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenHousekeeping.class);
 
-    private static final int NR_OF_PAST_DAYS_TO_CLEANUP = 3;
+    private static final int NR_OF_ROWS_TO_KEEP_PER_MINUTE = 1;
+    private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = NR_OF_ROWS_TO_KEEP_PER_MINUTE * 60;
+    private static final int MAX_NR_OF_ROWS_PER_DAY = NR_OF_ROWS_TO_KEEP_PER_HOUR * 24;
 
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final CacheService cacheService;
@@ -42,31 +43,43 @@ public class OpgenomenVermogenHousekeeping {
 
     @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN)
     public void start() {
-        LocalDate today = LocalDate.now(clock);
-        IntStream.rangeClosed(1, NR_OF_PAST_DAYS_TO_CLEANUP)
-                 .forEach(i -> cleanup(today.minusDays(i)));
+        LOGGER.info("Start housekeeping of OpgenomenVermogen");
+        findDaysToCleanup().forEach(this::cleanup);
         cacheService.clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
+        LOGGER.info("Finished housekeeping of OpgenomenVermogen");
     }
 
-    public void cleanup(LocalDate day) {
-        List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
-
-        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByHour = opgenomenVermogensOnDay.stream()
-                                                                                                .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getHour()));
-
-        opgenomenVermogensByHour.values().forEach(this::cleanupHour);
+    private List<LocalDate> findDaysToCleanup() {
+        final LocalDate today = LocalDate.now(clock);
+        return opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(today, MAX_NR_OF_ROWS_PER_DAY)
+                .stream()
+                .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
+                .collect(toList());
     }
 
-    private void cleanupHour(List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
-        Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
-                                                                                                      .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
+    private void cleanup(final LocalDate day) {
+        LOGGER.info("Cleanup day {}", day);
 
-        List<OpgenomenVermogen> opgenomenVermogensToKeep = opgenomenVermogensByMinute.values()
-                                                                                     .stream()
-                                                                                     .map(this::getOpgenomenVermogenToKeepInMinute)
-                                                                                     .collect(toList());
+        final List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
-        List<OpgenomenVermogen> opgenomenVermogensToDelete = opgenomenVermogensInOneHour.stream()
+        final Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByHour = opgenomenVermogensOnDay.stream()
+                                                                                                      .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getHour()));
+
+        opgenomenVermogensByHour.forEach(this::cleanupHour);
+    }
+
+    private void cleanupHour(final int hour, final List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
+        LOGGER.info("Cleanup hour {}", hour);
+
+        final Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
+                                                                                                            .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
+
+        final List<OpgenomenVermogen> opgenomenVermogensToKeep = opgenomenVermogensByMinute.values()
+                                                                                           .stream()
+                                                                                           .map(this::getOpgenomenVermogenToKeepInMinute)
+                                                                                           .collect(toList());
+
+        final List<OpgenomenVermogen> opgenomenVermogensToDelete = opgenomenVermogensInOneHour.stream()
                                                                                         .filter(opgenomenVermogen -> !opgenomenVermogensToKeep.contains(opgenomenVermogen))
                                                                                         .collect(toList());
 
@@ -75,15 +88,15 @@ public class OpgenomenVermogenHousekeeping {
         opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensToDelete);
     }
 
-    private void log(List<OpgenomenVermogen> opgenomenVermogensToDelete, List<OpgenomenVermogen> opgenomenVermogensToKeep) {
-        if (LOGGER.isInfoEnabled()) {
-            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.info("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.info("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+    private void log(final List<OpgenomenVermogen> opgenomenVermogensToDelete, final List<OpgenomenVermogen> opgenomenVermogensToKeep) {
+        if (LOGGER.isDebugEnabled()) {
+            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.debug("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.debug("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
         }
     }
 
-    private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
+    private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(final List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
+        final Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
         return opgenomenVermogenInOneMinute.stream()
                                            .max(byHighestWattThenDatumtijd).orElse(null);
     }
