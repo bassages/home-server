@@ -61,6 +61,19 @@ public class MeterstandHousekeepingTest {
     }
 
     @Test
+    public void whenStartThenPastTwoMonthsAreCleanedUp() {
+        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
+
+        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
+        timeTravelTo(clock, currentDateTime);
+
+        meterstandHousekeeping.start();
+
+        verify(meterstandRepository).findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate().minusMonths(2),
+                currentDateTime.toLocalDate(), 48);
+    }
+
+    @Test
     public void givenOnlyASingleMeterstandExistsWhenCleanupThenNoneDeleted() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
@@ -69,7 +82,7 @@ public class MeterstandHousekeepingTest {
 
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
+        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                  .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
@@ -77,7 +90,7 @@ public class MeterstandHousekeepingTest {
 
         meterstandHousekeeping.start();
 
-        verify(meterstandRepository).findDatesBeforeToDateWithMoreRowsThan(any(), anyInt());
+        verify(meterstandRepository).findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt());
         verify(meterstandRepository).findByDateTimeBetween(any(), any());
         verifyNoMoreInteractions(meterstandRepository);
     }
@@ -91,7 +104,7 @@ public class MeterstandHousekeepingTest {
 
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
+        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                  .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
@@ -125,7 +138,7 @@ public class MeterstandHousekeepingTest {
 
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
+        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                  .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
@@ -155,7 +168,7 @@ public class MeterstandHousekeepingTest {
 
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate(), 48))
+        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                 .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();

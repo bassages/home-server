@@ -33,11 +33,13 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
                    "  SELECT PARSEDATETIME(FORMATDATETIME(date_time, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
                    "         COUNT(id) AS nr_of_records " +
                    "    FROM meterstand " +
-                   "   WHERE date_time < :toDate " +
+                   "   WHERE date_time >= :fromDate " +
+                   "     AND date_time < :toDate " +
                    "   GROUP BY date " +
                    "     HAVING nr_of_records > :maxNrOfRowsPerDay " +
                    "   ORDER BY nr_of_records DESC " +
                    " )", nativeQuery = true)
-    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("toDate") LocalDate toDate,
+    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+                                                          @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 }

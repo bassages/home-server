@@ -23,12 +23,14 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
                    "  SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
                    "         COUNT(id) AS nr_of_records " +
                    "    FROM opgenomen_vermogen " +
-                   "   WHERE datumtijd < :toDate " +
+                   "   WHERE datumtijd >= :fromDate " +
+                   "     AND datumtijd < :toDate " +
                    "   GROUP BY date " +
                    "     HAVING nr_of_records > :maxNrOfRowsPerDay " +
                    "   ORDER BY nr_of_records DESC " +
                    " )", nativeQuery = true)
-    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("toDate") LocalDate toDate,
+    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+                                                          @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
 }

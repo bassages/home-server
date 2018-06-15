@@ -29,6 +29,8 @@ public class OpgenomenVermogenHousekeeping {
     private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = NR_OF_ROWS_TO_KEEP_PER_MINUTE * 60;
     private static final int MAX_NR_OF_ROWS_PER_DAY = NR_OF_ROWS_TO_KEEP_PER_HOUR * 24;
 
+    private static final int NUMBER_OF_MONTHS_TO_LOOK_BACK = 2;
+
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final CacheService cacheService;
     private final Clock clock;
@@ -51,7 +53,7 @@ public class OpgenomenVermogenHousekeeping {
 
     private List<LocalDate> findDaysToCleanup() {
         final LocalDate today = LocalDate.now(clock);
-        return opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(today, MAX_NR_OF_ROWS_PER_DAY)
+        return opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                 .stream()
                 .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
                 .collect(toList());

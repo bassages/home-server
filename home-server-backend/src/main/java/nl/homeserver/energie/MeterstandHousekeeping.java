@@ -27,6 +27,8 @@ public class MeterstandHousekeeping {
     private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = 2;
     private static final int MAX_NR_OF_ROWS_PER_DAY = NR_OF_ROWS_TO_KEEP_PER_HOUR * 24;
 
+    private static final int NUMBER_OF_MONTHS_TO_LOOK_BACK = 2;
+
     private final MeterstandRepository meterstandRepository;
     private final CacheService cacheService;
     private final Clock clock;
@@ -49,7 +51,7 @@ public class MeterstandHousekeeping {
 
     private List<LocalDate> findDaysToCleanup() {
         final LocalDate today = LocalDate.now(clock);
-        return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(today, MAX_NR_OF_ROWS_PER_DAY)
+        return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                                    .stream()
                                    .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
                                    .collect(toList());

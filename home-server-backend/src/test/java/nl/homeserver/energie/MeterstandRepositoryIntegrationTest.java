@@ -19,6 +19,11 @@ public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTe
 
     @Test
     public void shouldFindDatesBeforeToDateWithMoreRowsThan() {
+        final LocalDate fromDate = LocalDate.of(2017, JANUARY, 3);
+        entityManager.persist(aMeterstand().withDateTime(fromDate.minusDays(1).atTime(0, 0, 0)).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDate.minusDays(1).atTime(12, 0, 9)).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDate.minusDays(1).atTime(12, 0, 10)).build());
+
         final LocalDate toDate = LocalDate.of(2017, JANUARY, 12);
         entityManager.persist(aMeterstand().withDateTime(toDate.atTime(0, 0, 0)).build());
         entityManager.persist(aMeterstand().withDateTime(toDate.atTime(12, 0, 9)).build());
@@ -33,7 +38,7 @@ public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTe
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 8)).build());
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 1)).build());
 
-        final List<Timestamp> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(toDate, 2);
+        final List<Timestamp> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
         assertThat(datesWithMoreThan2RowsBeforeToDate).hasSize(1);
         assertThat(datesWithMoreThan2RowsBeforeToDate.get(0).toLocalDateTime().toLocalDate()).isEqualTo(dayBeforeToDateWith3Records);
