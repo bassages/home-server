@@ -27,7 +27,7 @@ public class MeterstandHousekeeping {
     private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = 2;
     private static final int MAX_NR_OF_ROWS_PER_DAY = NR_OF_ROWS_TO_KEEP_PER_HOUR * 24;
 
-    private static final int NUMBER_OF_MONTHS_TO_LOOK_BACK = 2;
+    private static final int NUMBER_OF_MONTHS_TO_LOOK_BACK = 1;
 
     private final MeterstandRepository meterstandRepository;
     private final CacheService cacheService;

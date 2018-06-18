@@ -61,7 +61,7 @@ public class MeterstandHousekeepingTest {
     }
 
     @Test
-    public void whenStartThenPastTwoMonthsAreCleanedUp() {
+    public void whenStartThenPastMonthIsCleanedUp() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -69,7 +69,7 @@ public class MeterstandHousekeepingTest {
 
         meterstandHousekeeping.start();
 
-        verify(meterstandRepository).findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate().minusMonths(2),
+        verify(meterstandRepository).findDatesBeforeToDateWithMoreRowsThan(currentDateTime.toLocalDate().minusMonths(1),
                 currentDateTime.toLocalDate(), 48);
     }
 
