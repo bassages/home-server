@@ -8,7 +8,7 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+    gradleVersion = '4.9'
 }
 
 node {
