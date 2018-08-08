@@ -1,17 +1,13 @@
 package nl.homeserver.energie;
 
-import static java.math.RoundingMode.HALF_UP;
-
 import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static java.math.RoundingMode.HALF_UP;
 
 @RestController
 @RequestMapping("/api/slimmemeter")
@@ -25,14 +21,15 @@ public class SlimmeMeterController {
     private static final int GAS_SCALE = 3;
     private static final int STROOM_SCALE = 3;
 
-    public SlimmeMeterController(OpgenomenVermogenService opgenomenVermogenService, MeterstandService meterstandService) {
+    public SlimmeMeterController(final OpgenomenVermogenService opgenomenVermogenService,
+                                 final MeterstandService meterstandService) {
         this.opgenomenVermogenService = opgenomenVermogenService;
         this.meterstandService = meterstandService;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody Dsmr42Reading dsmr42Reading) {
+    public void save(final @RequestBody Dsmr42Reading dsmr42Reading) {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info(ReflectionToStringBuilder.toString(dsmr42Reading, new RecursiveToStringStyle()));
         }
@@ -41,18 +38,18 @@ public class SlimmeMeterController {
         saveOpgenomenVermogen(dsmr42Reading);
     }
 
-    private void saveMeterstand(@RequestBody Dsmr42Reading dsmr42Reading) {
-        Meterstand meterstand = mapToMeterStand(dsmr42Reading);
+    private void saveMeterstand(final @RequestBody Dsmr42Reading dsmr42Reading) {
+        final Meterstand meterstand = mapToMeterStand(dsmr42Reading);
         meterstandService.save(meterstand);
     }
 
-    private void saveOpgenomenVermogen(@RequestBody Dsmr42Reading dsmr42Reading) {
-        OpgenomenVermogen opgenomenVermogen = mapToOpgenomenVermogen(dsmr42Reading);
+    private void saveOpgenomenVermogen(final @RequestBody Dsmr42Reading dsmr42Reading) {
+        final OpgenomenVermogen opgenomenVermogen = mapToOpgenomenVermogen(dsmr42Reading);
         opgenomenVermogenService.save(opgenomenVermogen);
     }
 
-    private Meterstand mapToMeterStand(Dsmr42Reading dsmr42Reading) {
-        Meterstand meterstand = new Meterstand();
+    private Meterstand mapToMeterStand(final Dsmr42Reading dsmr42Reading) {
+        final Meterstand meterstand = new Meterstand();
         meterstand.setDateTime(dsmr42Reading.getDatumtijd());
         meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));
         meterstand.setGas(dsmr42Reading.getGas().setScale(GAS_SCALE, HALF_UP));
@@ -61,8 +58,8 @@ public class SlimmeMeterController {
         return meterstand;
     }
 
-    private OpgenomenVermogen mapToOpgenomenVermogen(Dsmr42Reading dsmr42Reading) {
-        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
+    private OpgenomenVermogen mapToOpgenomenVermogen(final Dsmr42Reading dsmr42Reading) {
+        final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(dsmr42Reading.getDatumtijd());
         opgenomenVermogen.setWatt(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmr42Reading.getStroomTariefIndicator().shortValue()));

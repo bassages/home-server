@@ -1,23 +1,16 @@
 package nl.homeserver.energiecontract;
 
-import static java.math.BigDecimal.ZERO;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Getter;
 import lombok.Setter;
 import nl.homeserver.energie.StroomTariefIndicator;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import static java.math.BigDecimal.ZERO;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -58,7 +51,7 @@ public class Energiecontract {
     @Setter
     private String leverancier;
 
-    public BigDecimal getStroomKosten(StroomTariefIndicator stroomTariefIndicator) {
+    public BigDecimal getStroomKosten(final StroomTariefIndicator stroomTariefIndicator) {
         switch (stroomTariefIndicator) {
             case DAL:
                 if (stroomPerKwhDalTarief != null) {

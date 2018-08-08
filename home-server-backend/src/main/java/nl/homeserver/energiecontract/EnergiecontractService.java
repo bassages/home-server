@@ -1,16 +1,15 @@
 package nl.homeserver.energiecontract;
 
-import static java.time.LocalDateTime.now;
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.cache.CacheService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.cache.CacheService;
+import static java.time.LocalDateTime.now;
 
 @Service
 public class EnergiecontractService {
@@ -38,29 +37,29 @@ public class EnergiecontractService {
     }
 
     public Energiecontract getCurrent() {
-        LocalDateTime now = now(clock);
+        final LocalDateTime now = now(clock);
         return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
-    public Energiecontract save(Energiecontract energiecontract) {
-        Energiecontract savedEnergieContract = energiecontractRepository.save(energiecontract);
+    public Energiecontract save(final Energiecontract energiecontract) {
+        final Energiecontract savedEnergieContract = energiecontractRepository.save(energiecontract);
         energiecontractToDateRecalculator.recalculate();
         cacheService.clearAll();
         return savedEnergieContract;
     }
 
-    public void delete(long id) {
+    public void delete(final long id) {
         energiecontractRepository.deleteById(id);
         energiecontractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
-    public List<Energiecontract> findAllInInPeriod(DateTimePeriod period) {
+    public List<Energiecontract> findAllInInPeriod(final DateTimePeriod period) {
         return energiecontractRepository.findValidInPeriod(period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
-    public Energiecontract getById(long id) {
+    public Energiecontract getById(final long id) {
         return energiecontractRepository.getOne(id);
     }
 }

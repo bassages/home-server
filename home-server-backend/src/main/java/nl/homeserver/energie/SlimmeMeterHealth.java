@@ -1,14 +1,14 @@
 package nl.homeserver.energie;
 
-import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 @Component
 public class SlimmeMeterHealth implements HealthIndicator {
@@ -20,14 +20,15 @@ public class SlimmeMeterHealth implements HealthIndicator {
     private final MeterstandService meterstandService;
     private final Clock clock;
 
-    public SlimmeMeterHealth(MeterstandService meterstandService, Clock clock) {
+    public SlimmeMeterHealth(final MeterstandService meterstandService,
+                             final Clock clock) {
         this.meterstandService = meterstandService;
         this.clock = clock;
     }
 
     @Override
     public Health health() {
-        Meterstand mostRecent = meterstandService.getMostRecent();
+        final Meterstand mostRecent = meterstandService.getMostRecent();
 
         if (mostRecent == null) {
             return Health.unknown()
@@ -46,7 +47,7 @@ public class SlimmeMeterHealth implements HealthIndicator {
         }
     }
 
-    private String formatDatumtjd(Meterstand mostRecent) {
+    private String formatDatumtjd(final Meterstand mostRecent) {
         return mostRecent.getDateTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

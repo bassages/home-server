@@ -1,18 +1,12 @@
 package nl.homeserver.energie;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Entity
 public class OpgenomenVermogen {
@@ -20,6 +14,7 @@ public class OpgenomenVermogen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
+    @Getter
     @Setter
     private long id;
 
@@ -40,7 +35,7 @@ public class OpgenomenVermogen {
         return StroomTariefIndicator.byId(this.tariefIndicator);
     }
 
-    public void setTariefIndicator(StroomTariefIndicator tariefIndicator) {
+    public void setTariefIndicator(final StroomTariefIndicator tariefIndicator) {
         this.tariefIndicator = tariefIndicator.getId();
     }
 }

@@ -1,16 +1,17 @@
 package nl.homeserver;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public final class DatePeriod {
 
     private final DateTimePeriod dateTimePeriod;
 
-    public DatePeriod(DateTimePeriod dateTimePeriod) {
+    public DatePeriod(final DateTimePeriod dateTimePeriod) {
         this.dateTimePeriod = dateTimePeriod;
     }
 
@@ -26,11 +27,11 @@ public final class DatePeriod {
         return dateTimePeriod.getEndDateTime().toLocalDate();
     }
 
-    public static DatePeriod aPeriodWithEndDate(LocalDate startDate, LocalDate endDate) {
+    public static DatePeriod aPeriodWithEndDate(final LocalDate startDate, LocalDate endDate) {
         return new DatePeriod(DateTimePeriod.aPeriodWithEndDateTime(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay().minusNanos(1)));
     }
 
-    public static DatePeriod aPeriodWithToDate(LocalDate startDate, LocalDate toDate) {
+    public static DatePeriod aPeriodWithToDate(final LocalDate startDate, final LocalDate toDate) {
         return new DatePeriod(DateTimePeriod.aPeriodWithToDateTime(startDate.atStartOfDay(), toDate.atStartOfDay()));
     }
 
@@ -43,7 +44,7 @@ public final class DatePeriod {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -52,7 +53,7 @@ public final class DatePeriod {
             return false;
         }
 
-        DatePeriod period = (DatePeriod) o;
+        final DatePeriod period = (DatePeriod) o;
 
         return new EqualsBuilder().append(dateTimePeriod, period.dateTimePeriod).isEquals();
     }
@@ -60,5 +61,12 @@ public final class DatePeriod {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(dateTimePeriod).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("dateTimePeriod", dateTimePeriod)
+                .toString();
     }
 }

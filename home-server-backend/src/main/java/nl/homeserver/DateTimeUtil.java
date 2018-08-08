@@ -10,7 +10,7 @@ public class DateTimeUtil {
         // Hide public constructor
     }
 
-    public static long toMillisSinceEpoch(LocalDateTime localDateTime) {
+    public static long toMillisSinceEpoch(final LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 }

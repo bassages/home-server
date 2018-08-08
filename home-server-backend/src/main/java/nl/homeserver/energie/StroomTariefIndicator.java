@@ -1,8 +1,8 @@
 package nl.homeserver.energie;
 
-import static java.lang.String.format;
-
 import java.util.EnumSet;
+
+import static java.lang.String.format;
 
 public enum StroomTariefIndicator {
     DAL((short)1),
@@ -11,7 +11,7 @@ public enum StroomTariefIndicator {
 
     private final short id;
 
-    StroomTariefIndicator(short id) {
+    StroomTariefIndicator(final short id) {
         this.id = id;
     }
 
@@ -19,7 +19,7 @@ public enum StroomTariefIndicator {
         return id;
     }
 
-    public static StroomTariefIndicator byId(short id) {
+    public static StroomTariefIndicator byId(final short id) {
         return EnumSet.allOf(StroomTariefIndicator.class)
                       .stream()
                       .filter(stroomTariefIndicator -> stroomTariefIndicator.id == id)

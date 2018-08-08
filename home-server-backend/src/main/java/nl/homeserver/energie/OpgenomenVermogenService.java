@@ -34,7 +34,7 @@ public class OpgenomenVermogenService {
     }
 
     public OpgenomenVermogen save(final OpgenomenVermogen opgenomenVermogen) {
-        OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenRepository.save(opgenomenVermogen);
+        final OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenRepository.save(opgenomenVermogen);
         messagingTemplate.convertAndSend(TOPIC, savedOpgenomenVermogen);
         return savedOpgenomenVermogen;
     }
@@ -44,18 +44,18 @@ public class OpgenomenVermogenService {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY)
-    public List<OpgenomenVermogen> getPotentiallyCachedHistory(DatePeriod period, Duration subPeriodDuration) {
+    public List<OpgenomenVermogen> getPotentiallyCachedHistory(final DatePeriod period, final Duration subPeriodDuration) {
         return getHistory(period, subPeriodDuration);
     }
 
-    public List<OpgenomenVermogen> getHistory(DatePeriod period, Duration subPeriodDuration) {
-        DateTimePeriod dateTimePeriod = period.toDateTimePeriod();
+    public List<OpgenomenVermogen> getHistory(final DatePeriod period, final Duration subPeriodDuration) {
+        final DateTimePeriod dateTimePeriod = period.toDateTimePeriod();
 
-        List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(
+        final List<OpgenomenVermogen> opgenomenVermogenInPeriod = opgenomenVermogenRepository.getOpgenomenVermogen(
                 dateTimePeriod.getFromDateTime(), dateTimePeriod.getToDateTime());
 
-        long subPeriodLengthInMillis = subPeriodDuration.getSeconds() * 1000;
-        long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLengthInMillis;
+        final long subPeriodLengthInMillis = subPeriodDuration.getSeconds() * 1000;
+        final long nrOfSubPeriodsInPeriod = (toMillisSinceEpoch(dateTimePeriod.getToDateTime()) - toMillisSinceEpoch(dateTimePeriod.getFromDateTime())) / subPeriodLengthInMillis;
 
         return LongStream.rangeClosed(0, nrOfSubPeriodsInPeriod)
                          .boxed()
@@ -64,14 +64,15 @@ public class OpgenomenVermogenService {
                          .collect(toList());
     }
 
-    private DateTimePeriod toSubPeriod(LocalDateTime from, long periodNumber, Duration subPeriodDuration) {
-        Duration durationUntilStartOfSubPeriod = subPeriodDuration.multipliedBy(periodNumber);
-        LocalDateTime subFrom = from(durationUntilStartOfSubPeriod.addTo(from));
-        LocalDateTime subTo = from(subPeriodDuration.addTo(subFrom));
+    private DateTimePeriod toSubPeriod(final LocalDateTime from, final long periodNumber, final Duration subPeriodDuration) {
+        final Duration durationUntilStartOfSubPeriod = subPeriodDuration.multipliedBy(periodNumber);
+        final LocalDateTime subFrom = from(durationUntilStartOfSubPeriod.addTo(from));
+        final LocalDateTime subTo = from(subPeriodDuration.addTo(subFrom));
         return aPeriodWithToDateTime(subFrom, subTo);
     }
 
-    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(List<OpgenomenVermogen> opgenomenVermogens, DateTimePeriod period) {
+    private OpgenomenVermogen getMaxOpgenomenVermogenInPeriode(final List<OpgenomenVermogen> opgenomenVermogens,
+                                                               final DateTimePeriod period) {
         return opgenomenVermogens.stream()
                                  .filter(opgenomenVermogen -> period.isWithinPeriod(opgenomenVermogen.getDatumtijd()))
                                  .max(comparingInt(OpgenomenVermogen::getWatt))
@@ -79,16 +80,17 @@ public class OpgenomenVermogenService {
                                  .orElse(this.mapToEmptyOpgenomenVermogen(period.getFromDateTime()));
     }
 
-    private OpgenomenVermogen mapToOpgenomenVermogen(OpgenomenVermogen opgenomenVermogen, DateTimePeriod period) {
-        OpgenomenVermogen result = new OpgenomenVermogen();
+    private OpgenomenVermogen mapToOpgenomenVermogen(final OpgenomenVermogen opgenomenVermogen,
+                                                     final DateTimePeriod period) {
+        final OpgenomenVermogen result = new OpgenomenVermogen();
         result.setTariefIndicator(opgenomenVermogen.getTariefIndicator());
         result.setDatumtijd(period.getFromDateTime());
         result.setWatt(opgenomenVermogen.getWatt());
         return result;
     }
 
-    private OpgenomenVermogen mapToEmptyOpgenomenVermogen(LocalDateTime datumtijd) {
-        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
+    private OpgenomenVermogen mapToEmptyOpgenomenVermogen(final LocalDateTime datumtijd) {
+        final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
         opgenomenVermogen.setWatt(0);

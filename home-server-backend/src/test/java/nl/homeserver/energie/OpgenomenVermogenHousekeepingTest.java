@@ -82,18 +82,17 @@ public class OpgenomenVermogenHousekeepingTest {
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                         .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
-        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(1).build();
-        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(1).build();
-        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                                         .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenHousekeeping.start();
 
-        verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
-
-        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(opgenomenVermogen1, opgenomenVermogen2);
+        verify(opgenomenVermogenRepository).deleteById(opgenomenVermogen1.getId());
+        verify(opgenomenVermogenRepository).deleteById(opgenomenVermogen2.getId());
     }
 
     @Test
@@ -108,50 +107,17 @@ public class OpgenomenVermogenHousekeepingTest {
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                         .thenReturn(singletonList(dayToCleanupAsTimeStamp));
 
-        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(3).build();
-        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(2).build();
-        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(3).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(2).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                                         .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
 
         opgenomenVermogenHousekeeping.start();
 
-        verify(opgenomenVermogenRepository).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
-
-        assertThat(deletedOpgenomenVermogenCaptor.getValue()).containsExactlyInAnyOrder(opgenomenVermogen2, opgenomenVermogen3);
-    }
-
-    @Test
-    public void whenCleanUpThenCleanUpPerMinuteAndDeletePerHour() {
-        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
-
-        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
-        timeTravelTo(clock, currentDateTime);
-
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                        .thenReturn(singletonList(dayToCleanupAsTimeStamp));
-
-        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 0, 0)).build();
-        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 0, 10)).build();
-
-        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 1, 0)).build();
-        final OpgenomenVermogen opgenomenVermogen4 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(12, 1, 10)).build();
-
-        final OpgenomenVermogen opgenomenVermogen5 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(13, 1, 0)).build();
-        final OpgenomenVermogen opgenomenVermogen6 = aOpgenomenVermogen().withDatumTijd(dayToCleanup.atTime(13, 1, 10)).build();
-
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
-                                        .thenReturn(asList(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3, opgenomenVermogen4, opgenomenVermogen5, opgenomenVermogen6));
-
-        opgenomenVermogenHousekeeping.start();
-
-        verify(opgenomenVermogenRepository, times(2)).deleteInBatch(deletedOpgenomenVermogenCaptor.capture());
-
-        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(0)).containsExactlyInAnyOrder(opgenomenVermogen1, opgenomenVermogen3);
-        assertThat(deletedOpgenomenVermogenCaptor.getAllValues().get(1)).containsExactlyInAnyOrder(opgenomenVermogen5);
+        verify(opgenomenVermogenRepository).deleteById(opgenomenVermogen2.getId());
+        verify(opgenomenVermogenRepository).deleteById(opgenomenVermogen3.getId());
     }
 
     @Test

@@ -8,7 +8,7 @@ public class CacheService {
 
     private final CacheManager cacheManager;
 
-    public CacheService(CacheManager cacheManager) {
+    public CacheService(final CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
 

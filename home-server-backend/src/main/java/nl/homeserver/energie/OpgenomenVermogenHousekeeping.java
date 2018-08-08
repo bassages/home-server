@@ -71,7 +71,7 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private void cleanupHour(final int hour, final List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
-        LOGGER.info("Cleanup hour {}", hour);
+        LOGGER.debug("Cleanup hour {}", hour);
 
         final Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
                                                                                                             .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
@@ -87,7 +87,7 @@ public class OpgenomenVermogenHousekeeping {
 
         log(opgenomenVermogensToDelete, opgenomenVermogensToKeep);
 
-        opgenomenVermogenRepository.deleteInBatch(opgenomenVermogensToDelete);
+        opgenomenVermogensToDelete.forEach(opgenomenVermogen -> opgenomenVermogenRepository.deleteById(opgenomenVermogen.getId()));
     }
 
     private void log(final List<OpgenomenVermogen> opgenomenVermogensToDelete, final List<OpgenomenVermogen> opgenomenVermogensToKeep) {

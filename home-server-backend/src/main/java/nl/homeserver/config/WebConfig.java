@@ -1,7 +1,5 @@
 package nl.homeserver.config;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.http.CacheControl;
@@ -11,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.concurrent.TimeUnit;
 
 @EnableWebSecurity
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
@@ -23,7 +23,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
     };
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(final HttpSecurity http) throws Exception {
         http
             .csrf().disable()
             .headers().frameOptions().sameOrigin().and()
@@ -43,12 +43,12 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
     }
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
+    public void addViewControllers(final ViewControllerRegistry registry) {
         registry.addViewController("/login").setViewName("login");
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/index.html")
                 .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
                 .setCacheControl(CacheControl.noStore());

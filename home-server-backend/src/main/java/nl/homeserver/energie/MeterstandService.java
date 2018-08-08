@@ -1,7 +1,10 @@
 package nl.homeserver.energie;
 
-import static java.time.LocalDate.now;
-import static java.util.stream.Collectors.toList;
+import nl.homeserver.DatePeriod;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -9,12 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.DatePeriod;
+import static java.time.LocalDate.now;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class MeterstandService {
@@ -42,8 +41,8 @@ public class MeterstandService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public Meterstand save(Meterstand meterstand) {
-        Meterstand savedMeterStand = meterstandRepository.save(meterstand);
+    public Meterstand save(final Meterstand meterstand) {
+        final Meterstand savedMeterStand = meterstandRepository.save(meterstand);
         mostRecentlySavedMeterstand = Optional.of(savedMeterStand);
         messagingTemplate.convertAndSend(TOPIC, meterstand);
         return savedMeterStand;
@@ -58,16 +57,16 @@ public class MeterstandService {
     }
 
     public Meterstand getOldestOfToday() {
-        LocalDate today = now(clock);
+        final LocalDate today = now(clock);
 
-        LocalDateTime van = today.atStartOfDay();
-        LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
+        final LocalDateTime van = today.atStartOfDay();
+        final LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
 
-        Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
+        final Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
 
         if (oudsteStroomStandOpDag != null) {
             // Gas is registered once every hour, in the hour AFTER it actually is used. Compensate for that hour
-            Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
+            final Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
 
             if (oudsteGasStandOpDag != null) {
                 oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
@@ -76,18 +75,18 @@ public class MeterstandService {
         return oudsteStroomStandOpDag;
     }
 
-    public List<MeterstandOpDag> getPerDag(DatePeriod period) {
+    public List<MeterstandOpDag> getPerDag(final DatePeriod period) {
         return period.getDays().stream()
                                .map(this::getMeterstandOpDag)
                                .collect(toList());
     }
 
-    private MeterstandOpDag getMeterstandOpDag(LocalDate day) {
+    private MeterstandOpDag getMeterstandOpDag(final LocalDate day) {
         return new MeterstandOpDag(day, getMeesteRecenteMeterstandOpDag(day));
     }
 
-    private Meterstand getMeesteRecenteMeterstandOpDag(LocalDate day) {
-        LocalDate today = now(clock);
+    private Meterstand getMeesteRecenteMeterstandOpDag(final LocalDate day) {
+        final LocalDate today = now(clock);
         if (day.isAfter(today)) {
             return null;
         } else if (day.isEqual(today)) {
@@ -98,13 +97,13 @@ public class MeterstandService {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG)
-    public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(LocalDate day) {
+    public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(final LocalDate day) {
         return getNonCachedMeestRecenteMeterstandOpDag(day);
     }
 
-    private Meterstand getNonCachedMeestRecenteMeterstandOpDag(LocalDate day) {
-        LocalDateTime van = day.atStartOfDay();
-        LocalDateTime totEnMet = day.atStartOfDay().plusDays(1).minusNanos(1);
+    private Meterstand getNonCachedMeestRecenteMeterstandOpDag(final LocalDate day) {
+        final LocalDateTime van = day.atStartOfDay();
+        final LocalDateTime totEnMet = day.atStartOfDay().plusDays(1).minusNanos(1);
         return meterstandRepository.getMostRecentInPeriod(van, totEnMet);
     }
 }

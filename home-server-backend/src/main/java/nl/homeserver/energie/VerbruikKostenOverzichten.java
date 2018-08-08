@@ -1,11 +1,11 @@
 package nl.homeserver.energie;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 public class VerbruikKostenOverzichten {
 
@@ -16,7 +16,7 @@ public class VerbruikKostenOverzichten {
     }
 
     public VerbruikKostenOverzicht averageToSingle() {
-        VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
         verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
         verbruikKostenOverzicht.setGasVerbruik(getAverage(all, VerbruikKostenOverzicht::getGasVerbruik, 3));
@@ -30,10 +30,10 @@ public class VerbruikKostenOverzichten {
                                   final Function<VerbruikKostenOverzicht, BigDecimal> attributeToAverageGetter,
                                   final int scale) {
 
-        BigDecimal sum = verbruikKostenOverzichten.stream()
-                                                      .map(attributeToAverageGetter)
-                                                      .filter(Objects::nonNull)
-                                                      .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal sum = verbruikKostenOverzichten.stream()
+                                                        .map(attributeToAverageGetter)
+                                                        .filter(Objects::nonNull)
+                                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
     }
