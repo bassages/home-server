@@ -30,9 +30,9 @@ import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
+public class WarmupInitialCache implements ApplicationListener<ApplicationReadyEvent> {
 
-    private static final Logger LOGGER = getLogger(WarmupCache.class);
+    private static final Logger LOGGER = getLogger(WarmupInitialCache.class);
 
     private static final Month[] MONTHS = Month.values();
 
@@ -46,12 +46,12 @@ public class WarmupCache implements ApplicationListener<ApplicationReadyEvent> {
     @Value("${warmupCache.on-application-start}")
     private boolean warmupCacheOnApplicationStart;
 
-    public WarmupCache(final OpgenomenVermogenController opgenomenVermogenController,
-                       final EnergieController energieController,
-                       final KlimaatController klimaatController,
-                       final KlimaatService klimaatService,
-                       final MeterstandController meterstandController,
-                       final Clock clock) {
+    public WarmupInitialCache(final OpgenomenVermogenController opgenomenVermogenController,
+                              final EnergieController energieController,
+                              final KlimaatController klimaatController,
+                              final KlimaatService klimaatService,
+                              final MeterstandController meterstandController,
+                              final Clock clock) {
         this.opgenomenVermogenController = opgenomenVermogenController;
         this.energieController = energieController;
         this.klimaatController = klimaatController;

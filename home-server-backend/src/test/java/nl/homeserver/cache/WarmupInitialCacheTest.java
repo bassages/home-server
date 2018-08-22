@@ -29,12 +29,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WarmupCacheTest {
-
-    private final String SOME_KLIMAATSENSOR_CODE = "SOME_NICE_CODE";
+public class WarmupInitialCacheTest {
 
     @InjectMocks
-    private WarmupCache warmupCache;
+    private WarmupInitialCache warmupInitialCache;
 
     @Mock
     private KlimaatController klimaatController;
@@ -64,7 +62,7 @@ public class WarmupCacheTest {
     public void givenWarmupDisabledWhenApplicationStartedThenNoWarmup() {
         setWarmupCacheDisabled();
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verifyZeroInteractions(klimaatController, opgenomenVermogenController, energieController, meterstandController);
     }
@@ -72,73 +70,73 @@ public class WarmupCacheTest {
     @Test
     public void givenWarmupEnabledWhenApplicationStartedThenOpgenomenVermogenHistoryWarmedup() {
         setWarmupCacheEnabled();
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(opgenomenVermogenController, times(14)).getOpgenomenVermogenHistory(fromDateCaptor.capture(),
                                                                                                            toDateCaptor.capture(),
                                                                                                            eq(MINUTES.toMillis(3)));
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 16),
-                LocalDate.of(2017, 12, 17),
-                LocalDate.of(2017, 12, 18),
-                LocalDate.of(2017, 12, 19),
-                LocalDate.of(2017, 12, 20),
-                LocalDate.of(2017, 12, 21),
-                LocalDate.of(2017, 12, 22),
-                LocalDate.of(2017, 12, 23),
-                LocalDate.of(2017, 12, 24),
-                LocalDate.of(2017, 12, 25),
-                LocalDate.of(2017, 12, 26),
-                LocalDate.of(2017, 12, 27),
-                LocalDate.of(2017, 12, 28),
-                LocalDate.of(2017, 12, 29)
+                LocalDate.of(2017, DECEMBER, 16),
+                LocalDate.of(2017, DECEMBER, 17),
+                LocalDate.of(2017, DECEMBER, 18),
+                LocalDate.of(2017, DECEMBER, 19),
+                LocalDate.of(2017, DECEMBER, 20),
+                LocalDate.of(2017, DECEMBER, 21),
+                LocalDate.of(2017, DECEMBER, 22),
+                LocalDate.of(2017, DECEMBER, 23),
+                LocalDate.of(2017, DECEMBER, 24),
+                LocalDate.of(2017, DECEMBER, 25),
+                LocalDate.of(2017, DECEMBER, 26),
+                LocalDate.of(2017, DECEMBER, 27),
+                LocalDate.of(2017, DECEMBER, 28),
+                LocalDate.of(2017, DECEMBER, 29)
         );
 
         assertThat(toDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 17),
-                LocalDate.of(2017, 12, 18),
-                LocalDate.of(2017, 12, 19),
-                LocalDate.of(2017, 12, 20),
-                LocalDate.of(2017, 12, 21),
-                LocalDate.of(2017, 12, 22),
-                LocalDate.of(2017, 12, 23),
-                LocalDate.of(2017, 12, 24),
-                LocalDate.of(2017, 12, 25),
-                LocalDate.of(2017, 12, 26),
-                LocalDate.of(2017, 12, 27),
-                LocalDate.of(2017, 12, 28),
-                LocalDate.of(2017, 12, 29),
-                LocalDate.of(2017, 12, 30)
+                LocalDate.of(2017, DECEMBER, 17),
+                LocalDate.of(2017, DECEMBER, 18),
+                LocalDate.of(2017, DECEMBER, 19),
+                LocalDate.of(2017, DECEMBER, 20),
+                LocalDate.of(2017, DECEMBER, 21),
+                LocalDate.of(2017, DECEMBER, 22),
+                LocalDate.of(2017, DECEMBER, 23),
+                LocalDate.of(2017, DECEMBER, 24),
+                LocalDate.of(2017, DECEMBER, 25),
+                LocalDate.of(2017, DECEMBER, 26),
+                LocalDate.of(2017, DECEMBER, 27),
+                LocalDate.of(2017, DECEMBER, 28),
+                LocalDate.of(2017, DECEMBER, 29),
+                LocalDate.of(2017, DECEMBER, 30)
         );
     }
 
     @Test
     public void givenWarmupEnabledWhenApplicationStartedThenVerbruikPerUurOpDagWarmedup() {
         setWarmupCacheEnabled();
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(energieController, times(14)).getVerbruikPerUurOpDag(dateCaptor.capture());
 
         assertThat(dateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2017, 12, 16),
-                LocalDate.of(2017, 12, 17),
-                LocalDate.of(2017, 12, 18),
-                LocalDate.of(2017, 12, 19),
-                LocalDate.of(2017, 12, 20),
-                LocalDate.of(2017, 12, 21),
-                LocalDate.of(2017, 12, 22),
-                LocalDate.of(2017, 12, 23),
-                LocalDate.of(2017, 12, 24),
-                LocalDate.of(2017, 12, 25),
-                LocalDate.of(2017, 12, 26),
-                LocalDate.of(2017, 12, 27),
-                LocalDate.of(2017, 12, 28),
-                LocalDate.of(2017, 12, 29)
+                LocalDate.of(2017, DECEMBER, 16),
+                LocalDate.of(2017, DECEMBER, 17),
+                LocalDate.of(2017, DECEMBER, 18),
+                LocalDate.of(2017, DECEMBER, 19),
+                LocalDate.of(2017, DECEMBER, 20),
+                LocalDate.of(2017, DECEMBER, 21),
+                LocalDate.of(2017, DECEMBER, 22),
+                LocalDate.of(2017, DECEMBER, 23),
+                LocalDate.of(2017, DECEMBER, 24),
+                LocalDate.of(2017, DECEMBER, 25),
+                LocalDate.of(2017, DECEMBER, 26),
+                LocalDate.of(2017, DECEMBER, 27),
+                LocalDate.of(2017, DECEMBER, 28),
+                LocalDate.of(2017, DECEMBER, 29)
         );
     }
 
@@ -147,7 +145,7 @@ public class WarmupCacheTest {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(energieController, times(13)).getVerbruikPerDag(fromDateCaptor.capture(), toDateCaptor.capture());
 
@@ -189,7 +187,7 @@ public class WarmupCacheTest {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(meterstandController, times(13)).perDag(fromDateCaptor.capture(), toDateCaptor.capture());
 
@@ -229,9 +227,9 @@ public class WarmupCacheTest {
     @Test
     public void givenWarmupEnabledWhenApplicationStartedThenVerbruikPerMaandInJaarWarmedup() {
         setWarmupCacheEnabled();
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(energieController, times(2)).getVerbruikPerMaandInJaar(yearCaptor.capture());
 
@@ -241,9 +239,9 @@ public class WarmupCacheTest {
     @Test
     public void givenWarmupEnabledWhenApplicationStartedThenVerbruikPerJaarWarmedup() {
         setWarmupCacheEnabled();
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(energieController).getVerbruikPerJaar();
     }
@@ -253,12 +251,11 @@ public class WarmupCacheTest {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        KlimaatSensor klimaatSensor = new KlimaatSensor();
-        String sensorCode = "SOME_NICE_CODE";
-        klimaatSensor.setCode(sensorCode);
+        final String sensorCode = "SOME_NICE_CODE";
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
         when(klimaatService.getAllKlimaatSensors()).thenReturn(singletonList(klimaatSensor));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
         verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode), fromDateCaptor.capture(), toDateCaptor.capture());
 
@@ -288,20 +285,26 @@ public class WarmupCacheTest {
         setWarmupCacheEnabled();
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
+        final String sensorCode = "SOME_NICE_CODE";
+
         when(klimaatService.getAllKlimaatSensors())
-                           .thenReturn(singletonList(aKlimaatSensor().withCode(SOME_KLIMAATSENSOR_CODE).build()));
+                           .thenReturn(singletonList(aKlimaatSensor().withCode(sensorCode).build()));
 
-        warmupCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verify(klimaatController).getAverage(eq(SOME_KLIMAATSENSOR_CODE), eq(SensorType.TEMPERATUUR.name()), AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
-        verify(klimaatController).getAverage(eq(SOME_KLIMAATSENSOR_CODE), eq(SensorType.LUCHTVOCHTIGHEID.name()), AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
+        verify(klimaatController).getAverage(eq(sensorCode),
+                                             eq(SensorType.TEMPERATUUR.name()),
+                                             AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
+        verify(klimaatController).getAverage(eq(sensorCode),
+                                             eq(SensorType.LUCHTVOCHTIGHEID.name()),
+                                             AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
     }
 
     private void setWarmupCacheDisabled() {
-        setField(warmupCache, "warmupCacheOnApplicationStart", false);
+        setField(warmupInitialCache, "warmupCacheOnApplicationStart", false);
     }
 
     private void setWarmupCacheEnabled() {
-        setField(warmupCache, "warmupCacheOnApplicationStart", true);
+        setField(warmupInitialCache, "warmupCacheOnApplicationStart", true);
     }
 }

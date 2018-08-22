@@ -41,7 +41,7 @@ public class MeterstandHousekeeping {
         this.clock = clock;
     }
 
-    @Scheduled(cron = HousekeepingSchedule.METERSTAND)
+    @Scheduled(cron = HousekeepingSchedule.METERSTAND_CLEANUP)
     public void start() {
         LOGGER.info("Start housekeeping of Meterstand");
         findDaysToCleanup().forEach(this::cleanup);

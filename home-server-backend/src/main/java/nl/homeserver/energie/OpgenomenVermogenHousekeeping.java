@@ -43,7 +43,7 @@ public class OpgenomenVermogenHousekeeping {
         this.clock = clock;
     }
 
-    @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN)
+    @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN_CLEANUP)
     public void start() {
         LOGGER.info("Start housekeeping of OpgenomenVermogen");
         findDaysToCleanup().forEach(this::cleanup);

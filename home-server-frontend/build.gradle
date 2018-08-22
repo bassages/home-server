@@ -7,10 +7,6 @@ repositories {
     jcenter()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
-}
-
 node {
     // Version of node to use.
     version = '8.10.0' // LTS version
