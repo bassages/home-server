@@ -33,4 +33,28 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
                                                           @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
+    @Query(value = "  SELECT watt " +
+                   "    FROM opgenomen_vermogen " +
+                   "   WHERE datumtijd >= :fromDate AND datumtijd < :toDate " +
+                   "GROUP BY watt " +
+                   "ORDER BY COUNT(id) DESC " +
+                   "LIMIT 1;", nativeQuery = true)
+    int findMostCommonWattInPeriod(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+
+    @Query(value = "SELECT COUNT(id) FROM OpgenomenVermogen o " +
+                   " WHERE datumtijd >= :fromDate AND datumtijd < :toDate")
+    long countNumberOfRecordsInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
+
+    @Query(value = "  SELECT watt, COUNT(id) AS numberOfRecords " +
+                   "    FROM opgenomen_vermogen " +
+                   "   WHERE datumtijd >= :fromDate AND datumtijd < :toDate " +
+                   "     AND watt >= :fromWatt AND watt < :toWatt " +
+                   "GROUP BY watt", nativeQuery = true)
+    List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate,
+                                                        @Param("fromWatt") int fromWatt, @Param("toWatt") int toWatt);
+
+    interface NumberOfRecordsPerWatt {
+        long getWatt();
+        long getNumberOfRecords();
+    }
 }
