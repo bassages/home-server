@@ -8,4 +8,6 @@ public final class HousekeepingSchedule {
     public static final String WARMUP_CACHE = FIVE_MINUTES_PAST_MIDNIGHT;
     public static final String OPGENOMEN_VERMOGEN_CLEANUP = ONE_AM;
     public static final String METERSTAND_CLEANUP = TWO_AM;
+
+    private HousekeepingSchedule() { }
 }

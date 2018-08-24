@@ -22,6 +22,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             "classpath:/public/"
     };
 
+    private static final String LOGIN_PATH = "/login";
+
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http
@@ -29,7 +31,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .headers().frameOptions().sameOrigin().and()
             .httpBasic().and()
             .formLogin()
-                .loginPage("/login")
+                .loginPage(LOGIN_PATH)
                 .permitAll().and()
             .logout()
                 .invalidateHttpSession(true)
@@ -37,14 +39,14 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .authorizeRequests()
                 .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .antMatchers("/login").permitAll()
+                .antMatchers(LOGIN_PATH).permitAll()
                 .anyRequest().authenticated()
         ;
     }
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
+        registry.addViewController(LOGIN_PATH).setViewName("login");
     }
 
     @Override

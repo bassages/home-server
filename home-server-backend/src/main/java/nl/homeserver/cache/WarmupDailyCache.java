@@ -95,7 +95,7 @@ public class WarmupDailyCache {
         final List<KlimaatSensor> klimaatSensors = klimaatService.getAllKlimaatSensors();
 
         for (final KlimaatSensor klimaatSensor : klimaatSensors) {
-            LOGGER.info("Warmup of cache klimaat history for sensor " + klimaatSensor);
+            LOGGER.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
             klimaatController.findAllInPeriod(klimaatSensor.getCode(), yesterday, today);
         }
     }

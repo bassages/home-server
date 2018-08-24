@@ -114,11 +114,11 @@ public class WarmupInitialCache implements ApplicationListener<ApplicationReadyE
         final List<KlimaatSensor> klimaatSensors = klimaatService.getAllKlimaatSensors();
 
         for (final KlimaatSensor klimaatSensor : klimaatSensors) {
-            LOGGER.info("Warmup of cache klimaat history for sensor " + klimaatSensor);
+            LOGGER.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
             aPeriodWithToDate(today.minusDays(7), today).getDays()
                     .forEach(day -> klimaatController.findAllInPeriod(klimaatSensor.getCode(), day, day.plusDays(1)));
 
-            LOGGER.info("Warmup of cache klimaat averages for sensor " + klimaatSensor);
+            LOGGER.info("Warmup of cache klimaat averages for sensor {}", klimaatSensor);
             final int[] years = {today.getYear(), today.getYear() - 1, today.getYear() - 2};
             Stream.of(SensorType.values())
                   .forEach(sentortype -> klimaatController.getAverage(klimaatSensor.getCode(), sentortype.name(), years));
