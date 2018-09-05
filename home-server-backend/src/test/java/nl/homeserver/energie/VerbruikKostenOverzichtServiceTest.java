@@ -1,14 +1,14 @@
 package nl.homeserver.energie;
 
-import static java.time.LocalDateTime.now;
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.energie.StroomTariefIndicator.DAL;
+import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -37,7 +38,7 @@ public class VerbruikKostenOverzichtServiceTest {
     private VerbruikKostenOverzichtService verbruikKostenOverzichtService;
 
     @Mock
-    private VerbruikRepository verbruikRepository;
+    private VerbruikProvider verbruikProvider;
     @Mock
     private EnergiecontractService energiecontractService;
     @Mock
@@ -56,7 +57,7 @@ public class VerbruikKostenOverzichtServiceTest {
         LocalDateTime to = LocalDateTime.of(2016, JANUARY, 3, 4, 13);
         DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period);
+        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasKosten()).isNull();
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isNull();
@@ -65,7 +66,7 @@ public class VerbruikKostenOverzichtServiceTest {
         assertThat(verbruikKostenOverzicht.getStroomKostenNormaal()).isNull();
         assertThat(verbruikKostenOverzicht.getStroomVerbruikNormaal()).isNull();
 
-        verifyZeroInteractions(verbruikRepository, energiecontractService);
+        verifyZeroInteractions(verbruikProvider, energiecontractService);
     }
 
     @Test
@@ -92,11 +93,11 @@ public class VerbruikKostenOverzichtServiceTest {
 
         when(energiecontractService.findAllInInPeriod(period)).thenReturn(asList(energiecontract1, energiecontract2));
 
-        when(verbruikRepository.getGasVerbruikInPeriod(from.plusHours(1), from.plusDays(1).plusHours(1))).thenReturn(new BigDecimal("1.111"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(from, from.plusDays(1))).thenReturn(new BigDecimal("2.222"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(from, from.plusDays(1))).thenReturn(new BigDecimal("3.333"));
+        when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)))).thenReturn(new BigDecimal("1.111"));
+        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
+        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), NORMAAL)).thenReturn(new BigDecimal("3.333"));
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period);
+        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("1.111"));
         assertThat(verbruikKostenOverzicht.getGasKosten()).isEqualTo(new BigDecimal("11.110"));
@@ -124,11 +125,11 @@ public class VerbruikKostenOverzichtServiceTest {
         energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
         when(energiecontractService.findAllInInPeriod(period)).thenReturn(singletonList(energiecontract));
 
-        when(verbruikRepository.getGasVerbruikInPeriod(day.atStartOfDay().plusHours(1), day.plusDays(1).atStartOfDay().plusHours(1))).thenReturn(new BigDecimal("1.000"));
-        when(verbruikRepository.getStroomVerbruikDalTariefInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay())).thenReturn(new BigDecimal("2.000"));
-        when(verbruikRepository.getStroomVerbruikNormaalTariefInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay())).thenReturn(new BigDecimal("3.000"));
+        when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()))).thenReturn(new BigDecimal("1.000"));
+        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), DAL)).thenReturn(new BigDecimal("2.000"));
+        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), NORMAAL)).thenReturn(new BigDecimal("3.000"));
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period);
+        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("1.000"));
         assertThat(verbruikKostenOverzicht.getGasKosten()).isEqualTo(new BigDecimal("10.000"));
@@ -138,21 +139,5 @@ public class VerbruikKostenOverzichtServiceTest {
         assertThat(verbruikKostenOverzicht.getStroomKostenNormaal()).isEqualTo(new BigDecimal("90.000"));
 
         verifyZeroInteractions(verbruikKostenOverzichtServiceProxyWithEnabledCaching);
-    }
-
-    @Test
-    public void whenGetPotentiallyCachedStroomVerbruikInPeriodeForUnknownTariefThenException() {
-        Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setValidFrom(LocalDate.of(2018, JANUARY, 1));
-        energiecontract.setValidTo(LocalDate.of(2019, JANUARY, 1));
-        when(energiecontractService.findAllInInPeriod(any())).thenReturn(singletonList(energiecontract));
-
-        StroomTariefIndicator unknownStroomTariefIndicator = null;
-
-        DateTimePeriod period = aPeriodWithToDateTime(now(), now().plusDays(1));
-
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> verbruikKostenOverzichtService.getPotentiallyCachedStroomVerbruikInPeriode(period, unknownStroomTariefIndicator))
-                .withMessage("Unexpected StroomTariefIndicator: [null]");
     }
 }

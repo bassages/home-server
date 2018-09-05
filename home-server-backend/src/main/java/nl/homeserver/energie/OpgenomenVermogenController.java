@@ -1,17 +1,22 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.DatePeriod;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.web.bind.annotation.*;
+import static java.time.LocalDate.now;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.time.LocalDate.now;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import nl.homeserver.DatePeriod;
 
 @RestController
 @RequestMapping("/api/opgenomen-vermogen")
@@ -30,7 +35,7 @@ public class OpgenomenVermogenController {
         return opgenomenVermogenService.getMostRecent();
     }
 
-    @GetMapping(path = "historie/{from}/{to}")
+    @GetMapping("historie/{from}/{to}")
     public List<OpgenomenVermogen> getOpgenomenVermogenHistory(final @PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                                final @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                                                final @RequestParam("subPeriodLength") long subPeriodLengthInSeconds) {

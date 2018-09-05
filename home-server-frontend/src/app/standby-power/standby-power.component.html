@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col-5">
+    <p class="h1">Basisverbruik</p>
+  </div>
+  <div class="col-sm-6 offset-sm-1 offset-md-2 offset-lg-0 col-md-5 col-lg-3 right-to-h1">
+    <home-date-navigator mode="year" [selectedDate]="selectedYear" (navigation)="onYearNavigate($event)" class="input-group"></home-date-navigator>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-lg-8">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped table-hover table-sm">
+        <thead>
+        <tr>
+          <th>Maand</th>
+          <th class="text-right">Verbruik</th>
+          <th class="text-right">Kosten</th>
+          <th class="text-right">% totale kosten<sup>*</sup></th>
+          <th class="text-right">% tijd<sup>**</sup></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let standbyPowerInPeriod of standbyPowerInPeriods">
+          <td class="text-capitalize">{{monthName(standbyPowerInPeriod.month)}}</td>
+          <td class="text-right">{{standbyPowerInPeriod.standbyPower}} Watt</td>
+          <td class="text-right text-capitalize">{{standbyPowerInPeriod.costsOfStandByPower | currency: 'EUR'}}</td>
+          <td class="text-right text-capitalize">{{standbyPowerInPeriod.percentageOfTotalCost}}%</td>
+          <td class="text-right text-capitalize">{{standbyPowerInPeriod.percentageOfTotalPeriod}}%</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 col-lg-8">
+    <p><strong>*</strong> Percentage van de totale electriciteitskosten in deze maand.</p>
+    <p><strong>**</strong> In dit percentage van de tijd waren er geen andere apparaten die stroom verbruikten.</p>
+  </div>
+</div>

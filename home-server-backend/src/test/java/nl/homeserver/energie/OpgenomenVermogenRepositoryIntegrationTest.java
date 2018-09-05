@@ -1,17 +1,18 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.groups.Tuple.tuple;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.homeserver.RepositoryIntegrationTest;
 
 public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
@@ -58,7 +59,7 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
         entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(2)).build());
         entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(3)).build());
 
-        final int mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(day, day.plusDays(1));
+        final int mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
         assertThat(mostCommonWattInPeriod).isEqualTo(10);
     }
@@ -94,11 +95,11 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
 
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(day.plusDays(1).atStartOfDay()).build());
 
-        final List<OpgenomenVermogenRepository.NumberOfRecordsPerWatt> numberOfRecordsPerWatt = opgenomenVermogenRepository.numberOfRecordsInRange(
+        final List<NumberOfRecordsPerWatt> numberOfRecordsPerWatt = opgenomenVermogenRepository.numberOfRecordsInRange(
                 day.atStartOfDay(), day.plusDays(1).atStartOfDay(), 10, 20);
 
-        assertThat(numberOfRecordsPerWatt).extracting(OpgenomenVermogenRepository.NumberOfRecordsPerWatt::getNumberOfRecords,
-                                                      OpgenomenVermogenRepository.NumberOfRecordsPerWatt::getWatt)
+        assertThat(numberOfRecordsPerWatt).extracting(NumberOfRecordsPerWatt::getNumberOfRecords,
+                                                      NumberOfRecordsPerWatt::getWatt)
                                           .containsExactlyInAnyOrder(tuple(1L, 10L),
                                                                      tuple(2L, 11L),
                                                                      tuple(1L, 19L));

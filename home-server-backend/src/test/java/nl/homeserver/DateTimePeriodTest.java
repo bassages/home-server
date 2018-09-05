@@ -73,7 +73,7 @@ public class DateTimePeriodTest {
 
         DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
-        assertThat(period.startOnOrAfter(start)).isTrue();
+        assertThat(period.startsOnOrAfter(start)).isTrue();
     }
 
     @Test
@@ -82,7 +82,7 @@ public class DateTimePeriodTest {
 
         DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
-        assertThat(period.startOnOrAfter(start.minusMinutes(1))).isTrue();
+        assertThat(period.startsOnOrAfter(start.minusMinutes(1))).isTrue();
     }
 
     @Test
@@ -91,6 +91,6 @@ public class DateTimePeriodTest {
 
         DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
-        assertThat(period.startOnOrAfter(start.plusMinutes(1))).isFalse();
+        assertThat(period.startsOnOrAfter(start.plusMinutes(1))).isFalse();
     }
 }

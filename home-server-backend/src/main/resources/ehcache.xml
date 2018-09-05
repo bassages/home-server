@@ -13,4 +13,5 @@
     <cache name="meestRecenteMeterstandOpDag" />
     <cache name="klimaatInPeriod" />
     <cache name="averageKlimaatInMonth" />
+    <cache name="standbyPower" />
 </ehcache>

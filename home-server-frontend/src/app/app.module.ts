@@ -17,7 +17,7 @@ import {ErrorHandingService} from './error-handling/error-handing.service';
 
 import * as SockJS from 'sockjs-client';
 import {StompConfig, StompService} from '@stomp/ng2-stompjs';
-import {OpgenomenVermogenService} from './opgenomen-vermogen/opgenomenVermogen.service';
+import {OpgenomenVermogenService} from './opgenomen-vermogen/opgenomen-vermogen.service';
 import {EnergieVerbruikService} from './energie-verbruik/energie-verbruik.service';
 import {EnergieVerbruikComponent} from './energie-verbruik/energie-verbruik.component';
 import {DecimalPipe} from '@angular/common';
@@ -44,6 +44,8 @@ import {EnergiecontractService} from './energiecontract/energiecontract.service'
 import {KlimaatHighestLowestComponent} from './klimaat/klimaat-highest-lowest/klimaat-highest-lowest.component';
 import {KlimaatAverageComponent} from './klimaat/klimaat-average/klimaat-average.component';
 import {KlimaatSensorsComponent} from './klimaat/klimaat-sensors/klimaat-sensors.component';
+import {StandbyPowerComponent} from './standby-power/standby-power.component';
+import {StandbyPowerService} from './standby-power/standby-power.service';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -71,6 +73,7 @@ const appRoutes: Routes = [
   {path: 'meterstand', component: MeterstandComponent},
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
+  {path: 'energie/basisverbruik', component: StandbyPowerComponent},
   {path: 'mindergasnl', component: MindergasnlComponent},
   {path: 'klimaat/sensors', component: KlimaatSensorsComponent},
   {path: 'klimaat/historie', component: KlimaatHistorieComponent},
@@ -100,7 +103,8 @@ const appRoutes: Routes = [
     EnergiecontractComponent,
     KlimaatHighestLowestComponent,
     KlimaatAverageComponent,
-    KlimaatSensorsComponent
+    KlimaatSensorsComponent,
+    StandbyPowerComponent
   ],
   imports: [
     BrowserModule,
@@ -127,6 +131,7 @@ const appRoutes: Routes = [
     MindergasnlService,
     KlimaatService,
     LoadingIndicatorService,
+    StandbyPowerService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig}
   ],

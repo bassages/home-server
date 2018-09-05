@@ -1,18 +1,5 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.DatePeriod;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.AdditionalAnswers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.List;
-
 import static java.time.Month.JANUARY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -21,7 +8,23 @@ import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.AdditionalAnswers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import nl.homeserver.DatePeriod;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OpgenomenVermogenServiceTest {

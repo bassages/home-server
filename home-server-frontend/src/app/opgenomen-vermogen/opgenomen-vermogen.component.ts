@@ -1,14 +1,14 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import {OpgenomenVermogenService} from './opgenomenVermogen.service';
+import {OpgenomenVermogenService} from './opgenomen-vermogen.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
 import * as _ from 'lodash';
 import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
 import {ErrorHandingService} from '../error-handling/error-handing.service';
-import {OpgenomenVermogen} from './opgenomenVermogen';
+import {OpgenomenVermogen} from './opgenomen-vermogen';
 import {ChartService} from '../chart/chart.service';
 import {Statistics} from '../statistics';
 import {ChartStatisticsService} from '../chart/statistics/chart-statistics.service';

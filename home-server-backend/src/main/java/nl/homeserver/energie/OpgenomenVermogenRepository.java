@@ -1,14 +1,15 @@
 package nl.homeserver.energie;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVermogen, Long> {
@@ -18,6 +19,9 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
 
     @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
     OpgenomenVermogen getMostRecent();
+
+    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MIN(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
+    OpgenomenVermogen getOldest();
 
     @Query(value = "SELECT date FROM (" +
                    "  SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
@@ -39,7 +43,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
                    "GROUP BY watt " +
                    "ORDER BY COUNT(id) DESC " +
                    "LIMIT 1;", nativeQuery = true)
-    int findMostCommonWattInPeriod(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+    Integer findMostCommonWattInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
     @Query(value = "SELECT COUNT(id) FROM OpgenomenVermogen o " +
                    " WHERE datumtijd >= :fromDate AND datumtijd < :toDate")
@@ -47,14 +51,9 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
 
     @Query(value = "  SELECT watt, COUNT(id) AS numberOfRecords " +
                    "    FROM opgenomen_vermogen " +
-                   "   WHERE datumtijd >= :fromDate AND datumtijd < :toDate " +
+                   "   WHERE datumtijd >= :fromDateTime AND datumtijd < :toDateTime " +
                    "     AND watt >= :fromWatt AND watt < :toWatt " +
                    "GROUP BY watt", nativeQuery = true)
-    List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate,
-                                                        @Param("fromWatt") int fromWatt, @Param("toWatt") int toWatt);
-
-    interface NumberOfRecordsPerWatt {
-        long getWatt();
-        long getNumberOfRecords();
-    }
+    List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDateTime") LocalDateTime fromDateTime, @Param("toDateTime") LocalDateTime toDate,
+                                                                              @Param("fromWatt") int fromWatt, @Param("toWatt") int toWatt);
 }

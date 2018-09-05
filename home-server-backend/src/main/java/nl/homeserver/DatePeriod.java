@@ -1,13 +1,22 @@
 package nl.homeserver;
 
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public final class DatePeriod {
+
+    private static Set WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
 
     private final DateTimePeriod dateTimePeriod;
 
@@ -31,8 +40,8 @@ public final class DatePeriod {
         return new DatePeriod(DateTimePeriod.aPeriodWithEndDateTime(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay().minusNanos(1)));
     }
 
-    public static DatePeriod aPeriodWithToDate(final LocalDate startDate, final LocalDate toDate) {
-        return new DatePeriod(DateTimePeriod.aPeriodWithToDateTime(startDate.atStartOfDay(), toDate.atStartOfDay()));
+    public static DatePeriod aPeriodWithToDate(final LocalDate fromDate, final LocalDate toDate) {
+        return new DatePeriod(DateTimePeriod.aPeriodWithToDateTime(fromDate.atStartOfDay(), toDate.atStartOfDay()));
     }
 
     public DateTimePeriod toDateTimePeriod() {
@@ -43,12 +52,23 @@ public final class DatePeriod {
         return dateTimePeriod.getDays();
     }
 
+    public long getNumberOfWeekendDays() {
+        return getDays().stream()
+                        .filter(date -> WEEKENDDAYS.contains(date.getDayOfWeek()))
+                        .count();
+    }
+
+    public long getNumberOfWeekDays() {
+        return getDays().stream()
+                        .filter(date -> !WEEKENDDAYS.contains(date.getDayOfWeek()))
+                        .count();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
-
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
@@ -65,7 +85,7 @@ public final class DatePeriod {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("dateTimePeriod", dateTimePeriod)
                 .toString();
     }

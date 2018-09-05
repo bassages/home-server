@@ -1,21 +1,22 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimePeriod;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
+import static java.time.LocalDateTime.from;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.LongStream;
 
-import static java.time.LocalDateTime.from;
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+
+import nl.homeserver.DatePeriod;
+import nl.homeserver.DateTimePeriod;
 
 @Service
 public class OpgenomenVermogenService {

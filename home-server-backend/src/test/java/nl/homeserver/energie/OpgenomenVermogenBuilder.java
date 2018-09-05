@@ -4,14 +4,14 @@ import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 
 import java.time.LocalDateTime;
 
-public class OpgenomenVermogenBuilder {
+class OpgenomenVermogenBuilder {
 
     private LocalDateTime datumtijd = LocalDateTime.now();
     private StroomTariefIndicator stroomTariefIndicator = NORMAAL;
     private int watt;
     private long id;
 
-    public static OpgenomenVermogenBuilder aOpgenomenVermogen() {
+    static OpgenomenVermogenBuilder aOpgenomenVermogen() {
         return new OpgenomenVermogenBuilder();
     }
 

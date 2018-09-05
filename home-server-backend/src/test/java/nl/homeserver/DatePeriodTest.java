@@ -25,14 +25,38 @@ public class DatePeriodTest {
 
     @Test
     public void whenCreateDatePeriodWithToDateThenEndDateIsSet() {
-        LocalDate startDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
+        LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
         LocalDate toDate = LocalDate.of(2017, Month.DECEMBER, 1);
 
-        DatePeriod datePeriod = DatePeriod.aPeriodWithToDate(startDate, toDate);
+        DatePeriod datePeriod = DatePeriod.aPeriodWithToDate(fromDate, toDate);
 
-        assertThat(datePeriod.getFromDate()).isEqualTo(startDate);
+        assertThat(datePeriod.getFromDate()).isEqualTo(fromDate);
         assertThat(datePeriod.getToDate()).isEqualTo(toDate);
         assertThat(datePeriod.getEndDate()).isEqualTo(toDate.minusDays(1));
+    }
+
+    @Test
+    public void givenTwoWeekThenNumberOfWeekendDaysIsFour() {
+        LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
+        LocalDate toDate = fromDate.plusDays(14);
+
+        DatePeriod datePeriod = DatePeriod.aPeriodWithToDate(fromDate, toDate);
+
+        final long numberOfWeekendDays = datePeriod.getNumberOfWeekendDays();
+
+        assertThat(numberOfWeekendDays).isEqualTo(4);
+    }
+
+    @Test
+    public void givenTwoWeekThenNumberOfWeekDaysIsTen() {
+        LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
+        LocalDate toDate = fromDate.plusDays(14);
+
+        DatePeriod datePeriod = DatePeriod.aPeriodWithToDate(fromDate, toDate);
+
+        final long numberOfWeekDays = datePeriod.getNumberOfWeekDays();
+
+        assertThat(numberOfWeekDays).isEqualTo(10);
     }
 
     @Test

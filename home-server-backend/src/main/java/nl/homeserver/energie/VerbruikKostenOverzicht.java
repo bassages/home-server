@@ -30,4 +30,11 @@ public class VerbruikKostenOverzicht {
     @Getter
     @Setter
     private BigDecimal gasKosten;
+
+    public BigDecimal getTotaalStroomKosten() {
+        if (stroomKostenNormaal != null && stroomKostenDal != null) {
+            return stroomKostenDal.add(stroomKostenNormaal);
+        }
+        return null;
+    }
 }
