@@ -29,7 +29,7 @@ repositories {
 
 node {
     // Version of node to use.
-    version = '8.10.0' // LTS version
+    version = '8.11.4' // LTS version
     download = true
 }
 
@@ -78,8 +78,8 @@ dependencies {
     compile('javax.inject:javax.inject:1')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('org.assertj:assertj-core:3.11.0')
-    testCompile('nl.jqno.equalsverifier:equalsverifier:2.5.2');
+    testCompile('org.assertj:assertj-core:3.11.1')
+    testCompile('nl.jqno.equalsverifier:equalsverifier:2.5.2')
 
     runtime('com.h2database:h2')
     runtime('org.hibernate:hibernate-java8')
