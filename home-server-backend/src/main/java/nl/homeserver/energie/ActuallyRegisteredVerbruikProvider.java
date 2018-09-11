@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import nl.homeserver.DateTimePeriod;
 
-// TODO: unittest
 @Component
 public class ActuallyRegisteredVerbruikProvider implements VerbruikProvider {
 
