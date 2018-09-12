@@ -30,33 +30,31 @@ public class EnergiecontractControllerTest {
     @Test
     public void givenANewEnergyContractWhenSaveThenDelegatedToService() {
         when(energiecontractService.save(any())).then(returnsFirstArg());
-        Energiecontract energieContract = mock(Energiecontract.class);
-        when(energieContract.getId()).thenReturn(null);
+        EnergiecontractDto energieContractDto = mock(EnergiecontractDto.class);
+        when(energieContractDto.getId()).thenReturn(null);
 
-        Energiecontract savedEnergieContract = energiecontractController.save(energieContract);
+        Energiecontract savedEnergieContract = energiecontractController.save(energieContractDto);
 
-        assertThat(savedEnergieContract).isSameAs(energieContract);
+        verify(energiecontractService).save(any());
     }
 
     @Test
-    public void givenAnExistingEnergyContractWhenSaveThenValidToSetAndSaveIsDelegatedToService() {
+    public void givenAnExistingEnergyContractWhenSaveThenDelegatedToService() {
         when(energiecontractService.save(any())).then(returnsFirstArg());
 
         long id = 13451L;
         LocalDate validTo = LocalDate.of(2018, MARCH, 13);
 
         Energiecontract existingEnergiecontract = mock(Energiecontract.class);
-        when(existingEnergiecontract.getValidTo()).thenReturn(validTo);
 
-        Energiecontract energiecontractToUpdate = mock(Energiecontract.class);
+        EnergiecontractDto energiecontractToUpdate = mock(EnergiecontractDto.class);
         when(energiecontractToUpdate.getId()).thenReturn(id);
 
         when(energiecontractService.getById(id)).thenReturn(existingEnergiecontract);
 
         Energiecontract savedEnergieContract = energiecontractController.save(energiecontractToUpdate);
 
-        assertThat(savedEnergieContract).isSameAs(energiecontractToUpdate);
-        verify(energiecontractToUpdate).setValidTo(validTo);
+        assertThat(savedEnergieContract).isSameAs(existingEnergiecontract);
     }
 
     @Test
