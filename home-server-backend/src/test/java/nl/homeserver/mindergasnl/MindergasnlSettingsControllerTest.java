@@ -1,6 +1,7 @@
 package nl.homeserver.mindergasnl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,12 +24,11 @@ public class MindergasnlSettingsControllerTest {
 
     @Test
     public void whenSaveThenDelegatedToService() {
-        MindergasnlSettings notSavedMindergasnlSettings = mock(MindergasnlSettings.class);
         MindergasnlSettings savedMindergasnlSettings = mock(MindergasnlSettings.class);
 
-        when(mindergasnlService.save(notSavedMindergasnlSettings)).thenReturn(savedMindergasnlSettings);
+        when(mindergasnlService.save(any())).thenReturn(savedMindergasnlSettings);
 
-        assertThat(mindergasnlSettingsController.save(notSavedMindergasnlSettings)).isSameAs(savedMindergasnlSettings);
+        assertThat(mindergasnlSettingsController.save(mock(MindergasnlSettingsDto.class))).isSameAs(savedMindergasnlSettings);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class MindergasnlSettingsControllerTest {
     }
 
     @Test
-    public void givenNoMindergasnlSettingsExistwhenGetThenNullReturned() {
+    public void givenNoMindergasnlSettingsExistWhenGetThenNullReturned() {
         when(mindergasnlService.findOne()).thenReturn(Optional.empty());
 
         assertThat(mindergasnlSettingsController.get()).isNull();

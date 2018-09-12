@@ -1,6 +1,10 @@
 package nl.homeserver.mindergasnl;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/mindergasnl")
@@ -18,7 +22,14 @@ public class MindergasnlSettingsController {
     }
 
     @PostMapping
-    public MindergasnlSettings save(final @RequestBody MindergasnlSettings mindergasnlSettings) {
-        return mindergasnlService.save(mindergasnlSettings);
+    public MindergasnlSettings save(final @RequestBody MindergasnlSettingsDto mindergasnlSettingsDto) {
+        return mindergasnlService.save(fromDto(mindergasnlSettingsDto));
+    }
+
+    private MindergasnlSettings fromDto(final MindergasnlSettingsDto mindergasnlSettingsDto) {
+        final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
+        mindergasnlSettings.setAutomatischUploaden(mindergasnlSettingsDto.isAutomatischUploaden());
+        mindergasnlSettings.setAuthenticatietoken(mindergasnlSettingsDto.getAuthenticatietoken());
+        return mindergasnlSettings;
     }
 }

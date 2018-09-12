@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-public class MindergasnlSettings {
+class MindergasnlSettings {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
