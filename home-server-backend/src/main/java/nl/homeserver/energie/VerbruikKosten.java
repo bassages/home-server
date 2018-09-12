@@ -4,11 +4,11 @@ import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import javax.annotation.Nullable;
 
-@RequiredArgsConstructor
-public class VerbruikKosten {
+import lombok.Getter;
+
+class VerbruikKosten {
 
     private static final int KOSTEN_SCALE = 3;
 
@@ -17,9 +17,14 @@ public class VerbruikKosten {
 
     private final BigDecimal kosten;
 
-    public static final VerbruikKosten UNKNOWN = new VerbruikKosten(null, null);
+    static final VerbruikKosten UNKNOWN = new VerbruikKosten(null, null);
 
-    public BigDecimal getKosten() {
+    VerbruikKosten(@Nullable final BigDecimal verbruik, @Nullable final BigDecimal kosten) {
+        this.verbruik = verbruik;
+        this.kosten = kosten;
+    }
+
+    BigDecimal getKosten() {
         if (kosten == null) {
             return null;
         }
