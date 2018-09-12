@@ -1,17 +1,16 @@
 package nl.homeserver.energie;
 
-import static java.util.Comparator.naturalOrder;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static org.apache.commons.lang3.ObjectUtils.max;
+import static org.apache.commons.lang3.ObjectUtils.min;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +43,10 @@ public class StandbyPowerService {
         LOGGER.info("getStandbyPower for yearMonth: {}", yearMonth);
 
         final LocalDate oldestAvailableDate = opgenomenVermogenRepository.getOldest().getDatumtijd().toLocalDate();
-        final LocalDateTime from = Stream.of(oldestAvailableDate, yearMonth.atDay(1))
-                                         .max(naturalOrder()).get().atStartOfDay();
+        final LocalDateTime from = max(oldestAvailableDate, yearMonth.atDay(1)).atStartOfDay();
 
         final LocalDate latestAvailableDate = opgenomenVermogenRepository.getMostRecent().getDatumtijd().toLocalDate();
-        final LocalDateTime to = Stream.of(yearMonth.atEndOfMonth().plusDays(1), latestAvailableDate)
-                                       .min(naturalOrder()).get().atStartOfDay();
+        final LocalDateTime to = min(yearMonth.atEndOfMonth().plusDays(1), latestAvailableDate).atStartOfDay();
 
         final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(from, to);
 
