@@ -10,13 +10,11 @@ import java.math.BigDecimal;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 
-// TODO: unittest
+/**
+ * Limburg en Noord-Brabant hebben een afwijkend tijdschema,
+ * daar houd deze class geen rekening mee!
+ */
 public class VerbruikForVirtualUsageProvider implements VerbruikProvider {
-
-    // TODO:
-    // Limburg en Noord-Brabant
-    // Normaaltarief	7.00 uur - 21.00 uur
-    // Daltarief	   21.00 uur - 7.00 uur
 
     private static final int NUMBER_OF_HOURS_LOW_ON_WEEKDAY = 8;
     private static final int NUMBER_OF_HOURS_HIGH_ON_WEEKDAY = 16;
@@ -34,7 +32,6 @@ public class VerbruikForVirtualUsageProvider implements VerbruikProvider {
     public BigDecimal getStroomVerbruik(final DateTimePeriod period,
                                         final StroomTariefIndicator stroomTariefIndicator) {
 
-        //TODO assert period from and to are at 00:00:000
         final DatePeriod datePeriod = aPeriodWithToDate(period.getFromDateTime().toLocalDate(),
                                                         period.getToDateTime().toLocalDate());
 
