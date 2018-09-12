@@ -6,12 +6,12 @@ import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
+import static org.apache.commons.lang3.ObjectUtils.max;
+import static org.apache.commons.lang3.ObjectUtils.min;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -145,15 +145,8 @@ public class VerbruikKostenOverzichtService {
     }
 
     private DateTimePeriod getSubPeriod(final Energiecontract energiecontract, final DateTimePeriod period) {
-        final LocalDateTime subFrom = Stream.of(period.getFromDateTime(), energiecontract.getValidFrom().atStartOfDay())
-                                            .max(LocalDateTime::compareTo)
-                                            .orElse(null);
-
-        final LocalDateTime subTo = Stream.of(period.getToDateTime(), energiecontract.getValidTo() != null ? energiecontract.getValidTo().atStartOfDay() : null)
-                                          .filter(Objects::nonNull)
-                                          .min(LocalDateTime::compareTo)
-                                          .orElse(null);
-
+        final LocalDateTime subFrom = max(period.getFromDateTime(), energiecontract.getValidFrom().atStartOfDay());
+        final LocalDateTime subTo = min(period.getToDateTime(), energiecontract.getValidTo() != null ? energiecontract.getValidTo().atStartOfDay() : null);
         return aPeriodWithToDateTime(subFrom, subTo);
     }
 }

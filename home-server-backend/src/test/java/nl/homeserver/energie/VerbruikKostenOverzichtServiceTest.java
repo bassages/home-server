@@ -8,7 +8,6 @@ import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -20,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -53,11 +51,11 @@ public class VerbruikKostenOverzichtServiceTest {
     public void whenGetForPeriodInFutureThenNoOtherServicesCalledAndUsageIsZero() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 1).atStartOfDay());
 
-        LocalDateTime from = LocalDateTime.of(2016, JANUARY, 2, 10, 6);
-        LocalDateTime to = LocalDateTime.of(2016, JANUARY, 3, 4, 13);
-        DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final LocalDateTime from = LocalDateTime.of(2016, JANUARY, 2, 10, 6);
+        final LocalDateTime to = LocalDateTime.of(2016, JANUARY, 3, 4, 13);
+        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasKosten()).isNull();
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isNull();
@@ -73,18 +71,18 @@ public class VerbruikKostenOverzichtServiceTest {
     public void givenMultipleEnergycontractsWhenGetForPeriodInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atStartOfDay());
 
-        LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
-        LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atStartOfDay();
-        DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
+        final LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atStartOfDay();
+        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        Energiecontract energiecontract1 = new Energiecontract();
+        final Energiecontract energiecontract1 = new Energiecontract();
         energiecontract1.setValidFrom(LocalDate.of(2000, JANUARY, 1));
         energiecontract1.setValidTo(from.plusDays(1).toLocalDate());
         energiecontract1.setGasPerKuub(new BigDecimal("10"));
         energiecontract1.setStroomPerKwhDalTarief(new BigDecimal("20"));
         energiecontract1.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
 
-        Energiecontract energiecontract2 = new Energiecontract();
+        final Energiecontract energiecontract2 = new Energiecontract();
         energiecontract2.setValidFrom(energiecontract1.getValidTo());
         energiecontract2.setValidTo(null);
         energiecontract2.setGasPerKuub(new BigDecimal("40"));
@@ -97,7 +95,7 @@ public class VerbruikKostenOverzichtServiceTest {
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), NORMAAL)).thenReturn(new BigDecimal("3.333"));
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("1.111"));
         assertThat(verbruikKostenOverzicht.getGasKosten()).isEqualTo(new BigDecimal("11.110"));
@@ -111,13 +109,13 @@ public class VerbruikKostenOverzichtServiceTest {
     public void whenGetVerbruikPerDagForCurrentDayThenUsageAreRetrievedFromNonCachedService() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atTime(14, 43, 13));
 
-        VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching = mock(VerbruikKostenOverzichtService.class);
+        final VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching = mock(VerbruikKostenOverzichtService.class);
         setField(verbruikKostenOverzichtServiceProxyWithEnabledCaching, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtServiceProxyWithEnabledCaching);
 
-        LocalDate day = LocalDate.of(2016, JANUARY, 4);
-        DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
+        final LocalDate day = LocalDate.of(2016, JANUARY, 4);
+        final DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
-        Energiecontract energiecontract = new Energiecontract();
+        final Energiecontract energiecontract = new Energiecontract();
         energiecontract.setValidFrom(LocalDate.of(2000, JANUARY, 1));
         energiecontract.setValidTo(null);
         energiecontract.setGasPerKuub(new BigDecimal("10"));
@@ -129,7 +127,7 @@ public class VerbruikKostenOverzichtServiceTest {
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), DAL)).thenReturn(new BigDecimal("2.000"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), NORMAAL)).thenReturn(new BigDecimal("3.000"));
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
         assertThat(verbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("1.000"));
         assertThat(verbruikKostenOverzicht.getGasKosten()).isEqualTo(new BigDecimal("10.000"));
