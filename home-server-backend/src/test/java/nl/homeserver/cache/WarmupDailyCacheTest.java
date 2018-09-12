@@ -1,29 +1,35 @@
 package nl.homeserver.cache;
 
-import nl.homeserver.energie.EnergieController;
-import nl.homeserver.energie.MeterstandController;
-import nl.homeserver.energie.OpgenomenVermogenController;
-import nl.homeserver.klimaat.KlimaatController;
-import nl.homeserver.klimaat.KlimaatSensor;
-import nl.homeserver.klimaat.KlimaatService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import java.time.Clock;
-import java.time.LocalDate;
-
-import static java.time.Month.*;
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JUNE;
+import static java.time.Month.SEPTEMBER;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+
+import java.time.Clock;
+import java.time.LocalDate;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import nl.homeserver.energie.EnergieController;
+import nl.homeserver.energie.MeterstandController;
+import nl.homeserver.energie.OpgenomenVermogenController;
+import nl.homeserver.energie.StandbyPowerController;
+import nl.homeserver.klimaat.KlimaatController;
+import nl.homeserver.klimaat.KlimaatSensor;
+import nl.homeserver.klimaat.KlimaatService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WarmupDailyCacheTest {
@@ -42,18 +48,9 @@ public class WarmupDailyCacheTest {
     @Mock
     private MeterstandController meterstandController;
     @Mock
+    private StandbyPowerController standbyPowerController;
+    @Mock
     private Clock clock;
-
-    @Captor
-    private ArgumentCaptor<LocalDate> fromDateCaptor;
-    @Captor
-    private ArgumentCaptor<LocalDate> toDateCaptor;
-
-    @Captor
-    private ArgumentCaptor<LocalDate> dateCaptor;
-
-    @Captor
-    private ArgumentCaptor<Integer> yearCaptor;
 
     @Test
     public void givenWarmupDisabledWhenConsideredThenNoWarmup() {
@@ -71,8 +68,8 @@ public class WarmupDailyCacheTest {
 
         warmupDailyCache.considerDailyWarmup();
 
-        verify(opgenomenVermogenController).getOpgenomenVermogenHistory(LocalDate.of(2017, 12, 29),
-                                                                        LocalDate.of(2017, 12, 30),
+        verify(opgenomenVermogenController).getOpgenomenVermogenHistory(LocalDate.of(2017, DECEMBER, 29),
+                                                                        LocalDate.of(2017, DECEMBER, 30),
                                                                         MINUTES.toMillis(3));
     }
 
@@ -138,6 +135,17 @@ public class WarmupDailyCacheTest {
         warmupDailyCache.considerDailyWarmup();
 
         verify(klimaatController).findAllInPeriod(sensorCode, LocalDate.of(2017, DECEMBER, 29), LocalDate.of(2017, DECEMBER, 30));
+    }
+
+    @Test
+    public void givenWarmupEnabledWhenApplicationStartedThenStandbyPowerCacheWarmedUp() {
+        setWarmupCacheEnabled();
+        timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
+
+        warmupDailyCache.considerDailyWarmup();
+
+        verify(standbyPowerController).getStandbyPower(2017);
+        verify(standbyPowerController).getStandbyPower(2016);
     }
 
     private void setWarmupCacheDisabled() {

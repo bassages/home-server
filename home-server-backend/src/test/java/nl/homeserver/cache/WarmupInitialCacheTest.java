@@ -3,6 +3,7 @@ package nl.homeserver.cache;
 import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
+import nl.homeserver.energie.StandbyPowerController;
 import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;
@@ -45,6 +46,8 @@ public class WarmupInitialCacheTest {
     @Mock
     private MeterstandController meterstandController;
     @Mock
+    private StandbyPowerController standbyPowerController;
+    @Mock
     private Clock clock;
 
     @Captor
@@ -64,7 +67,7 @@ public class WarmupInitialCacheTest {
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verifyZeroInteractions(klimaatController, opgenomenVermogenController, energieController, meterstandController);
+        verifyZeroInteractions(klimaatController, opgenomenVermogenController, energieController, meterstandController, standbyPowerController);
     }
 
     @Test
@@ -298,6 +301,17 @@ public class WarmupInitialCacheTest {
         verify(klimaatController).getAverage(eq(sensorCode),
                                              eq(SensorType.LUCHTVOCHTIGHEID.name()),
                                              AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
+    }
+
+    @Test
+    public void givenWarmupEnabledWhenApplicationStartedThenStandbyPowerCacheWarmedUp() {
+        setWarmupCacheEnabled();
+        timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
+
+        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+
+        verify(standbyPowerController).getStandbyPower(2017);
+        verify(standbyPowerController).getStandbyPower(2016);
     }
 
     private void setWarmupCacheDisabled() {

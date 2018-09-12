@@ -3,6 +3,7 @@ package nl.homeserver.cache;
 import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
+import nl.homeserver.energie.StandbyPowerController;
 import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;
@@ -41,6 +42,7 @@ public class WarmupInitialCache implements ApplicationListener<ApplicationReadyE
     private final KlimaatController klimaatController;
     private final KlimaatService klimaatService;
     private final MeterstandController meterstandController;
+    private final StandbyPowerController standbyPowerController;
     private final Clock clock;
 
     @Value("${warmupCache.on-application-start}")
@@ -51,12 +53,14 @@ public class WarmupInitialCache implements ApplicationListener<ApplicationReadyE
                               final KlimaatController klimaatController,
                               final KlimaatService klimaatService,
                               final MeterstandController meterstandController,
+                              final StandbyPowerController standbyPowerController,
                               final Clock clock) {
         this.opgenomenVermogenController = opgenomenVermogenController;
         this.energieController = energieController;
         this.klimaatController = klimaatController;
         this.klimaatService = klimaatService;
         this.meterstandController = meterstandController;
+        this.standbyPowerController = standbyPowerController;
         this.clock = clock;
     }
 
@@ -104,6 +108,9 @@ public class WarmupInitialCache implements ApplicationListener<ApplicationReadyE
 
         LOGGER.info("Warmup of cache verbruikPerJaar");
         energieController.getVerbruikPerJaar();
+
+        LOGGER.info("Warmup of cache standbyPower");
+        Stream.of(today.getYear(), today.getYear() - 1).sorted().forEach(standbyPowerController::getStandbyPower);
     }
 
     private void warmupClimateCache() {
