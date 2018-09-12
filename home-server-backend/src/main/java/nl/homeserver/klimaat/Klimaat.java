@@ -36,11 +36,13 @@ public class Klimaat {
 
     @Getter
     @Setter
+    @Nullable
     @Column(precision = 4, scale = 2)
     private BigDecimal temperatuur;
 
     @Getter
     @Setter
+    @Nullable
     @Column(precision = 4, scale = 1)
     private BigDecimal luchtvochtigheid;
 

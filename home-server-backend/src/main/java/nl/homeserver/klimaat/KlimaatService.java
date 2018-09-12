@@ -131,6 +131,7 @@ public class KlimaatService {
                                                            .collect(toList());
     }
 
+    @Nullable
     private BigDecimal getAverage(final List<BigDecimal> decimals) {
         BigDecimal average = null;
         if (!decimals.isEmpty()) {
