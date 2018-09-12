@@ -1,10 +1,10 @@
 package nl.homeserver.energie;
 
+import static java.util.Comparator.naturalOrder;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -41,15 +41,15 @@ public class StandbyPowerService {
 
     @Cacheable(CACHE_NAME_STANDBY_POWER)
     public Optional<StandbyPowerInPeriod> getStandbyPower(final YearMonth yearMonth) {
-        LOGGER.info("getStandbyPower for yearMonth: " + yearMonth);
+        LOGGER.info("getStandbyPower for yearMonth: {}", yearMonth);
 
         final LocalDate oldestAvailableDate = opgenomenVermogenRepository.getOldest().getDatumtijd().toLocalDate();
         final LocalDateTime from = Stream.of(oldestAvailableDate, yearMonth.atDay(1))
-                                         .max(Comparator.naturalOrder()).get().atStartOfDay();
+                                         .max(naturalOrder()).get().atStartOfDay();
 
         final LocalDate latestAvailableDate = opgenomenVermogenRepository.getMostRecent().getDatumtijd().toLocalDate();
         final LocalDateTime to = Stream.of(yearMonth.atEndOfMonth().plusDays(1), latestAvailableDate)
-                                       .min(Comparator.naturalOrder()).get().atStartOfDay();
+                                       .min(naturalOrder()).get().atStartOfDay();
 
         final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(from, to);
 

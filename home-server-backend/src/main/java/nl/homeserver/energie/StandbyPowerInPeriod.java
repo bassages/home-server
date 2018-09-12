@@ -3,7 +3,6 @@ package nl.homeserver.energie;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 

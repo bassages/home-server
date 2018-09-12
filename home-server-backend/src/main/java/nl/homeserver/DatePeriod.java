@@ -3,20 +3,19 @@ package nl.homeserver;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public final class DatePeriod {
 
-    private static Set WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
+    private static final Set WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
 
     private final DateTimePeriod dateTimePeriod;
 
