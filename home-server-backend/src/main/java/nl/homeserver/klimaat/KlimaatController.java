@@ -1,16 +1,26 @@
 package nl.homeserver.klimaat;
 
-import nl.homeserver.ResourceNotFoundException;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.SensorType.toSensorType;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.klimaat.SensorType.toSensorType;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import nl.homeserver.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/api/klimaat")
@@ -36,9 +46,9 @@ public class KlimaatController {
     }
 
     @PutMapping("sensors/{sensorCode}")
-    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensor klimaatSensor) {
+    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensorDto klimaatSensorDto) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
-        existingKlimaatSensor.setOmschrijving(klimaatSensor.getOmschrijving());
+        existingKlimaatSensor.setOmschrijving(klimaatSensorDto.getOmschrijving());
         return klimaatService.update(existingKlimaatSensor);
     }
 
