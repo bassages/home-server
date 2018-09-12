@@ -1,10 +1,7 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.DatePeriod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
+import static java.time.LocalDate.now;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -12,8 +9,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.LocalDate.now;
-import static java.util.stream.Collectors.toList;
+import javax.annotation.Nullable;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+
+import nl.homeserver.DatePeriod;
 
 @Service
 public class MeterstandService {
@@ -85,6 +88,7 @@ public class MeterstandService {
         return new MeterstandOpDag(day, getMeesteRecenteMeterstandOpDag(day));
     }
 
+    @Nullable
     private Meterstand getMeesteRecenteMeterstandOpDag(final LocalDate day) {
         final LocalDate today = now(clock);
         if (day.isAfter(today)) {

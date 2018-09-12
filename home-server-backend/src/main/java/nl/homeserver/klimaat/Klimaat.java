@@ -1,15 +1,24 @@
 package nl.homeserver.klimaat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class Klimaat {
@@ -42,7 +51,7 @@ public class Klimaat {
     @JsonIgnore
     private KlimaatSensor klimaatSensor;
 
-    public void setDatumtijd(final LocalDateTime datumtijd) {
+    public void setDatumtijd(@Nullable final LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
         if (datumtijd != null) {
             this.datum = datumtijd.toLocalDate();

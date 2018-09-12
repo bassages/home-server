@@ -2,14 +2,19 @@ package nl.homeserver.energie;
 
 import java.time.LocalDate;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import javax.annotation.Nullable;
 
-@RequiredArgsConstructor
+import lombok.Getter;
+
 public class MeterstandOpDag {
 
     @Getter
     private final LocalDate dag;
     @Getter
     private final Meterstand meterstand;
+
+    public MeterstandOpDag(final LocalDate dag, @Nullable final Meterstand meterstand) {
+        this.dag = dag;
+        this.meterstand = meterstand;
+    }
 }
