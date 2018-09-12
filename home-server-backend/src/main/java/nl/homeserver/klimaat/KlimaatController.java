@@ -39,9 +39,15 @@ public class KlimaatController {
 
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@PathVariable("sensorCode") final String sensorCode, @RequestBody final Klimaat klimaat) {
+    public void add(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatDto klimaatDto) {
         final KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
+
+        final Klimaat klimaat = new Klimaat();
+        klimaat.setDatumtijd(klimaatDto.getDatumtijd());
+        klimaat.setLuchtvochtigheid(klimaatDto.getLuchtvochtigheid());
+        klimaat.setTemperatuur(klimaatDto.getTemperatuur());
         klimaat.setKlimaatSensor(klimaatSensor);
+
         klimaatService.add(klimaat);
     }
 

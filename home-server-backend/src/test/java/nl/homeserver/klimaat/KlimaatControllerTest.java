@@ -15,12 +15,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -43,17 +46,24 @@ public class KlimaatControllerTest {
     private static final String NOT_EXISTING_SENSOR_CODE = "DOES_NOT_EXISTS";
     private static final String EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST = "KlimaatSensor [" + NOT_EXISTING_SENSOR_CODE + "] does not exist";
 
+    @Captor
+    private ArgumentCaptor<Klimaat> klimaatCaptor;
+
     @Test
     public void whenAddThenKlimaatSensorSetAndDelegatedToService() {
         final String sensorCode = "LIVINGROOM";
         when(klimaatService.getKlimaatSensorByCode(sensorCode)).thenReturn(Optional.of(klimaatSensor));
 
-        final Klimaat klimaat = new Klimaat();
+        final KlimaatDto klimaatDto = new KlimaatDto();
+        klimaatDto.setTemperatuur(new BigDecimal("12.67"));
+        klimaatDto.setLuchtvochtigheid(new BigDecimal("60.2"));
 
-        klimaatController.add(sensorCode, klimaat);
+        klimaatController.add(sensorCode, klimaatDto);
 
-        assertThat(klimaat.getKlimaatSensor()).isSameAs(klimaatSensor);
-        verify(klimaatService).add(klimaat);
+        verify(klimaatService).add(klimaatCaptor.capture());
+        assertThat(klimaatCaptor.getValue().getKlimaatSensor()).isSameAs(klimaatSensor);
+        assertThat(klimaatCaptor.getValue().getTemperatuur()).isEqualTo(klimaatDto.getTemperatuur());
+        assertThat(klimaatCaptor.getValue().getLuchtvochtigheid()).isEqualTo(klimaatDto.getLuchtvochtigheid());
     }
 
     @Test
@@ -61,7 +71,7 @@ public class KlimaatControllerTest {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.add(NOT_EXISTING_SENSOR_CODE, new Klimaat()))
+                .isThrownBy(() -> klimaatController.add(NOT_EXISTING_SENSOR_CODE, mock(KlimaatDto.class)))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
 
