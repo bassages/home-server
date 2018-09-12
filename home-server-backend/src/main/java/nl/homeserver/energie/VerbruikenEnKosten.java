@@ -4,14 +4,17 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 
-public class VerbruikenEnKosten {
+import javax.annotation.Nullable;
+
+class VerbruikenEnKosten {
 
     private final Collection<VerbruikKosten> all;
 
-    public VerbruikenEnKosten(final Collection<VerbruikKosten> all) {
+    VerbruikenEnKosten(final Collection<VerbruikKosten> all) {
         this.all = all;
     }
 
+    @Nullable
     private BigDecimal getTotaalVerbruik() {
         return all.stream()
                   .map(VerbruikKosten::getVerbruik)
@@ -20,6 +23,7 @@ public class VerbruikenEnKosten {
                   .orElse(null);
     }
 
+    @Nullable
     private BigDecimal getTotaalKosten() {
         return all.stream()
                   .map(VerbruikKosten::getKosten)
@@ -28,7 +32,7 @@ public class VerbruikenEnKosten {
                   .orElse(null);
     }
 
-    public VerbruikKosten sumToSingle() {
+    VerbruikKosten sumToSingle() {
         return  new VerbruikKosten(getTotaalVerbruik(), getTotaalKosten());
     }
 }
