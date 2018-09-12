@@ -1,16 +1,24 @@
 package nl.homeserver.energiecontract;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
-import nl.homeserver.energie.StroomTariefIndicator;
+import static java.math.BigDecimal.ZERO;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static java.math.BigDecimal.ZERO;
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Getter;
+import lombok.Setter;
+import nl.homeserver.energie.StroomTariefIndicator;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -30,6 +38,7 @@ public class Energiecontract {
     @JsonIgnore
     @Getter
     @Setter
+    @Nullable
     private LocalDate validTo;
 
     @Column(precision = 7, scale = 6, nullable = false)
