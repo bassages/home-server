@@ -33,10 +33,8 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)")
     Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
-    @Nullable
     List<Meterstand> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
-    @Nullable
     @Query(value = "SELECT date FROM (" +
                    "  SELECT PARSEDATETIME(FORMATDATETIME(date_time, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
                    "         COUNT(id) AS nr_of_records " +
