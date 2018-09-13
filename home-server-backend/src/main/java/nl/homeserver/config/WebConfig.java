@@ -1,16 +1,17 @@
 package nl.homeserver.config;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.http.CacheControl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.concurrent.TimeUnit;
 
 @EnableWebSecurity
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
@@ -22,7 +23,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             "classpath:/public/"
     };
 
-    private static final String LOGIN_PATH = "/login";
+    private static final String LOGIN_PATH = DefaultLoginPageGeneratingFilter.DEFAULT_LOGIN_PAGE_URL;
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
