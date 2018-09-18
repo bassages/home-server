@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import nl.homeserver.DatePeriod;
+import nl.homeserver.config.Paths;
 
 @RestController
-@RequestMapping("/api/opgenomen-vermogen")
+@RequestMapping(Paths.API + "/opgenomen-vermogen")
 public class OpgenomenVermogenController {
 
     private final OpgenomenVermogenService opgenomenVermogenService;

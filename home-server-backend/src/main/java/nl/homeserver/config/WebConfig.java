@@ -8,7 +8,6 @@ import org.springframework.http.CacheControl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -23,7 +22,11 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             "classpath:/public/"
     };
 
-    private static final String LOGIN_PATH = DefaultLoginPageGeneratingFilter.DEFAULT_LOGIN_PAGE_URL;
+    private final UnauthenticatedRequestHandler unauthenticatedRequestHandler;
+
+    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler) {
+        this.unauthenticatedRequestHandler = unauthenticatedRequestHandler;
+    }
 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
@@ -32,7 +35,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .headers().frameOptions().sameOrigin().and()
             .httpBasic().and()
             .formLogin()
-                .loginPage(LOGIN_PATH)
+                .loginPage(Paths.LOGIN)
+                .defaultSuccessUrl("/", true)
                 .permitAll().and()
             .logout()
                 .invalidateHttpSession(true)
@@ -40,14 +44,14 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .authorizeRequests()
                 .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .antMatchers(LOGIN_PATH).permitAll()
-                .anyRequest().authenticated()
-        ;
+                .antMatchers(Paths.LOGIN).permitAll()
+                .anyRequest().authenticated().and()
+                .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
     }
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController(LOGIN_PATH).setViewName("login");
+        registry.addViewController(Paths.LOGIN).setViewName("login");
     }
 
     @Override

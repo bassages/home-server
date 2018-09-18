@@ -1,5 +1,11 @@
 package nl.homeserver.energie;
 
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,14 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.List;
-
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import nl.homeserver.config.Paths;
 
 @RestController
-@RequestMapping("/api/energie")
+@RequestMapping(Paths.API + "/energie")
 public class EnergieController {
 
     private final VerbruikService verbruikService;

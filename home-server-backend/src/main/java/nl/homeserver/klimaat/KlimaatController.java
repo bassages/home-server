@@ -21,9 +21,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import nl.homeserver.ResourceNotFoundException;
+import nl.homeserver.config.Paths;
 
 @RestController
-@RequestMapping("/api/klimaat")
+@RequestMapping(Paths.API + "/klimaat")
 public class KlimaatController {
 
     private final KlimaatService klimaatService;

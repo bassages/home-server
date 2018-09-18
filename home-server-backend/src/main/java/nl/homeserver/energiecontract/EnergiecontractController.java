@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.homeserver.config.Paths;
+
 @RestController
-@RequestMapping("/api/energiecontract")
+@RequestMapping(Paths.API + "/energiecontract")
 public class EnergiecontractController {
 
     private final EnergiecontractService energiecontractService;

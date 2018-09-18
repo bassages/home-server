@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.homeserver.config.Paths;
+
 @RestController
-@RequestMapping("/api/mindergasnl")
+@RequestMapping(Paths.API + "/mindergasnl")
 public class MindergasnlSettingsController {
 
     private final MindergasnlService mindergasnlService;

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.homeserver.config.Paths;
+
 @RestController
-@RequestMapping("/api/standby-power")
+@RequestMapping(Paths.API + "/standby-power")
 public class StandbyPowerController {
 
     private final StandbyPowerService standbyPowerService;

@@ -7,7 +7,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {MeterstandService} from './meterstand/meterstand.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {DpDatePickerModule} from 'ng2-date-picker';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {NavbarComponent} from './navbar/navbar.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {LoadingIndicatorComponent} from './loading-indicator/loading-indicator.component';
@@ -46,6 +46,7 @@ import {KlimaatAverageComponent} from './klimaat/klimaat-average/klimaat-average
 import {KlimaatSensorsComponent} from './klimaat/klimaat-sensors/klimaat-sensors.component';
 import {StandbyPowerComponent} from './standby-power/standby-power.component';
 import {StandbyPowerService} from './standby-power/standby-power.service';
+import {AuthorizationInterceptor} from './auth/authorization-interceptor';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -111,7 +112,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule.forRoot(),
+    NgbModule,
     DpDatePickerModule,
     RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true})
   ],
@@ -133,7 +134,11 @@ const appRoutes: Routes = [
     LoadingIndicatorService,
     StandbyPowerService,
     ErrorHandingService,
-    StompService, {provide: StompConfig, useValue: stompConfig}
+    StompService, {provide: StompConfig, useValue: stompConfig},
+    { provide: HTTP_INTERCEPTORS,
+      useClass: AuthorizationInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

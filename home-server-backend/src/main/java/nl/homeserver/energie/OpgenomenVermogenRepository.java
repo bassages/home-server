@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,12 +18,15 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
     @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd >= :van AND ov.datumtijd < :tot ORDER BY ov.datumtijd")
     List<OpgenomenVermogen> getOpgenomenVermogen(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
+    @Nullable
     @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
     OpgenomenVermogen getMostRecent();
 
+    @Nullable
     @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MIN(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
     OpgenomenVermogen getOldest();
 
+    @Nullable
     @Query(value = "SELECT date FROM (" +
                    "  SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
                    "         COUNT(id) AS nr_of_records " +
@@ -37,6 +41,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
                                                           @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
+    @Nullable
     @Query(value = "  SELECT watt " +
                    "    FROM opgenomen_vermogen " +
                    "   WHERE datumtijd >= :fromDate AND datumtijd < :toDate " +

@@ -1,5 +1,17 @@
 package nl.homeserver.dev;
 
+import static java.time.temporal.ChronoUnit.HOURS;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import nl.homeserver.config.Paths;
 import nl.homeserver.dev.energie.SlimmeMeterSimulatorService;
 import nl.homeserver.energie.MeterstandHousekeeping;
 import nl.homeserver.energie.OpgenomenVermogenHousekeeping;
@@ -7,19 +19,9 @@ import nl.homeserver.klimaat.Klimaat;
 import nl.homeserver.klimaat.KlimaatRepos;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatSensorRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-
-import static java.time.temporal.ChronoUnit.HOURS;
 
 @RestController
-@RequestMapping("/api/dev")
+@RequestMapping(Paths.API + "/dev")
 public class DevController {
 
     private final KlimaatRepos klimaatRepos;

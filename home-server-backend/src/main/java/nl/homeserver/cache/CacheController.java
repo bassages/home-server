@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import nl.homeserver.config.Paths;
+
 @RestController
-@RequestMapping("/api/cache")
+@RequestMapping(Paths.API + "/cache")
 public class CacheController {
 
     private final CacheService cacheService;
