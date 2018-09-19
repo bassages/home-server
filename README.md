@@ -21,7 +21,7 @@
 # Screenshots
 
 ## Actueel
-![Alt text](documentation/screenshots/actueel-xl.png?raw=true "Actueel")
+![Alt text](documentation/screenshots/actueel-xl.jpg?raw=true "Actueel")
 
 ## Opgenomen vermogen
 ![Alt text](documentation/screenshots/opgenomen-vermogen.png?raw=true "Actueel")
