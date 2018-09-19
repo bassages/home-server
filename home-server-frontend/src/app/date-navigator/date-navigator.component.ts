@@ -86,14 +86,15 @@ export class DateNavigatorComponent implements OnInit {
 
   public navigate(amount: number): void {
     if (this.mode === 'day') {
-      this.navigation.emit(this._selectedDate.clone().add(amount, 'days'));
+      this.selectedDate = this._selectedDate.clone().add(amount, 'days');
 
     } else if (this.mode === 'month') {
-      this.navigation.emit(this._selectedDate.clone().add(amount, 'months'));
+      this.selectedDate = this._selectedDate.clone().add(amount, 'months');
 
     } else if (this.mode === 'year') {
-      this.yearPickerModel += amount;
-      this.selectedDate = moment(`${this.yearPickerModel}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
+      this.selectedDate = moment(`${this.yearPickerModel + amount}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
+
+      // Since year mode is not backed by a datepicker, we'll have to trigger the navigation event
       this.navigation.emit(this._selectedDate.clone());
     }
   }

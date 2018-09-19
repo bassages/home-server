@@ -14,9 +14,9 @@ import {ErrorHandingService} from '../error-handling/error-handing.service';
 })
 export class MeterstandComponent implements OnInit {
 
-  selectedMonth: Moment;
+  public selectedYearMonth: Moment;
 
-  sortedMeterstandenPerDag: MeterstandOpDag[] = [];
+  public sortedMeterstandenPerDag: MeterstandOpDag[] = [];
 
   constructor(private meterstandService: MeterstandService,
               private loadingIndicatorService: LoadingIndicatorService,
@@ -24,7 +24,7 @@ export class MeterstandComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.selectedMonth = this.getStartOfCurrentMonth();
+    this.selectedYearMonth = this.getStartOfCurrentMonth();
     setTimeout(() => this.getMeterstanden());
   }
 
@@ -34,7 +34,7 @@ export class MeterstandComponent implements OnInit {
   }
 
   private getMeterstanden(): void {
-    const from = this.selectedMonth.clone().startOf('month');
+    const from = this.selectedYearMonth.clone().startOf('month');
     const to = from.clone().add(1, 'month');
 
     this.loadingIndicatorService.open();
@@ -46,8 +46,8 @@ export class MeterstandComponent implements OnInit {
     );
   }
 
-  public onMonthNavigate(date: Moment): void {
-    this.selectedMonth = date;
+  public yearMonthChanged(selectedYearMonth: Moment): void {
+    this.selectedYearMonth = selectedYearMonth;
     this.getMeterstanden();
   }
 }
