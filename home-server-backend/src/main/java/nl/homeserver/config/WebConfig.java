@@ -23,9 +23,12 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
     };
 
     private final UnauthenticatedRequestHandler unauthenticatedRequestHandler;
+    private final SuccessfulLoginHandler successfulLoginHandler;
 
-    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler) {
+    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler,
+                     final SuccessfulLoginHandler successfulLoginHandler) {
         this.unauthenticatedRequestHandler = unauthenticatedRequestHandler;
+        this.successfulLoginHandler = successfulLoginHandler;
     }
 
     @Override
@@ -36,7 +39,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .httpBasic().and()
             .formLogin()
                 .loginPage(Paths.LOGIN)
-                .defaultSuccessUrl("/", true)
+                .successHandler(successfulLoginHandler)
                 .permitAll().and()
             .logout()
                 .invalidateHttpSession(true)
