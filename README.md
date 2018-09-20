@@ -11,13 +11,6 @@
 - Beschikbaar stellen van de klimaat sensor data via een (reponsive) web interface
 - Mogelijkheid om gas meterstanden dagelijks automatisch te uploaden naar mindergas.nl
 
-# Technologie
-- Spring Boot (Java 8, Gradle)
-- Angular
-- Bootstrap
-- C3.js voor grafieken
-- Runtime: Raspberry PI 3
-
 # Screenshots
 
 ## Actueel
@@ -35,7 +28,7 @@
 ## Meterstanden per dag
 ![Alt text](documentation/screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
 
-## Temperatuur / Luchtvochtigheid
+## Klimaat
 ![Alt text](documentation/screenshots/temperatuur.png?raw=true "Temperatuur")
 
 ## Kosten per maand in jaar (klein scherm)
