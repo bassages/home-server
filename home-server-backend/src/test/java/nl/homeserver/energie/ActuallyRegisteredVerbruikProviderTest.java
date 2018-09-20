@@ -3,7 +3,8 @@ package nl.homeserver.energie;
 import static java.math.BigDecimal.TEN;
 import static java.time.Month.MAY;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +38,7 @@ public class ActuallyRegisteredVerbruikProviderTest {
 
         when(verbruikRepository.getGasVerbruikInPeriod(from.plusHours(1), to.plusHours(1))).thenReturn(TEN);
 
-        BigDecimal gasVerbruik = actuallyRegisteredVerbruikProvider.getGasVerbruik(period);
+        final BigDecimal gasVerbruik = actuallyRegisteredVerbruikProvider.getGasVerbruik(period);
 
         assertThat(gasVerbruik).isEqualTo(TEN);
     }
@@ -51,7 +52,7 @@ public class ActuallyRegisteredVerbruikProviderTest {
 
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        BigDecimal stroomVerbruik = actuallyRegisteredVerbruikProvider.getStroomVerbruik(period, StroomTariefIndicator.NORMAAL);
+        final BigDecimal stroomVerbruik = actuallyRegisteredVerbruikProvider.getStroomVerbruik(period, StroomTariefIndicator.NORMAAL);
 
         assertThat(stroomVerbruik).isEqualTo(TEN);
     }
@@ -65,7 +66,7 @@ public class ActuallyRegisteredVerbruikProviderTest {
 
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        BigDecimal stroomVerbruik = actuallyRegisteredVerbruikProvider.getStroomVerbruik(period, StroomTariefIndicator.DAL);
+        final BigDecimal stroomVerbruik = actuallyRegisteredVerbruikProvider.getStroomVerbruik(period, StroomTariefIndicator.DAL);
 
         assertThat(stroomVerbruik).isEqualTo(TEN);
     }

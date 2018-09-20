@@ -1,19 +1,24 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimePeriod;
-import org.springframework.stereotype.Service;
-
-import java.time.*;
-import java.util.List;
-import java.util.stream.IntStream;
-
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static java.util.EnumSet.allOf;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.springframework.stereotype.Service;
+
+import nl.homeserver.DatePeriod;
+import nl.homeserver.DateTimePeriod;
 
 @Service
 public class VerbruikService {

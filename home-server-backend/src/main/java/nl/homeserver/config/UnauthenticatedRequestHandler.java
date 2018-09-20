@@ -16,7 +16,7 @@ public class UnauthenticatedRequestHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException authException) throws IOException {
         final String servletPath = request.getServletPath();
-        if (servletPath.startsWith(Paths.API)) {
+        if (servletPath.startsWith(Paths.API) || servletPath.startsWith(Paths.WEBSOCKET)) {
             response.setStatus(HttpStatus.SC_UNAUTHORIZED);
         } else {
             response.sendRedirect(Paths.LOGIN);

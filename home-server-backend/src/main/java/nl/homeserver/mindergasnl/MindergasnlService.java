@@ -1,8 +1,17 @@
 package nl.homeserver.mindergasnl;
 
-import nl.homeserver.DatePeriod;
-import nl.homeserver.energie.MeterstandOpDag;
-import nl.homeserver.energie.MeterstandService;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Provider;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -14,16 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.energie.MeterstandOpDag;
+import nl.homeserver.energie.MeterstandService;
 
 @Service
 public class MindergasnlService {

@@ -24,7 +24,7 @@ public class MindergasnlSettingsControllerTest {
 
     @Test
     public void whenSaveThenDelegatedToService() {
-        MindergasnlSettings savedMindergasnlSettings = mock(MindergasnlSettings.class);
+        final MindergasnlSettings savedMindergasnlSettings = mock(MindergasnlSettings.class);
 
         when(mindergasnlService.save(any())).thenReturn(savedMindergasnlSettings);
 
@@ -33,7 +33,7 @@ public class MindergasnlSettingsControllerTest {
 
     @Test
     public void givenMindergasnlSettingsExistWhenGetThenRetrievedFromService() {
-        MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
+        final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
 
         when(mindergasnlService.findOne()).thenReturn(Optional.of(mindergasnlSettings));
 

@@ -2,7 +2,6 @@ package nl.homeserver.energie;
 
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,14 +53,14 @@ public class StandbyPowerServiceTest {
 
         when(opgenomenVermogenRepository.countNumberOfRecordsInPeriod(from, to)).thenReturn(10L);
 
-        NumberOfRecordsPerWatt numberOfRecordsPerWatt1 = mock(NumberOfRecordsPerWatt.class);
+        final NumberOfRecordsPerWatt numberOfRecordsPerWatt1 = mock(NumberOfRecordsPerWatt.class);
         when(numberOfRecordsPerWatt1.getNumberOfRecords()).thenReturn(2L);
 
-        NumberOfRecordsPerWatt numberOfRecordsPerWatt2 = mock(NumberOfRecordsPerWatt.class);
+        final NumberOfRecordsPerWatt numberOfRecordsPerWatt2 = mock(NumberOfRecordsPerWatt.class);
         when(numberOfRecordsPerWatt2.getNumberOfRecords()).thenReturn(1L);
 
         when(opgenomenVermogenRepository.numberOfRecordsInRange(from, to, 8, 12))
-                .thenReturn(asList(numberOfRecordsPerWatt1, numberOfRecordsPerWatt2));
+                .thenReturn(List.of(numberOfRecordsPerWatt1, numberOfRecordsPerWatt2));
 
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, aPeriodWithToDateTime(from, to)))
                                            .thenReturn(actualVko);

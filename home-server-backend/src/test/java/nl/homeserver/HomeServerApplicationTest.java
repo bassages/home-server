@@ -13,27 +13,27 @@ public class HomeServerApplicationTest {
 
     @Test
     public void whenGetClockThenSystemDefautClockReturned() {
-        HomeServerApplication homeServerApplication = new HomeServerApplication();
+        final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
-        Clock clock = homeServerApplication.getClock();
+        final Clock clock = homeServerApplication.getClock();
 
         assertThat(clock).isEqualTo(Clock.systemDefaultZone());
     }
 
     @Test
     public void whenGetHttpClientBuilderThenReturned() {
-        HomeServerApplication homeServerApplication = new HomeServerApplication();
+        final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
-        HttpClientBuilder httpClientBuilder = homeServerApplication.getHttpClientBuilder();
+        final HttpClientBuilder httpClientBuilder = homeServerApplication.getHttpClientBuilder();
 
         assertThat(httpClientBuilder).isNotNull();
     }
 
     @Test
     public void whenGeTaskExcecutorThenReturned() {
-        HomeServerApplication homeServerApplication = new HomeServerApplication();
+        final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
-        Executor taskExecutor = homeServerApplication.getTaskExecutor();
+        final Executor taskExecutor = homeServerApplication.getTaskExecutor();
 
         assertThat(taskExecutor).isExactlyInstanceOf(SimpleAsyncTaskExecutor.class);
     }

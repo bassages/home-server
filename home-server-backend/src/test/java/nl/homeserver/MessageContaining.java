@@ -7,13 +7,13 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 public class MessageContaining extends Condition<LoggingEvent> {
     private final String requiredContent;
 
-    public MessageContaining(String requiredContent) {
+    public MessageContaining(final String requiredContent) {
         super("Contains \"" + requiredContent + "\"");
         this.requiredContent = requiredContent;
     }
 
     @Override
-    public boolean matches(LoggingEvent loggingEvent) {
+    public boolean matches(final LoggingEvent loggingEvent) {
         return loggingEvent.toString().contains(requiredContent);
     }
 }

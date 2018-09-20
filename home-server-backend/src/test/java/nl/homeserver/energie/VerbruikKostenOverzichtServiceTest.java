@@ -1,8 +1,6 @@
 package nl.homeserver.energie;
 
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
@@ -17,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +88,7 @@ public class VerbruikKostenOverzichtServiceTest {
         energiecontract2.setStroomPerKwhDalTarief(new BigDecimal("50"));
         energiecontract2.setStroomPerKwhNormaalTarief(new BigDecimal("60"));
 
-        when(energiecontractService.findAllInInPeriod(period)).thenReturn(asList(energiecontract1, energiecontract2));
+        when(energiecontractService.findAllInInPeriod(period)).thenReturn(List.of(energiecontract1, energiecontract2));
 
         when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)))).thenReturn(new BigDecimal("1.111"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
@@ -121,7 +120,7 @@ public class VerbruikKostenOverzichtServiceTest {
         energiecontract.setGasPerKuub(new BigDecimal("10"));
         energiecontract.setStroomPerKwhDalTarief(new BigDecimal("20"));
         energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
-        when(energiecontractService.findAllInInPeriod(period)).thenReturn(singletonList(energiecontract));
+        when(energiecontractService.findAllInInPeriod(period)).thenReturn(List.of(energiecontract));
 
         when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()))).thenReturn(new BigDecimal("1.000"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), DAL)).thenReturn(new BigDecimal("2.000"));

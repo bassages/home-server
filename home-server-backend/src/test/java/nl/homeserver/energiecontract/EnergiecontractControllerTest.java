@@ -1,7 +1,6 @@
 package nl.homeserver.energiecontract;
 
 import static java.time.Month.MARCH;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,10 +29,10 @@ public class EnergiecontractControllerTest {
     @Test
     public void givenANewEnergyContractWhenSaveThenDelegatedToService() {
         when(energiecontractService.save(any())).then(returnsFirstArg());
-        EnergiecontractDto energieContractDto = mock(EnergiecontractDto.class);
+        final EnergiecontractDto energieContractDto = mock(EnergiecontractDto.class);
         when(energieContractDto.getId()).thenReturn(null);
 
-        Energiecontract savedEnergieContract = energiecontractController.save(energieContractDto);
+        final Energiecontract savedEnergieContract = energiecontractController.save(energieContractDto);
 
         verify(energiecontractService).save(any());
     }
@@ -42,24 +41,24 @@ public class EnergiecontractControllerTest {
     public void givenAnExistingEnergyContractWhenSaveThenDelegatedToService() {
         when(energiecontractService.save(any())).then(returnsFirstArg());
 
-        long id = 13451L;
-        LocalDate validTo = LocalDate.of(2018, MARCH, 13);
+        final long id = 13451L;
+        final LocalDate validTo = LocalDate.of(2018, MARCH, 13);
 
-        Energiecontract existingEnergiecontract = mock(Energiecontract.class);
+        final Energiecontract existingEnergiecontract = mock(Energiecontract.class);
 
-        EnergiecontractDto energiecontractToUpdate = mock(EnergiecontractDto.class);
+        final EnergiecontractDto energiecontractToUpdate = mock(EnergiecontractDto.class);
         when(energiecontractToUpdate.getId()).thenReturn(id);
 
         when(energiecontractService.getById(id)).thenReturn(existingEnergiecontract);
 
-        Energiecontract savedEnergieContract = energiecontractController.save(energiecontractToUpdate);
+        final Energiecontract savedEnergieContract = energiecontractController.save(energiecontractToUpdate);
 
         assertThat(savedEnergieContract).isSameAs(existingEnergiecontract);
     }
 
     @Test
     public void whenDeleteThenDelegatedToService() {
-        long id = 1234L;
+        final long id = 1234L;
 
         energiecontractController.delete(id);
 
@@ -68,7 +67,7 @@ public class EnergiecontractControllerTest {
 
     @Test
     public void whenGetAllThenDelegatedToService() {
-        List<Energiecontract> allEnergieContracts = asList(mock(Energiecontract.class), mock(Energiecontract.class));
+        final List<Energiecontract> allEnergieContracts = List.of(mock(Energiecontract.class), mock(Energiecontract.class));
         when(energiecontractService.getAll()).thenReturn(allEnergieContracts);
 
         assertThat(energiecontractController.getAll()).isSameAs(allEnergieContracts);
@@ -76,7 +75,7 @@ public class EnergiecontractControllerTest {
 
     @Test
     public void whenGetCurrentlyValidEnergiecontractThenDelegatedToService() {
-        Energiecontract currentlyValid = mock(Energiecontract.class);
+        final Energiecontract currentlyValid = mock(Energiecontract.class);
         when(energiecontractService.getCurrent()).thenReturn(currentlyValid);
 
         assertThat(energiecontractController.getCurrentlyValid()).isSameAs(currentlyValid);

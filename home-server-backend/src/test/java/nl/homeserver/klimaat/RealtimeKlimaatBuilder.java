@@ -14,13 +14,13 @@ public class RealtimeKlimaatBuilder {
         return new RealtimeKlimaatBuilder();
     }
 
-    public RealtimeKlimaatBuilder withDatumtijd(LocalDateTime datumTijd) {
+    public RealtimeKlimaatBuilder withDatumtijd(final LocalDateTime datumTijd) {
         this.datumTijd = datumTijd;
         return this;
     }
 
     public RealtimeKlimaat build() {
-        RealtimeKlimaat klimaat = new RealtimeKlimaat();
+        final RealtimeKlimaat klimaat = new RealtimeKlimaat();
         klimaat.setDatumtijd(datumTijd);
         return klimaat;
     }

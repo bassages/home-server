@@ -1,12 +1,12 @@
 package nl.homeserver.energiecontract;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.apache.commons.lang3.ObjectUtils.notEqual;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EnergiecontractToDateRecalculator {

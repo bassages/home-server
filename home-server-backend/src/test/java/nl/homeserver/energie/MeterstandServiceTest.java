@@ -42,10 +42,10 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenSaveThenDelegatedToRepositoryAndEventSend() {
-        Meterstand meterstand = aMeterstand().build();
+        final Meterstand meterstand = aMeterstand().build();
         when(meterstandRepository.save(meterstand)).thenReturn(meterstand);
 
-        Meterstand savedMeterstand = meterstandService.save(meterstand);
+        final Meterstand savedMeterstand = meterstandService.save(meterstand);
 
         assertThat(savedMeterstand).isSameAs(meterstand);
 
@@ -56,15 +56,15 @@ public class MeterstandServiceTest {
     public void givenMeterstandAlreadySavedWhenGetMostRecentThenMostRecentReturned() {
         when(meterstandRepository.save(any(Meterstand.class))).then(returnsFirstArg());
 
-        Meterstand meterstand = aMeterstand().build();
-        Meterstand savedMeterstand = meterstandService.save(meterstand);
+        final Meterstand meterstand = aMeterstand().build();
+        final Meterstand savedMeterstand = meterstandService.save(meterstand);
 
         assertThat(meterstandService.getMostRecent()).isEqualTo(savedMeterstand);
     }
 
     @Test
     public void givenNoMeterstandSavedYetWhenGetMostRecentThenMostRecentIsRetrievedFromRepository() {
-        Meterstand meterstand = mock(Meterstand.class);
+        final Meterstand meterstand = mock(Meterstand.class);
         when(meterstandRepository.getMostRecent()).thenReturn(meterstand);
 
         assertThat(meterstandService.getMostRecent()).isEqualTo(meterstand);
@@ -72,7 +72,7 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenGetOldestDelegatedToRepository() {
-        Meterstand oldestMeterstand = aMeterstand().build();
+        final Meterstand oldestMeterstand = aMeterstand().build();
 
         when(meterstandRepository.getOldest()).thenReturn(oldestMeterstand);
 
@@ -81,22 +81,22 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenGetOldestOfTodayThenReturned() {
-        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
 
-        Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000"))
+        final Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000"))
                                                               .withStroomTarief2(new BigDecimal("200.000"))
                                                               .build();
 
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandElectricity);
 
-        Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
+        final Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandGas);
 
-        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
         assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
         assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
         assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandGas.getGas());
@@ -104,11 +104,11 @@ public class MeterstandServiceTest {
 
     @Test
     public void givenNoMeterstandExistsInNextHourWhenGetOldestOfTodayThenGasNotOverWritten() {
-        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
 
-        Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000"))
+        final Meterstand oldestMeterstandElectricity = aMeterstand().withStroomTarief1(new BigDecimal("100.000"))
                                                               .withStroomTarief2(new BigDecimal("200.000"))
                                                               .withGas(new BigDecimal("999.000"))
                                                               .build();
@@ -119,7 +119,7 @@ public class MeterstandServiceTest {
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(null);
 
-        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
         assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
         assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
         assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandElectricity.getGas());
@@ -127,14 +127,14 @@ public class MeterstandServiceTest {
 
     @Test
     public void givenNoMeterstandExistsInPeriodWhenGetOldestOfTodayThenNullReturned() {
-        LocalDate today = LocalDate.of(2017, JANUARY, 8);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
 
         when(meterstandRepository.getOldestInPeriod(any(LocalDateTime.class), any(LocalDateTime.class)))
                                  .thenReturn(null);
 
-        Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+        final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
         assertThat(oldestOfToday).isNull();
 
         verify(meterstandRepository).getOldestInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1));
@@ -145,15 +145,15 @@ public class MeterstandServiceTest {
     public void whenGetPerDagForTodayThenNonCachedMeterstandReturned() {
         setCachedMeterstandService(null);
 
-        LocalDate today = LocalDate.of(2017, JANUARY, 13);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 13);
 
         timeTravelTo(clock, today.atStartOfDay());
 
-        Meterstand mostRecentMeterstandOfToday = mock(Meterstand.class);
+        final Meterstand mostRecentMeterstandOfToday = mock(Meterstand.class);
         when(meterstandRepository.getMostRecentInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1)))
                 .thenReturn(mostRecentMeterstandOfToday);
 
-        List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(today, today.plusDays(1)));
+        final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(today, today.plusDays(1)));
 
         assertThat(meterstandPerDag).hasSize(1);
         assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(today);
@@ -162,18 +162,18 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenGetPerDagForYesterdayThenCachedMeterstandReturned() {
-        MeterstandService cachedMeterstandService = mock(MeterstandService.class);
+        final MeterstandService cachedMeterstandService = mock(MeterstandService.class);
         setCachedMeterstandService(cachedMeterstandService);
 
-        LocalDate today = LocalDate.of(2017, JANUARY, 13);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 13);
         timeTravelTo(clock, today.atStartOfDay());
 
-        LocalDate yesterday = today.minusDays(1);
+        final LocalDate yesterday = today.minusDays(1);
 
-        Meterstand mostRecentMeterstandOfYesterday = mock(Meterstand.class);
+        final Meterstand mostRecentMeterstandOfYesterday = mock(Meterstand.class);
         when(cachedMeterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(yesterday)).thenReturn(mostRecentMeterstandOfYesterday);
 
-        List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(yesterday, yesterday.plusDays(1)));
+        final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(yesterday, yesterday.plusDays(1)));
 
         assertThat(meterstandPerDag).hasSize(1);
         assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(yesterday);
@@ -182,12 +182,12 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenGetPerDagForFutureThenNullReturned() {
-        LocalDate today = LocalDate.of(2017, JANUARY, 13);
+        final LocalDate today = LocalDate.of(2017, JANUARY, 13);
         timeTravelTo(clock, today.atStartOfDay());
 
-        LocalDate tomorrow = today.plusDays(1);
+        final LocalDate tomorrow = today.plusDays(1);
 
-        List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(tomorrow, tomorrow.plusDays(1)));
+        final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(tomorrow, tomorrow.plusDays(1)));
 
         assertThat(meterstandPerDag).hasSize(1);
         assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(tomorrow);
@@ -196,15 +196,15 @@ public class MeterstandServiceTest {
 
     @Test
     public void whenGetPotentiallyCachedMeestRecenteMeterstandOpDagThenDelegatedToRepository() {
-        LocalDate day = LocalDate.of(2016, MARCH, 12);
+        final LocalDate day = LocalDate.of(2016, MARCH, 12);
 
-        Meterstand meterstand = mock(Meterstand.class);
+        final Meterstand meterstand = mock(Meterstand.class);
         when(meterstandRepository.getMostRecentInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusNanos(1))).thenReturn(meterstand);
 
         assertThat(meterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day)).isSameAs(meterstand);
     }
 
-    private void setCachedMeterstandService(MeterstandService cachedMeterstandService) {
+    private void setCachedMeterstandService(final MeterstandService cachedMeterstandService) {
         setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", cachedMeterstandService);
     }
 }

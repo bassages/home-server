@@ -19,18 +19,18 @@ public class EnergiecontractBuilder {
         return new EnergiecontractBuilder();
     }
 
-    public EnergiecontractBuilder withValidFrom(LocalDate validFrom) {
+    public EnergiecontractBuilder withValidFrom(final LocalDate validFrom) {
         this.validFrom = validFrom;
         return this;
     }
 
-    public EnergiecontractBuilder withValidTo(LocalDate validTo) {
+    public EnergiecontractBuilder withValidTo(final LocalDate validTo) {
         this.validTo = validTo;
         return this;
     }
 
     public Energiecontract build() {
-        Energiecontract energiecontract = new Energiecontract();
+        final Energiecontract energiecontract = new Energiecontract();
         energiecontract.setGasPerKuub(gasPerKuub);
         energiecontract.setStroomPerKwhNormaalTarief(stroomPerKwhNormaalTarief);
         energiecontract.setStroomPerKwhDalTarief(stroomPerKwhDalTarief);

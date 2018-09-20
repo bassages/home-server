@@ -1,16 +1,17 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.MeterstandBuilder.aMeterstand;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energie.MeterstandBuilder.aMeterstand;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.homeserver.RepositoryIntegrationTest;
 
 public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
 

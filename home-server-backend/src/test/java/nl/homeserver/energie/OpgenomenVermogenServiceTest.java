@@ -1,7 +1,6 @@
 package nl.homeserver.energie;
 
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.energie.OpgenomenVermogenBuilder.aOpgenomenVermogen;
@@ -39,22 +38,22 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void givenOneDayPeriodWhenGetHistoryPerHalfDayThenMaxOpgenomenVermogensPerHalfDayReturned() {
-        LocalDate day = LocalDate.of(2018, JANUARY, 6);
-        DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
+        final LocalDate day = LocalDate.of(2018, JANUARY, 6);
+        final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
 
-        OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(0, 0)).withWatt(100).build();
-        OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(2, 0)).withWatt(401).build();
-        OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(11, 59)).withWatt(400).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(0, 0)).withWatt(100).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(2, 0)).withWatt(401).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(11, 59)).withWatt(400).build();
 
-        OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(12, 0)).withWatt(500).build();
-        OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(14, 0)).withWatt(601).build();
-        OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(23, 59)).withWatt(600).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(12, 0)).withWatt(500).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(14, 0)).withWatt(601).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(23, 59)).withWatt(600).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay()))
-                                        .thenReturn(asList(opgenomenVermogenInFirstHalfOfDay1, opgenomenVermogenInFirstHalfOfDay2, opgenomenVermogenInFirstHalfOfDay3,
+                                        .thenReturn(List.of(opgenomenVermogenInFirstHalfOfDay1, opgenomenVermogenInFirstHalfOfDay2, opgenomenVermogenInFirstHalfOfDay3,
                                                            opgenomenVermogenInSecondHalfOfDay1, opgenomenVermogenInSecondHalfOfDay2, opgenomenVermogenInSecondHalfOfDay3));
 
-        List<OpgenomenVermogen> history = opgenomenVermogenService.getHistory(period, Duration.ofHours(12));
+        final List<OpgenomenVermogen> history = opgenomenVermogenService.getHistory(period, Duration.ofHours(12));
 
         assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
                            .containsExactly(tuple(day.atTime(0, 0), 401),
@@ -64,7 +63,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void whenGetMostRecentThenDelegatedToRepository() {
-        OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
+        final OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
 
         when(opgenomenVermogenRepository.getMostRecent()).thenReturn(mostRecent);
 
@@ -73,7 +72,7 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void whenSaveThenSavedInRepositoryAndMessageSendToTopic() {
-        OpgenomenVermogen opgenomenVermogen = mock(OpgenomenVermogen.class);
+        final OpgenomenVermogen opgenomenVermogen = mock(OpgenomenVermogen.class);
 
         when(opgenomenVermogenRepository.save(any(OpgenomenVermogen.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
         opgenomenVermogenService.save(opgenomenVermogen);
@@ -83,13 +82,13 @@ public class OpgenomenVermogenServiceTest {
 
     @Test
     public void whenGetPotentiallyCachedHistoryThenReturned() {
-        LocalDate day = LocalDate.of(2018, JANUARY, 6);
-        DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
+        final LocalDate day = LocalDate.of(2018, JANUARY, 6);
+        final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay()))
                 .thenReturn(emptyList());
 
-        List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
+        final List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
 
         assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
                 .containsExactly(tuple(day.atTime(0, 0), 0),

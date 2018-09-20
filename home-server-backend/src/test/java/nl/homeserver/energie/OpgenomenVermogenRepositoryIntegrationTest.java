@@ -59,7 +59,7 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
         entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(2)).build());
         entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(3)).build());
 
-        final int mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
+        final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
         assertThat(mostCommonWattInPeriod).isEqualTo(10);
     }

@@ -39,56 +39,56 @@ public class VerbruikServiceTest {
 
     @Test
     public void whenGetVerbruikPerDagForTwoDaysThenVerbruikKostenOverzichtServiceIsCalledForBothDays() {
-        LocalDate from = LocalDate.of(2016, JANUARY, 2);
-        LocalDate to = LocalDate.of(2016, JANUARY, 4);
-        DatePeriod period = aPeriodWithToDate(from, to);
+        final LocalDate from = LocalDate.of(2016, JANUARY, 2);
+        final LocalDate to = LocalDate.of(2016, JANUARY, 4);
+        final DatePeriod period = aPeriodWithToDate(from, to);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1))))
                                            .thenReturn(verbruikKostenOverzichtForDay1);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay())))
                                            .thenReturn(verbruikKostenOverzichtForDay2);
 
-        List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
+        final List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
-        Assertions.assertThat(verbruikPerDag).hasSize(2);
+        assertThat(verbruikPerDag).hasSize(2);
 
-        VerbruikKostenOpDag verbruikKostenDay1 = verbruikPerDag.get(0);
+        final VerbruikKostenOpDag verbruikKostenDay1 = verbruikPerDag.get(0);
         assertThat(verbruikKostenDay1.getDag()).isEqualTo(from);
         assertThat(verbruikKostenDay1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
 
-        VerbruikKostenOpDag verbruikKostenDay2 = verbruikPerDag.get(1);
+        final VerbruikKostenOpDag verbruikKostenDay2 = verbruikPerDag.get(1);
         assertThat(verbruikKostenDay2.getDag()).isEqualTo(from.plusDays(1));
         assertThat(verbruikKostenDay2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
     }
 
     @Test
     public void whenGetVerbruikPerUurOpDagThenVerbruikKostenOverzichtServiceIsCalledForAllHoursInDay() {
-        LocalDate day = LocalDate.of(2016, JANUARY, 2);
+        final LocalDate day = LocalDate.of(2016, JANUARY, 2);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(day.atStartOfDay(), day.atStartOfDay().plusHours(1))))
                 .thenReturn(verbruikKostenOverzichtForHour1);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForHour2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour2 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(day.atStartOfDay().plusHours(1), day.atStartOfDay().plusHours(2))))
                 .thenReturn(verbruikKostenOverzichtForHour2);
 
-        List<VerbruikInUurOpDag> verbruikPerUurOpDag = verbruikService.getVerbruikPerUurOpDag(day);
+        final List<VerbruikInUurOpDag> verbruikPerUurOpDag = verbruikService.getVerbruikPerUurOpDag(day);
 
-        Assertions.assertThat(verbruikPerUurOpDag).hasSize(24);
+        assertThat(verbruikPerUurOpDag).hasSize(24);
 
-        VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
+        final VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
         assertThat(verbruikKostenForHour1.getUur()).isEqualTo(0);
         assertThat(verbruikKostenForHour1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour1);
 
-        VerbruikInUurOpDag verbruikKostenForHour2 = verbruikPerUurOpDag.get(1);
+        final VerbruikInUurOpDag verbruikKostenForHour2 = verbruikPerUurOpDag.get(1);
         assertThat(verbruikKostenForHour2.getUur()).isEqualTo(1);
         assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour2);
 
@@ -100,34 +100,34 @@ public class VerbruikServiceTest {
 
     @Test
     public void whenGetVerbruikPerMaandInJaarThenVerbruikKostenOverzichtServiceIsCalledForAllMonthsInYear() {
-        int year = 2018;
+        final int year = 2018;
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                     aPeriodWithToDateTime(LocalDate.of(year, JANUARY, 1).atStartOfDay(), LocalDate.of(year, FEBRUARY, 1).atStartOfDay())))
                 .thenReturn(verbruikKostenOverzichtForJanuary);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForFebruary = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForFebruary = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(LocalDate.of(year, FEBRUARY, 1).atStartOfDay(),
                                                                                                LocalDate.of(year, MARCH, 1).atStartOfDay())))
                 .thenReturn(verbruikKostenOverzichtForFebruary);
 
-        List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = verbruikService.getVerbruikPerMaandInJaar(Year.of(year));
+        final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = verbruikService.getVerbruikPerMaandInJaar(Year.of(year));
 
-        Assertions.assertThat(verbruikPerMaandInJaar).hasSize(12);
+        assertThat(verbruikPerMaandInJaar).hasSize(12);
 
-        VerbruikInMaandInJaar verbruikKostenForMonth1 = verbruikPerMaandInJaar.get(0);
+        final VerbruikInMaandInJaar verbruikKostenForMonth1 = verbruikPerMaandInJaar.get(0);
         assertThat(verbruikKostenForMonth1.getMaand()).isEqualTo(1);
         assertThat(verbruikKostenForMonth1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForJanuary);
 
-        VerbruikInMaandInJaar verbruikKostenForHour2 = verbruikPerMaandInJaar.get(1);
+        final VerbruikInMaandInJaar verbruikKostenForHour2 = verbruikPerMaandInJaar.get(1);
         assertThat(verbruikKostenForHour2.getMaand()).isEqualTo(2);
         assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
 
         range(1, 12).forEach(month -> {
-                LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
-                LocalDateTime to = LocalDate.of(year, month + 1, 1).atStartOfDay();
+                final LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
+                final LocalDateTime to = LocalDate.of(year, month + 1, 1).atStartOfDay();
                 verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, aPeriodWithToDateTime(from, to));
             }
         );
@@ -135,33 +135,33 @@ public class VerbruikServiceTest {
 
     @Test
     public void givenMeterstandenExistsForTwoYearsWhenGetVerbruikPerJaarThenVerbruikKostenOverzichtServiceIsCalledForBothYears() {
-        Meterstand meterstandFor2018 = MeterstandBuilder.aMeterstand().withDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay()).build();
+        final Meterstand meterstandFor2018 = MeterstandBuilder.aMeterstand().withDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay()).build();
         when(meterstandService.getOldest()).thenReturn(meterstandFor2018);
 
-        Meterstand meterstandFor2019 = MeterstandBuilder.aMeterstand().withDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay()).build();
+        final Meterstand meterstandFor2019 = MeterstandBuilder.aMeterstand().withDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay()).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay(),
                                                                                                LocalDate.of(2019, JANUARY, 1).atStartOfDay())))
                                            .thenReturn(verbruikKostenOverzichtFor2018);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtFor2019 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2019 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay(),
                                                                                                LocalDate.of(2020, JANUARY, 1).atStartOfDay())))
                                             .thenReturn(verbruikKostenOverzichtFor2019);
 
-        List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
+        final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
 
-        Assertions.assertThat(verbruikPerJaar).hasSize(2);
+        assertThat(verbruikPerJaar).hasSize(2);
 
-        VerbruikInJaar verbruikInJaar2018 = verbruikPerJaar.get(0);
+        final VerbruikInJaar verbruikInJaar2018 = verbruikPerJaar.get(0);
         assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
         assertThat(verbruikInJaar2018.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
 
-        VerbruikInJaar verbruikInJaar2019 = verbruikPerJaar.get(1);
+        final VerbruikInJaar verbruikInJaar2019 = verbruikPerJaar.get(1);
         assertThat(verbruikInJaar2019.getJaar()).isEqualTo(2019);
         assertThat(verbruikInJaar2019.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
     }
@@ -170,28 +170,28 @@ public class VerbruikServiceTest {
     public void givenNoMeterstandenExistsWhenGetVerbruikPerJaarThenResultIsEmpty() {
         when(meterstandService.getOldest()).thenReturn(null);
 
-        List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
+        final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
 
-        Assertions.assertThat(verbruikPerJaar).isEmpty();
+        assertThat(verbruikPerJaar).isEmpty();
     }
 
     @Test
     public void whenGetGemiddeldeVerbruikEnKostenInPeriodeThenAveragesAreReturned() {
-        LocalDate from = LocalDate.of(2016, JANUARY, 2);
-        LocalDate to = LocalDate.of(2016, JANUARY, 4);
-        DatePeriod period = aPeriodWithToDate(from, to);
+        final LocalDate from = LocalDate.of(2016, JANUARY, 2);
+        final LocalDate to = LocalDate.of(2016, JANUARY, 4);
+        final DatePeriod period = aPeriodWithToDate(from, to);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1))))
                 .thenReturn(verbruikKostenOverzichtForDay1);
 
-        VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider,
                                                                          aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay())))
                 .thenReturn(verbruikKostenOverzichtForDay2);
 
-        VerbruikKostenOverzicht gemiddeldeVerbruikEnKostenInPeriode = verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period);
+        final VerbruikKostenOverzicht gemiddeldeVerbruikEnKostenInPeriode = verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period);
         assertThat(gemiddeldeVerbruikEnKostenInPeriode).isNotNull();
     }
 }

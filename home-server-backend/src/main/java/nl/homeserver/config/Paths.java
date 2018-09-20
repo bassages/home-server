@@ -8,4 +8,5 @@ public final class Paths {
     public static final String API = "/api";
     public static final String ROOT = "/";
     public static final String ACTUATOR = "/actuator";
+    public static final String WEBSOCKET = "/ws";
 }

@@ -2,8 +2,6 @@ package nl.homeserver.klimaat;
 
 import static java.time.LocalDate.now;
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
@@ -98,7 +96,7 @@ public class KlimaatControllerTest {
     public void whenGetHighestThenDelegatedToService() {
         when(klimaatService.getKlimaatSensorByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
-        final List<Klimaat> higestKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> higestKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
 
         final SensorType sensorType = TEMPERATUUR;
         final LocalDate from = LocalDate.of(2018, JANUARY, 12);
@@ -123,7 +121,7 @@ public class KlimaatControllerTest {
     public void whenGetLowestThenDelegatedToService() {
         when(klimaatService.getKlimaatSensorByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
-        final List<Klimaat> higestKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> higestKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
 
         final SensorType sensorType = TEMPERATUUR;
         final LocalDate from = LocalDate.of(2018, JANUARY, 12);
@@ -153,9 +151,9 @@ public class KlimaatControllerTest {
 
         final GemiddeldeKlimaatPerMaand month1 = mock(GemiddeldeKlimaatPerMaand.class);
         final GemiddeldeKlimaatPerMaand month2 = mock(GemiddeldeKlimaatPerMaand.class);
-        final List<GemiddeldeKlimaatPerMaand> year = asList(month1, month2);
+        final List<GemiddeldeKlimaatPerMaand> year = List.of(month1, month2);
 
-        final List<List<GemiddeldeKlimaatPerMaand>> monthsInYears = singletonList(year);
+        final List<List<GemiddeldeKlimaatPerMaand>> monthsInYears = List.of(year);
         when(klimaatService.getAveragePerMonthInYears(EXISTING_SENSOR_CODE, sensorType, years)).thenReturn(monthsInYears);
 
         assertThat(klimaatController.getAverage(EXISTING_SENSOR_CODE, sensorType.name(), years)).isSameAs(monthsInYears);
@@ -168,7 +166,7 @@ public class KlimaatControllerTest {
 
         when(klimaatService.getKlimaatSensorByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
-        final List<Klimaat> allInPeriod = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> allInPeriod = List.of(mock(Klimaat.class), mock(Klimaat.class));
 
         when(klimaatService.getInPeriod(eq(EXISTING_SENSOR_CODE), eq(aPeriodWithToDate(from, to)))).thenReturn(allInPeriod);
 
@@ -186,7 +184,7 @@ public class KlimaatControllerTest {
 
     @Test
     public void whenGetAllKlimaatSensorsThenDelegatedToService() {
-        final List<KlimaatSensor> allKlimaatSensors = singletonList(klimaatSensor);
+        final List<KlimaatSensor> allKlimaatSensors = List.of(klimaatSensor);
         when(klimaatService.getAllKlimaatSensors()).thenReturn(allKlimaatSensors);
 
         assertThat(klimaatController.getAllKlimaatSensors()).isEqualTo(allKlimaatSensors);

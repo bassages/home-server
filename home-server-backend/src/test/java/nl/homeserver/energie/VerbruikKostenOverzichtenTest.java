@@ -1,9 +1,9 @@
 package nl.homeserver.energie;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class VerbruikKostenOverzichtenTest {
 
     @Test
     public void whenAverageToSingleThenSingleVerbuikKostenOverichWithAveragesReturned() {
-        VerbruikKostenOverzicht verbruikKostenOverzicht1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzicht1 = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht1.setGasVerbruik(new BigDecimal(42.023));
         verbruikKostenOverzicht1.setGasKosten(new BigDecimal(10.000));
         verbruikKostenOverzicht1.setStroomVerbruikDal(new BigDecimal(123.000));
@@ -19,7 +19,7 @@ public class VerbruikKostenOverzichtenTest {
         verbruikKostenOverzicht1.setStroomVerbruikNormaal(new BigDecimal(2450.607));
         verbruikKostenOverzicht1.setStroomKostenNormaal(new BigDecimal(2312.023));
 
-        VerbruikKostenOverzicht verbruikKostenOverzicht2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzicht2 = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht2.setGasVerbruik(new BigDecimal(21.531));
         verbruikKostenOverzicht2.setGasKosten(new BigDecimal(34.131));
         verbruikKostenOverzicht2.setStroomVerbruikDal(new BigDecimal(134.012));
@@ -27,8 +27,8 @@ public class VerbruikKostenOverzichtenTest {
         verbruikKostenOverzicht2.setStroomVerbruikNormaal(new BigDecimal(2321.242));
         verbruikKostenOverzicht2.setStroomKostenNormaal(new BigDecimal(9214.081));
 
-        VerbruikKostenOverzichten verbruikKostenOverzichten = new VerbruikKostenOverzichten(asList(verbruikKostenOverzicht1, verbruikKostenOverzicht2));
-        VerbruikKostenOverzicht averagedVerbruikKostenOverzicht = verbruikKostenOverzichten.averageToSingle();
+        final VerbruikKostenOverzichten verbruikKostenOverzichten = new VerbruikKostenOverzichten(List.of(verbruikKostenOverzicht1, verbruikKostenOverzicht2));
+        final VerbruikKostenOverzicht averagedVerbruikKostenOverzicht = verbruikKostenOverzichten.averageToSingle();
 
         assertThat(averagedVerbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("31.777"));
         assertThat(averagedVerbruikKostenOverzicht.getStroomVerbruikDal()).isEqualTo(new BigDecimal("128.506"));

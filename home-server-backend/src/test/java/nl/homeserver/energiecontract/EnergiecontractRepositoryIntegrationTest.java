@@ -1,14 +1,17 @@
 package nl.homeserver.energiecontract;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.time.Month.NOVEMBER;
+import static nl.homeserver.energie.EnergiecontractBuilder.anEnergiecontract;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
-import static java.time.Month.*;
-import static nl.homeserver.energie.EnergiecontractBuilder.anEnergiecontract;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.homeserver.RepositoryIntegrationTest;
 
 public class EnergiecontractRepositoryIntegrationTest extends RepositoryIntegrationTest {
 

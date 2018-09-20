@@ -1,11 +1,11 @@
 package nl.homeserver.energie;
 
+import static java.math.BigDecimal.ROUND_HALF_UP;
+
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
-
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 public class VerbruikKostenOverzichten {
 

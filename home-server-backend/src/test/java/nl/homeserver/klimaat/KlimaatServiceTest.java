@@ -1,16 +1,28 @@
 package nl.homeserver.klimaat;
 
-import nl.homeserver.DatePeriod;
-import nl.homeserver.Trend;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import static java.math.BigDecimal.ZERO;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
+import static java.time.Month.SEPTEMBER;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
+import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.getField;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -24,24 +36,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static java.math.BigDecimal.ZERO;
-import static java.time.Month.*;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
-import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
-import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
-import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.util.ReflectionTestUtils.getField;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import nl.homeserver.DatePeriod;
+import nl.homeserver.Trend;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {
@@ -85,7 +91,7 @@ public class KlimaatServiceTest {
 
     @Test
     public void whenGetAllKlimaatSensorshenDelegatedToRepository() {
-        final List<KlimaatSensor> klimaatSensors = asList(mock(KlimaatSensor.class), mock(KlimaatSensor.class));
+        final List<KlimaatSensor> klimaatSensors = List.of(mock(KlimaatSensor.class), mock(KlimaatSensor.class));
         when(klimaatSensorRepository.findAll()).thenReturn(klimaatSensors);
 
         assertThat(klimaatService.getAllKlimaatSensors()).isSameAs(klimaatSensors);
@@ -209,7 +215,7 @@ public class KlimaatServiceTest {
                                                 .build();
 
         final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
-        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(SOME_SENSOR_CODE, singletonList(klimaatToSave));
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.put(SOME_SENSOR_CODE, List.of(klimaatToSave));
 
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.empty());
 
@@ -254,7 +260,7 @@ public class KlimaatServiceTest {
                                                          .build();
 
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensorBasement.getCode(),
-                                                         asList(recentValidKlimaat1, recentValidKlimaat2, recentInvalidKlimaat1, recentInvalidKlimaat2));
+                                                         List.of(recentValidKlimaat1, recentValidKlimaat2, recentInvalidKlimaat1, recentInvalidKlimaat2));
 
         klimaatService.save();
 
@@ -275,7 +281,7 @@ public class KlimaatServiceTest {
         final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakHighTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.getPeakHighTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestHighestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
         final List<Klimaat> highest = klimaatService.getHighest(SOME_SENSOR_CODE, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
@@ -292,7 +298,7 @@ public class KlimaatServiceTest {
         final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakLowTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.getPeakLowTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestLowestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
         final List<Klimaat> lowest = klimaatService.getLowest(SOME_SENSOR_CODE, TEMPERATUUR, aPeriodWithToDate(from, to), limit);
@@ -309,7 +315,7 @@ public class KlimaatServiceTest {
         final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakHighHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.getPeakHighHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestHighestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
         final List<Klimaat> highest = klimaatService.getHighest(SOME_SENSOR_CODE, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
@@ -326,7 +332,7 @@ public class KlimaatServiceTest {
         final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
-        when(klimaatRepository.getPeakLowHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(singletonList(day));
+        when(klimaatRepository.getPeakLowHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestLowestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
         final List<Klimaat> lowest = klimaatService.getLowest(SOME_SENSOR_CODE, LUCHTVOCHTIGHEID, aPeriodWithToDate(from, to), limit);
@@ -379,7 +385,7 @@ public class KlimaatServiceTest {
                                            .build();
         final Klimaat klimaat3 = aKlimaat().withDatumtijd(date.atTime(2, 0, 45)).build();
 
-        getRecentlyReceivedKlimaatPerSensorCode().put(SOME_SENSOR_CODE, asList(klimaat1, klimaat2, klimaat3));
+        getRecentlyReceivedKlimaatPerSensorCode().put(SOME_SENSOR_CODE, List.of(klimaat1, klimaat2, klimaat3));
 
         final RealtimeKlimaat mostRecent = klimaatService.getMostRecent(SOME_SENSOR_CODE);
         assertThat(mostRecent.getDatumtijd()).isEqualTo(klimaat2.getDatumtijd());
@@ -464,7 +470,7 @@ public class KlimaatServiceTest {
 
         final DatePeriod period = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
 
-        final List<Klimaat> cachedKlimaats = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> cachedKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
         when(cachedProxy.getPotentiallyCachedAllInPeriod(eq(SOME_SENSOR_CODE), eq(period))).thenReturn(cachedKlimaats);
 
         assertThat(klimaatService.getInPeriod(SOME_SENSOR_CODE, period)).isSameAs(cachedKlimaats);
@@ -477,7 +483,7 @@ public class KlimaatServiceTest {
 
         final DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
 
-        final List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> klimaatsFromRepository = List.of(mock(Klimaat.class), mock(Klimaat.class));
         when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(SOME_SENSOR_CODE, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
                               .thenReturn(klimaatsFromRepository);
 
@@ -491,7 +497,7 @@ public class KlimaatServiceTest {
 
         final DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
 
-        final List<Klimaat> klimaatsFromRepository = asList(mock(Klimaat.class), mock(Klimaat.class));
+        final List<Klimaat> klimaatsFromRepository = List.of(mock(Klimaat.class), mock(Klimaat.class));
         when(klimaatRepository.findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(SOME_SENSOR_CODE, period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay().minusNanos(1)))
                 .thenReturn(klimaatsFromRepository);
 

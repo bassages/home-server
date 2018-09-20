@@ -2,7 +2,6 @@ package nl.homeserver.energiecontract;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,8 +40,8 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenGetByIdThenDelegatedToRepository() {
-        long id = 132L;
-        Energiecontract energiecontract = mock(Energiecontract.class);
+        final long id = 132L;
+        final Energiecontract energiecontract = mock(Energiecontract.class);
         when(energiecontractRepository.getOne(id)).thenReturn(energiecontract);
 
         assertThat(energiecontractService.getById(id)).isSameAs(energiecontract);
@@ -50,7 +49,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenGetAllThenDelegatedToRepository() {
-        List<Energiecontract> all = asList(mock(Energiecontract.class), mock(Energiecontract.class));
+        final List<Energiecontract> all = List.of(mock(Energiecontract.class), mock(Energiecontract.class));
         when(energiecontractRepository.findAll()).thenReturn(all);
 
         assertThat(energiecontractService.getAll()).isSameAs(all);
@@ -58,10 +57,10 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenGetCurrentThenDelegatedToRepository() {
-        LocalDate today = LocalDate.of(2019, JANUARY, 1);
+        final LocalDate today = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, today.atStartOfDay());
 
-        Energiecontract energiecontract = mock(Energiecontract.class);
+        final Energiecontract energiecontract = mock(Energiecontract.class);
         when(energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(today)).thenReturn(energiecontract);
 
         assertThat(energiecontractService.getCurrent()).isSameAs(energiecontract);
@@ -69,7 +68,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenDeleteThenDeletedFromRepository() {
-        long id = 12;
+        final long id = 12;
         energiecontractService.delete(id);
 
         verify(energiecontractRepository).deleteById(id);
@@ -77,7 +76,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenDeleteThenAllCachesCleared() {
-        long id = 12;
+        final long id = 12;
         energiecontractService.delete(id);
 
         verify(cacheService).clearAll();
@@ -85,7 +84,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenDeleteThenValidToRecalculated() {
-        long id = 12;
+        final long id = 12;
         energiecontractService.delete(id);
 
         verify(energiecontractToDateRecalculator).recalculate();
@@ -93,7 +92,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenSaveThenSavedByRepository() {
-        Energiecontract energiecontract = mock(Energiecontract.class);
+        final Energiecontract energiecontract = mock(Energiecontract.class);
         energiecontractService.save(energiecontract);
 
         verify(energiecontractRepository).save(energiecontract);
@@ -101,7 +100,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenSaveThenAllCachesCleared() {
-        Energiecontract energiecontract = mock(Energiecontract.class);
+        final Energiecontract energiecontract = mock(Energiecontract.class);
         energiecontractService.save(energiecontract);
 
         verify(cacheService).clearAll();
@@ -109,7 +108,7 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenSaveThenValidToRecalculated() {
-        Energiecontract energiecontract = mock(Energiecontract.class);
+        final Energiecontract energiecontract = mock(Energiecontract.class);
         energiecontractService.save(energiecontract);
 
         verify(energiecontractToDateRecalculator).recalculate();
@@ -117,11 +116,11 @@ public class EnergiecontractServiceTest {
 
     @Test
     public void whenFindAllThenRetrievedFromRepository() {
-        LocalDateTime from = LocalDate.of(2018, APRIL, 21).atStartOfDay();
-        LocalDateTime to = from.plusDays(1);
-        DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final LocalDateTime from = LocalDate.of(2018, APRIL, 21).atStartOfDay();
+        final LocalDateTime to = from.plusDays(1);
+        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        List<Energiecontract> energiecontractsInPeriod = asList(mock(Energiecontract.class), mock(Energiecontract.class));
+        final List<Energiecontract> energiecontractsInPeriod = List.of(mock(Energiecontract.class), mock(Energiecontract.class));
 
         when(energiecontractRepository.findValidInPeriod(from.toLocalDate(), to.toLocalDate()))
                                       .thenReturn(energiecontractsInPeriod);

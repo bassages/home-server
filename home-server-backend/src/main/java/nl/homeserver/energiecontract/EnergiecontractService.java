@@ -1,15 +1,16 @@
 package nl.homeserver.energiecontract;
 
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.cache.CacheService;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import static java.time.LocalDateTime.now;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.cache.CacheService;
 
 @Service
 public class EnergiecontractService {

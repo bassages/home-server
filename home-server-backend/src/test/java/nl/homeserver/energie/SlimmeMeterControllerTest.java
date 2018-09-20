@@ -3,7 +3,6 @@ package nl.homeserver.energie;
 import static ch.qos.logback.classic.Level.INFO;
 import static ch.qos.logback.classic.Level.OFF;
 import static java.math.BigDecimal.TEN;
-import static java.util.Collections.singletonList;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -12,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,10 +47,10 @@ public class SlimmeMeterControllerTest {
 
     @Test
     public void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
-        Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
-        LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
+        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        final LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
         dsmr42Reading.setDatumtijd(dateTime);
-        StroomTariefIndicator stroomTariefIndicator = NORMAAL;
+        final StroomTariefIndicator stroomTariefIndicator = NORMAAL;
         dsmr42Reading.setStroomTariefIndicator((int) stroomTariefIndicator.getId());
         dsmr42Reading.setGas(new BigDecimal("201.876234"));
         dsmr42Reading.setStroomTarief1(new BigDecimal("352.907511"));
@@ -67,15 +67,15 @@ public class SlimmeMeterControllerTest {
         dsmr42Reading.setMeterIdentificatieStroom("MIS");
         dsmr42Reading.setAantalLangeStroomStoringenInAlleFases(431);
 
-        LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
+        final LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
         langeStroomStoring.setDatumtijdEinde(LocalDateTime.now());
         langeStroomStoring.setDuurVanStoringInSeconden(120L);
-        dsmr42Reading.setLangeStroomStoringen(singletonList(langeStroomStoring));
+        dsmr42Reading.setLangeStroomStoringen(List.of(langeStroomStoring));
 
         slimmeMeterController.save(dsmr42Reading);
 
         verify(meterstandService).save(meterstandCaptor.capture());
-        Meterstand savedMeterstand = meterstandCaptor.getValue();
+        final Meterstand savedMeterstand = meterstandCaptor.getValue();
         assertThat(savedMeterstand.getDateTime()).isEqualTo(dateTime);
         assertThat(savedMeterstand.getGas()).isEqualTo(new BigDecimal("201.876"));
         assertThat(savedMeterstand.getStroomTariefIndicator()).isEqualTo(stroomTariefIndicator);
@@ -90,7 +90,7 @@ public class SlimmeMeterControllerTest {
 
     @Test
     public void givenLogLevelIsInfoWhenSaveThenLoggedAtLevelInfo() {
-        Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
         dsmr42Reading.setGas(TEN);
         dsmr42Reading.setStroomTarief1(TEN);
@@ -100,14 +100,14 @@ public class SlimmeMeterControllerTest {
 
         slimmeMeterController.save(dsmr42Reading);
 
-        LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
         assertThat(loggingEvent.getFormattedMessage()).startsWith("nl.homeserver.energie.Dsmr42Reading");
     }
 
     @Test
     public void givenLogLevelIsOffWhenSaveThenNothingLogged() {
-        Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
         dsmr42Reading.setGas(TEN);
         dsmr42Reading.setStroomTarief1(TEN);

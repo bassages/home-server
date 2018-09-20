@@ -1,13 +1,14 @@
 package nl.homeserver.klimaat;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 
-import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.homeserver.RepositoryIntegrationTest;
 
 public class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 

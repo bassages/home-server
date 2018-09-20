@@ -15,23 +15,23 @@ class OpgenomenVermogenBuilder {
         return new OpgenomenVermogenBuilder();
     }
 
-    public OpgenomenVermogenBuilder withId(long id) {
+    public OpgenomenVermogenBuilder withId(final long id) {
         this.id = id;
         return this;
     }
 
-    public OpgenomenVermogenBuilder withDatumTijd(LocalDateTime datumtijd) {
+    public OpgenomenVermogenBuilder withDatumTijd(final LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
         return this;
     }
 
-    public OpgenomenVermogenBuilder withWatt(int watt) {
+    public OpgenomenVermogenBuilder withWatt(final int watt) {
         this.watt = watt;
         return this;
     }
 
     public OpgenomenVermogen build() {
-        OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
+        final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setId(id);
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setWatt(watt);

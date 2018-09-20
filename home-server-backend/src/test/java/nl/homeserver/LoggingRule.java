@@ -22,7 +22,7 @@ public class LoggingRule implements TestRule {
 
     private ArgumentCaptor<LoggingEvent> loggingEventCaptor;
 
-    public LoggingRule(Class<?> loggerClass) {
+    public LoggingRule(final Class<?> loggerClass) {
         this.logger = (Logger) getLogger(loggerClass);
         mockAppender = mock(Appender.class);
     }
@@ -45,11 +45,11 @@ public class LoggingRule implements TestRule {
     }
 
     @Override
-    public Statement apply(Statement base, Description description) {
+    public Statement apply(final Statement base, final Description description) {
         return setUpAndTearDown.apply(base, description);
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(final Level level) {
         logger.setLevel(level);
     }
 

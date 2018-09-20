@@ -1,7 +1,6 @@
 package nl.homeserver.klimaat;
 
 import static java.time.Month.JULY;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +28,9 @@ public class KlimaatSensorValueTrendServiceTest {
 
     @Test
     public void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() throws Exception {
-        LocalDate day = LocalDate.of(2016, JULY, 1);
+        final LocalDate day = LocalDate.of(2016, JULY, 1);
 
-        List<Klimaat> klimaats = asList(
+        final List<Klimaat> klimaats = List.of(
                 aKlimaat().withDatumtijd(day.atTime(14, 0, 0)).withTemperatuur(new BigDecimal("19.00")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 4, 0)).withTemperatuur(new BigDecimal("20.20")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 8, 0)).withTemperatuur(new BigDecimal("21.70")).withKlimaatSensor(klimaatSensor).build()
@@ -42,9 +41,9 @@ public class KlimaatSensorValueTrendServiceTest {
 
     @Test
     public void givenTemperatureDropsWhenDetermineValueTrendThenTrendIsDown() {
-        LocalDate day = LocalDate.of(2016, JULY, 1);
+        final LocalDate day = LocalDate.of(2016, JULY, 1);
 
-        List<Klimaat> klimaats = asList(
+        final List<Klimaat> klimaats = List.of(
                 aKlimaat().withDatumtijd(day.atTime(14, 0, 0)).withTemperatuur(new BigDecimal("21.70")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 4, 0)).withTemperatuur(new BigDecimal("20.20")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 8, 0)).withTemperatuur(new BigDecimal("19.00")).withKlimaatSensor(klimaatSensor).build()
@@ -55,9 +54,9 @@ public class KlimaatSensorValueTrendServiceTest {
 
     @Test
     public void givenTemperatureRemainsTheSameWhenDetermineValueTrendThenTrendIsStable() {
-        LocalDate day = LocalDate.of(2016, JULY, 1);
+        final LocalDate day = LocalDate.of(2016, JULY, 1);
 
-        List<Klimaat> klimaats = asList(
+        final List<Klimaat> klimaats = List.of(
                 aKlimaat().withDatumtijd(day.atTime(14, 0, 0)).withTemperatuur(new BigDecimal("20.00")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 4, 0)).withTemperatuur(new BigDecimal("20.00")).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 8, 0)).withTemperatuur(new BigDecimal("20.00")).withKlimaatSensor(klimaatSensor).build(),
@@ -69,11 +68,11 @@ public class KlimaatSensorValueTrendServiceTest {
 
     @Test
     public void givenNotEnoughValidSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
-        LocalDate day = LocalDate.of(2016, JULY, 1);
+        final LocalDate day = LocalDate.of(2016, JULY, 1);
 
-        BigDecimal invalidTemperatuur = null;
+        final BigDecimal invalidTemperatuur = null;
 
-        List<Klimaat> klimaats = asList(
+        final List<Klimaat> klimaats = List.of(
                 aKlimaat().withDatumtijd(day.atTime(14, 0, 0)).withTemperatuur(invalidTemperatuur).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 4, 0)).withTemperatuur(invalidTemperatuur).withKlimaatSensor(klimaatSensor).build(),
                 aKlimaat().withDatumtijd(day.atTime(14, 8, 0)).withTemperatuur(invalidTemperatuur).withKlimaatSensor(klimaatSensor).build()

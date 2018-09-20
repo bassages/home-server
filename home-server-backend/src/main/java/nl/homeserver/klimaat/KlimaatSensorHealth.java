@@ -1,8 +1,13 @@
 package nl.homeserver.klimaat;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.springframework.boot.actuate.health.Health.down;
+import static org.springframework.boot.actuate.health.Health.unknown;
+import static org.springframework.boot.actuate.health.Health.up;
+import static org.springframework.boot.actuate.health.Status.DOWN;
+import static org.springframework.boot.actuate.health.Status.UP;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
@@ -12,12 +17,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.springframework.boot.actuate.health.Health.*;
-import static org.springframework.boot.actuate.health.Status.DOWN;
-import static org.springframework.boot.actuate.health.Status.UP;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 @Component
 public class KlimaatSensorHealth implements HealthIndicator {

@@ -1,8 +1,8 @@
 package nl.homeserver.energie;
 
-import java.util.EnumSet;
-
 import static java.lang.String.format;
+
+import java.util.EnumSet;
 
 public enum StroomTariefIndicator {
     DAL((short)1),

@@ -1,14 +1,14 @@
 package nl.homeserver.energie;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
 
-import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SlimmeMeterHealth implements HealthIndicator {

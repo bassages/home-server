@@ -1,25 +1,5 @@
 package nl.homeserver.cache;
 
-import nl.homeserver.energie.EnergieController;
-import nl.homeserver.energie.MeterstandController;
-import nl.homeserver.energie.OpgenomenVermogenController;
-import nl.homeserver.energie.StandbyPowerController;
-import nl.homeserver.klimaat.KlimaatController;
-import nl.homeserver.klimaat.KlimaatSensor;
-import nl.homeserver.klimaat.KlimaatService;
-import nl.homeserver.klimaat.SensorType;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.List;
-import java.util.stream.Stream;
-
 import static java.time.LocalDate.now;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -29,6 +9,27 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.LongStream.rangeClosed;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
+
+import nl.homeserver.energie.EnergieController;
+import nl.homeserver.energie.MeterstandController;
+import nl.homeserver.energie.OpgenomenVermogenController;
+import nl.homeserver.energie.StandbyPowerController;
+import nl.homeserver.klimaat.KlimaatController;
+import nl.homeserver.klimaat.KlimaatSensor;
+import nl.homeserver.klimaat.KlimaatService;
+import nl.homeserver.klimaat.SensorType;
 
 @Component
 public class WarmupInitialCache implements ApplicationListener<ApplicationReadyEvent> {

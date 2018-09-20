@@ -16,8 +16,8 @@ public class EnergiecontractTest {
 
     @Test
     public void givenStroomPerKwhNormaalTariefSetWhenGetStroomKostenNormaalThenReturned() {
-        Energiecontract energiecontract = new Energiecontract();
-        BigDecimal normaalTarief = new BigDecimal("20.121231");
+        final Energiecontract energiecontract = new Energiecontract();
+        final BigDecimal normaalTarief = new BigDecimal("20.121231");
         energiecontract.setStroomPerKwhNormaalTarief(normaalTarief);
 
         assertThat(energiecontract.getStroomKosten(NORMAAL)).isSameAs(normaalTarief);
@@ -25,8 +25,8 @@ public class EnergiecontractTest {
 
     @Test
     public void givenStroomPerKwhDalTariefSetWhenGetStroomKostenDalThenReturned() {
-        Energiecontract energiecontract = new Energiecontract();
-        BigDecimal dalTarief = new BigDecimal("785.7453");
+        final Energiecontract energiecontract = new Energiecontract();
+        final BigDecimal dalTarief = new BigDecimal("785.7453");
         energiecontract.setStroomPerKwhDalTarief(dalTarief);
 
         assertThat(energiecontract.getStroomKosten(DAL)).isSameAs(dalTarief);
@@ -34,8 +34,8 @@ public class EnergiecontractTest {
 
     @Test
     public void givenStroomPerKwhDalTariefNullWhenGetStroomKostenDalThenNormaalReturned() {
-        Energiecontract energiecontract = new Energiecontract();
-        BigDecimal normaalTarief = new BigDecimal("123.121231");
+        final Energiecontract energiecontract = new Energiecontract();
+        final BigDecimal normaalTarief = new BigDecimal("123.121231");
         energiecontract.setStroomPerKwhNormaalTarief(normaalTarief);
 
         assertThat(energiecontract.getStroomKosten(DAL)).isSameAs(normaalTarief);
@@ -43,7 +43,7 @@ public class EnergiecontractTest {
 
     @Test
     public void givenWhenGetStroomHostenOnbekendThenZeroReturned() {
-        Energiecontract energiecontract = new Energiecontract();
+        final Energiecontract energiecontract = new Energiecontract();
 
         assertThat(energiecontract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
     }

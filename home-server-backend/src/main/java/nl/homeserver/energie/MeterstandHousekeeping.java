@@ -1,12 +1,9 @@
 package nl.homeserver.energie;
 
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.housekeeping.HousekeepingSchedule;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -14,10 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
 
 @Service
 public class MeterstandHousekeeping {

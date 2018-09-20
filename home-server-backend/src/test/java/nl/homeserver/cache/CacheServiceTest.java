@@ -1,8 +1,9 @@
 package nl.homeserver.cache;
 
-import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class CacheServiceTest {
 
     @Test
     public void givenSingleCacheWhenClearThenCleared() {
-        String nameOfCache1 = "nameOfCache1";
+        final String nameOfCache1 = "nameOfCache1";
         when(cacheManager.getCache(nameOfCache1)).thenReturn(cache1);
 
         cacheService.clear(nameOfCache1);
@@ -36,11 +37,11 @@ public class CacheServiceTest {
 
     @Test
     public void givenThreeCachesWhenClearAllThenEveryCacheCleared() {
-        String nameOfCache1 = "nameOfCache1";
-        String nameOfCache2 = "nameOfCache2";
-        String nameOfCache3 = "nameOfCache3";
+        final String nameOfCache1 = "nameOfCache1";
+        final String nameOfCache2 = "nameOfCache2";
+        final String nameOfCache3 = "nameOfCache3";
 
-        when(cacheManager.getCacheNames()).thenReturn(asList(nameOfCache1, nameOfCache2, nameOfCache3));
+        when(cacheManager.getCacheNames()).thenReturn(List.of(nameOfCache1, nameOfCache2, nameOfCache3));
 
         when(cacheManager.getCache(nameOfCache1)).thenReturn(cache1);
         when(cacheManager.getCache(nameOfCache2)).thenReturn(cache2);

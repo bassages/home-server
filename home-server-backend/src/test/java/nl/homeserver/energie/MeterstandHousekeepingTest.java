@@ -1,10 +1,25 @@
 package nl.homeserver.energie;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.MessageContaining;
-import nl.homeserver.cache.CacheService;
+import static ch.qos.logback.classic.Level.DEBUG;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.MeterstandBuilder.aMeterstand;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,22 +29,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.sql.Timestamp;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static ch.qos.logback.classic.Level.DEBUG;
-import static java.time.Month.JANUARY;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static nl.homeserver.energie.MeterstandBuilder.aMeterstand;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.LoggingRule;
+import nl.homeserver.MessageContaining;
+import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MeterstandHousekeepingTest {
@@ -83,10 +87,10 @@ public class MeterstandHousekeepingTest {
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
-        when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(singletonList(meterstand));
+        when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(List.of(meterstand));
 
         meterstandHousekeeping.start();
 
@@ -105,7 +109,7 @@ public class MeterstandHousekeepingTest {
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -119,7 +123,7 @@ public class MeterstandHousekeepingTest {
 
         when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
-                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
+                                 .thenReturn(List.of(meterstand1, meterstand2, meterstand3, meterstand4, meterstand5, meterstand6, meterstand7, meterstand8));
 
         meterstandHousekeeping.start();
 
@@ -139,7 +143,7 @@ public class MeterstandHousekeepingTest {
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -147,7 +151,7 @@ public class MeterstandHousekeepingTest {
 
         when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
-                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3));
+                                 .thenReturn(List.of(meterstand1, meterstand2, meterstand3));
 
         loggingRule.setLevel(DEBUG);
 
@@ -169,7 +173,7 @@ public class MeterstandHousekeepingTest {
         final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
         when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                .thenReturn(singletonList(dayToCleanupAsTimeStamp));
+                                .thenReturn(List.of(dayToCleanupAsTimeStamp));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -177,7 +181,7 @@ public class MeterstandHousekeepingTest {
 
         when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
-                                 .thenReturn(asList(meterstand1, meterstand2, meterstand3));
+                                 .thenReturn(List.of(meterstand1, meterstand2, meterstand3));
 
         loggingRule.setLevel(Level.OFF);
 

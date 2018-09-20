@@ -1,5 +1,34 @@
 package nl.homeserver.cache;
 
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JUNE;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.AdditionalMatchers;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+
 import nl.homeserver.energie.EnergieController;
 import nl.homeserver.energie.MeterstandController;
 import nl.homeserver.energie.OpgenomenVermogenController;
@@ -8,26 +37,6 @@ import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;
 import nl.homeserver.klimaat.SensorType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.YearMonth;
-
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JUNE;
-import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WarmupInitialCacheTest {
@@ -256,7 +265,7 @@ public class WarmupInitialCacheTest {
 
         final String sensorCode = "SOME_NICE_CODE";
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
-        when(klimaatService.getAllKlimaatSensors()).thenReturn(singletonList(klimaatSensor));
+        when(klimaatService.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
@@ -291,7 +300,7 @@ public class WarmupInitialCacheTest {
         final String sensorCode = "SOME_NICE_CODE";
 
         when(klimaatService.getAllKlimaatSensors())
-                           .thenReturn(singletonList(aKlimaatSensor().withCode(sensorCode).build()));
+                           .thenReturn(List.of(aKlimaatSensor().withCode(sensorCode).build()));
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 

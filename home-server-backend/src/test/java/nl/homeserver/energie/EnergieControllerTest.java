@@ -1,6 +1,5 @@
 package nl.homeserver.energie;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -35,13 +34,13 @@ public class EnergieControllerTest {
 
     @Test
     public void whenGetGemiddeldeVerbruikPerDagThenDelegatedToVerbruikService() {
-        VerbruikKostenOverzicht verbruikKostenOverzicht = mock(VerbruikKostenOverzicht.class);
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = mock(VerbruikKostenOverzicht.class);
         when(verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(datePeriodCaptor.capture())).thenReturn(verbruikKostenOverzicht);
 
-        LocalDate from = LocalDate.of(2017, 4, 2);
-        LocalDate to = LocalDate.of(2017, 5, 19);
+        final LocalDate from = LocalDate.of(2017, 4, 2);
+        final LocalDate to = LocalDate.of(2017, 5, 19);
 
-        VerbruikKostenOverzicht gemiddeldeVerbruikPerDagInPeriode = energieController.getGemiddeldeVerbruikPerDag(from, to);
+        final VerbruikKostenOverzicht gemiddeldeVerbruikPerDagInPeriode = energieController.getGemiddeldeVerbruikPerDag(from, to);
 
         assertThat(datePeriodCaptor.getValue().getFromDate()).isEqualTo(from);
         assertThat(datePeriodCaptor.getValue().getToDate()).isEqualTo(to);
@@ -51,13 +50,13 @@ public class EnergieControllerTest {
 
     @Test
     public void whenGetVerbruikPerDagThenDelegatedToVerbruikService() {
-        List<VerbruikKostenOpDag> verbruikKostenPerDag = singletonList(mock(VerbruikKostenOpDag.class));
+        final List<VerbruikKostenOpDag> verbruikKostenPerDag = List.of(mock(VerbruikKostenOpDag.class));
         when(verbruikService.getVerbruikPerDag(datePeriodCaptor.capture())).thenReturn(verbruikKostenPerDag);
 
-        LocalDate from = LocalDate.of(2017, 4, 2);
-        LocalDate to = LocalDate.of(2017, 5, 19);
+        final LocalDate from = LocalDate.of(2017, 4, 2);
+        final LocalDate to = LocalDate.of(2017, 5, 19);
 
-        List<VerbruikKostenOpDag> verbruikPerDag = energieController.getVerbruikPerDag(from, to);
+        final List<VerbruikKostenOpDag> verbruikPerDag = energieController.getVerbruikPerDag(from, to);
 
         assertThat(datePeriodCaptor.getValue().getFromDate()).isEqualTo(from);
         assertThat(datePeriodCaptor.getValue().getToDate()).isEqualTo(to);
@@ -67,8 +66,8 @@ public class EnergieControllerTest {
 
     @Test
     public void whenGetVerbruikPerUurOpDagThenDelegatedToVerbruikService() {
-        List<VerbruikInUurOpDag> verbruikPerUurOpDag = singletonList(mock(VerbruikInUurOpDag.class));
-        LocalDate day = LocalDate.of(2017, 4, 2);
+        final List<VerbruikInUurOpDag> verbruikPerUurOpDag = List.of(mock(VerbruikInUurOpDag.class));
+        final LocalDate day = LocalDate.of(2017, 4, 2);
         when(verbruikService.getVerbruikPerUurOpDag(day)).thenReturn(verbruikPerUurOpDag);
 
         assertThat(energieController.getVerbruikPerUurOpDag(day)).isEqualTo(verbruikPerUurOpDag);
@@ -76,7 +75,7 @@ public class EnergieControllerTest {
 
     @Test
     public void whenGetVerbruikPerJaarThenDelegatedToVerbruikService() {
-        List<VerbruikInJaar> verbruikPerJaar = singletonList(mock(VerbruikInJaar.class));
+        final List<VerbruikInJaar> verbruikPerJaar = List.of(mock(VerbruikInJaar.class));
         when(verbruikService.getVerbruikPerJaar()).thenReturn(verbruikPerJaar);
 
         assertThat(energieController.getVerbruikPerJaar()).isEqualTo(verbruikPerJaar);
@@ -84,9 +83,9 @@ public class EnergieControllerTest {
 
     @Test
     public void whenGetVerbruikPerMaandInJaarThenDelegatedToVerbruikService() {
-        int year = 2018;
+        final int year = 2018;
 
-        List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = singletonList(mock(VerbruikInMaandInJaar.class));
+        final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = List.of(mock(VerbruikInMaandInJaar.class));
         when(verbruikService.getVerbruikPerMaandInJaar(eq(Year.of(year)))).thenReturn(verbruikPerMaandInJaar);
 
         assertThat(energieController.getVerbruikPerMaandInJaar(year)).isEqualTo(verbruikPerMaandInJaar);

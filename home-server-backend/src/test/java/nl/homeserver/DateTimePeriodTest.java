@@ -17,10 +17,10 @@ public class DateTimePeriodTest {
 
     @Test
     public void whenCreateDateTimePeriodWithEndDateTimeThenToDateTimeIsSet() {
-        LocalDateTime fromDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
-        LocalDateTime endDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
+        final LocalDateTime fromDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
+        final LocalDateTime endDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
 
-        DateTimePeriod dateTimePeriod = aPeriodWithEndDateTime(fromDateTime, endDateTime);
+        final DateTimePeriod dateTimePeriod = aPeriodWithEndDateTime(fromDateTime, endDateTime);
 
         assertThat(dateTimePeriod.getFromDateTime()).isEqualTo(fromDateTime);
         assertThat(dateTimePeriod.getToDateTime()).isEqualTo(endDateTime.plusNanos(1));
@@ -29,10 +29,10 @@ public class DateTimePeriodTest {
 
     @Test
     public void whenCreateDateTimePeriodWithToDateTimeThenEndDateTimeIsSet() {
-        LocalDateTime startDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
-        LocalDateTime toDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
+        final LocalDateTime startDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
+        final LocalDateTime toDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
 
-        DateTimePeriod dateTimePeriod = aPeriodWithToDateTime(startDateTime, toDateTime);
+        final DateTimePeriod dateTimePeriod = aPeriodWithToDateTime(startDateTime, toDateTime);
 
         assertThat(dateTimePeriod.getFromDateTime()).isEqualTo(startDateTime);
         assertThat(dateTimePeriod.getToDateTime()).isEqualTo(toDateTime);
@@ -41,22 +41,22 @@ public class DateTimePeriodTest {
 
     @Test
     public void givenPeriodOfASingleDayThenNumberOfDaysIsOne() {
-        LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
-        LocalDateTime to = from.plusDays(1);
-        DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+        final LocalDateTime to = from.plusDays(1);
+        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        List<LocalDate> daysInPeriod = period.getDays();
+        final List<LocalDate> daysInPeriod = period.getDays();
 
         assertThat(daysInPeriod).containsExactly(from.toLocalDate());
     }
 
     @Test
     public void givenPeriodOfFiveDaysThenNumberOfDaysIsFive() {
-        LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
-        LocalDateTime to = from.plusDays(5);
-        DateTimePeriod period = aPeriodWithEndDateTime(from, to);
+        final LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+        final LocalDateTime to = from.plusDays(5);
+        final DateTimePeriod period = aPeriodWithEndDateTime(from, to);
 
-        List<LocalDate> dagenInPeriode = period.getDays();
+        final List<LocalDate> dagenInPeriode = period.getDays();
 
         assertThat(dagenInPeriode).containsExactly(
             LocalDate.of(2015, JANUARY, 1),
@@ -69,27 +69,27 @@ public class DateTimePeriodTest {
 
     @Test
     public void givenPeriodThatStartsOnGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
-        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+        final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
-        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+        final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
         assertThat(period.startsOnOrAfter(start)).isTrue();
     }
 
     @Test
     public void givenPeriodThatStartsAfterGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
-        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+        final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
-        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+        final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
         assertThat(period.startsOnOrAfter(start.minusMinutes(1))).isTrue();
     }
 
     @Test
     public void givenPeriodThatStartsBeforeGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
-        LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+        final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
-        DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+        final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
         assertThat(period.startsOnOrAfter(start.plusMinutes(1))).isFalse();
     }

@@ -5,7 +5,6 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.SEPTEMBER;
-import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -16,6 +15,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,7 +130,7 @@ public class WarmupDailyCacheTest {
 
         final String sensorCode = "SOME_FANCY_SENSOR";
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
-        when(klimaatService.getAllKlimaatSensors()).thenReturn(singletonList(klimaatSensor));
+        when(klimaatService.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
         warmupDailyCache.considerDailyWarmup();
 
