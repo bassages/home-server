@@ -30,7 +30,7 @@ public class UnauthenticatedRequestHandlerTest {
 
         unauthenticatedRequestHandler.commence(request, response, error);
 
-        verify(response).setStatus(HttpStatus.SC_UNAUTHORIZED);
+        verify(response).sendError(401, "Unauthorized");
     }
 
     @Test

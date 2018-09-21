@@ -9,7 +9,7 @@ plugins {
 }
 
 jacoco {
-    toolVersion = '0.8.0'
+    toolVersion = '0.8.2'
 }
 
 sonarqube {

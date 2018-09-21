@@ -1,21 +1,21 @@
 package nl.homeserver.energie;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
+import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class VerbruikKostenOverzichten {
+class VerbruikKostenOverzichten {
 
     private final Collection<VerbruikKostenOverzicht> all;
 
-    public VerbruikKostenOverzichten(final Collection<VerbruikKostenOverzicht> all) {
+    VerbruikKostenOverzichten(final Collection<VerbruikKostenOverzicht> all) {
         this.all = all;
     }
 
-    public VerbruikKostenOverzicht averageToSingle() {
+    VerbruikKostenOverzicht averageToSingle() {
         final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
         verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
@@ -35,6 +35,6 @@ public class VerbruikKostenOverzichten {
                                                         .filter(Objects::nonNull)
                                                         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), ROUND_HALF_UP).setScale(scale, ROUND_HALF_UP);
+        return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), HALF_UP).setScale(scale, HALF_UP);
     }
 }
