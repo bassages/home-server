@@ -47,6 +47,8 @@ import {KlimaatSensorsComponent} from './klimaat/klimaat-sensors/klimaat-sensors
 import {StandbyPowerComponent} from './standby-power/standby-power.component';
 import {StandbyPowerService} from './standby-power/standby-power.service';
 import {AuthorizationInterceptor} from './auth/authorization-interceptor';
+import {AuthService} from './auth.service';
+import {LoginComponent} from './login/login.component';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -70,8 +72,10 @@ const stompConfig: StompConfig = {
 };
 
 const appRoutes: Routes = [
-  {path: '', pathMatch: 'full', component: DashboardComponent},
+  {path: '', pathMatch: 'full', component: LoginComponent},
+  {path: 'dashboard', component: DashboardComponent},
   {path: 'meterstand', component: MeterstandComponent},
+  {path: 'login', component: LoginComponent},
   {path: 'energie/opgenomen-vermogen', component: OpgenomenVermogenComponent},
   {path: 'energie/:verbruiksoort/:periode', component: EnergieVerbruikComponent},
   {path: 'energie/basisverbruik', component: StandbyPowerComponent},
@@ -96,6 +100,7 @@ const appRoutes: Routes = [
     EnergieVerbruikComponent,
     DateNavigatorComponent,
     OpgenomenVermogenComponent,
+    LoginComponent,
     MindergasnlComponent,
     KlimaatHistorieComponent,
     StatisticsComponent,
@@ -117,6 +122,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes, {enableTracing: false, useHash: true})
   ],
   providers: [
+    AuthService,
     DecimalPipe,
     ChartService,
     ChartStatisticsService,
@@ -135,10 +141,7 @@ const appRoutes: Routes = [
     StandbyPowerService,
     ErrorHandingService,
     StompService, {provide: StompConfig, useValue: stompConfig},
-    { provide: HTTP_INTERCEPTORS,
-      useClass: AuthorizationInterceptor,
-      multi: true
-    }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

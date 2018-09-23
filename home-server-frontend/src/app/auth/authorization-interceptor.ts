@@ -4,15 +4,21 @@ import {Observable} from 'rxjs/Observable';
 import {catchError} from 'rxjs/operators';
 import {EMPTY, throwError} from 'rxjs';
 import {DOCUMENT} from '@angular/common';
+import {AuthService} from '../auth.service';
 
 @Injectable()
 export class AuthorizationInterceptor implements HttpInterceptor {
 
-  constructor(@Inject(DOCUMENT) private document: any) {
+  constructor(@Inject(DOCUMENT) private document: any,
+              private authService: AuthService) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(request).pipe(
+    const xhr = request.clone({
+      // Prevent Basic-auth popup from browser
+      headers: request.headers.set('X-Requested-With', 'XMLHttpRequest')
+    });
+    return next.handle(xhr).pipe(
       catchError(error => this.handleError(request, error))
     );
   }
@@ -25,9 +31,9 @@ export class AuthorizationInterceptor implements HttpInterceptor {
     } else {
 
       if (httpErrorResponse.status === 401) {
-        // Session timed out causing the xhr call to fail.
-        // Redirect to root will cause the server to show login page
-        this.document.location.href = '/login';
+        if (request.url !== '/api/user') {
+          this.authService.loggedOut();
+        }
         return EMPTY;
       }
     }

@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" *ngIf="isVisible">
   <div class="container">
-    <a class="navbar-brand" href="#"><i class="fas fa-home"></i></a>
+    <a class="navbar-brand" routerLink="/dashboard"><i class="fas fa-home"></i></a>
 
     <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Open/sluit menu">
       <span class="navbar-toggler-icon"></span>
@@ -62,7 +62,7 @@
             <a class="dropdown-item" href="/actuator" target="_blank"><i class="fas fa-server"></i> Server</a>
           </div>
         </li>
-        <li><a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Afmelden</a></li>
+        <li><a class="nav-link clickable" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Afmelden</a></li>
       </ul>
     </div>
   </div>

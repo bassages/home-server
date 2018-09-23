@@ -98,7 +98,6 @@ export class KlimaatSensorsComponent implements OnInit {
       },
       error => this.errorHandlingService.handleError('De klimaatsensor kon niet worden verwijderd', error),
       () => this.loadingIndicatorService.close()
-
     );
   }
 

@@ -1,5 +1,7 @@
 package nl.homeserver.config;
 
+import static org.springframework.http.HttpStatus.RESET_CONTENT;
+
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
@@ -8,9 +10,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
@@ -24,12 +24,9 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
     };
 
     private final UnauthenticatedRequestHandler unauthenticatedRequestHandler;
-    private final SuccessfulLoginHandler successfulLoginHandler;
 
-    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler,
-                     final SuccessfulLoginHandler successfulLoginHandler) {
+    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler) {
         this.unauthenticatedRequestHandler = unauthenticatedRequestHandler;
-        this.successfulLoginHandler = successfulLoginHandler;
     }
 
     @Override
@@ -38,29 +35,17 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
             .csrf().disable()
             .headers().frameOptions().sameOrigin().and()
             .httpBasic().and()
-            .formLogin()
-                .loginPage(Paths.LOGIN)
-                .successHandler(successfulLoginHandler)
-                .permitAll().and()
             .logout()
+                .addLogoutHandler((request, response, authentication) -> response.setStatus(RESET_CONTENT.value()))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true).and()
             .authorizeRequests()
                 .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .antMatchers("/", "/**/*.js", "/**/*.css", "/index.html", "/assets/**/*").permitAll()
                 .antMatchers(Paths.LOGIN).permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
-    }
-
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(new AlreadyLoggedInUserInterceptor());
-    }
-
-    @Override
-    public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController(Paths.LOGIN).setViewName("login");
     }
 
     @Override
