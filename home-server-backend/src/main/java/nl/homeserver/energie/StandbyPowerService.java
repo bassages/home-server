@@ -71,7 +71,7 @@ public class StandbyPowerService {
         final VerbruikKostenOverzicht actualVko = getActualVko(period);
         final VerbruikKostenOverzicht standByPowerVko = getStandbyPowerVko(mostCommonWattInPeriod, period);
 
-        StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(yearMonth, mostCommonWattInPeriod, percentageInStandByPower, standByPowerVko, actualVko);
+        final StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(yearMonth, mostCommonWattInPeriod, percentageInStandByPower, standByPowerVko, actualVko);
 
         return Optional.of(standbyPowerInPeriod);
     }
