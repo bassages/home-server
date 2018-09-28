@@ -8,16 +8,16 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/cache")
-public class CacheController {
+class CacheController {
 
     private final CacheService cacheService;
 
-    public CacheController(final CacheService cacheService) {
+    CacheController(final CacheService cacheService) {
         this.cacheService = cacheService;
     }
 
     @PostMapping(path = "clearAll")
-    public void clearAll() {
+    void clearAll() {
         cacheService.clearAll();
     }
 }

@@ -13,8 +13,6 @@ import {ChartService} from '../chart/chart.service';
 import {Statistics} from '../statistics';
 import {ChartStatisticsService} from '../chart/statistics/chart-statistics.service';
 
-const periodLengthInMilliseconds = moment.duration(1, 'minutes').asSeconds();
-
 @Component({
   selector: 'home-opgenomen-vermogen',
   templateUrl: './opgenomen-vermogen.component.html',
@@ -25,7 +23,17 @@ export class OpgenomenVermogenComponent implements OnInit {
   public selectedDate: Moment;
   public statistics: Statistics;
 
+  public periodLengthInSeconds = moment.duration(3, 'minutes').asSeconds();
+
   private chart: ChartAPI;
+
+  public detailLevels = [
+    { periodLength:  60, title: 'Detailniveau ++'  },
+    { periodLength: 180, title: 'Detailniveau +'   },
+    { periodLength: 300, title: 'Detailniveau +/-' },
+    { periodLength: 420, title: 'Detailniveau -'   },
+    { periodLength: 600, title: 'Detailniveau --'  }
+  ];
 
   constructor(private opgenomenVermogenService: OpgenomenVermogenService,
               private chartService: ChartService,
@@ -62,7 +70,7 @@ export class OpgenomenVermogenComponent implements OnInit {
     const from = this.selectedDate;
     const to = from.clone().add(1, 'days');
 
-    this.opgenomenVermogenService.getHistory(from, to, periodLengthInMilliseconds).subscribe(
+    this.opgenomenVermogenService.getHistory(from, to, this.periodLengthInSeconds).subscribe(
       opgenomenVermogens => this.loadDataIntoChart(opgenomenVermogens),
       error => this.errorHandlingService.handleError('Opgenomen vermogen kon niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
@@ -149,10 +157,10 @@ export class OpgenomenVermogenComponent implements OnInit {
 
   // noinspection JSMethodCanBeStatic
   private getTicksForEveryHourInPeriod(from: Moment, to: Moment) {
-    const numberOfHoursInDay = ((to.toDate().getTime() - from.toDate().getTime()) / 1000) / 60 / 60;
+    const numberOfHoursInPeriod: number = moment.duration(to.diff(from)).asHours();
 
     const tickValues: number[] = [];
-    for (let i = 0; i <= numberOfHoursInDay; i++) {
+    for (let i = 0; i <= numberOfHoursInPeriod; i++) {
       const tickValue = from.toDate().getTime() + (i * 60 * 60 * 1000);
       tickValues.push(tickValue);
     }
@@ -172,5 +180,9 @@ export class OpgenomenVermogenComponent implements OnInit {
     const max: number = _.max(watts);
 
     return new Statistics(min, max, mean);
+  }
+
+  public periodLengthChanged(): void {
+    this.getAndLoadData();
   }
 }

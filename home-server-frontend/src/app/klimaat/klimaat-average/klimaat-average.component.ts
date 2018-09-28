@@ -65,8 +65,7 @@ export class KlimaatAverageComponent implements OnInit {
     return this.klimaatService.getDecimalFormat(sensorType);
   }
 
-  public setSensorCode(sensorCode: string): void {
-    this.sensorCode = sensorCode;
+  public sensorChanged(): void {
     this.getAndLoadData();
   }
 

@@ -53,7 +53,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
     );
   }
 
-  private getAndLoadData() {
+  private getAndLoadData(): void {
     this.loadingIndicatorService.open();
 
     const from: Moment = this.getFrom();
@@ -87,13 +87,11 @@ export class KlimaatHighestLowestComponent implements OnInit {
     return this.klimaatService.getDecimalFormat(sensorType);
   }
 
-  public setLimit(limit: string) {
-    this.limit = +limit;
+  public limitChanged(): void {
     this.getAndLoadData();
   }
 
-  public setSensorCode(sensorCode: string): void {
-    this.sensorCode = sensorCode;
+  public sensorChanged(): void {
     this.getAndLoadData();
   }
 
@@ -107,7 +105,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
     this.getAndLoadData();
   }
 
-  public navigateToDetailsOfDate(dateTime: Moment) {
+  public navigateToDetailsOfDate(dateTime: Moment): void {
     const commands = ['/klimaat/historie'];
     const extras = { queryParams: { sensorCode: this.sensorCode, sensorType: this.sensorType, datum: dateTime.format('DD-MM-YYYY') } };
     this.router.navigate(commands, extras);

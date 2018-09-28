@@ -1,16 +1,24 @@
 <div class="row">
 
   <!-- Up to (but excluding) small -->
-  <div class="col-12 pl-2 pr-2 d-xs-block d-sm-none">
+  <div class="col-12 px-2 px-sm-0 d-xs-block d-md-none">
     <h4>Opgenomen vermogen (Watt)</h4>
     <home-date-navigator mode="day" [selectedDate]="selectedDate" (navigation)="onDateNavigate($event)" class="input-group input-group-sm mb-2"></home-date-navigator>
+    <select #periodLength class="input-group input-group-sm mb-2" name="periodLength" (change)="periodLengthChanged()" [(ngModel)]="periodLengthInSeconds">
+      <option *ngFor="let _detailLevel of detailLevels" [value]="_detailLevel.periodLength">{{_detailLevel.title}}</option>
+    </select>
   </div>
 
   <!-- Small and above -->
-  <div class="col-12 pl-0 pr-0 d-none d-sm-block">
+  <div class="col-12 px-0 d-none d-md-block">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-auto">
         <a class="nav-link active">Opgenomen vermogen (Watt)</a>
+      </li>
+      <li class="nav-item col-md-3">
+        <select #periodLength class="form-control" name="periodLength" (change)="periodLengthChanged()" [(ngModel)]="periodLengthInSeconds">
+          <option *ngFor="let _detailLevel of detailLevels" [value]="_detailLevel.periodLength">{{_detailLevel.title}}</option>
+        </select>
       </li>
       <li class="nav-item">
         <home-date-navigator mode="day" [selectedDate]="selectedDate" (navigation)="onDateNavigate($event)" class="input-group"></home-date-navigator>
@@ -20,7 +28,7 @@
 </div>
 
 <div class="row">
-  <div class="col-12 pl-2 pr-2 pl-sm-0 pr-sm-0">
+  <div class="col-12 px-2 px-sm-0 pr-sm-0">
     <div id="chart" class="c3 chart graph-chart"></div>
     <div class="activated">
       <home-statistics [statistics]="statistics" decimalFormat="0.0-0"></home-statistics>

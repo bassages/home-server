@@ -10,8 +10,8 @@
     </div>
   </div>
   <div class="col-md-4 col-lg-3 mb-2">
-    <select #sensor class="form-control" name="sensor" (change)="setSensorCode(sensor.value)">
-      <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensorCode === _sensor.code">{{_sensor.omschrijving}}</option>
+    <select class="form-control" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
+      <option *ngFor="let _sensor of sensors" [value]="_sensor.code">{{_sensor.omschrijving}}</option>
     </select>
   </div>
   <div class="col-md-4 col-lg-3 mb-2">

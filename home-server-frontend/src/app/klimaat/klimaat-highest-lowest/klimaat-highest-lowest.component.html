@@ -10,16 +10,16 @@
     </div>
   </div>
   <div class="col-md-3 mb-2">
-    <select #sensor class="form-control" name="sensor" (change)="setSensorCode(sensor.value)">
-      <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensorCode === _sensor.code">{{_sensor.omschrijving}}</option>
+    <select class="form-control" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
+      <option *ngFor="let _sensor of sensors" [value]="_sensor.code">{{_sensor.omschrijving}}</option>
     </select>
   </div>
   <div class="col-md-3 mb-2">
     <home-date-navigator mode="year" [selectedDate]="year" (navigation)="yearPickerChanged($event)" class="input-group"></home-date-navigator>
   </div>
   <div class="col-md-2">
-    <select #limitSelect class="form-control form-control" id="limit" name="limit" (change)="setLimit(limitSelect.value)">
-      <option *ngFor="let _limit of [5, 10, 25, 50, 100]" [value]="_limit" [selected]="_limit === limit">{{ _limit }}</option>
+    <select class="form-control form-control" id="limit" name="limit" (change)="limitChanged()" [(ngModel)]="limit">
+      <option *ngFor="let _limit of [5, 10, 25, 50, 100]" [value]="_limit">{{ _limit }}</option>
     </select>
   </div>
 </div>

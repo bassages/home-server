@@ -1,11 +1,11 @@
 <div class="row">
   <div class="col-lg-1 pr-0 d-none d-lg-block">&nbsp;</div>
 
-  <div class="col-md-12 col-lg-11 pl-0 pr-0 d-none d-lg-block">
+  <div class="col-md-12 col-lg-11 px-0 d-none d-lg-block">
     <ul class="nav nav-tabs">
       <li class="nav-item mr-1">
-        <select class="form-control" name="sensor" (change)="changeSensor($event.target.value)">
-          <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensorCode === _sensor.code">{{_sensor.omschrijving}}</option>
+        <select class="form-control" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
+          <option *ngFor="let _sensor of sensors" [value]="_sensor.code">{{_sensor.omschrijving}}</option>
         </select>
       </li>
 
@@ -19,9 +19,9 @@
 <!-- Up to (but excluding) large -->
 <div class="d-xs-block d-lg-none">
 
-  <div class="row mb-2 pl-2 pr-2 pl-sm-0 pr-sm-0">
-    <select class="form-control" name="sensor" (change)="changeSensor($event.target.value)">
-      <option *ngFor="let _sensor of sensors" [value]="_sensor.code" [selected]="sensorCode === _sensor.code">{{_sensor.omschrijving}}</option>
+  <div class="row mb-2 px-2 px-sm-0">
+    <select class="form-control" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
+      <option *ngFor="let _sensor of sensors" [value]="_sensor.code">{{_sensor.omschrijving}}</option>
     </select>
   </div>
 
@@ -36,13 +36,13 @@
   </div>
 
   <!-- Date selection  -->
-  <div class="row mb-2 pl-2 pr-2 pl-sm-0 pr-sm-0">
+  <div class="row mb-2 px-2 px-sm-0">
     <home-date-navigator mode="day" [selectedDate]="date" (navigation)="onDateNavigate($event)" class="input-group input-group-sm"></home-date-navigator>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-1 pl-0 pr-0 d-none d-lg-block">
+  <div class="col-md-1 px-0 d-none d-lg-block">
     <ul class="nav nav-tabs-left flex-column">
       <li class="nav-item">
         <a class="nav-link mb-1 clickable text-center" [ngClass]="{'active': sensorType === 'temperatuur'}" (click)="setSensorType('temperatuur')"><i class="fas fa-thermometer-half"></i> &#8451;</a>
@@ -52,7 +52,7 @@
       </li>
     </ul>
   </div>
-  <div class="col-md-12 col-lg-11 pl-2 pr-2 pl-sm-0 pr-sm-0">
+  <div class="col-md-12 col-lg-11 px-2 px-sm-0">
     <div [hidden]="!showChart" id="chart" class="c3 graph-chart"></div>
     <div *ngIf="showTable" class="table-responsive">
       <table class="table table-bordered table-striped table-hover table-sm">
@@ -67,7 +67,7 @@
 </div>
 <div class="row">
   <div class="col-lg-1 pr-0 d-none d-lg-block">&nbsp;</div>
-  <div class="col-md-12 col-lg-11 pl-2 pr-2 pl-sm-0 pr-sm-0">
+  <div class="col-md-12 col-lg-11 px-2 px-sm-0">
     <home-statistics [statistics]="statistics" [decimalFormat]="getDecimalFormat(sensorType)" [valuePostfix]="getValuePostFix(sensorType)" [additionalClasses]="{'activated': showChart}"></home-statistics>
   </div>
 </div>

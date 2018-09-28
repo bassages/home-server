@@ -172,8 +172,8 @@ export class KlimaatHistorieComponent implements OnInit {
     );
   }
 
-  public changeSensor(sensorCode: string): void {
-    this.navigateTo(sensorCode, this.sensorType, this.date);
+  public sensorChanged(): void {
+    this.navigateTo(this.sensorCode, this.sensorType, this.date);
   }
 
   private getChartConfig(klimaat: Klimaat[]): ChartConfiguration {
