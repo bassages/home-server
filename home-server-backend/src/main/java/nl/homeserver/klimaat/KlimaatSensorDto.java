@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
-public class KlimaatSensorDto {
+class KlimaatSensorDto {
 
     @Getter
     @Setter

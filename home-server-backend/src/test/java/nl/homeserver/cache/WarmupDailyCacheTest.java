@@ -23,10 +23,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import nl.homeserver.energie.EnergieController;
-import nl.homeserver.energie.MeterstandController;
-import nl.homeserver.energie.OpgenomenVermogenController;
-import nl.homeserver.energie.StandbyPowerController;
+import nl.homeserver.energie.verbruikkosten.EnergieController;
+import nl.homeserver.energie.meterstand.MeterstandController;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenController;
+import nl.homeserver.energie.standbypower.StandbyPowerController;
 import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;

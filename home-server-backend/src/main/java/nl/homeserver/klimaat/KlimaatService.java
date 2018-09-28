@@ -44,7 +44,7 @@ public class KlimaatService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
 
-    protected static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
+    static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
     private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 18;
     private static final int NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR = 15;
@@ -68,11 +68,11 @@ public class KlimaatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final Clock clock;
 
-    public KlimaatService(final KlimaatRepos klimaatRepository,
-                          final KlimaatSensorRepository klimaatSensorRepository,
-                          final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
-                          final SimpMessagingTemplate messagingTemplate,
-                          final Clock clock) {
+    KlimaatService(final KlimaatRepos klimaatRepository,
+                   final KlimaatSensorRepository klimaatSensorRepository,
+                   final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
+                   final SimpMessagingTemplate messagingTemplate,
+                   final Clock clock) {
         this.klimaatRepository = klimaatRepository;
         this.klimaatSensorRepository = klimaatSensorRepository;
         this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
@@ -89,7 +89,7 @@ public class KlimaatService {
     }
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
-    public void save() {
+    void save() {
         final LocalDateTime referenceDateTime = now(clock).truncatedTo(ChronoUnit.MINUTES);
         recentlyReceivedKlimaatsPerKlimaatSensorCode
                 .forEach((klimaatSensorCode, klimaats) -> this.saveKlimaatWithAveragedRecentSensorValues(referenceDateTime, klimaatSensorCode));
@@ -153,7 +153,8 @@ public class KlimaatService {
         return klimaatSensorRepository.save(klimaatSensor);
     }
 
-    public List<Klimaat> getInPeriod(final String klimaatSensorCode, final DatePeriod period) {
+    List<Klimaat> getInPeriod(final String klimaatSensorCode,
+                              final DatePeriod period) {
         final LocalDate today = LocalDate.now(clock);
 
         if (period.getEndDate().isBefore(today)) {
@@ -197,9 +198,9 @@ public class KlimaatService {
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
-    public List<List<GemiddeldeKlimaatPerMaand>> getAveragePerMonthInYears(final String sensorCode,
-                                                                           final SensorType sensorType,
-                                                                           final int[] years) {
+    List<List<GemiddeldeKlimaatPerMaand>> getAveragePerMonthInYears(final String sensorCode,
+                                                                    final SensorType sensorType,
+                                                                    final int[] years) {
         return IntStream.of(years)
                         .mapToObj(Year::of)
                         .map(year -> getAveragePerMonthInYear(sensorCode, sensorType, year))
@@ -263,10 +264,10 @@ public class KlimaatService {
         return value != null && value.compareTo(ZERO) != 0;
     }
 
-    public List<Klimaat> getHighest(final String sensorCode,
-                                    final SensorType sensorType,
-                                    final DatePeriod period,
-                                    final int limit) {
+    List<Klimaat> getHighest(final String sensorCode,
+                             final SensorType sensorType,
+                             final DatePeriod period,
+                             final int limit) {
         if (sensorType == TEMPERATUUR) {
             return getHighestTemperature(sensorCode, period, limit);
         } else if (sensorType == LUCHTVOCHTIGHEID) {
@@ -276,7 +277,10 @@ public class KlimaatService {
         }
     }
 
-    public List<Klimaat> getLowest(final String sensorCode, final SensorType sensorType, final DatePeriod period, final int limit) {
+    List<Klimaat> getLowest(final String sensorCode,
+                            final SensorType sensorType,
+                            final DatePeriod period,
+                            final int limit) {
         if (sensorType == TEMPERATUUR) {
             return getLowestTemperature(sensorCode, period, limit);
         } else if (sensorType == LUCHTVOCHTIGHEID) {
@@ -355,7 +359,7 @@ public class KlimaatService {
                                                                                             period.toDateTimePeriod().getEndDateTime());
     }
 
-    public Optional<KlimaatSensor> getKlimaatSensorByCode(final String klimaatSensorCode) {
+    Optional<KlimaatSensor> getKlimaatSensorByCode(final String klimaatSensorCode) {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
@@ -363,7 +367,7 @@ public class KlimaatService {
         return klimaatSensorRepository.findAll();
     }
 
-    public KlimaatSensor update(final KlimaatSensor klimaatSensor) {
+    KlimaatSensor update(final KlimaatSensor klimaatSensor) {
         return klimaatSensorRepository.save(klimaatSensor);
     }
 

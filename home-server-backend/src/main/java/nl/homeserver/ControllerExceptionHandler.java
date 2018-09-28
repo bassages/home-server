@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-    protected static final String ERROR_CODE_UNIQUE_KEY_CONSTRAINT_VIOLATION = "UNIQUE_KEY_CONSTRAINT_VIOLATION";
-    protected static final String ERROR_CODE_NOT_FOUND = "NOT_FOUND";
+    static final String ERROR_CODE_UNIQUE_KEY_CONSTRAINT_VIOLATION = "UNIQUE_KEY_CONSTRAINT_VIOLATION";
+    static final String ERROR_CODE_NOT_FOUND = "NOT_FOUND";
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> createResponse(final DataIntegrityViolationException dataIntegrityViolationException) {

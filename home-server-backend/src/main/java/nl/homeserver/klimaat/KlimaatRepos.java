@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 @Transactional
-public interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
+interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     @Query(value = "  SELECT k FROM Klimaat k "
                  + "   WHERE k.klimaatSensor.code = :sensorCode "

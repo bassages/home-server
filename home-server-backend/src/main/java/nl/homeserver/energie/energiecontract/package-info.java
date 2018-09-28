@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package nl.homeserver.energie.energiecontract;
+
+import javax.annotation.ParametersAreNonnullByDefault;

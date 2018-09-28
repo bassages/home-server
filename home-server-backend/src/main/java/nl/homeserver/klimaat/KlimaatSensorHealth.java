@@ -22,7 +22,7 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KlimaatSensorHealth implements HealthIndicator {
+class KlimaatSensorHealth implements HealthIndicator {
 
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 10;
 
@@ -31,7 +31,7 @@ public class KlimaatSensorHealth implements HealthIndicator {
     private final KlimaatService klimaatService;
     private final Clock clock;
 
-    public KlimaatSensorHealth(final KlimaatService klimaatService, final Clock clock) {
+    KlimaatSensorHealth(final KlimaatService klimaatService, final Clock clock) {
         this.klimaatService = klimaatService;
         this.clock = clock;
     }

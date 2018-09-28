@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package nl.homeserver.energie.opgenomenvermogen;
+
+import javax.annotation.ParametersAreNonnullByDefault;

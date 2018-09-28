@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KlimaatDto {
+class KlimaatDto {
 
     private long id;
     private LocalDateTime datumtijd;

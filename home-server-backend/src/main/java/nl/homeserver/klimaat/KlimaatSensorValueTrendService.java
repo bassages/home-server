@@ -21,19 +21,19 @@ import org.springframework.stereotype.Service;
 import nl.homeserver.Trend;
 
 @Service
-public class KlimaatSensorValueTrendService {
+class KlimaatSensorValueTrendService {
 
     private static final int MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND = 3;
 
     private static final Map<Integer, Trend> SIGNUM_OF_SLOPE_TO_TREND_MAPPING = new HashMap<>();
 
-    public KlimaatSensorValueTrendService() {
+    KlimaatSensorValueTrendService() {
         SIGNUM_OF_SLOPE_TO_TREND_MAPPING.put(-1, DOWN);
         SIGNUM_OF_SLOPE_TO_TREND_MAPPING.put(0, STABLE);
         SIGNUM_OF_SLOPE_TO_TREND_MAPPING.put(1, UP);
     }
 
-    public Trend determineValueTrend(final List<Klimaat> klimaats, final Function<Klimaat, BigDecimal> sensorValueGetter) {
+    Trend determineValueTrend(final List<Klimaat> klimaats, final Function<Klimaat, BigDecimal> sensorValueGetter) {
         final List<Klimaat> validklimaats = getValidKlimaats(klimaats, sensorValueGetter);
 
         if (size(validklimaats) < MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {

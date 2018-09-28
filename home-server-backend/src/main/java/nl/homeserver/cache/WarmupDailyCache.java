@@ -16,17 +16,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import nl.homeserver.energie.EnergieController;
-import nl.homeserver.energie.MeterstandController;
-import nl.homeserver.energie.OpgenomenVermogenController;
-import nl.homeserver.energie.StandbyPowerController;
+import nl.homeserver.energie.verbruikkosten.EnergieController;
+import nl.homeserver.energie.meterstand.MeterstandController;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenController;
+import nl.homeserver.energie.standbypower.StandbyPowerController;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
 import nl.homeserver.klimaat.KlimaatController;
 import nl.homeserver.klimaat.KlimaatSensor;
 import nl.homeserver.klimaat.KlimaatService;
 
 @Component
-public class WarmupDailyCache {
+class WarmupDailyCache {
 
     private static final Logger LOGGER = getLogger(WarmupDailyCache.class);
 
@@ -38,16 +38,16 @@ public class WarmupDailyCache {
     private final StandbyPowerController standbyPowerController;
     private final Clock clock;
 
-    @Value("${warmupCache.daily}")
+    @Value("${cache.warmup.daily}")
     private boolean warmupCacheDaily;
 
-    public WarmupDailyCache(final OpgenomenVermogenController opgenomenVermogenController,
-                            final EnergieController energieController,
-                            final KlimaatController klimaatController,
-                            final KlimaatService klimaatService,
-                            final MeterstandController meterstandController,
-                            final StandbyPowerController standbyPowerController,
-                            final Clock clock) {
+    WarmupDailyCache(final OpgenomenVermogenController opgenomenVermogenController,
+                     final EnergieController energieController,
+                     final KlimaatController klimaatController,
+                     final KlimaatService klimaatService,
+                     final MeterstandController meterstandController,
+                     final StandbyPowerController standbyPowerController,
+                     final Clock clock) {
         this.opgenomenVermogenController = opgenomenVermogenController;
         this.energieController = energieController;
         this.klimaatController = klimaatController;

@@ -34,13 +34,13 @@ public class KlimaatController {
     }
 
     @GetMapping("sensors")
-    public List<KlimaatSensor> getAllKlimaatSensors() {
+    List<KlimaatSensor> getAllKlimaatSensors() {
         return klimaatService.getAllKlimaatSensors();
     }
 
     @PostMapping("sensors/{sensorCode}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatDto klimaatDto) {
+    void add(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatDto klimaatDto) {
         final KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
 
         final Klimaat klimaat = new Klimaat();
@@ -53,41 +53,41 @@ public class KlimaatController {
     }
 
     @PutMapping("sensors/{sensorCode}")
-    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensorDto klimaatSensorDto) {
+    KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensorDto klimaatSensorDto) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         existingKlimaatSensor.setOmschrijving(klimaatSensorDto.getOmschrijving());
         return klimaatService.update(existingKlimaatSensor);
     }
 
     @DeleteMapping("sensors/{sensorCode}")
-    public void delete(@PathVariable("sensorCode") final String sensorCode) {
+    void delete(@PathVariable("sensorCode") final String sensorCode) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         klimaatService.delete(existingKlimaatSensor);
     }
 
     @GetMapping(path = "{sensorCode}/meest-recente")
-    public RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") final String sensorCode) {
+    RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") final String sensorCode) {
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getMostRecent(sensorCode);
     }
 
     @GetMapping(path = "{sensorCode}/hoogste")
-    public List<Klimaat> getHighest(@PathVariable("sensorCode") final String sensorCode,
-                                    @RequestParam("sensorType") final String sensorType,
-                                    @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
-                                    @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
-                                    @RequestParam("limit") final int limit) {
+    List<Klimaat> getHighest(@PathVariable("sensorCode") final String sensorCode,
+                             @RequestParam("sensorType") final String sensorType,
+                             @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                             @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
+                             @RequestParam("limit") final int limit) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getHighest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);
     }
 
     @GetMapping(path = "{sensorCode}/laagste")
-    public List<Klimaat> getLowest(@PathVariable("sensorCode") final String sensorCode,
-                                   @RequestParam("sensorType") final String sensorType,
-                                   @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
-                                   @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
-                                   @RequestParam("limit") final int limit) {
+    List<Klimaat> getLowest(@PathVariable("sensorCode") final String sensorCode,
+                            @RequestParam("sensorType") final String sensorType,
+                            @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                            @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to,
+                            @RequestParam("limit") final int limit) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getLowest(sensorCode, toSensorType(sensorType), aPeriodWithToDate(from, to), limit);

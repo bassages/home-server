@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-public class Klimaat {
+class Klimaat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

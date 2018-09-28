@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.homeserver.Trend;
 
-public class RealtimeKlimaat {
+class RealtimeKlimaat {
 
     @Getter
     @Setter

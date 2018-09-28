@@ -10,10 +10,10 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/user")
-public class UserController {
+class UserController {
 
     @GetMapping
-    public Principal user(final Principal user) {
+    Principal user(final Principal user) {
         return user;
     }
 }
