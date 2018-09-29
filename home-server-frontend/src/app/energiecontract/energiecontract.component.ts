@@ -45,7 +45,6 @@ export class EnergiecontractComponent implements OnInit {
   public ngOnInit(): void {
     this.datePickerConfiguration = {
       format: datePickerFormat,
-      max: moment()
     };
     this.createForm();
     setTimeout(() => this.getEnergieContracten());
