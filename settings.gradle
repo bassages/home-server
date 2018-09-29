@@ -1,3 +1,4 @@
 include 'home-server-frontend',
         'home-server-frontend-ng1',
-        'home-server-backend'
+        'home-server-backend',
+        'home-server-db-maintainance'
