@@ -23,15 +23,15 @@ import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Service
-public class VerbruikService {
+class VerbruikService {
 
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
     private final MeterstandService meterstandService;
     private final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
 
-    public VerbruikService(final VerbruikKostenOverzichtService verbruikKostenOverzichtService,
-                           final MeterstandService meterstandService,
-                           final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider) {
+    VerbruikService(final VerbruikKostenOverzichtService verbruikKostenOverzichtService,
+                    final MeterstandService meterstandService,
+                    final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider) {
         this.verbruikKostenOverzichtService = verbruikKostenOverzichtService;
         this.meterstandService = meterstandService;
         this.actuallyRegisteredVerbruikProvider = actuallyRegisteredVerbruikProvider;

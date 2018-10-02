@@ -41,7 +41,7 @@ public class OpgenomenVermogenService {
         return savedOpgenomenVermogen;
     }
 
-    public OpgenomenVermogen getMostRecent() {
+    OpgenomenVermogen getMostRecent() {
         return opgenomenVermogenRepository.getMostRecent();
     }
 

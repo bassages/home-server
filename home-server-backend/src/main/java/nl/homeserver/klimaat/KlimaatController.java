@@ -25,11 +25,11 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/klimaat")
-public class KlimaatController {
+class KlimaatController {
 
     private final KlimaatService klimaatService;
 
-    public KlimaatController(final KlimaatService klimaatService) {
+    KlimaatController(final KlimaatService klimaatService) {
         this.klimaatService = klimaatService;
     }
 
@@ -94,18 +94,18 @@ public class KlimaatController {
     }
 
     @GetMapping(path = "{sensorCode}")
-    public List<Klimaat> findAllInPeriod(@PathVariable("sensorCode") final String sensorCode,
-                                         @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
-                                         @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to) {
+    List<Klimaat> findAllInPeriod(@PathVariable("sensorCode") final String sensorCode,
+                                  @RequestParam("from") @DateTimeFormat(iso = ISO.DATE) final LocalDate from,
+                                  @RequestParam("to") @DateTimeFormat(iso = ISO.DATE) final LocalDate to) {
 
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getInPeriod(sensorCode, aPeriodWithToDate(from, to));
     }
 
     @GetMapping(path = "{sensorCode}/gemiddeld-per-maand-in-jaar")
-    public List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") final String sensorCode,
-                                                            @RequestParam("sensorType") final String sensorType,
-                                                            @RequestParam("jaar") final int[] years) {
+    List<List<GemiddeldeKlimaatPerMaand>> getAverage(@PathVariable("sensorCode") final String sensorCode,
+                                                     @RequestParam("sensorType") final String sensorType,
+                                                     @RequestParam("jaar") final int[] years) {
         getKlimaatSensorExpectingOne(sensorCode);
         return klimaatService.getAveragePerMonthInYears(sensorCode, toSensorType(sensorType), years);
     }

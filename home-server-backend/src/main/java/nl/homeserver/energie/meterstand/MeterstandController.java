@@ -17,7 +17,7 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/meterstanden")
-public class MeterstandController {
+class MeterstandController {
 
     private final MeterstandService meterstandService;
 
@@ -36,8 +36,8 @@ public class MeterstandController {
     }
 
     @GetMapping("per-dag/{vanaf}/{tot}")
-    public List<MeterstandOpDag> perDag(final @PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                        final @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+    List<MeterstandOpDag> perDag(final @PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+                                 final @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         final DatePeriod period = aPeriodWithToDate(from, to);
         return meterstandService.getPerDag(period);
     }

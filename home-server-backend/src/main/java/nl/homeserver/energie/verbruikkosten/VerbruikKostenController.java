@@ -17,11 +17,11 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/energie")
-public class EnergieController {
+public class VerbruikKostenController {
 
     private final VerbruikService verbruikService;
 
-    EnergieController(final VerbruikService verbruikService) {
+    VerbruikKostenController(final VerbruikService verbruikService) {
         this.verbruikService = verbruikService;
     }
 

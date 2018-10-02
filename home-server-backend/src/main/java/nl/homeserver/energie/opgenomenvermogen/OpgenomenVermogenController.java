@@ -21,7 +21,7 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/opgenomen-vermogen")
-public class OpgenomenVermogenController {
+class OpgenomenVermogenController {
 
     private final OpgenomenVermogenService opgenomenVermogenService;
     private final Clock clock;
@@ -37,7 +37,7 @@ public class OpgenomenVermogenController {
     }
 
     @GetMapping("historie/{from}/{to}")
-    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(final @PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+    List<OpgenomenVermogen> getOpgenomenVermogenHistory(final @PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                                         final @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
                                                         final @RequestParam("subPeriodLength") long subPeriodLengthInSeconds) {
 

@@ -18,7 +18,7 @@ import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/standby-power")
-public class StandbyPowerController {
+class StandbyPowerController {
 
     private final StandbyPowerService standbyPowerService;
     private final Clock clock;
@@ -30,7 +30,7 @@ public class StandbyPowerController {
     }
 
     @GetMapping(path = "{year}")
-    public List<StandbyPowerInPeriod> getStandbyPower(@PathVariable("year") final int year) {
+    List<StandbyPowerInPeriod> getStandbyPower(@PathVariable("year") final int year) {
         final YearMonth currentYearMonth = YearMonth.now(clock);
         return IntStream.rangeClosed(1, 12)
                         .boxed().sorted(reverseOrder())

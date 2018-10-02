@@ -1,10 +1,10 @@
 package nl.homeserver.klimaat;
 
-public enum SensorType {
+enum SensorType {
     TEMPERATUUR,
     LUCHTVOCHTIGHEID;
 
-    public static SensorType toSensorType(final String string) {
+    static SensorType toSensorType(final String string) {
         return SensorType.valueOf(string.toUpperCase());
     }
 }
