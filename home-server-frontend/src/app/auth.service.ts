@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {LoadingIndicatorService} from './loading-indicator/loading-indicator.service';
 
 const API_PATH_USER = '/api/user';
 
@@ -12,7 +13,8 @@ export class AuthService {
   public authenticatedSubject = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient,
-              private router: Router) {
+              private router: Router,
+              private loadingIndicatorService: LoadingIndicatorService) {
   }
 
   public determineCurrentLoginStatus() {
@@ -55,6 +57,7 @@ export class AuthService {
 
   public loggedOut() {
     this.authenticatedSubject.next(false);
+    this.loadingIndicatorService.close();
     this.router.navigate(['/login']);
   }
 }

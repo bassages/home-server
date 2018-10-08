@@ -47,7 +47,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import nl.homeserver.DatePeriod;
-import nl.homeserver.Trend;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatServiceTest {

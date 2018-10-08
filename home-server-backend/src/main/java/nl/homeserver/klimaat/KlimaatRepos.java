@@ -80,7 +80,6 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  + "ORDER BY k.luchtvochtigheid DESC, k.datumtijd ASC LIMIT 1", nativeQuery = true)
     Klimaat earliestHighestHumidityOnDay(@Param("sensorCode") String sensorCode, @Param("date") LocalDate day);
 
-    @Nullable
     @Query(value = "SELECT datum FROM (  SELECT k.datum AS datum,"
                  + "                            MIN(k.luchtvochtigheid) AS luchtvochtigheid"
                  + "                       FROM klimaat k INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id"

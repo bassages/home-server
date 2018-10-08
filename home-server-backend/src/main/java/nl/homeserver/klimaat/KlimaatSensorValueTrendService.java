@@ -3,10 +3,10 @@ package nl.homeserver.klimaat;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static nl.homeserver.Trend.DOWN;
-import static nl.homeserver.Trend.STABLE;
-import static nl.homeserver.Trend.UNKNOWN;
-import static nl.homeserver.Trend.UP;
+import static nl.homeserver.klimaat.Trend.DOWN;
+import static nl.homeserver.klimaat.Trend.STABLE;
+import static nl.homeserver.klimaat.Trend.UNKNOWN;
+import static nl.homeserver.klimaat.Trend.UP;
 import static org.apache.commons.collections4.CollectionUtils.size;
 
 import java.math.BigDecimal;
@@ -17,8 +17,6 @@ import java.util.function.Function;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.springframework.stereotype.Service;
-
-import nl.homeserver.Trend;
 
 @Service
 class KlimaatSensorValueTrendService {

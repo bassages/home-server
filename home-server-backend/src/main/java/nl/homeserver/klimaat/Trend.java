@@ -1,6 +1,6 @@
-package nl.homeserver;
+package nl.homeserver.klimaat;
 
-public enum Trend {
+enum Trend {
     UNKNOWN,
     STABLE,
     UP,

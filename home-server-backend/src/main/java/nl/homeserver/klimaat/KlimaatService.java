@@ -188,7 +188,7 @@ public class KlimaatService {
         return klimaats.stream().max(comparing(Klimaat::getDatumtijd));
     }
 
-    public void add(final Klimaat klimaat) {
+    void add(final Klimaat klimaat) {
         if (klimaat.getDatumtijd() == null) {
             klimaat.setDatumtijd(now(clock));
         }
@@ -363,7 +363,7 @@ public class KlimaatService {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode);
     }
 
-    public List<KlimaatSensor> getAllKlimaatSensors() {
+    List<KlimaatSensor> getAllKlimaatSensors() {
         return klimaatSensorRepository.findAll();
     }
 

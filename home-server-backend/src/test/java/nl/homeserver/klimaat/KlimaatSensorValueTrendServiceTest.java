@@ -15,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import nl.homeserver.Trend;
-
 @RunWith(MockitoJUnitRunner.class)
 public class KlimaatSensorValueTrendServiceTest {
 
