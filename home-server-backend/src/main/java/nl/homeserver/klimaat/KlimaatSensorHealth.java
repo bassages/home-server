@@ -21,7 +21,10 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+
 @Component
+@AllArgsConstructor
 class KlimaatSensorHealth implements HealthIndicator {
 
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 10;
@@ -30,11 +33,6 @@ class KlimaatSensorHealth implements HealthIndicator {
 
     private final KlimaatService klimaatService;
     private final Clock clock;
-
-    KlimaatSensorHealth(final KlimaatService klimaatService, final Clock clock) {
-        this.klimaatService = klimaatService;
-        this.clock = clock;
-    }
 
     @Override
     public Health health() {
@@ -73,11 +71,10 @@ class KlimaatSensorHealth implements HealthIndicator {
             return format("%s (%s) - Most recent valid klimaat was saved at %s. Which is more than %d minutes ago.",
                           klimaatSensor.getCode(), DOWN.toString(),
                           formatDatumtijd(mostRecentlyReceivedKlimaatForSensor), MAXIMUM_KLIMAAT_AGE_IN_MINUTES);
-        } else {
-            return format("%s (%s) - Most recent valid klimaat was saved at %s.",
-                          klimaatSensor.getCode(), UP.toString(),
-                          formatDatumtijd(mostRecentlyReceivedKlimaatForSensor));
         }
+        return format("%s (%s) - Most recent valid klimaat was saved at %s.",
+                      klimaatSensor.getCode(), UP.toString(),
+                      formatDatumtijd(mostRecentlyReceivedKlimaatForSensor));
     }
 
     private boolean atLeastOneIsDown(final Map<KlimaatSensor, RealtimeKlimaat> mostRecentForAllSensors) {

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.opgenomenvermogen.NumberOfRecordsPerWatt;
 import nl.homeserver.energie.verbruikkosten.ActuallyRegisteredVerbruikProvider;
@@ -26,6 +27,7 @@ import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
 import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenRepository;
 
 @Service
+@AllArgsConstructor
 class StandbyPowerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StandbyPowerService.class);
@@ -35,14 +37,6 @@ class StandbyPowerService {
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
     private final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
-
-    StandbyPowerService(final OpgenomenVermogenRepository opgenomenVermogenRepository,
-                        final VerbruikKostenOverzichtService verbruikKostenOverzichtService,
-                        final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider) {
-        this.opgenomenVermogenRepository = opgenomenVermogenRepository;
-        this.verbruikKostenOverzichtService = verbruikKostenOverzichtService;
-        this.actuallyRegisteredVerbruikProvider = actuallyRegisteredVerbruikProvider;
-    }
 
     @Cacheable(CACHE_NAME_STANDBY_POWER)
     public Optional<StandbyPowerInPeriod> getStandbyPower(final YearMonth yearMonth) {

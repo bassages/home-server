@@ -9,10 +9,12 @@ import java.util.List;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.cache.CacheService;
 
 @Service
+@AllArgsConstructor
 public class EnergiecontractService {
 
     private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
@@ -21,17 +23,6 @@ public class EnergiecontractService {
     private final EnergiecontractRepository energiecontractRepository;
     private final CacheService cacheService;
     private final Clock clock;
-
-    public EnergiecontractService(final EnergiecontractToDateRecalculator energiecontractToDateRecalculator,
-                                  final EnergiecontractRepository energiecontractRepository,
-                                  final CacheService cacheService,
-                                  final Clock clock) {
-
-        this.energiecontractToDateRecalculator = energiecontractToDateRecalculator;
-        this.energiecontractRepository = energiecontractRepository;
-        this.cacheService = cacheService;
-        this.clock = clock;
-    }
 
     List<Energiecontract> getAll() {
         return energiecontractRepository.findAll();

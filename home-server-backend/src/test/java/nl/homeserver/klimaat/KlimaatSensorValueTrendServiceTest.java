@@ -25,7 +25,7 @@ public class KlimaatSensorValueTrendServiceTest {
     private KlimaatSensor klimaatSensor;
 
     @Test
-    public void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() throws Exception {
+    public void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() {
         final LocalDate day = LocalDate.of(2016, JULY, 1);
 
         final List<Klimaat> klimaats = List.of(

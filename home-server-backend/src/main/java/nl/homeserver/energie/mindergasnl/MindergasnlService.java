@@ -24,11 +24,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.energie.meterstand.MeterstandOpDag;
 import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Service
+@AllArgsConstructor
 public class MindergasnlService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MindergasnlService.class);
@@ -43,15 +45,6 @@ public class MindergasnlService {
     private final MeterstandService meterstandService;
     private final Provider<HttpClientBuilder> httpClientBuilder;
     private final Clock clock;
-
-    MindergasnlService(final MindergasnlSettingsRepository mindergasnlSettingsRepository,
-                              final MeterstandService meterstandService,
-                              final Provider<HttpClientBuilder> httpClientBuilder, final Clock clock) {
-        this.mindergasnlSettingsRepository = mindergasnlSettingsRepository;
-        this.meterstandService = meterstandService;
-        this.httpClientBuilder = httpClientBuilder;
-        this.clock = clock;
-    }
 
     Optional<MindergasnlSettings> findOne() {
         return mindergasnlSettingsRepository.findOneByIdIsNotNull();

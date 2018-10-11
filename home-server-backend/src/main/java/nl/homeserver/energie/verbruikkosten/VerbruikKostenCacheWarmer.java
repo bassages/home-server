@@ -16,10 +16,12 @@ import java.time.Month;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
 
 @Component
+@AllArgsConstructor
 class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private static final Logger LOGGER = getLogger(VerbruikKostenCacheWarmer.class);
@@ -28,11 +30,6 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
 
     private final VerbruikKostenController verbruikKostenController;
     private final Clock clock;
-
-    VerbruikKostenCacheWarmer(final VerbruikKostenController verbruikKostenController, final Clock clock) {
-        this.verbruikKostenController = verbruikKostenController;
-        this.clock = clock;
-    }
 
     @Override
     public void warmupInitialCache() {

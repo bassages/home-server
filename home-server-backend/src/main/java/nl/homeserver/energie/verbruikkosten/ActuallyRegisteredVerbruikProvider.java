@@ -8,17 +8,15 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.StroomTariefIndicator;
 
 @Component
+@AllArgsConstructor
 public class ActuallyRegisteredVerbruikProvider implements VerbruikProvider {
 
     private final VerbruikRepository verbruikRepository;
-
-    public ActuallyRegisteredVerbruikProvider(final VerbruikRepository verbruikRepository) {
-        this.verbruikRepository = verbruikRepository;
-    }
 
     @Override
     public BigDecimal getStroomVerbruik(final DateTimePeriod period,

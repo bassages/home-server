@@ -17,25 +17,19 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Service
+@AllArgsConstructor
 class VerbruikService {
 
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
     private final MeterstandService meterstandService;
     private final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
-
-    VerbruikService(final VerbruikKostenOverzichtService verbruikKostenOverzichtService,
-                    final MeterstandService meterstandService,
-                    final ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider) {
-        this.verbruikKostenOverzichtService = verbruikKostenOverzichtService;
-        this.meterstandService = meterstandService;
-        this.actuallyRegisteredVerbruikProvider = actuallyRegisteredVerbruikProvider;
-    }
 
     List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(final LocalDate day) {
         return IntStream.range(0, 24)

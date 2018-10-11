@@ -16,20 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/opgenomen-vermogen")
+@AllArgsConstructor
 class OpgenomenVermogenController {
 
     private final OpgenomenVermogenService opgenomenVermogenService;
     private final Clock clock;
-
-    OpgenomenVermogenController(final OpgenomenVermogenService opgenomenVermogenService, final Clock clock) {
-        this.opgenomenVermogenService = opgenomenVermogenService;
-        this.clock = clock;
-    }
 
     @GetMapping("meest-recente")
     OpgenomenVermogen getMostRecent() {

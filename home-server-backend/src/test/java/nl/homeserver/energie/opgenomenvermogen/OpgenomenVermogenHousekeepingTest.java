@@ -20,8 +20,6 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -45,11 +43,8 @@ public class OpgenomenVermogenHousekeepingTest {
     @Mock
     private Clock clock;
 
-    @Captor
-    private ArgumentCaptor<List<OpgenomenVermogen>> deletedOpgenomenVermogenCaptor;
-
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(OpgenomenVermogenHousekeeping.class);
+    public final LoggingRule loggingRule = new LoggingRule(OpgenomenVermogenHousekeeping.class);
 
     @Test
     public void whenDailyCleanupThenCacheCleared() {

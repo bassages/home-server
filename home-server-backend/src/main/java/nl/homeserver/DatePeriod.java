@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings("FieldMayBeFinal")
 public final class DatePeriod {
 
     private static final Set WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
@@ -35,7 +36,7 @@ public final class DatePeriod {
         return dateTimePeriod.getEndDateTime().toLocalDate();
     }
 
-    public static DatePeriod aPeriodWithEndDate(final LocalDate startDate, LocalDate endDate) {
+    public static DatePeriod aPeriodWithEndDate(final LocalDate startDate, final LocalDate endDate) {
         return new DatePeriod(DateTimePeriod.aPeriodWithEndDateTime(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay().minusNanos(1)));
     }
 

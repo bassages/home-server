@@ -15,11 +15,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.StroomTariefIndicator;
 
 @Service
+@AllArgsConstructor
 public class OpgenomenVermogenService {
 
     static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
@@ -29,12 +31,7 @@ public class OpgenomenVermogenService {
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    OpgenomenVermogenService(final OpgenomenVermogenRepository opgenomenVermogenRepository,
-                             final SimpMessagingTemplate messagingTemplate) {
-        this.opgenomenVermogenRepository = opgenomenVermogenRepository;
-        this.messagingTemplate = messagingTemplate;
-    }
-
+    @SuppressWarnings("UnusedReturnValue")
     public OpgenomenVermogen save(final OpgenomenVermogen opgenomenVermogen) {
         final OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenRepository.save(opgenomenVermogen);
         messagingTemplate.convertAndSend(TOPIC, savedOpgenomenVermogen);

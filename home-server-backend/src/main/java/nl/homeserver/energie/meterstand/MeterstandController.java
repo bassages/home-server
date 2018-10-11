@@ -12,18 +12,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/meterstanden")
+@AllArgsConstructor
 class MeterstandController {
 
     private final MeterstandService meterstandService;
-
-    MeterstandController(final MeterstandService meterstandService) {
-        this.meterstandService = meterstandService;
-    }
 
     @GetMapping("meest-recente")
     Meterstand getMostRecent() {

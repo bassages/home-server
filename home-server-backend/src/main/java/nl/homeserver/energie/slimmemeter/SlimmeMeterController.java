@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.config.Paths;
 import nl.homeserver.energie.StroomTariefIndicator;
 import nl.homeserver.energie.meterstand.Meterstand;
@@ -21,6 +22,7 @@ import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenService;
 
 @RestController
 @RequestMapping(Paths.API + "/slimmemeter")
+@AllArgsConstructor
 class SlimmeMeterController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SlimmeMeterController.class);
@@ -30,12 +32,6 @@ class SlimmeMeterController {
 
     private static final int GAS_SCALE = 3;
     private static final int STROOM_SCALE = 3;
-
-    SlimmeMeterController(final OpgenomenVermogenService opgenomenVermogenService,
-                          final MeterstandService meterstandService) {
-        this.opgenomenVermogenService = opgenomenVermogenService;
-        this.meterstandService = meterstandService;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

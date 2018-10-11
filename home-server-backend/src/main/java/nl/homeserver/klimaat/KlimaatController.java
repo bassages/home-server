@@ -20,18 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.ResourceNotFoundException;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/klimaat")
+@AllArgsConstructor
 class KlimaatController {
 
     private final KlimaatService klimaatService;
-
-    KlimaatController(final KlimaatService klimaatService) {
-        this.klimaatService = klimaatService;
-    }
 
     @GetMapping("sensors")
     List<KlimaatSensor> getAllKlimaatSensors() {

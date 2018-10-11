@@ -9,21 +9,18 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
 
 @Component
+@AllArgsConstructor
 class StandbyPowerCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private static final Logger LOGGER = getLogger(StandbyPowerCacheWarmer.class);
 
     private final StandbyPowerController standbyPowerController;
     private final Clock clock;
-
-    StandbyPowerCacheWarmer(final StandbyPowerController standbyPowerController, final Clock clock) {
-        this.standbyPowerController = standbyPowerController;
-        this.clock = clock;
-    }
 
     @Override
     public void warmupInitialCache() {

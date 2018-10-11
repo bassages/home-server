@@ -8,14 +8,13 @@ import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 class EnergiecontractToDateRecalculator {
 
     private final EnergiecontractRepository energiecontractRepository;
-
-    EnergiecontractToDateRecalculator(final EnergiecontractRepository energiecontractRepository) {
-        this.energiecontractRepository = energiecontractRepository;
-    }
 
     void recalculate() {
         final Sort sortByVanAsc = new Sort(Sort.Direction.ASC, "validFrom");

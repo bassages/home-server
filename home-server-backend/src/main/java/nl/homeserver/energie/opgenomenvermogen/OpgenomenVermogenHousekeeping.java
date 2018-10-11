@@ -18,10 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.CacheService;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
 
 @Service
+@AllArgsConstructor
 public class OpgenomenVermogenHousekeeping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenHousekeeping.class);
@@ -35,14 +37,6 @@ public class OpgenomenVermogenHousekeeping {
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final CacheService cacheService;
     private final Clock clock;
-
-    OpgenomenVermogenHousekeeping(final OpgenomenVermogenRepository opgenomenVermogenRepository,
-                                  final CacheService cacheService,
-                                  final Clock clock) {
-        this.opgenomenVermogenRepository = opgenomenVermogenRepository;
-        this.cacheService = cacheService;
-        this.clock = clock;
-    }
 
     @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN_CLEANUP)
     public void start() {
@@ -99,7 +93,7 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(final List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        final Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(comparing(OpgenomenVermogen::getDatumtijd));
+        final Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(OpgenomenVermogen::getDatumtijd);
         return opgenomenVermogenInOneMinute.stream()
                                            .max(byHighestWattThenDatumtijd).orElse(null);
     }

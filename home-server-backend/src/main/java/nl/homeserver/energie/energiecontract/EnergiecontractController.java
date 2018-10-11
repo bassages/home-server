@@ -10,17 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.config.Paths;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping(Paths.API + "/energiecontract")
 class EnergiecontractController {
 
     private final EnergiecontractService energiecontractService;
-
-    EnergiecontractController(final EnergiecontractService energiecontractService) {
-        this.energiecontractService = energiecontractService;
-    }
 
     @GetMapping
     List<Energiecontract> getAll() {

@@ -53,7 +53,7 @@ public class MeterstandHousekeepingTest {
     private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(MeterstandHousekeeping.class);
+    public final LoggingRule loggingRule = new LoggingRule(MeterstandHousekeeping.class);
 
     @Test
     public void whenCleanUpThenCachesCleared() {

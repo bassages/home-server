@@ -14,20 +14,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/standby-power")
+@AllArgsConstructor
 class StandbyPowerController {
 
     private final StandbyPowerService standbyPowerService;
     private final Clock clock;
-
-    StandbyPowerController(final StandbyPowerService standbyPowerService,
-                           final Clock clock) {
-        this.standbyPowerService = standbyPowerService;
-        this.clock = clock;
-    }
 
     @GetMapping(path = "{year}")
     List<StandbyPowerInPeriod> getStandbyPower(@PathVariable("year") final int year) {

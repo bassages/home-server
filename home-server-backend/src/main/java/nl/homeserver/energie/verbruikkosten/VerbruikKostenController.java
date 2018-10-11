@@ -13,17 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/energie")
+@AllArgsConstructor
 public class VerbruikKostenController {
 
     private final VerbruikService verbruikService;
-
-    VerbruikKostenController(final VerbruikService verbruikService) {
-        this.verbruikService = verbruikService;
-    }
 
     @GetMapping(path = "gemiddelde-per-dag/{van}/{tot}")
     VerbruikKostenOverzicht getGemiddeldeVerbruikPerDag(final @PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,

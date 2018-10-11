@@ -3,6 +3,7 @@ package nl.homeserver.energie.meterstand;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@SuppressWarnings({ "FieldMayBeFinal", "WeakerAccess", "CanBeFinal" })
 public class MeterstandBuilder {
 
     private long id;
@@ -19,33 +20,33 @@ public class MeterstandBuilder {
         return new MeterstandBuilder();
     }
 
-    public MeterstandBuilder withDateTime(LocalDateTime dateTime) {
+    public MeterstandBuilder withDateTime(final LocalDateTime dateTime) {
         this.datumtijd = dateTime;
         return this;
     }
 
-    public MeterstandBuilder withStroomTarief1(BigDecimal stroomTarief1) {
+    public MeterstandBuilder withStroomTarief1(final BigDecimal stroomTarief1) {
         this.stroomTarief1 = stroomTarief1;
         return this;
     }
 
-    public MeterstandBuilder withStroomTarief2(BigDecimal stroomTarief2) {
+    public MeterstandBuilder withStroomTarief2(final BigDecimal stroomTarief2) {
         this.stroomTarief1 = stroomTarief2;
         return this;
     }
 
-    public MeterstandBuilder withGas(BigDecimal gas) {
+    public MeterstandBuilder withGas(final BigDecimal gas) {
         this.gas = gas;
         return this;
     }
 
-    public MeterstandBuilder withId(long id) {
+    public MeterstandBuilder withId(final long id) {
         this.id = id;
         return this;
     }
 
     public Meterstand build() {
-        Meterstand meterstand = new Meterstand();
+        final Meterstand meterstand = new Meterstand();
         meterstand.setDateTime(datumtijd);
         meterstand.setId(id);
         meterstand.setStroomTarief1(stroomTarief1);

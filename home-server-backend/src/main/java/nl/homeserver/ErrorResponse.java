@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ErrorResponse {
+class ErrorResponse {
 
     @Getter
     private final String code;

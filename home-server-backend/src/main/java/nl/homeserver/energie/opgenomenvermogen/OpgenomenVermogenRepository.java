@@ -26,7 +26,6 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
     @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MIN(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
     OpgenomenVermogen getOldest();
 
-    @Nullable
     @Query(value = "SELECT date FROM (" +
                    "  SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
                    "         COUNT(id) AS nr_of_records " +

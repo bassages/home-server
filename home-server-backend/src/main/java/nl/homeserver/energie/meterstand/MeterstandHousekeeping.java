@@ -17,11 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.CacheService;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
 
 @Service
+@AllArgsConstructor
 class MeterstandHousekeeping {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeterstandHousekeeping.class);
@@ -34,14 +36,6 @@ class MeterstandHousekeeping {
     private final MeterstandRepository meterstandRepository;
     private final CacheService cacheService;
     private final Clock clock;
-
-    MeterstandHousekeeping(final MeterstandRepository meterstandRepository,
-                           final CacheService cacheService,
-                           final Clock clock) {
-        this.meterstandRepository = meterstandRepository;
-        this.cacheService = cacheService;
-        this.clock = clock;
-    }
 
     @Scheduled(cron = HousekeepingSchedule.METERSTAND_CLEANUP)
     public void start() {
@@ -68,7 +62,7 @@ class MeterstandHousekeeping {
         final List<Meterstand> meterstandenOnDay = meterstandRepository.findByDateTimeBetween(start, end);
 
         final Map<Integer, List<Meterstand>> meterstandenByHour = meterstandenOnDay.stream()
-                                                                                  .collect(groupingBy(meterstand -> meterstand.getDateTime().getHour()));
+                                                                                   .collect(groupingBy(meterstand -> meterstand.getDateTime().getHour()));
 
         meterstandenByHour.forEach(this::cleanupMeterStandenInOneHour);
     }

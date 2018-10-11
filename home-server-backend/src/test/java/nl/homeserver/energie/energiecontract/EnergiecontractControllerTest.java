@@ -1,6 +1,5 @@
 package nl.homeserver.energie.energiecontract;
 
-import static java.time.Month.MARCH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.Test;
@@ -42,7 +40,6 @@ public class EnergiecontractControllerTest {
         when(energiecontractService.save(any())).then(returnsFirstArg());
 
         final long id = 13451L;
-        final LocalDate validTo = LocalDate.of(2018, MARCH, 13);
 
         final Energiecontract existingEnergiecontract = mock(Energiecontract.class);
 

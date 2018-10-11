@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import nl.homeserver.energie.StroomTariefIndicator;
 
+@SuppressWarnings({ "FieldMayBeFinal", "WeakerAccess" })
 public class OpgenomenVermogenBuilder {
 
     private LocalDateTime datumtijd = LocalDateTime.now();

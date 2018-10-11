@@ -43,7 +43,7 @@ public class SlimmeMeterControllerTest {
     private MeterstandService meterstandService;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(SlimmeMeterController.class);
+    public final LoggingRule loggingRule = new LoggingRule(SlimmeMeterController.class);
 
     @Captor
     private ArgumentCaptor<Meterstand> meterstandCaptor;

@@ -5,6 +5,9 @@ import static java.math.BigDecimal.ZERO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import javax.annotation.Nullable;
+
+@SuppressWarnings({ "FieldMayBeFinal", "WeakerAccess", "CanBeFinal" })
 public class EnergiecontractBuilder {
 
     private BigDecimal gasPerKuub = ZERO;
@@ -17,12 +20,12 @@ public class EnergiecontractBuilder {
         return new EnergiecontractBuilder();
     }
 
-    public EnergiecontractBuilder withValidFrom(final LocalDate validFrom) {
+    public EnergiecontractBuilder withValidFrom(@Nullable final LocalDate validFrom) {
         this.validFrom = validFrom;
         return this;
     }
 
-    public EnergiecontractBuilder withValidTo(final LocalDate validTo) {
+    public EnergiecontractBuilder withValidTo(@Nullable final LocalDate validTo) {
         this.validTo = validTo;
         return this;
     }

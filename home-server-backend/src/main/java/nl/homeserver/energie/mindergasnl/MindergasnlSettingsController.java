@@ -6,17 +6,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.config.Paths;
 
 @RestController
 @RequestMapping(Paths.API + "/mindergasnl")
+@AllArgsConstructor
 class MindergasnlSettingsController {
 
     private final MindergasnlService mindergasnlService;
-
-    MindergasnlSettingsController(final MindergasnlService mindergasnlService) {
-        this.mindergasnlService = mindergasnlService;
-    }
 
     @GetMapping
     MindergasnlSettings get() {

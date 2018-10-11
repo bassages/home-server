@@ -12,21 +12,18 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
 
 @Component
+@AllArgsConstructor
 class KlimaatCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private static final Logger LOGGER = getLogger(KlimaatCacheWarmer.class);
 
     private final KlimaatController klimaatController;
     private final Clock clock;
-
-    KlimaatCacheWarmer(final KlimaatController klimaatController, final Clock clock) {
-        this.klimaatController = klimaatController;
-        this.clock = clock;
-    }
 
     @Override
     public void warmupInitialCache() {

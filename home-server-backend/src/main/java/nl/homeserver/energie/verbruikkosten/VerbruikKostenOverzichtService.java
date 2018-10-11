@@ -85,11 +85,13 @@ public class VerbruikKostenOverzichtService {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Cacheable(cacheNames = CACHE_NAME_GAS_VERBRUIK_IN_PERIODE, key = "#verbruikProvider.getClass().getName() + '-' + #period")
     public VerbruikKosten getPotentiallyCachedGasVerbruikInPeriode(final VerbruikProvider verbruikProvider, final DateTimePeriod period) {
         return getNotCachedGasVerbruikInPeriode(verbruikProvider, period);
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Cacheable(cacheNames = CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE, key = "#verbruikProvider.getClass().getName() + '-' + #period + '-' + #stroomTariefIndicator")
     public VerbruikKosten getPotentiallyCachedStroomVerbruikInPeriode(final VerbruikProvider verbruikProvider,
                                                                       final DateTimePeriod period,

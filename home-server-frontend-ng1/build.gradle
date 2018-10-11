@@ -46,4 +46,4 @@ task buildAngularJsApplication(type: GulpTask) {
     options = ['--max-old-space-size=512']
 }
 
-jar.dependsOn 'buildAngularJsApplication';
+jar.dependsOn 'buildAngularJsApplication'

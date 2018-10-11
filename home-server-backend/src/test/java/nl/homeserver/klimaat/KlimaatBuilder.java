@@ -3,7 +3,9 @@ package nl.homeserver.klimaat;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class KlimaatBuilder {
+import javax.annotation.Nullable;
+
+class KlimaatBuilder {
 
     private LocalDateTime datumTijd;
     private KlimaatSensor klimaatSensor;
@@ -14,31 +16,31 @@ public class KlimaatBuilder {
         // Hide public constructor
     }
 
-    public static KlimaatBuilder aKlimaat() {
+    static KlimaatBuilder aKlimaat() {
         return new KlimaatBuilder();
     }
 
-    public KlimaatBuilder withDatumtijd(final LocalDateTime datumTijd) {
+    KlimaatBuilder withDatumtijd(@Nullable final LocalDateTime datumTijd) {
         this.datumTijd = datumTijd;
         return this;
     }
 
-    public KlimaatBuilder withKlimaatSensor(final KlimaatSensor klimaatSensor) {
+    KlimaatBuilder withKlimaatSensor(@Nullable final KlimaatSensor klimaatSensor) {
         this.klimaatSensor = klimaatSensor;
         return this;
     }
 
-    public KlimaatBuilder withTemperatuur(final BigDecimal temperatuur) {
+    KlimaatBuilder withTemperatuur(@Nullable final BigDecimal temperatuur) {
         this.temperatuur = temperatuur;
         return this;
     }
 
-    public KlimaatBuilder withLuchtvochtigheid(final BigDecimal luchtvochtigheid) {
+    KlimaatBuilder withLuchtvochtigheid(@Nullable final BigDecimal luchtvochtigheid) {
         this.luchtvochtigheid = luchtvochtigheid;
         return this;
     }
 
-    public Klimaat build() {
+    Klimaat build() {
         final Klimaat klimaat = new Klimaat();
         klimaat.setDatumtijd(datumTijd);
         klimaat.setKlimaatSensor(klimaatSensor);

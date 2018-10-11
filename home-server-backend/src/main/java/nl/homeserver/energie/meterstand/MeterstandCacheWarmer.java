@@ -15,10 +15,12 @@ import java.time.Month;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
 
 @Component
+@AllArgsConstructor
 class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private static final Logger LOGGER = getLogger(MeterstandCacheWarmer.class);
@@ -27,11 +29,6 @@ class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private final MeterstandController meterstandController;
     private final Clock clock;
-
-    MeterstandCacheWarmer(final MeterstandController meterstandController, final Clock clock) {
-        this.meterstandController = meterstandController;
-        this.clock = clock;
-    }
 
     @Override
     public void warmupInitialCache() {

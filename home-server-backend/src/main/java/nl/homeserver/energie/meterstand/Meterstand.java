@@ -51,7 +51,7 @@ public class Meterstand {
         return StroomTariefIndicator.byId(this.stroomTariefIndicator);
     }
 
-    public void setStroomTariefIndicator(StroomTariefIndicator stroomTariefIndicator) {
+    public void setStroomTariefIndicator(final StroomTariefIndicator stroomTariefIndicator) {
         this.stroomTariefIndicator = stroomTariefIndicator.getId();
     }
 }

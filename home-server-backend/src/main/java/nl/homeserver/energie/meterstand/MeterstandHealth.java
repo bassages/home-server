@@ -10,10 +10,12 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Component
+@AllArgsConstructor
 class MeterstandHealth implements HealthIndicator {
 
     private static final int MAXIMUM_MESSAGE_AGE_IN_MINUTES = 5;
@@ -22,12 +24,6 @@ class MeterstandHealth implements HealthIndicator {
 
     private final MeterstandService meterstandService;
     private final Clock clock;
-
-    MeterstandHealth(final MeterstandService meterstandService,
-                     final Clock clock) {
-        this.meterstandService = meterstandService;
-        this.clock = clock;
-    }
 
     @Override
     public Health health() {

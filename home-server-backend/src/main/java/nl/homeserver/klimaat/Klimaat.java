@@ -27,6 +27,7 @@ class Klimaat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @SuppressWarnings("FieldCanBeLocal")
     @Column
     private LocalDate datum;
 

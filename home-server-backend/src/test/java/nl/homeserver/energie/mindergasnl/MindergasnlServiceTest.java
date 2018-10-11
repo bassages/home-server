@@ -73,7 +73,7 @@ public class MindergasnlServiceTest {
     private StatusLine statusLine;
 
     @Rule
-    public LoggingRule loggingRule = new LoggingRule(MindergasnlService.class);
+    public final LoggingRule loggingRule = new LoggingRule(MindergasnlService.class);
 
     @Captor
     private ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
@@ -197,7 +197,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenYesterdaysMeterstandIsUnknownWhenUploadMeterstandWhenEnabledThenNotUploaded() throws Exception {
+    public void givenYesterdaysMeterstandIsUnknownWhenUploadMeterstandWhenEnabledThenNotUploaded() {
         final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
@@ -249,7 +249,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged() throws Exception {
+    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged() {
         final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 

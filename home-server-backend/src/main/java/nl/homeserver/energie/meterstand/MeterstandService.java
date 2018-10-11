@@ -37,8 +37,8 @@ public class MeterstandService {
     private Optional<Meterstand> mostRecentlySavedMeterstand = Optional.empty();
 
     MeterstandService(final MeterstandRepository meterstandRepository,
-                             final Clock clock,
-                             final SimpMessagingTemplate messagingTemplate) {
+                      final Clock clock,
+                      final SimpMessagingTemplate messagingTemplate) {
         this.meterstandRepository = meterstandRepository;
         this.clock = clock;
         this.messagingTemplate = messagingTemplate;

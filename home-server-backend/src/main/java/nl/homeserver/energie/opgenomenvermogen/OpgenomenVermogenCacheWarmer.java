@@ -11,20 +11,17 @@ import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
 
 @Component
+@AllArgsConstructor
 class OpgenomenVermogenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
     private static final Logger LOGGER = getLogger(OpgenomenVermogenCacheWarmer.class);
 
     private final OpgenomenVermogenController opgenomenVermogenController;
     private final Clock clock;
-
-    OpgenomenVermogenCacheWarmer(final OpgenomenVermogenController opgenomenVermogenController, final Clock clock) {
-        this.opgenomenVermogenController = opgenomenVermogenController;
-        this.clock = clock;
-    }
 
     @Override
     public void warmupInitialCache() {
