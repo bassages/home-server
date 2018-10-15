@@ -1,20 +1,15 @@
-FROM ubuntu:17.04
+FROM openjdk:10-jdk
 
-MAINTAINER bassages
-
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y  software-properties-common && \
-    add-apt-repository ppa:webupd8team/java -y && \
-    apt-get update && \
-    echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get clean
+MAINTAINER nl.homeserver
 
 RUN mkdir -p /opt/home-server
-ADD build/libs/home-server-1.0.0.jar /opt/home-server
-RUN chmod -R 777 /opt/home-server
+COPY build/libs/home-server*.jar /opt/home-server
+COPY application-docker.properties /opt/home-server
+
+WORKDIR /opt/home-server
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/opt/home-server/home-server-1.0.0.jar"]
+VOLUME /var/home-server/database
+
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=docker", "/opt/home-server/home-server-backend-1.0.0.jar"]

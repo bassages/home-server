@@ -43,12 +43,13 @@ export class KlimaatAverageComponent implements OnInit {
         }
         this.getAndLoadData();
       },
-      error => this.errorHandlingService.handleError('De klimaat sensors konden nu niet worden opgehaald', error),
+      error => this.errorHandlingService.handleError('De klimaat sensors konden niet worden opgehaald', error),
     );
   }
 
   private getAndLoadData() {
     this.loadingIndicatorService.open();
+    this.gemiddeldeKlimaatPerMaand = [];
 
     this.klimaatService.getGemiddeldeKlimaatPerMaand(this.sensorCode, this.sensorType, this.year.year()).subscribe(
       gemiddeldeKlimaatPerMaand => { this.gemiddeldeKlimaatPerMaand = gemiddeldeKlimaatPerMaand; },

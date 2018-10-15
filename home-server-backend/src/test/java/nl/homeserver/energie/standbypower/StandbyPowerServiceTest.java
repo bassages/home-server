@@ -81,8 +81,6 @@ public class StandbyPowerServiceTest {
 
         assertThat(standbyPower.getFromDate()).isEqualTo(from.toLocalDate());
         assertThat(standbyPower.getToDate()).isEqualTo(to.toLocalDate());
-        assertThat(standbyPower.getYear()).isEqualTo(month.getYear());
-        assertThat(standbyPower.getMonth()).isEqualTo(month.getMonthValue());
         assertThat(standbyPower.getPercentageOfTotalPeriod()).isEqualTo(new BigDecimal("30.00"));
         assertThat(standbyPower.getStandbyPower()).isEqualTo(10);
         assertThat(standbyPower.getTotalCostsOfPower()).isEqualTo(new BigDecimal("200"));

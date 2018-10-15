@@ -1,5 +1,6 @@
 package nl.homeserver.energie.standbypower;
 
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static org.apache.commons.lang3.ObjectUtils.max;
 import static org.apache.commons.lang3.ObjectUtils.min;
@@ -18,13 +19,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.opgenomenvermogen.NumberOfRecordsPerWatt;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogen;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenRepository;
 import nl.homeserver.energie.verbruikkosten.ActuallyRegisteredVerbruikProvider;
 import nl.homeserver.energie.verbruikkosten.VerbruikForVirtualUsageProvider;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
-import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenRepository;
 
 @Service
 @AllArgsConstructor
@@ -41,37 +44,53 @@ class StandbyPowerService {
     @Cacheable(CACHE_NAME_STANDBY_POWER)
     public Optional<StandbyPowerInPeriod> getStandbyPower(final YearMonth yearMonth) {
         LOGGER.info("getStandbyPower for yearMonth: {}", yearMonth);
+        final Optional<DatePeriod> period = getPeriod(yearMonth);
+        return period.flatMap(this::forPeriod);
+    }
 
-        final LocalDate oldestAvailableDate = opgenomenVermogenRepository.getOldest().getDatumtijd().toLocalDate();
-        final LocalDateTime from = max(oldestAvailableDate, yearMonth.atDay(1)).atStartOfDay();
+    private Optional<DatePeriod> getPeriod(final YearMonth yearMonth) {
+        final OpgenomenVermogen oldest = opgenomenVermogenRepository.getOldest();
+        final OpgenomenVermogen mostRecent = opgenomenVermogenRepository.getMostRecent();
 
-        final LocalDate latestAvailableDate = opgenomenVermogenRepository.getMostRecent().getDatumtijd().toLocalDate();
-        final LocalDateTime to = min(yearMonth.atEndOfMonth().plusDays(1), latestAvailableDate).atStartOfDay();
+        if (oldest == null || mostRecent == null) {
+             return Optional.empty();
+        }
 
-        final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(from, to);
+        final LocalDate oldestAvailableDate = oldest.getDatumtijd().toLocalDate();
+        final LocalDate from = max(oldestAvailableDate, yearMonth.atDay(1));
+
+        final LocalDate mostRecentAvailableDate = mostRecent.getDatumtijd().toLocalDate();
+        final LocalDate to = min(yearMonth.atEndOfMonth().plusDays(1), mostRecentAvailableDate);
+
+        return Optional.of(aPeriodWithToDate(from, to));
+    }
+
+    private Optional<StandbyPowerInPeriod> forPeriod(final DatePeriod datePeriod) {
+        final DateTimePeriod period = datePeriod.toDateTimePeriod();
+
+        final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(period.getFromDateTime(), period.getToDateTime());
 
         if (mostCommonWattInPeriod == null) {
             return Optional.empty();
         }
 
         final List<NumberOfRecordsPerWatt> numberOfRecordsInRange = opgenomenVermogenRepository.numberOfRecordsInRange(
-                from, to, mostCommonWattInPeriod - 2, mostCommonWattInPeriod + 2);
+                period.getFromDateTime(), period.getToDateTime(), mostCommonWattInPeriod - 2, mostCommonWattInPeriod + 2);
 
         final long numberOfRecordsInStandbyPower = numberOfRecordsInRange.stream()
                                                                          .mapToLong(NumberOfRecordsPerWatt::getNumberOfRecords)
                                                                          .sum();
-        final long totalNumberOfRecordsInQuarter = opgenomenVermogenRepository.countNumberOfRecordsInPeriod(from, to);
+        final long totalNumberOfRecordsInQuarter = opgenomenVermogenRepository.countNumberOfRecordsInPeriod(period.getFromDateTime(), period.getToDateTime());
 
         final BigDecimal percentageInStandByPower = BigDecimal.valueOf(numberOfRecordsInStandbyPower)
                                                               .divide(BigDecimal.valueOf(totalNumberOfRecordsInQuarter), 2, RoundingMode.HALF_UP)
                                                               .multiply(BigDecimal.valueOf(100));
 
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-
         final VerbruikKostenOverzicht actualVko = getActualVko(period);
         final VerbruikKostenOverzicht standByPowerVko = getStandbyPowerVko(mostCommonWattInPeriod, period);
 
-        final StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(yearMonth, mostCommonWattInPeriod, percentageInStandByPower, standByPowerVko, actualVko);
+        final StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(
+                datePeriod, mostCommonWattInPeriod, percentageInStandByPower, standByPowerVko, actualVko);
 
         return Optional.of(standbyPowerInPeriod);
     }
