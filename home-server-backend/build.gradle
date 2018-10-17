@@ -17,9 +17,6 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.junit.reportsPath", "build/test-results"
         property "sonar.jacoco.reportPath", "build/test-reports/jacoco.exec"
-
-        // Exclude development utils
-        property "sonar.coverage.exclusions", "**/dev/**/*.java"
     }
 }
 
@@ -102,9 +99,9 @@ bootRun {
     systemProperties System.properties
 }
 
-// ------------ Angular ------------
+def recursive = false
 processResources.dependsOn getRootProject().project('home-server-frontend')
-                                           .getTasksByName('buildAngularApplication', false)[0]
+                                           .getTasksByName('buildAngularApplication', recursive)[0]
 processResources.doLast {
     def frontendArtifacts = '../home-server-frontend/dist'
     def resourcesDirectory = 'build/resources/main/static'
@@ -117,26 +114,6 @@ processResources.doLast {
     copy {
         from frontendArtifacts
         into resourcesDirectory
-    }
-}
-
-// ------------ AngularJS (1.x.x) ------------
-processResources.dependsOn getRootProject().project('home-server-frontend-ng1')
-                                           .getTasksByName('buildAngularJsApplication', false)[0]
-
-processResources.doLast {
-    def frontendArtifacts = '../home-server-frontend-ng1/dist'
-    def resourcesDirectory = 'build/resources/main/public'
-
-    println '-----------------------------------------------------------------------------------'
-    println 'Copy front-end artifacts'
-    println 'From: [' + frontendArtifacts + '] To: [' + resourcesDirectory + ']'
-    println '-----------------------------------------------------------------------------------'
-
-    copy {
-        from frontendArtifacts
-        into resourcesDirectory
-        rename('index.html', 'ng1.html')
     }
 }
 

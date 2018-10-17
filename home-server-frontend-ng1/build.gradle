@@ -12,12 +12,12 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+    gradleVersion = '4.10.2'
 }
 
 node {
     // Version of node to use.
-    version = '8.10.0' // LTS version
+    version = '8.11.4' // LTS version
     download = true
 }
 

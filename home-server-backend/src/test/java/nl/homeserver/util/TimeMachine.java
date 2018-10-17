@@ -21,5 +21,4 @@ public final class TimeMachine {
         doReturn(realClock.instant()).when(mockedClock).instant();
         doReturn(realClock.getZone()).when(mockedClock).getZone();
     }
-
 }
