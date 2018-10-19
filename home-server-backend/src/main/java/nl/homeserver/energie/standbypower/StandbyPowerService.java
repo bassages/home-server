@@ -1,14 +1,12 @@
 package nl.homeserver.energie.standbypower;
 
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static org.apache.commons.lang3.ObjectUtils.max;
 import static org.apache.commons.lang3.ObjectUtils.min;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
