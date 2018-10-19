@@ -11,25 +11,19 @@
 - Beschikbaar stellen van de klimaat sensor data via een (reponsive) web interface
 - Mogelijkheid om gas meterstanden dagelijks automatisch te uploaden naar mindergas.nl
 
-# Screenshots
+# Links
+[home-sensors](https://github.com/bassages/home-sensors)
 
-## Actueel
+# Impressie
+
+## Actueel overzicht
 ![Alt text](documentation/screenshots/actueel-xl.jpg?raw=true "Actueel")
 
 ## Opgenomen vermogen
-![Alt text](documentation/screenshots/opgenomen-vermogen.png?raw=true "Actueel")
+![Alt text](documentation/screenshots/opgenomen-vermogen.jpg?raw=true "Actueel")
 
-## Kosten per maand in jaar
-![Alt text](documentation/screenshots/kosten-maand-xl.png?raw=true "Kosten per maand in jaar")
-
-## Verbruik per dag in maand
-![Alt text](documentation/screenshots/verbruik-dag-xl.png?raw=true "Verbruik per dag in maand")
-
-## Meterstanden per dag
-![Alt text](documentation/screenshots/meterstanden-xl.png?raw=true "Meterstanden per dag")
+## Kosten per dag in maand
+![Alt text](documentation/screenshots/kosten-dag-xl.jpg?raw=true "Kosten per maand in jaar")
 
 ## Klimaat
-![Alt text](documentation/screenshots/temperatuur.png?raw=true "Temperatuur")
-
-## Kosten per maand in jaar (klein scherm)
-<img src="https://raw.githubusercontent.com/bassages/home-server/master/documentation/screenshots/kosten-maand-xs.png" width="400">
+![Alt text](documentation/screenshots/temperatuur.jpg?raw=true "Temperatuur")
