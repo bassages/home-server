@@ -22,3 +22,4 @@ deploy:
   on:
     repo: bassages/home-server
     tags: true
+    skip_cleanup: true
