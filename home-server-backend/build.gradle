@@ -42,7 +42,11 @@ compileTestJava {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
 }
 
-version = '1.0.0'
+if (System.getenv("TRAVIS_TAG") != null) {
+    version = System.getenv("TRAVIS_TAG")
+} else {
+    version = 'x.x.x'
+}
 
 jar {
     baseName = 'home-server'
