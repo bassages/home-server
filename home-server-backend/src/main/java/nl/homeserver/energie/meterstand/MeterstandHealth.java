@@ -11,8 +11,6 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
-import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Component
 @AllArgsConstructor
