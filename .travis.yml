@@ -1,6 +1,6 @@
 language: java
 jdk:
-- openjdk10
+- openjdk11
 script: "./gradlew clean build sonarqube"
 addons:
   sonarcloud:
