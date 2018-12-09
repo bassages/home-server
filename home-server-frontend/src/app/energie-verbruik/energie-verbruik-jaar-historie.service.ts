@@ -8,7 +8,6 @@ import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-ch
 import {ChartConfiguration} from 'c3';
 import {DecimalPipe} from '@angular/common';
 import {VerbruikInJaar} from './verbruikInJaar';
-import {isNullOrUndefined} from 'util';
 
 @Injectable()
 export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikHistorieService
@@ -54,7 +53,7 @@ export class EnergieVerbruikJaarHistorieService extends AbstractEnergieVerbruikH
   }
 
   public getFormattedDate(verbruikInJaar: VerbruikInJaar): string {
-    return !isNullOrUndefined(verbruikInJaar.jaar) ? verbruikInJaar.jaar.toString() : '';
+    return !(verbruikInJaar.jaar === null || verbruikInJaar.jaar === undefined) ? verbruikInJaar.jaar.toString() : '';
   }
 
   public getMoment(selectedDate: Moment, verbruikInjaar: VerbruikInJaar): Moment {

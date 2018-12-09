@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import {Moment} from 'moment';
 import {Klimaat} from './klimaat';
 import {RealtimeKlimaat} from './realtimeKlimaat';
-import {isUndefined} from 'util';
 import {Trend} from './trend';
 import {GemiddeldeKlimaatPerMaand} from './gemiddeldeKlimaatPerMaand';
 
@@ -76,7 +75,7 @@ export class KlimaatService {
 
   public getMostRecent(sensorCode: string): Observable<RealtimeKlimaat> {
     return this.http.get<BackendRealtimeKlimaat>(`api/klimaat/${sensorCode}/meest-recente`)
-                    .pipe(filter(value => !isUndefined(value) && value !== null))
+                    .pipe(filter(value => value !== undefined && value !== null))
                     .pipe(map(KlimaatService.mapToRealtimeKlimaat));
   }
 

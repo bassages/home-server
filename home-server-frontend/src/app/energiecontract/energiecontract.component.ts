@@ -9,7 +9,6 @@ import * as moment from 'moment';
 import {Moment} from 'moment';
 import {DatePickerDirective, IDatePickerConfig} from 'ng2-date-picker';
 import {DecimalPipe} from '@angular/common';
-import {isNullOrUndefined} from 'util';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 const datePickerFormat = 'dddd DD-MM-YYYY';
@@ -177,7 +176,7 @@ export class EnergiecontractComponent implements OnInit {
 
   // noinspection JSMethodCanBeStatic
   private toFloat(value: string): number {
-    if (isNullOrUndefined(value)) {
+    if (value === null || value === undefined) {
       return null;
     }
     const parsed: number = parseFloat(value.replace(',', '.'));

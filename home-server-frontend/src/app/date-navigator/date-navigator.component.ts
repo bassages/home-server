@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 import {IDatePickerConfig} from 'ng2-date-picker';
-import {isUndefined} from 'util';
 
 const selectedDayFormat = 'dd. DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';
@@ -19,7 +18,7 @@ export class DateNavigatorComponent implements OnInit {
 
   @Input()
   set selectedDate(selectedDate: Moment) {
-    if (!isUndefined(selectedDate)) {
+    if (selectedDate !== undefined) {
       this._selectedDate = selectedDate;
       this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
       this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
@@ -60,15 +59,15 @@ export class DateNavigatorComponent implements OnInit {
   }
 
   public datePickerChanged(selectedDate: Moment): void {
-    if (!isUndefined(selectedDate) && !isUndefined(this.previouslySelectedDate)
-          && !selectedDate.isSame(this.previouslySelectedDate)) {
+    if (selectedDate !== undefined && this.previouslySelectedDate !== undefined
+      && !selectedDate.isSame(this.previouslySelectedDate)) {
       this.navigation.emit(selectedDate);
     }
     this.previouslySelectedDate = selectedDate;
   }
 
   public isUpNavigationDisabled(): boolean {
-    if (isUndefined(this._selectedDate)) {
+    if (this._selectedDate === undefined) {
       return true;
     }
 

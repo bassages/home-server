@@ -40,11 +40,6 @@ export class StandbyPowerComponent implements OnInit {
     this.standbyPowerInPeriods = standbyPowerInLastQuarters;
   }
 
-  // noinspection JSMethodCanBeStatic
-  public monthName(month: number): string {
-    return moment().month(month - 1).format('MMMM');
-  }
-
   public onYearNavigate(selectedYear: Moment): void {
     this.selectedYear = selectedYear;
     this.getAndLoadData();

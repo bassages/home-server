@@ -1,6 +1,4 @@
 export class StandbyPowerInPeriod {
-  month: number;
-  year: number;
   fromDate: Date;
   toDate: Date;
   standbyPower: number;

@@ -1,7 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Statistics} from '../../statistics';
 import {DecimalPipe} from '@angular/common';
-import {isNull, isUndefined} from 'util';
 
 @Component({
   selector: 'home-statistics',
@@ -27,7 +26,7 @@ export class StatisticsComponent {
   constructor(private decimalPipe: DecimalPipe) { }
 
   public format(value: number): string {
-    if (isUndefined(value) || isNull(value) || isNaN(value)) {
+    if (value === undefined || value === null || isNaN(value)) {
       return '-';
     }
     return this.valuePrefix + this.decimalPipe.transform(value, this.decimalFormat) + this.valuePostfix;
