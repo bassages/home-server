@@ -4,7 +4,7 @@ import {Led, LedState} from '../led';
 import {RealtimeKlimaat} from '../../klimaat/realtimeKlimaat';
 import {Observable, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
-import {StompService} from '@stomp/ng2-stompjs';
+import {RxStompService} from '@stomp/ng2-stompjs';
 import {Message} from '@stomp/stompjs';
 import {Trend} from '../../klimaat/trend';
 
@@ -28,7 +28,7 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
   private klimaatSubscription: Subscription;
 
   constructor(private klimaatService: KlimaatService,
-              private stompService: StompService,
+              private stompService: RxStompService,
               private router: Router) { }
 
   public ngOnInit(): void {
@@ -41,7 +41,7 @@ export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
   }
 
   private subscribeToKlimaatUpdates(): void {
-    this.klimaatObserver = this.stompService.subscribe('/topic/klimaat');
+    this.klimaatObserver = this.stompService.watch('/topic/klimaat');
     this.klimaatSubscription = this.klimaatObserver.subscribe((message) => {
       this.setKlimaat(KlimaatService.mapToRealtimeKlimaat(JSON.parse(message.body)));
     });

@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {StompService} from '@stomp/ng2-stompjs';
+import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';
 import {Meterstand} from '../../meterstand/meterstand';
@@ -30,7 +30,7 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
   private meterstandObserver: Observable<Message>;
   private meterstandSubscription: Subscription;
 
-  constructor(private stompService: StompService,
+  constructor(private stompService: RxStompService,
               private router: Router,
               private meterstandService: MeterstandService,
               private energieVerbruikService: EnergieVerbruikService) { }
@@ -52,7 +52,7 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToMeterstandUpdates() {
-    this.meterstandObserver = this.stompService.subscribe('/topic/meterstand');
+    this.meterstandObserver = this.stompService.watch('/topic/meterstand');
     this.meterstandSubscription = this.meterstandObserver.subscribe((message) => this.meterstand = new Meterstand(message.body));
   }
 

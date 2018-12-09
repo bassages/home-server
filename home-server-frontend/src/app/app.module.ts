@@ -14,9 +14,9 @@ import {LoadingIndicatorComponent} from './loading-indicator/loading-indicator.c
 import {LoadingIndicatorService} from './loading-indicator/loading-indicator.service';
 import {ErrorHandlingComponent} from './error-handling/error-handling.component';
 import {ErrorHandingService} from './error-handling/error-handing.service';
-
+import { environment } from '../environments/environment';
 import * as SockJS from 'sockjs-client';
-import {StompConfig, StompService} from '@stomp/ng2-stompjs';
+import {InjectableRxStompConfig, RxStompService, rxStompServiceFactory} from '@stomp/ng2-stompjs';
 import {OpgenomenVermogenService} from './opgenomen-vermogen/opgenomen-vermogen.service';
 import {EnergieVerbruikService} from './energie-verbruik/energie-verbruik.service';
 import {EnergieVerbruikComponent} from './energie-verbruik/energie-verbruik.component';
@@ -54,21 +54,25 @@ export function socketProvider() {
   return new SockJS('/ws');
 }
 
-const stompConfig: StompConfig = {
-  url: socketProvider,
-  headers: {},
+const myRxStompConfig: InjectableRxStompConfig = {
+  webSocketFactory: socketProvider,
+  connectHeaders: {},
 
   // Heartbeat interval
   // Interval in milliseconds, set to 0 to disable
-  heartbeat_in: 0, // Typical value 0 - disabled
-  heartbeat_out: 60000, // Typical value 20000
+  heartbeatIncoming: 0, // Typical value 0 - disabled
+  heartbeatOutgoing: 60000, // Typical value 20000
 
   // Wait in milliseconds before attempting auto reconnect
   // Set to 0 to disable
-  reconnect_delay: 20000,
+  reconnectDelay: 20000,
 
-  // Will log diagnostics on console
-  debug: false
+  // Will log diagnostics on console (in production environment only)
+  debug: (str) => {
+    if (!environment.production) {
+      console.log(new Date(), str);
+    }
+  }
 };
 
 const appRoutes: Routes = [
@@ -140,8 +144,20 @@ const appRoutes: Routes = [
     LoadingIndicatorService,
     StandbyPowerService,
     ErrorHandingService,
-    StompService, {provide: StompConfig, useValue: stompConfig},
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true }
+    {
+      provide: InjectableRxStompConfig,
+      useValue: myRxStompConfig
+    },
+    {
+      provide: RxStompService,
+      useFactory: rxStompServiceFactory,
+      deps: [InjectableRxStompConfig]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthorizationInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

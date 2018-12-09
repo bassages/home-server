@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {StompService} from '@stomp/ng2-stompjs';
+import {RxStompService} from '@stomp/ng2-stompjs';
 import {Observable, Subscription} from 'rxjs';
 import {Message} from '@stomp/stompjs';
 import {Meterstand} from '../../meterstand/meterstand';
@@ -30,7 +30,7 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
 
   constructor(private opgenomenVermogenService: OpgenomenVermogenService,
               private meterstandService: MeterstandService,
-              private stompService: StompService,
+              private stompService: RxStompService,
               private router: Router) { }
 
   public ngOnInit(): void {
@@ -56,12 +56,12 @@ export class StroomVerbruikComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToMeterstandUpdates() {
-    this.meterstandObserver = this.stompService.subscribe('/topic/meterstand');
+    this.meterstandObserver = this.stompService.watch('/topic/meterstand');
     this.meterstandSubscription = this.meterstandObserver.subscribe((message) => this.meterstand = new Meterstand(message.body));
   }
 
   private subscribeToOpgenomenVermogenUpdates() {
-    this.opgenomenVermogenObserver = this.stompService.subscribe('/topic/opgenomen-vermogen');
+    this.opgenomenVermogenObserver = this.stompService.watch('/topic/opgenomen-vermogen');
     this.opgenomenVermogenSubscription = this.opgenomenVermogenObserver.subscribe(
       (message) => this.setOpgenomenVermogen(new OpgenomenVermogen(message.body))
     );
