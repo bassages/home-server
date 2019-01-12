@@ -15,6 +15,7 @@ import {DecimalPipe} from '@angular/common';
 import {Statistics} from '../../statistics';
 import {ChartStatisticsService} from '../../chart/statistics/chart-statistics.service';
 import * as chroma from 'chroma-js';
+import {KlimaatSensorService} from '../klimaatsensor.service';
 
 @Component({
   selector: 'home-klimaat-historie',
@@ -39,6 +40,7 @@ export class KlimaatHistorieComponent implements OnInit {
   private chart: ChartAPI;
 
   constructor(private klimaatService: KlimaatService,
+              private klimaatSensorService: KlimaatSensorService,
               private chartService: ChartService,
               private chartStatisticsService: ChartStatisticsService,
               private loadingIndicatorService: LoadingIndicatorService,
@@ -82,7 +84,7 @@ export class KlimaatHistorieComponent implements OnInit {
   private getKlimaatSensors(): void {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.getKlimaatSensors().subscribe(
+    this.klimaatSensorService.list().subscribe(
       response => {
           this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
 

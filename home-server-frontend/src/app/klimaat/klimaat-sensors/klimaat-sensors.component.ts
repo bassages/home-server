@@ -6,6 +6,7 @@ import {KlimaatSensor} from '../klimaatSensor';
 import * as _ from 'lodash';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {KlimaatSensorService} from '../klimaatsensor.service';
 
 @Component({
   selector: 'home-klimaat-sensors',
@@ -22,6 +23,7 @@ export class KlimaatSensorsComponent implements OnInit {
   public selectedSensor: KlimaatSensor;
 
   constructor(private klimaatService: KlimaatService,
+              private klimaatSensorService: KlimaatSensorService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private modalService: NgbModal) {
@@ -42,7 +44,7 @@ export class KlimaatSensorsComponent implements OnInit {
   private getKlimaatSensors(): void {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.getKlimaatSensors().subscribe(
+    this.klimaatSensorService.list().subscribe(
       response => {
         this.sensors = _.sortBy<KlimaatSensor>(response, ['code']);
       },
@@ -74,7 +76,7 @@ export class KlimaatSensorsComponent implements OnInit {
     sensorToSave.code = this.code.value;
     sensorToSave.omschrijving = this.omschrijving.value;
 
-    this.klimaatService.updateKlimaatSensor(sensorToSave).subscribe(
+    this.klimaatSensorService.update(sensorToSave).subscribe(
       savedKlimaatSensor => {
         this.selectedSensor.omschrijving = savedKlimaatSensor.omschrijving;
         this.editMode = false;
@@ -90,7 +92,7 @@ export class KlimaatSensorsComponent implements OnInit {
   public delete() {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.deleteKlimaatSensor(this.selectedSensor).subscribe(
+    this.klimaatSensorService.delete(this.selectedSensor).subscribe(
       () => {
         const index = this.sensors.indexOf(this.selectedSensor);
         this.sensors.splice(index, 1);

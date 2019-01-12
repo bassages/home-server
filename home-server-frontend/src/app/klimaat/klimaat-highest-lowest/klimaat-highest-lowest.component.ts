@@ -9,8 +9,7 @@ import {KlimaatSensor} from '../klimaatSensor';
 import * as _ from 'lodash';
 import {zip} from 'rxjs';
 import {Router} from '@angular/router';
-
-const datePickerFormat = 'DD-MM-YYYY';
+import {KlimaatSensorService} from '../klimaatsensor.service';
 
 @Component({
   selector: 'home-klimaat-highest-lowest',
@@ -28,6 +27,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
   public lowestKlimaats: Klimaat[];
 
   constructor(private klimaatService: KlimaatService,
+              private klimaatSensorService: KlimaatSensorService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService,
               private router: Router) {
@@ -40,7 +40,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
   private getKlimaatSensors(): void {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.getKlimaatSensors().subscribe(
+    this.klimaatSensorService.list().subscribe(
       response => {
         this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
 

@@ -7,6 +7,7 @@ import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator
 import {KlimaatSensor} from '../klimaatSensor';
 import {GemiddeldeKlimaatPerMaand} from '../gemiddeldeKlimaatPerMaand';
 import * as _ from 'lodash';
+import {KlimaatSensorService} from '../klimaatsensor.service';
 
 @Component({
   selector: 'home-klimaat-average',
@@ -23,6 +24,7 @@ export class KlimaatAverageComponent implements OnInit {
   public gemiddeldeKlimaatPerMaand: GemiddeldeKlimaatPerMaand[];
 
   constructor(private klimaatService: KlimaatService,
+              private klimaatSensorService: KlimaatSensorService,
               private loadingIndicatorService: LoadingIndicatorService,
               private errorHandlingService: ErrorHandingService) {
   }
@@ -34,7 +36,7 @@ export class KlimaatAverageComponent implements OnInit {
   private getKlimaatSensors(): void {
     this.loadingIndicatorService.open();
 
-    this.klimaatService.getKlimaatSensors().subscribe(
+    this.klimaatSensorService.list().subscribe(
       response => {
         this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
 

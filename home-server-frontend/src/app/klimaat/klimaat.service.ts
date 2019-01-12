@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
-import {KlimaatSensor} from './klimaatSensor';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 import {Klimaat} from './klimaat';
@@ -63,11 +62,6 @@ export class KlimaatService {
     return gemiddeldeKlimaatPerMaand;
   }
 
-  public getKlimaatSensors(): Observable<KlimaatSensor[]> {
-    const url = '/api/klimaat/sensors';
-    return this.http.get<KlimaatSensor[]>(url);
-  }
-
   public getKlimaat(sensorCode: string, from: Moment, to: Moment): Observable<Klimaat[]> {
     const url = `/api/klimaat/${sensorCode}?from=${from.format('YYYY-MM-DD')}&to=${to.format('YYYY-MM-DD')}`;
     return this.http.get<BackendKlimaat[]>(url).pipe(map(KlimaatService.mapAllToKlimaat));
@@ -91,14 +85,6 @@ export class KlimaatService {
     const url = `api/klimaat/${sensorCode}/gemiddeld-per-maand-in-jaar?jaar=${year}&sensorType=${sensorType}`;
     return this.http.get<BackendGemiddeldeKlimaatPerMaand[][]>(url)
                     .pipe(map(KlimaatService.mapAllToGemiddeldeKlimaatPerMaand));
-  }
-
-  public updateKlimaatSensor(klimaatSensor: KlimaatSensor): Observable<KlimaatSensor> {
-    return this.http.put<KlimaatSensor>(`/api/klimaat/sensors/${klimaatSensor.code}`, klimaatSensor);
-  }
-
-  public deleteKlimaatSensor(klimaatSensor: KlimaatSensor) {
-    return this.http.delete(`/api/klimaat/sensors/${klimaatSensor.code}`);
   }
 
   // noinspection JSMethodCanBeStatic

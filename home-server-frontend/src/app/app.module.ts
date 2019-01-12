@@ -49,6 +49,7 @@ import {StandbyPowerService} from './standby-power/standby-power.service';
 import {AuthorizationInterceptor} from './auth/authorization-interceptor';
 import {AuthService} from './auth.service';
 import {LoginComponent} from './login/login.component';
+import {KlimaatSensorService} from './klimaat/klimaatsensor.service';
 
 export function socketProvider() {
   return new SockJS('/ws');
@@ -141,6 +142,7 @@ const appRoutes: Routes = [
     EnergiecontractService,
     MindergasnlService,
     KlimaatService,
+    KlimaatSensorService,
     LoadingIndicatorService,
     StandbyPowerService,
     ErrorHandingService,
