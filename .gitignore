@@ -4,3 +4,4 @@ node_modules
 developmentDatabase
 classes
 home-server-db
+*.iml
