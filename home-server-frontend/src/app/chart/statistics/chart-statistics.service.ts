@@ -1,5 +1,4 @@
 import {LineOptions} from 'c3';
-import * as _ from 'lodash';
 import {Statistics} from '../../statistics';
 
 export class ChartStatisticsService {
@@ -9,11 +8,21 @@ export class ChartStatisticsService {
       return [];
     }
 
-    return _.filter( [
-      this.createStatisticChartLine(statistics.avg, 'avg'),
-      this.createStatisticChartLine(statistics.min, 'min'),
-      this.createStatisticChartLine(statistics.max, 'max')
-    ], _.isObject);
+    const lineOptions: LineOptions[] = [];
+
+    const avg = this.createStatisticChartLine(statistics.avg, 'avg');
+    if (avg != null) {
+      lineOptions.push(avg);
+    }
+    const min = this.createStatisticChartLine(statistics.min, 'min');
+    if (min != null) {
+      lineOptions.push(min);
+    }
+    const max = this.createStatisticChartLine(statistics.max, 'max');
+    if (max != null) {
+      lineOptions.push(max);
+    }
+    return lineOptions;
   }
 
   // noinspection JSMethodCanBeStatic
@@ -21,5 +30,6 @@ export class ChartStatisticsService {
     if (value) {
       return { value: value, class: clazz };
     }
+    return null;
   }
 }
