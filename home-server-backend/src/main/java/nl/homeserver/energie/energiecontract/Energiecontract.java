@@ -60,6 +60,12 @@ public class Energiecontract {
     @Setter
     private String leverancier;
 
+    @Getter
+    @Setter
+    @Nullable
+    @Column(length = 2048)
+    private String remark;
+
     public BigDecimal getStroomKosten(final StroomTariefIndicator stroomTariefIndicator) {
         switch (stroomTariefIndicator) {
             case DAL:

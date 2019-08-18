@@ -8,4 +8,5 @@ export class Energiecontract {
   stroomPerKwhDalTarief: number;
   gasPerKuub: number;
   leverancier: string;
+  remark: string;
 }
