@@ -17,4 +17,5 @@ class EnergiecontractDto {
     private BigDecimal stroomPerKwhDalTarief;
     private BigDecimal gasPerKuub;
     private String leverancier;
+    private String remark;
 }

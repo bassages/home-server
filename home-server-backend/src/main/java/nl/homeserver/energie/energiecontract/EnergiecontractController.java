@@ -44,6 +44,7 @@ class EnergiecontractController {
         energiecontract.setStroomPerKwhDalTarief(energiecontractDto.getStroomPerKwhDalTarief());
         energiecontract.setGasPerKuub(energiecontractDto.getGasPerKuub());
         energiecontract.setLeverancier(energiecontractDto.getLeverancier());
+        energiecontract.setRemark(energiecontractDto.getRemark());
 
         return energiecontractService.save(energiecontract);
     }

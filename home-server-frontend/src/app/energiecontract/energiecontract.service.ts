@@ -13,6 +13,7 @@ class BackendEnergiecontract {
   stroomPerKwhDalTarief: number;
   gasPerKuub: number;
   leverancier: string;
+  remark: string;
 }
 
 @Injectable()
@@ -22,6 +23,7 @@ static toEnergieContract(backendEnergieContract: BackendEnergiecontract): Energi
     const energiecontract: Energiecontract = new Energiecontract();
     energiecontract.id = backendEnergieContract.id;
     energiecontract.leverancier = backendEnergieContract.leverancier;
+    energiecontract.remark = backendEnergieContract.remark;
     energiecontract.stroomPerKwhDalTarief = backendEnergieContract.stroomPerKwhDalTarief;
     energiecontract.stroomPerKwhNormaalTarief = backendEnergieContract.stroomPerKwhNormaalTarief;
     energiecontract.gasPerKuub = backendEnergieContract.gasPerKuub;
@@ -39,6 +41,7 @@ static toEnergieContract(backendEnergieContract: BackendEnergiecontract): Energi
     backendEnergiecontract.id = energieContract.id;
     backendEnergiecontract.validFrom = energieContract.validFrom.format('YYYY-MM-DD');
     backendEnergiecontract.leverancier = energieContract.leverancier;
+    backendEnergiecontract.remark = energieContract.remark;
     backendEnergiecontract.gasPerKuub = energieContract.gasPerKuub;
     backendEnergiecontract.stroomPerKwhNormaalTarief = energieContract.stroomPerKwhNormaalTarief;
     backendEnergiecontract.stroomPerKwhDalTarief = energieContract.stroomPerKwhDalTarief;

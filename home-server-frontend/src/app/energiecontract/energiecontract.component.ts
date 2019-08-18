@@ -52,6 +52,7 @@ export class EnergiecontractComponent implements OnInit {
   private createForm(): void {
     this.form = new FormGroup({
       leverancier: new FormControl('', [Validators.required, Validators.maxLength(255)]),
+      remark: new FormControl('', [Validators.maxLength(2048)]),
       gas: new FormControl('', [Validators.required, Validators.pattern(pricePattern)]),
       stroomNormaalTarief: new FormControl('', [Validators.required, Validators.pattern(pricePattern)]),
       stroomDalTarief: new FormControl('', Validators.pattern(pricePattern)),
@@ -77,6 +78,10 @@ export class EnergiecontractComponent implements OnInit {
     return this.form.get('leverancier') as FormControl;
   }
 
+  get remark(): FormControl {
+    return this.form.get('remark') as FormControl;
+  }
+
   get gas(): FormControl {
     return this.form.get('gas') as FormControl;
   }
@@ -94,6 +99,7 @@ export class EnergiecontractComponent implements OnInit {
     this.selectedEnergiecontract = null;
 
     this.leverancier.setValue('');
+    this.remark.setValue('');
     this.gas.setValue('');
     this.stroomNormaalTarief.setValue('');
     this.stroomDalTarief.setValue('');
@@ -107,6 +113,7 @@ export class EnergiecontractComponent implements OnInit {
     this.selectedEnergiecontract = energiecontract;
 
     this.leverancier.setValue(energiecontract.leverancier);
+    this.remark.setValue(energiecontract.remark);
     this.gas.setValue(this.formatPrice(energiecontract.gasPerKuub));
     this.stroomNormaalTarief.setValue(this.formatPrice(energiecontract.stroomPerKwhNormaalTarief));
     this.stroomDalTarief.setValue(this.formatPrice(energiecontract.stroomPerKwhDalTarief));
@@ -134,6 +141,10 @@ export class EnergiecontractComponent implements OnInit {
     const energiecontract: Energiecontract = this.selectedEnergiecontract ? this.selectedEnergiecontract : new Energiecontract();
     energiecontract.validFrom = this.selectedDate;
     energiecontract.leverancier = this.leverancier.value;
+
+    if (this.remark.value) {
+      energiecontract.remark = this.remark.value;
+    }
 
     energiecontract.gasPerKuub = this.toFloat(this.gas.value);
     energiecontract.stroomPerKwhNormaalTarief = this.toFloat(this.stroomNormaalTarief.value);
