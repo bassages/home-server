@@ -26,7 +26,7 @@ repositories {
 
 node {
     // Version of node to use.
-    version = '10.14.1' // LTS version
+    version = '10.16.3' // LTS version
     download = true
 }
 
