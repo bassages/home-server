@@ -13,7 +13,7 @@ import nl.homeserver.config.Paths;
 class UserController {
 
     @GetMapping
-    Principal user(final Principal user) {
+    public Principal user(final Principal user) {
         return user;
     }
 }

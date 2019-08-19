@@ -24,8 +24,9 @@ public class VerbruikKostenController {
     private final VerbruikService verbruikService;
 
     @GetMapping(path = "gemiddelde-per-dag/{van}/{tot}")
-    VerbruikKostenOverzicht getGemiddeldeVerbruikPerDag(final @PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                                        final @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
+    public VerbruikKostenOverzicht getGemiddeldeVerbruikPerDag(
+            final @PathVariable("van") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+            final @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
 
         return verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(aPeriodWithToDate(from, to));
     }

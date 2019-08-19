@@ -29,14 +29,15 @@ class OpgenomenVermogenController {
     private final Clock clock;
 
     @GetMapping("meest-recente")
-    OpgenomenVermogen getMostRecent() {
+    public OpgenomenVermogen getMostRecent() {
         return opgenomenVermogenService.getMostRecent();
     }
 
     @GetMapping("historie/{from}/{to}")
-    List<OpgenomenVermogen> getOpgenomenVermogenHistory(final @PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-                                                        final @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
-                                                        final @RequestParam("subPeriodLength") long subPeriodLengthInSeconds) {
+    public List<OpgenomenVermogen> getOpgenomenVermogenHistory(
+            final @PathVariable("from") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+            final @PathVariable("to") @DateTimeFormat(iso = ISO.DATE) LocalDate to,
+            final @RequestParam("subPeriodLength") long subPeriodLengthInSeconds) {
 
         final Duration subPeriodDuration = Duration.ofSeconds(subPeriodLengthInSeconds);
         final DatePeriod period = aPeriodWithToDate(from, to);
