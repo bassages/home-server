@@ -1,7 +1,7 @@
 language: java
 jdk:
 - openjdk11
-script: "./gradlew clean build sonarqube"
+script: "./gradlew clean build jacocoTestreport sonarqube"
 addons:
   sonarcloud:
     organization: bassages-github
