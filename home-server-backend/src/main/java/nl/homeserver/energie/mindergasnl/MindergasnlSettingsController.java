@@ -17,12 +17,12 @@ class MindergasnlSettingsController {
     private final MindergasnlService mindergasnlService;
 
     @GetMapping
-    MindergasnlSettings get() {
+    public MindergasnlSettings get() {
         return mindergasnlService.findOne().orElse(null);
     }
 
     @PostMapping
-    MindergasnlSettings save(final @RequestBody MindergasnlSettingsDto mindergasnlSettingsDto) {
+    public MindergasnlSettings save(final @RequestBody MindergasnlSettingsDto mindergasnlSettingsDto) {
         return mindergasnlService.save(fromDto(mindergasnlSettingsDto));
     }
 

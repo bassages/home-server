@@ -21,17 +21,17 @@ class EnergiecontractController {
     private final EnergiecontractService energiecontractService;
 
     @GetMapping
-    List<Energiecontract> getAll() {
+    public List<Energiecontract> getAll() {
         return energiecontractService.getAll();
     }
 
     @GetMapping("/current")
-    Energiecontract getCurrentlyValid() {
+    public Energiecontract getCurrentlyValid() {
         return energiecontractService.getCurrent();
     }
 
     @PostMapping
-    Energiecontract save(final @RequestBody EnergiecontractDto energiecontractDto) {
+    public Energiecontract save(final @RequestBody EnergiecontractDto energiecontractDto) {
         final Energiecontract energiecontract;
 
         if (energiecontractDto.getId() == null) {
@@ -50,7 +50,7 @@ class EnergiecontractController {
     }
 
     @DeleteMapping(path = "{id}")
-    void delete(final @PathVariable("id") long id) {
+    public void delete(final @PathVariable("id") long id) {
         energiecontractService.delete(id);
     }
 }

@@ -24,17 +24,17 @@ class MeterstandController {
     private final MeterstandService meterstandService;
 
     @GetMapping("meest-recente")
-    Meterstand getMostRecent() {
+    public Meterstand getMostRecent() {
         return meterstandService.getMostRecent();
     }
 
     @GetMapping("oudste-vandaag")
-    Meterstand getOldestOfToday() {
+    public Meterstand getOldestOfToday() {
         return meterstandService.getOldestOfToday();
     }
 
     @GetMapping("per-dag/{vanaf}/{tot}")
-    List<MeterstandOpDag> perDag(final @PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
+    public List<MeterstandOpDag> perDag(final @PathVariable("vanaf") @DateTimeFormat(iso = ISO.DATE) LocalDate from,
                                  final @PathVariable("tot") @DateTimeFormat(iso = ISO.DATE) LocalDate to) {
         final DatePeriod period = aPeriodWithToDate(from, to);
         return meterstandService.getPerDag(period);

@@ -15,7 +15,7 @@ class CacheController {
     private final CacheService cacheService;
 
     @PostMapping(path = "clearAll")
-    void clearAll() {
+    public void clearAll() {
         cacheService.clearAll();
     }
 }

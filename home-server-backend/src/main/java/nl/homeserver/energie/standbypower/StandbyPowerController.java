@@ -26,7 +26,7 @@ class StandbyPowerController {
     private final Clock clock;
 
     @GetMapping(path = "{year}")
-    List<StandbyPowerInPeriod> getStandbyPower(@PathVariable("year") final int year) {
+    public List<StandbyPowerInPeriod> getStandbyPower(@PathVariable("year") final int year) {
         final YearMonth currentYearMonth = YearMonth.now(clock);
         return IntStream.rangeClosed(1, 12)
                         .boxed().sorted(reverseOrder())
