@@ -1,6 +1,8 @@
 package nl.homeserver.energie.verbruikkosten;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,9 +34,9 @@ public class VerbruikKostenOverzicht {
     private BigDecimal gasKosten;
 
     public BigDecimal getTotaalStroomKosten() {
-        if (stroomKostenNormaal != null && stroomKostenDal != null) {
-            return stroomKostenDal.add(stroomKostenNormaal);
-        }
-        return null;
+        return Arrays.stream(new BigDecimal[] { stroomKostenNormaal, stroomKostenDal })
+                     .filter(Objects::nonNull)
+                     .reduce(BigDecimal::add)
+                     .orElse(null);
     }
 }

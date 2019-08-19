@@ -40,9 +40,11 @@ class StandbyPowerInPeriod {
         this.costsOfStandByPower = standByPowerVko.getTotaalStroomKosten();
         this.totalCostsOfPower = actualVko.getTotaalStroomKosten();
 
-        percentageOfTotalCost = costsOfStandByPower.divide(totalCostsOfPower, 2, HALF_UP)
-                                                   .multiply(BigDecimal.valueOf(100)).setScale(0, HALF_UP);
+        if  (this.costsOfStandByPower != null && this.totalCostsOfPower != null) {
+            percentageOfTotalCost = costsOfStandByPower.divide(totalCostsOfPower, 2, HALF_UP)
+                                                       .multiply(BigDecimal.valueOf(100)).setScale(0, HALF_UP);
 
+        }
     }
 
     private StandbyPowerInPeriod() {

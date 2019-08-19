@@ -7,13 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichten;
-
 public class VerbruikKostenOverzichtenTest {
 
     @Test
-    public void whenAverageToSingleThenSingleVerbuikKostenOverichWithAveragesReturned() {
+    public void whenAverageToSingleThenSingleVerbuikKostenOverichtWithAveragesReturned() {
         final VerbruikKostenOverzicht verbruikKostenOverzicht1 = new VerbruikKostenOverzicht();
         verbruikKostenOverzicht1.setGasVerbruik(new BigDecimal(42.023));
         verbruikKostenOverzicht1.setGasKosten(new BigDecimal(10.000));
@@ -31,6 +28,7 @@ public class VerbruikKostenOverzichtenTest {
         verbruikKostenOverzicht2.setStroomKostenNormaal(new BigDecimal(9214.081));
 
         final VerbruikKostenOverzichten verbruikKostenOverzichten = new VerbruikKostenOverzichten(List.of(verbruikKostenOverzicht1, verbruikKostenOverzicht2));
+
         final VerbruikKostenOverzicht averagedVerbruikKostenOverzicht = verbruikKostenOverzichten.averageToSingle();
 
         assertThat(averagedVerbruikKostenOverzicht.getGasVerbruik()).isEqualTo(new BigDecimal("31.777"));
@@ -41,4 +39,39 @@ public class VerbruikKostenOverzichtenTest {
         assertThat(averagedVerbruikKostenOverzicht.getStroomKostenNormaal()).isEqualTo(new BigDecimal("5763.05"));
     }
 
+    @Test
+    public void givenNotNullNormaalAndNotNullDalWhenGetTotaalStroomKostenThenSumOfNormaalAndDalReturned() {
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomKostenDal(new BigDecimal(3));
+        verbruikKostenOverzicht.setStroomKostenNormaal(new BigDecimal(1));
+
+        assertThat(verbruikKostenOverzicht.getTotaalStroomKosten()).isEqualTo(new BigDecimal(4));
+    }
+
+    @Test
+    public void givenNullNormaalAndNotNullDalWhenGetTotaalStroomKostenThenDalReturned() {
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomKostenDal(new BigDecimal(3));
+        verbruikKostenOverzicht.setStroomKostenNormaal(null);
+
+        assertThat(verbruikKostenOverzicht.getTotaalStroomKosten()).isEqualTo(new BigDecimal(3));
+    }
+
+    @Test
+    public void givenNotNullNormaalAndNullDalWhenGetTotaalStroomKostenThenNormaalReturned() {
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomKostenDal(null);
+        verbruikKostenOverzicht.setStroomKostenNormaal(new BigDecimal(3));
+
+        assertThat(verbruikKostenOverzicht.getTotaalStroomKosten()).isEqualTo(new BigDecimal(3));
+    }
+
+    @Test
+    public void givenNullNormaalAndDalWhenGetTotaalStroomKostenThenNullReturned() {
+        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
+        verbruikKostenOverzicht.setStroomKostenDal(null);
+        verbruikKostenOverzicht.setStroomKostenNormaal(null);
+
+        assertThat(verbruikKostenOverzicht.getTotaalStroomKosten()).isNull();
+    }
 }
