@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 })
 export class LoadingIndicatorComponent implements OnInit {
 
-  @ViewChild('loadingIndicatorTemplate')
+  @ViewChild('loadingIndicatorTemplate', { static: true })
   private loaderTemplate: TemplateRef<any>;
 
   modal: NgbModalRef;

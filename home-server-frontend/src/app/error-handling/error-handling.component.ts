@@ -10,7 +10,7 @@ import {Error} from './error';
 })
 export class ErrorHandlingComponent implements OnInit {
 
-  @ViewChild('errorDialogTemplate')
+  @ViewChild('errorDialogTemplate', { static: true })
   private errorDialogTemplate: TemplateRef<any>;
 
   public message: String;

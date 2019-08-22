@@ -39,7 +39,7 @@ export class EnergiecontractComponent implements OnInit {
               private modalService: NgbModal) {
   }
 
-  @ViewChild('datePicker') datePicker: DatePickerDirective;
+  @ViewChild('datePicker', {static: true}) datePicker: DatePickerDirective;
 
   public ngOnInit(): void {
     this.datePickerConfiguration = {
@@ -155,8 +155,8 @@ export class EnergiecontractComponent implements OnInit {
         if (this.selectedEnergiecontract) {
           this.selectedEnergiecontract.id = savedEnergiecontract.id;
         } else {
-         this.energiecontracten.push(savedEnergiecontract);
-         this.sort(this.energiecontracten);
+          this.energiecontracten.push(savedEnergiecontract);
+          this.sort(this.energiecontracten);
         }
         this.editMode = false;
         this.selectedEnergiecontract = null;
