@@ -1,8 +1,6 @@
 package nl.homeserver.cache;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.util.List;
@@ -35,7 +33,7 @@ public class WarmupInitialCacheTest {
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verifyZeroInteractions(initialCacheWarmer);
+        verifyNoMoreInteractions(initialCacheWarmer);
     }
 
     @Test

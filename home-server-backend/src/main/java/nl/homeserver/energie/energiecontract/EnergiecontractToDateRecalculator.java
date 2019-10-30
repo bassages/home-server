@@ -17,9 +17,8 @@ class EnergiecontractToDateRecalculator {
     private final EnergiecontractRepository energiecontractRepository;
 
     void recalculate() {
-        final Sort sortByVanAsc = new Sort(Sort.Direction.ASC, "validFrom");
-
-        final List<Energiecontract> energiecontracts = energiecontractRepository.findAll(sortByVanAsc);
+        Sort ordering = Sort.by(Sort.Direction.ASC, "validFrom");
+        final List<Energiecontract> energiecontracts = energiecontractRepository.findAll(ordering);
 
         Energiecontract previousEnergiecontract = null;
         for (int i = 0; i < energiecontracts.size(); i++) {

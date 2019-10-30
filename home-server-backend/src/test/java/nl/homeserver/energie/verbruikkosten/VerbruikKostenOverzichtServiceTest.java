@@ -6,9 +6,7 @@ import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import java.math.BigDecimal;
@@ -63,7 +61,7 @@ public class VerbruikKostenOverzichtServiceTest {
         assertThat(verbruikKostenOverzicht.getStroomKostenNormaal()).isNull();
         assertThat(verbruikKostenOverzicht.getStroomVerbruikNormaal()).isNull();
 
-        verifyZeroInteractions(verbruikProvider, energiecontractService);
+        verifyNoMoreInteractions(verbruikProvider, energiecontractService);
     }
 
     @Test
@@ -135,6 +133,6 @@ public class VerbruikKostenOverzichtServiceTest {
         assertThat(verbruikKostenOverzicht.getStroomVerbruikNormaal()).isEqualTo(new BigDecimal("3.000"));
         assertThat(verbruikKostenOverzicht.getStroomKostenNormaal()).isEqualTo(new BigDecimal("90.000"));
 
-        verifyZeroInteractions(verbruikKostenOverzichtServiceProxyWithEnabledCaching);
+        verifyNoMoreInteractions(verbruikKostenOverzichtServiceProxyWithEnabledCaching);
     }
 }

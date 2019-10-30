@@ -16,11 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -169,7 +165,6 @@ public class KlimaatServiceTest {
         assertThat(klimaat.getDatumtijd()).isEqualTo(currentDateTime);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void whenAddThenOldItemsRemovedFromRecentlyReceivedKlimaatsPerSensorCode() {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
@@ -539,7 +534,7 @@ public class KlimaatServiceTest {
         assertThat(monthsInOneYear).hasSize(12);
         assertThat(monthsInOneYear).extracting(GemiddeldeKlimaatPerMaand::getGemiddelde).containsOnlyNulls();
 
-        verifyZeroInteractions(klimaatRepository, cachedProxy);
+        verifyNoMoreInteractions(klimaatRepository, cachedProxy);
     }
 
     @Test
