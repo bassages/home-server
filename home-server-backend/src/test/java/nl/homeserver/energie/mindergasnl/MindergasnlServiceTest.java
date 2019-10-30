@@ -9,10 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -132,7 +129,7 @@ public class MindergasnlServiceTest {
 
         mindergasnlService.uploadMeterstandWhenEnabled();
 
-        verifyZeroInteractions(meterstandService, httpClientBuilder);
+        verifyNoMoreInteractions(meterstandService, httpClientBuilder);
     }
 
     @Test
@@ -145,7 +142,7 @@ public class MindergasnlServiceTest {
 
         mindergasnlService.uploadMeterstandWhenEnabled();
 
-        verifyZeroInteractions(meterstandService, httpClientBuilder);
+        verifyNoMoreInteractions(meterstandService, httpClientBuilder);
     }
 
     @Test
@@ -211,7 +208,7 @@ public class MindergasnlServiceTest {
         mindergasnlService.uploadMeterstandWhenEnabled();
 
         verify(meterstandService).getPerDag(eq(expectedPeriod));
-        verifyZeroInteractions(httpClientBuilder);
+        verifyNoMoreInteractions(httpClientBuilder);
     }
 
     @Test

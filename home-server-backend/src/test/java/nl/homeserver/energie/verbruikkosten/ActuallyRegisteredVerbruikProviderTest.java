@@ -5,8 +5,7 @@ import static java.time.Month.MAY;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -83,6 +82,6 @@ public class ActuallyRegisteredVerbruikProviderTest {
                 .isThrownBy(() -> actuallyRegisteredVerbruikProvider.getStroomVerbruik(period, StroomTariefIndicator.ONBEKEND))
                 .withMessage("Unexpected StroomTariefIndicator: [ONBEKEND]");
 
-        verifyZeroInteractions(verbruikRepository);
+        verifyNoMoreInteractions(verbruikRepository);
     }
 }
