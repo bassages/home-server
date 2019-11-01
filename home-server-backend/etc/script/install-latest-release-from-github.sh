@@ -24,13 +24,16 @@ echo "[INFO] Latest release asset name: $latest_github_release_asset_name"
 
 echo "[INFO] Downloading latest release asset from GitHub"
 local_release_download=releases/${latest_github_release_asset_name}
-curl ${latest_github_release_asset_download_url} --create-dirs -L -o ${local_release_download}
+curl "${latest_github_release_asset_download_url}" --create-dirs -L -o ${local_release_download}
 
 echo "[INFO] Stopping service"
 sudo service home-server stop
 
 echo "[INFO] Updating symbolic link to ${local_release_download}"
-ln -sf ${local_release_download} home-server.jar
+ln -sf "${local_release_download}" home-server.jar
+
+echo "[INFO] Wait 10 seconds until service is stopped"
+sleep 10s
 
 echo "[INFO] Starting service"
 sudo service home-server start
