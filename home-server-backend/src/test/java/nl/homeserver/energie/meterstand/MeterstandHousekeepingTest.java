@@ -159,9 +159,9 @@ public class MeterstandHousekeepingTest {
         meterstandHousekeeping.start();
 
         final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep first in hour 12: Meterstand[id=1"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep last in hour 12: Meterstand[id=3"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Delete: Meterstand[id=2"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep first in hour 12: Meterstand[dateTime=2016-01-01T12:00,gas=0.000,id=1"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep last in hour 12: Meterstand[dateTime=2016-01-01T12:30,gas=0.000,id=3"));
+        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Delete: Meterstand[dateTime=2016-01-01T12:15,gas=0.000,id=2"));
     }
 
     @Test
