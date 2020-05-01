@@ -3,6 +3,7 @@ package nl.homeserver;
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @SuppressWarnings("FieldMayBeFinal")
 public final class DatePeriod {
 
-    private static final Set WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
+    private static final Set<DayOfWeek> WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
 
     private final DateTimePeriod dateTimePeriod;
 
