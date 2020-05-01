@@ -1,7 +1,10 @@
 language: java
 jdk:
 - openjdk14
-script: "./gradlew clean build jacocoTestreport sonarqube"
+## SonarCloud does not support java 14 yet :-( see:
+## https://community.sonarsource.com/t/issue-java-14-java-lang-noclassdeffounderror-java-util-jar-pack200/21853
+##script: "./gradlew clean build jacocoTestreport sonarqube"
+script: "./gradlew clean build jacocoTestreport"
 addons:
   sonarcloud:
     organization: bassages-github
