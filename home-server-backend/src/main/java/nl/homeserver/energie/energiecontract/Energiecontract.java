@@ -67,17 +67,10 @@ public class Energiecontract {
     private String remark;
 
     public BigDecimal getStroomKosten(final StroomTariefIndicator stroomTariefIndicator) {
-        switch (stroomTariefIndicator) {
-            case DAL:
-                if (stroomPerKwhDalTarief != null) {
-                    return stroomPerKwhDalTarief;
-                } else {
-                    return stroomPerKwhNormaalTarief;
-                }
-            case NORMAAL:
-                return stroomPerKwhNormaalTarief;
-            default:
-                return ZERO;
-        }
+        return switch (stroomTariefIndicator) {
+            case DAL     -> stroomPerKwhDalTarief != null ? stroomPerKwhDalTarief : stroomPerKwhNormaalTarief;
+            case NORMAAL -> stroomPerKwhNormaalTarief;
+            default      -> ZERO;
+        };
     }
 }
