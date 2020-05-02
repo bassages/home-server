@@ -32,6 +32,7 @@ public class EnergiecontractControllerTest {
 
         final Energiecontract savedEnergieContract = energiecontractController.save(energieContractDto);
 
+        assertThat(savedEnergieContract).isNotNull();
         verify(energiecontractService).save(any());
     }
 
