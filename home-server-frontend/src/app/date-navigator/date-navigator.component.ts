@@ -71,7 +71,10 @@ export class DateNavigatorComponent {
   public datePickerChanged(selectedDate: Moment): void {
     if (selectedDate !== undefined && this.previouslySelectedDate !== undefined
       && !selectedDate.isSame(this.previouslySelectedDate)) {
-      this.pickers.forEach((item, index, array) => item.api.close());
+      this.pickers.forEach((item, index, array) => {
+        item.elemRef.nativeElement.blur();
+        item.api.close();
+      });
       this.navigation.emit(selectedDate);
     }
     this.previouslySelectedDate = selectedDate;
