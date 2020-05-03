@@ -1,10 +1,12 @@
 import {ChartConfiguration} from 'c3';
+import { Injectable } from '@angular/core';
 
 const defaultChartPadding = { top: 10, bottom: 25, left: 55, right: 20 };
 
 const minimumChartHeight = 220;
 const maximumChartHeight = 500;
 
+@Injectable()
 export class ChartService {
 
   // noinspection JSMethodCanBeStatic

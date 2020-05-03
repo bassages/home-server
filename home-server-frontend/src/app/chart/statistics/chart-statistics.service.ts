@@ -1,6 +1,8 @@
 import {LineOptions} from 'c3';
 import {Statistics} from '../../statistics';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class ChartStatisticsService {
 
   public createStatisticsChartLines(statistics: Statistics): LineOptions[] {

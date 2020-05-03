@@ -1,7 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import {IDatePickerConfig} from 'ng2-date-picker';
+import {DatePickerDirective, IDatePickerDirectiveConfig} from 'ng2-date-picker';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 const selectedDayFormat = 'dd. DD-MM-YYYY';
 const selectedMonthFormat = 'MMMM YYYY';
@@ -11,7 +12,7 @@ const selectedMonthFormat = 'MMMM YYYY';
   templateUrl: './date-navigator.component.html',
   styleUrls: ['./date-navigator.component.scss']
 })
-export class DateNavigatorComponent implements OnInit {
+export class DateNavigatorComponent {
 
   @Input()
   public mode: string;
@@ -20,34 +21,43 @@ export class DateNavigatorComponent implements OnInit {
   set selectedDate(selectedDate: Moment) {
     if (selectedDate !== undefined) {
       this._selectedDate = selectedDate;
-      this.dayPickerModel = this._selectedDate.format(selectedDayFormat);
-      this.monthPickerModel = this._selectedDate.format(selectedMonthFormat);
-      this.yearPickerModel = this._selectedDate.year();
+      this.selectedDay.setValue(selectedDate);
+      this.selectedMonth.setValue(selectedDate);
+      this.yearPickerFormattedValue = this._selectedDate.year();
     }
   }
 
   @Output()
   public navigation = new EventEmitter<Moment>();
 
+  @ViewChildren('picker')
+  public pickers: QueryList<DatePickerDirective>;
+
+  public form: FormGroup;
+
   private _selectedDate: Moment;
 
   public previouslySelectedDate: Moment;
 
-  public monthPickerConfiguration: IDatePickerConfig;
-  public monthPickerModel: String;
+  public monthPickerConfiguration: IDatePickerDirectiveConfig;
+  public dayPickerConfiguration: IDatePickerDirectiveConfig;
 
-  public dayPickerConfiguration: IDatePickerConfig;
-  public dayPickerModel: String;
+  public yearPickerFormattedValue: number;
 
-  public yearPickerModel: number;
-
-  constructor() { }
-
-  public ngOnInit(): void {
-    this.initDatePickers();
+  constructor() {
+    this.initDatePickerConfigurations();
+    this.createForm();
   }
 
-  private initDatePickers() {
+  private createForm(): void {
+    this.form = new FormGroup({
+      selectedDay: new FormControl({value: this._selectedDate}, [Validators.required]),
+      selectedMonth: new FormControl({value: this._selectedDate}, [Validators.required]),
+      selectedYear: new FormControl('', [Validators.required])
+    });
+  }
+
+  private initDatePickerConfigurations() {
     this.dayPickerConfiguration = {
       format: selectedDayFormat,
       max: moment()
@@ -61,9 +71,22 @@ export class DateNavigatorComponent implements OnInit {
   public datePickerChanged(selectedDate: Moment): void {
     if (selectedDate !== undefined && this.previouslySelectedDate !== undefined
       && !selectedDate.isSame(this.previouslySelectedDate)) {
+      this.pickers.forEach((item, index, array) => item.api.close());
       this.navigation.emit(selectedDate);
     }
     this.previouslySelectedDate = selectedDate;
+  }
+
+  get selectedDay(): FormControl {
+    return this.form.get('selectedDay') as FormControl;
+  }
+
+  get selectedMonth(): FormControl {
+    return this.form.get('selectedMonth') as FormControl;
+  }
+
+  get selectedYear(): FormControl {
+    return this.form.get('selectedYear') as FormControl;
   }
 
   public isUpNavigationDisabled(): boolean {
@@ -91,7 +114,7 @@ export class DateNavigatorComponent implements OnInit {
       this.selectedDate = this._selectedDate.clone().add(amount, 'months');
 
     } else if (this.mode === 'year') {
-      this.selectedDate = moment(`${this.yearPickerModel + amount}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
+      this.selectedDate = moment(`${this.yearPickerFormattedValue + amount}-${this._selectedDate.format('MM')}-${this._selectedDate.format('DD')}`);
 
       // Since year mode is not backed by a datepicker, we'll have to trigger the navigation event
       this.navigation.emit(this._selectedDate.clone());

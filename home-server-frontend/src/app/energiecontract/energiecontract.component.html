@@ -28,13 +28,15 @@
         <th>Stroom daltarief (kWh)</th>
       </tr>
     </thead>
-    <tr *ngFor="let energiecontract of energiecontracten" (click)="startEdit(energiecontract)" class="clickable" [ngClass]="{'table-primary': energiecontract.id === selectedEnergiecontract?.id}">
-      <td class="text-nowrap">{{ energiecontract.validFrom | date : 'dd-MM-yyyy' }}</td>
-      <td>{{ energiecontract.leverancier }}</td>
-      <td class="text-right">{{ energiecontract.gasPerKuub | currency:'EUR':'symbol':'1.6-6' }}</td>
-      <td class="text-right">{{ energiecontract.stroomPerKwhNormaalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
-      <td class="text-right">{{ energiecontract.stroomPerKwhDalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
-    </tr>
+    <tbody>
+      <tr *ngFor="let energiecontract of energiecontracten" (click)="startEdit(energiecontract)" class="clickable" [ngClass]="{'table-primary': energiecontract.id === selectedEnergiecontract?.id}">
+        <td class="text-nowrap">{{ energiecontract.validFrom | date : 'dd-MM-yyyy' }}</td>
+        <td>{{ energiecontract.leverancier }}</td>
+        <td class="text-right">{{ energiecontract.gasPerKuub | currency:'EUR':'symbol':'1.6-6' }}</td>
+        <td class="text-right">{{ energiecontract.stroomPerKwhNormaalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
+        <td class="text-right">{{ energiecontract.stroomPerKwhDalTarief | currency:'EUR':'symbol':'1.6-6' }}</td>
+      </tr>
+    </tbody>
   </table>
 </div>
 
@@ -45,9 +47,12 @@
     <label for="fromDate" class="col-md-4 col-lg-3 control-label">Vanaf *</label>
     <div class="col-sm-9 col-md-7 col-lg-5">
       <div class="input-group">
-        <input #datePicker="dpDayPicker" type="text" class="form-control" id="fromDate" name="fromDate" [readonly]="true"
-               [(ngModel)]="datePickerModel" [ngModelOptions]="{standalone: true}" [dpDayPicker]="datePickerConfiguration"
-               theme="dp-material" mode="day" (onChange)="datePickerChanged($event)" />
+        <input #datePicker="dpDayPicker" type="text" class="form-control" id="fromDate" name="fromDate"
+               [dpDayPicker]="datePickerConfiguration"
+               [formControl]="selectedDate"
+               [ngClass]="{'is-invalid': selectedDate.invalid}"
+               theme="dp-material"
+               mode="day" />
         <span class="input-group-append">
           <button type="button" class="btn btn-outline-secondary" (click)="openDatePicker()"><i class="fas fa-calendar"></i></button>
         </span>
