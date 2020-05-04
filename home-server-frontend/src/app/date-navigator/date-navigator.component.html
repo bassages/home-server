@@ -1,34 +1,38 @@
 <form class="form-inline" [formGroup]="form" autocomplete="off" novalidate>
 
-  <span class="input-group-prepend">
-    <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fas fa-chevron-left"></i></button>
-  </span>
+  <div class="input-group">
 
-  <!--suppress HtmlFormInputWithoutLabel -->
-  <input #picker="dpDayPicker" type="text" *ngIf="mode == 'day'" class="form-control text-center text-capitalize" name="dayPicker"
-         [formControl]="selectedDay"
-         [dpDayPicker]="dayPickerConfiguration"
-         (onChange)="datePickerChanged($event)"
-         [ngClass]="{'is-invalid': selectedDay.invalid}"
-         theme="dp-material"
-         mode="day" />
+    <span class="input-group-prepend">
+      <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fas fa-chevron-left"></i></button>
+    </span>
 
-  <!--suppress HtmlFormInputWithoutLabel -->
-  <input #picker="dpDayPicker" type="text" *ngIf="mode == 'month'" class="form-control text-center text-capitalize" name="monthPicker"
-         [formControl]="selectedMonth"
-         [dpDayPicker]="monthPickerConfiguration"
-         (onChange)="datePickerChanged($event)"
-         [ngClass]="{'is-invalid': selectedMonth.invalid}"
-         theme="dp-material"
-         mode="month" />
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <input #picker="dpDayPicker" type="text" *ngIf="mode == 'day'" class="form-control text-center text-capitalize" name="dayPicker"
+           [formControl]="selectedDay"
+           [dpDayPicker]="dayPickerConfiguration"
+           (onChange)="datePickerChanged($event)"
+           [ngClass]="{'is-invalid': selectedDay.invalid}"
+           theme="dp-material"
+           mode="day" />
 
-  <!--suppress HtmlFormInputWithoutLabel -->
-  <input #yearPicker type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
-         [formControl]="selectedYear"
-         [ngClass]="{'is-invalid': selectedYear.invalid}"
-         readonly="readonly" />
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <input #picker="dpDayPicker" type="text" *ngIf="mode == 'month'" class="form-control text-center text-capitalize" name="monthPicker"
+           [formControl]="selectedMonth"
+           [dpDayPicker]="monthPickerConfiguration"
+           (onChange)="datePickerChanged($event)"
+           [ngClass]="{'is-invalid': selectedMonth.invalid}"
+           theme="dp-material"
+           mode="month" />
+  
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <input #yearPicker type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
+           [formControl]="selectedYear"
+           [ngClass]="{'is-invalid': selectedYear.invalid}"
+           readonly="readonly" />
 
-  <span class="input-group-append">
-    <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i class="fas fa-chevron-right"></i></button>
-  </span>
+    <span class="input-group-append">
+      <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i class="fas fa-chevron-right"></i></button>
+    </span>
+
+  </div>
 </form>
