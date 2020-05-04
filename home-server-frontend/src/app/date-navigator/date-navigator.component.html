@@ -23,7 +23,7 @@
            [ngClass]="{'is-invalid': selectedMonth.invalid}"
            theme="dp-material"
            mode="month" />
-  
+
     <!--suppress HtmlFormInputWithoutLabel -->
     <input #yearPicker type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
            [formControl]="selectedYear"
