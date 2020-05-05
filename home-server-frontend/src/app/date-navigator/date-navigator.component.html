@@ -1,9 +1,12 @@
-<form class="form-inline" [formGroup]="form" autocomplete="off" novalidate>
+<form class="date-navigator-form" [formGroup]="form" autocomplete="off" novalidate>
 
   <div class="input-group">
 
     <span class="input-group-prepend">
-      <button (click)="navigate(-1)" class="btn btn-outline-secondary" type="button"><i class="fas fa-chevron-left"></i></button>
+      <button (click)="navigate(-1)"
+              class="btn btn-outline-secondary"
+              [ngClass]="{'responsive-size': responsiveSize}"
+              type="button"><i class="fas fa-chevron-left"></i></button>
     </span>
 
     <!--suppress HtmlFormInputWithoutLabel -->
@@ -11,7 +14,10 @@
            [formControl]="selectedDay"
            [dpDayPicker]="dayPickerConfiguration"
            (onChange)="datePickerChanged($event)"
-           [ngClass]="{'is-invalid': selectedDay.invalid}"
+           [ngClass]="{
+                  'is-invalid': selectedDay.invalid,
+                  'responsive-size': responsiveSize
+           }"
            theme="dp-material"
            mode="day" />
 
@@ -20,18 +26,27 @@
            [formControl]="selectedMonth"
            [dpDayPicker]="monthPickerConfiguration"
            (onChange)="datePickerChanged($event)"
-           [ngClass]="{'is-invalid': selectedMonth.invalid}"
+           [ngClass]="{
+                  'is-invalid': selectedMonth.invalid,
+                  'responsive-size': responsiveSize
+           }"
            theme="dp-material"
            mode="month" />
 
     <!--suppress HtmlFormInputWithoutLabel -->
-    <input #yearPicker type="text" *ngIf="mode == 'year'" class="form-control text-center" name="yearPicker"
+    <input #yearPicker type="text" *ngIf="mode == 'year'" class="form-control text-center responsive-size" name="yearPicker"
            [formControl]="selectedYear"
-           [ngClass]="{'is-invalid': selectedYear.invalid}"
+           [ngClass]="{
+                  'is-invalid': selectedYear.invalid,
+                  'responsive-size': responsiveSize
+           }"
            readonly="readonly" />
 
     <span class="input-group-append">
-      <button type="button" class="btn btn-outline-secondary" (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i class="fas fa-chevron-right"></i></button>
+      <button type="button"
+              class="btn btn-outline-secondary responsive-size"
+              [ngClass]="{'responsive-size': responsiveSize}"
+              (click)="navigate(+1)" [disabled]="isUpNavigationDisabled()"><i class="fas fa-chevron-right"></i></button>
     </span>
 
   </div>

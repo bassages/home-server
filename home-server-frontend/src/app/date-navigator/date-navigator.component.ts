@@ -18,6 +18,9 @@ export class DateNavigatorComponent {
   public mode: string;
 
   @Input()
+  public responsiveSize = false;
+
+  @Input()
   set selectedDate(selectedDate: Moment) {
     if (selectedDate !== undefined) {
       this._selectedDate = selectedDate;

@@ -20,7 +20,7 @@
 <div class="d-xs-block d-lg-none">
 
   <div class="row mb-2 px-2 px-sm-0">
-    <select class="form-control" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
+    <select class="form-control form-control-sm" name="sensor" (change)="sensorChanged()" [(ngModel)]="sensorCode">
       <option *ngFor="let _sensor of sensors" [value]="_sensor.code">{{_sensor.omschrijving}}</option>
     </select>
   </div>
@@ -37,7 +37,9 @@
 
   <!-- Date selection  -->
   <div class="row mb-2 px-2 px-sm-0">
-    <home-date-navigator mode="day" [selectedDate]="date" (navigation)="onDateNavigate($event)" class="input-group input-group-sm"></home-date-navigator>
+    <home-date-navigator mode="day" [selectedDate]="date" (navigation)="onDateNavigate($event)"
+                         [responsiveSize]="true"
+                         class="input-group input-group-sm"></home-date-navigator>
   </div>
 </div>
 
