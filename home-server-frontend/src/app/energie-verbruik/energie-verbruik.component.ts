@@ -4,7 +4,8 @@ import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
 import * as moment from 'moment';
 import {Moment} from 'moment';
-import * as _ from 'lodash';
+import capitalize from 'lodash/capitalize';
+import isEqual from 'lodash/isEqual';
 import {ErrorHandingService} from '../error-handling/error-handing.service';
 import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
 import {DecimalPipe} from '@angular/common';
@@ -62,7 +63,7 @@ export class EnergieVerbruikComponent implements OnInit {
         }
         const selectedDayParam = moment(queryParams.get('datum'), 'DD-MM-YYYY');
 
-        if (_.isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort === verbruiksoortParam
+        if (isEqual(this.energiesoorten, energiesoortenParam) && this.verbruiksoort === verbruiksoortParam
                    && this.selectedDate.isSame(selectedDayParam) && this.periode === periodeParam) {
           return;
         }
@@ -218,15 +219,15 @@ export class EnergieVerbruikComponent implements OnInit {
 
   public getFormattedValue(verbruik: any, energiesoort: string) {
     if (energiesoort === 'stroom') {
-      const dalValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort) + 'Dal'];
-      const normaalValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort) + 'Normaal'];
+      const dalValue = verbruik[energiesoort + capitalize(this.verbruiksoort) + 'Dal'];
+      const normaalValue = verbruik[energiesoort + capitalize(this.verbruiksoort) + 'Normaal'];
 
       if (dalValue || normaalValue) {
         return this.energieVerbruikHistorieService.formatWithUnitLabel(this.verbruiksoort, this.energiesoorten, dalValue + normaalValue);
       }
 
     } else if (energiesoort === 'gas') {
-      const gasValue = verbruik[energiesoort + _.capitalize(this.verbruiksoort)];
+      const gasValue = verbruik[energiesoort + capitalize(this.verbruiksoort)];
 
       if (gasValue) {
         return this.energieVerbruikHistorieService.formatWithUnitLabel(this.verbruiksoort, this.energiesoorten, gasValue);

@@ -3,7 +3,7 @@ import {KlimaatService} from '../klimaat.service';
 import {ErrorHandingService} from '../../error-handling/error-handing.service';
 import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
 import {KlimaatSensor} from '../klimaatSensor';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {KlimaatSensorService} from '../klimaatsensor.service';
@@ -46,7 +46,7 @@ export class KlimaatSensorsComponent implements OnInit {
 
     this.klimaatSensorService.list().subscribe(
       response => {
-        this.sensors = _.sortBy<KlimaatSensor>(response, ['code']);
+        this.sensors = sortBy<KlimaatSensor>(response, ['code']);
       },
       error => this.errorHandlingService.handleError('De klimaat sensors konden nu niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()

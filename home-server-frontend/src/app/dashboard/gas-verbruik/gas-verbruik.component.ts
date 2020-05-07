@@ -6,7 +6,7 @@ import {Meterstand} from '../../meterstand/meterstand';
 import {Led, LedState} from '../led';
 import {MeterstandService} from '../../meterstand/meterstand.service';
 import {EnergieVerbruikService} from '../../energie-verbruik/energie-verbruik.service';
-import * as _ from 'lodash';
+import isNumber from 'lodash/isNumber';
 import {VerbruikOpDag} from '../../energie-verbruik/verbruikOpDag';
 import {GemiddeldVerbruikInPeriod} from '../../energie-verbruik/gemiddeldVerbruikInPeriod';
 import {Router} from '@angular/router';
@@ -15,7 +15,7 @@ import * as moment from 'moment';
 @Component({
   selector: 'home-gas-verbruik',
   templateUrl: './gas-verbruik.component.html',
-  styleUrls: ['./gas-verbruik.component.scss']
+  styleUrls: ['../ledbar.scss', './gas-verbruik.component.scss']
 })
 export class GasVerbruikComponent implements OnInit, OnDestroy {
 
@@ -82,8 +82,8 @@ export class GasVerbruikComponent implements OnInit, OnDestroy {
   }
 
   private setGasVerbruikVandaagLeds() {
-    if (this.verbruikVandaag && _.isNumber(this.verbruikVandaag.gasVerbruik)
-      && this.gemiddeldVerbruikPerDagInAfgelopenWeek && _.isNumber(this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)) {
+    if (this.verbruikVandaag && isNumber(this.verbruikVandaag.gasVerbruik)
+      && this.gemiddeldVerbruikPerDagInAfgelopenWeek && isNumber(this.gemiddeldVerbruikPerDagInAfgelopenWeek.gasVerbruik)) {
 
       const procentueleVeranderingTovAfgelopenWeek: number = this.getProcentueleVeranderingTovAfgelopenWeek();
 

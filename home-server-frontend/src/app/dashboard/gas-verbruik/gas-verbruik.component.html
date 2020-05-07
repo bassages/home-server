@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="ledbar float-left">
-      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="gasLeds[i]?.state == LedState.ON ? 'gas-led-' + i : 'led-off'"></div>
+      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" class="led" [ngClass]="gasLeds[i]?.state == LedState.ON ? 'gas-led-' + i : 'led-off'"></div>
     </div>
 
     <p class="h3">Vandaag</p>

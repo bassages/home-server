@@ -3,7 +3,13 @@ import {KlimaatSensor} from '../klimaatSensor';
 import {KlimaatService} from '../klimaat.service';
 import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
 import {ErrorHandingService} from '../../error-handling/error-handing.service';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
+import map from 'lodash/map';
+import uniq from 'lodash/uniq';
+import mean from 'lodash/mean';
+import min from 'lodash/min';
+import max from 'lodash/max';
+import filter from 'lodash/filter';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as moment from 'moment';
 import {Moment} from 'moment';
@@ -86,7 +92,7 @@ export class KlimaatHistorieComponent implements OnInit {
 
     this.klimaatSensorService.list().subscribe(
       response => {
-          this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
+          this.sensors = sortBy<KlimaatSensor>(response, ['omschrijving']);
 
           if (!this.sensorCode && this.sensors.length > 0) {
             return this.navigateTo(this.sensors[0].code, this.sensorType, this.date);
@@ -159,7 +165,7 @@ export class KlimaatHistorieComponent implements OnInit {
   }
 
   private loadDataIntoTable(klimaat: Klimaat[]) {
-    this.sortedUniqueValues = _.sortBy(_.uniq(_.map(this.klimaats, this.sensorType)));
+    this.sortedUniqueValues = sortBy(uniq(map(this.klimaats, this.sensorType)));
     this.colorScale = chroma.scale(['#3e7fcd', 'white', '#e83b26'])
                             .mode('lch')
                             .colors(this.sortedUniqueValues.length);
@@ -321,13 +327,8 @@ export class KlimaatHistorieComponent implements OnInit {
   }
 
   private getStatistics(klimaats: Klimaat[]): Statistics {
-    const values: number[] = _.filter(_.map(klimaats, this.sensorType), (value: number) => value !== null && value > 0);
-
-    const mean: number = _.mean(values);
-    const min: number = _.min(values);
-    const max: number = _.max(values);
-
-    return new Statistics(min, max, mean);
+    const values: number[] = filter(map(klimaats, this.sensorType), (value: number) => value !== null && value > 0);
+    return new Statistics(min(values), max(values), mean(values));
   }
 
   // noinspection JSMethodCanBeStatic

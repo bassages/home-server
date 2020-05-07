@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import {Moment} from 'moment';
 import {Klimaat} from '../klimaat';
 import {KlimaatSensor} from '../klimaatSensor';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import {zip} from 'rxjs';
 import {Router} from '@angular/router';
 import {KlimaatSensorService} from '../klimaatsensor.service';
@@ -42,7 +42,7 @@ export class KlimaatHighestLowestComponent implements OnInit {
 
     this.klimaatSensorService.list().subscribe(
       response => {
-        this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
+        this.sensors = sortBy<KlimaatSensor>(response, ['omschrijving']);
 
         if (this.sensors.length > 0) {
           this.sensorCode = this.sensors[0].code;

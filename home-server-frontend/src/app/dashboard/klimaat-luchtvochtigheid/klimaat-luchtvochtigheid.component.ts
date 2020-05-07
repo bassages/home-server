@@ -11,7 +11,7 @@ import {Trend} from '../../klimaat/trend';
 @Component({
   selector: 'home-klimaat-luchtvochtigheid',
   templateUrl: './klimaat-luchtvochtigheid.component.html',
-  styleUrls: ['./klimaat-luchtvochtigheid.component.scss']
+  styleUrls: ['../ledbar.scss', './klimaat-luchtvochtigheid.component.scss']
 })
 export class KlimaatLuchtvochtigheidComponent implements  OnInit, OnDestroy {
 

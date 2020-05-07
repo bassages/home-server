@@ -1,5 +1,9 @@
 import {ChartConfiguration} from 'c3';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
+import sumBy from 'lodash/sumBy';
+import endsWith from 'lodash/endsWith';
+import startsWith from 'lodash/startsWith';
+import capitalize from 'lodash/capitalize';
 import {DecimalPipe} from '@angular/common';
 import {ChartService} from '../chart/chart.service';
 
@@ -64,7 +68,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
   protected getTooltipContent(c3, data, titleFormatter, valueFormatter, color, verbruiksoort: string, energiesoorten: string[]) {
     let tooltipContents = '';
 
-    data = _.sortBy(data, 'id');
+    data = sortBy(data, 'id');
 
     if (data.length > 0) {
       tooltipContents += `<table class='${c3.CLASS.tooltip}'><tr><th colspan='2'>${titleFormatter(data[0].x)}</th></tr>`;
@@ -84,7 +88,7 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
     }
 
     if (data.length > 1) {
-      const total: number = _.sumBy(data, 'value');
+      const total: number = sumBy(data, 'value');
       tooltipContents += '<tr>';
       tooltipContents += '<td class=\'name\'><strong>Totaal</strong></td>';
       tooltipContents += `<td class='value'><strong>${this.formatWithUnitLabel(verbruiksoort, energiesoorten, total)}</strong></td>`;
@@ -97,11 +101,11 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
 
   // noinspection JSMethodCanBeStatic
   private getTooltipLabel(id) {
-    if (_.endsWith(id, 'Dal')) {
+    if (endsWith(id, 'Dal')) {
       return 'Stroom - Daltarief';
-    } else if (_.endsWith(id, 'Normaal')) {
+    } else if (endsWith(id, 'Normaal')) {
       return 'Stroom - Normaaltarief';
-    } else if (_.startsWith(id, 'gas')) {
+    } else if (startsWith(id, 'gas')) {
       return 'Gas';
     }
   }
@@ -121,11 +125,11 @@ export abstract class AbstractEnergieVerbruikHistorieService extends ChartServic
   protected getKeysGroups(verbruiksoort: string, energiesoorten: string[]): string[] {
     const keysGroups: string[] = [];
     if (energiesoorten.indexOf('gas') > -1) {
-      keysGroups.push(`gas${_.capitalize(verbruiksoort)}`);
+      keysGroups.push(`gas${capitalize(verbruiksoort)}`);
     }
     if (energiesoorten.indexOf('stroom') > -1) {
-      keysGroups.push(`stroom${_.capitalize(verbruiksoort)}Dal`);
-      keysGroups.push(`stroom${_.capitalize(verbruiksoort)}Normaal`);
+      keysGroups.push(`stroom${capitalize(verbruiksoort)}Dal`);
+      keysGroups.push(`stroom${capitalize(verbruiksoort)}Normaal`);
     }
     return keysGroups;
   }

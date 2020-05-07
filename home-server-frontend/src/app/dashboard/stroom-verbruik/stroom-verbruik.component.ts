@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
 @Component({
   selector: 'home-stroom-verbruik',
   templateUrl: './stroom-verbruik.component.html',
-  styleUrls: ['./stroom-verbruik.component.scss']
+  styleUrls: ['../ledbar.scss', './stroom-verbruik.component.scss']
 })
 export class StroomVerbruikComponent implements OnInit, OnDestroy {
 

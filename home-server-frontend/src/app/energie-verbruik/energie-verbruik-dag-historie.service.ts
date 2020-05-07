@@ -8,7 +8,7 @@ import {VerbruikOpDag} from './verbruikOpDag';
 import {AbstractEnergieVerbruikHistorieService} from './energie-verbruik-base-chart.service';
 import {ChartConfiguration} from 'c3';
 import {DecimalPipe} from '@angular/common';
-import * as _ from 'lodash';
+import capitalize from 'lodash/capitalize';
 
 @Injectable()
 export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHistorieService
@@ -43,7 +43,7 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
       x: {
         type: 'timeseries',
         tick: {
-          format: (date: Date) => _.capitalize(moment(date).format('ddd DD')),
+          format: (date: Date) => capitalize(moment(date).format('ddd DD')),
           values: this.getTicksForEveryDayInMonth(selectedDate),
           centered: true,
           multiline: true,
@@ -100,7 +100,7 @@ export class EnergieVerbruikDagHistorieService extends AbstractEnergieVerbruikHi
 
   // noinspection JSMethodCanBeStatic
   private formatDate(date: any): string {
-    return _.capitalize(moment(date).format('ddd DD-MM'));
+    return capitalize(moment(date).format('ddd DD-MM'));
   }
 
   public getMoment(selectedDate: Moment, verbruikOpDag: VerbruikOpDag): Moment {

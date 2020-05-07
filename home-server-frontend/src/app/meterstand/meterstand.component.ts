@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MeterstandService} from './meterstand.service';
 import {MeterstandOpDag} from './meterstandOpDag';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import * as moment from 'moment';
 import {Moment} from 'moment';
 import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
@@ -40,7 +40,7 @@ export class MeterstandComponent implements OnInit {
     this.loadingIndicatorService.open();
 
     this.meterstandService.getMeterstanden(from, to).subscribe(
-      response => this.sortedMeterstandenPerDag = _.sortBy<MeterstandOpDag>(response, ['dag']),
+      response => this.sortedMeterstandenPerDag = sortBy<MeterstandOpDag>(response, ['dag']),
       error => this.errorHandlingService.handleError('De meterstanden konden nu niet worden opgehaald', error),
       () => this.loadingIndicatorService.close()
     );

@@ -5,7 +5,11 @@ import {OpgenomenVermogenService} from './opgenomen-vermogen.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as c3 from 'c3';
 import {ChartAPI, ChartConfiguration} from 'c3';
-import * as _ from 'lodash';
+import mean from 'lodash/mean';
+import min from 'lodash/min';
+import max from 'lodash/max';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
 import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
 import {ErrorHandingService} from '../error-handling/error-handing.service';
 import {OpgenomenVermogen} from './opgenomen-vermogen';
@@ -173,13 +177,8 @@ export class OpgenomenVermogenComponent implements OnInit {
 
   // noinspection JSMethodCanBeStatic
   private getStatistics(opgenomenVermogens: OpgenomenVermogen[]): Statistics {
-    const watts: number[] = _.filter(_.map(opgenomenVermogens, 'watt'), (watt: number) => watt !== null && watt > 0);
-
-    const mean: number = _.mean(watts);
-    const min: number = _.min(watts);
-    const max: number = _.max(watts);
-
-    return new Statistics(min, max, mean);
+    const watts: number[] = filter(map(opgenomenVermogens, 'watt'), (watt: number) => watt !== null && watt > 0);
+    return new Statistics(min(watts), max(watts), mean(watts));
   }
 
   public periodLengthChanged(): void {

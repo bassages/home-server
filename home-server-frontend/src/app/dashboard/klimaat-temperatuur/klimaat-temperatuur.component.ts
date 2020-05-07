@@ -11,7 +11,7 @@ import {Trend} from '../../klimaat/trend';
 @Component({
   selector: 'home-klimaat-temperatuur',
   templateUrl: './klimaat-temperatuur.component.html',
-  styleUrls: ['./klimaat-temperatuur.component.scss']
+  styleUrls: ['../ledbar.scss', './klimaat-temperatuur.component.scss']
 })
 export class KlimaatTemperatuurComponent implements OnInit, OnDestroy {
 

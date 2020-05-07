@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="ledbar float-left">
-      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" [ngClass]="leds[i]?.state == LedState.ON ? 'luchtvochtigheid-led-' + i : 'led-off'"></div>
+      <div *ngFor="let i of [9,8,7,6,5,4,3,2,1,0]" class="led" [ngClass]="leds[i]?.state == LedState.ON ? 'luchtvochtigheid-led-' + i : 'led-off'"></div>
     </div>
 
     <p class="h3">{{ sensorCode.charAt(0).toUpperCase() + sensorCode.slice(1).toLowerCase() }}</p>

@@ -3,7 +3,7 @@ import {Energiecontract} from './energiecontract';
 import {LoadingIndicatorService} from '../loading-indicator/loading-indicator.service';
 import {ErrorHandingService} from '../error-handling/error-handing.service';
 import {EnergiecontractService} from './energiecontract.service';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as moment from 'moment';
 import {DatePickerDirective, IDatePickerDirectiveConfig} from 'ng2-date-picker';
@@ -70,7 +70,7 @@ export class EnergiecontractComponent implements OnInit {
 
   // noinspection JSMethodCanBeStatic
   private sort(energiecontracten: Energiecontract[]): Energiecontract[] {
-    return _.sortBy<Energiecontract>(energiecontracten, ['validFrom']);
+    return sortBy<Energiecontract>(energiecontracten, ['validFrom']);
   }
 
   get selectedDate(): FormControl {

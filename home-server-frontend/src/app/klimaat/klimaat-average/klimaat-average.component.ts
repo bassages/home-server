@@ -6,7 +6,7 @@ import {KlimaatService} from '../klimaat.service';
 import {LoadingIndicatorService} from '../../loading-indicator/loading-indicator.service';
 import {KlimaatSensor} from '../klimaatSensor';
 import {GemiddeldeKlimaatPerMaand} from '../gemiddeldeKlimaatPerMaand';
-import * as _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import {KlimaatSensorService} from '../klimaatsensor.service';
 
 @Component({
@@ -38,7 +38,7 @@ export class KlimaatAverageComponent implements OnInit {
 
     this.klimaatSensorService.list().subscribe(
       response => {
-        this.sensors = _.sortBy<KlimaatSensor>(response, ['omschrijving']);
+        this.sensors = sortBy<KlimaatSensor>(response, ['omschrijving']);
 
         if (this.sensors.length > 0) {
           this.sensorCode = this.sensors[0].code;
