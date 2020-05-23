@@ -32,8 +32,8 @@ sudo service home-server stop
 echo "[INFO] Updating symbolic link to ${local_release_download}"
 ln -sf "${local_release_download}" home-server.jar
 
-echo "[INFO] Wait 10 seconds until service is stopped"
-sleep 10s
+echo "[INFO] Wait 20 seconds until service is stopped"
+sleep 20s
 
 echo "[INFO] Starting service"
 sudo service home-server start
