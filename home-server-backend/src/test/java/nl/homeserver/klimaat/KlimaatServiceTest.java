@@ -335,30 +335,6 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void givenUnexpectedSensorTypewhenGetHighestThenException() {
-        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 10);
-        final LocalDate to = from.plusDays(1);
-        final int limit = 100;
-
-        final SensorType unexpectedSensorType = null;
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> klimaatService.getLowest(SOME_SENSOR_CODE, unexpectedSensorType, aPeriodWithToDate(from, to), limit))
-                .withMessage("Unexpected SensorType [null]");
-    }
-
-    @Test
-    public void givenUnexpectedSensorTypewhenGetLowestThenException() {
-        final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
-        final LocalDate to = from.plusDays(1);
-        final int limit = 100;
-
-        final SensorType unexpectedSensorType = null;
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> klimaatService.getHighest(SOME_SENSOR_CODE, unexpectedSensorType, aPeriodWithToDate(from, to), limit))
-                .withMessage("Unexpected SensorType [null]");
-    }
-
-    @Test
     public void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
         final RealtimeKlimaat mostRecent = klimaatService.getMostRecent(SOME_SENSOR_CODE);
 
@@ -438,20 +414,6 @@ public class KlimaatServiceTest {
         }
 
         assertThat(averagesIn2016.get(JUNE.ordinal()).getGemiddelde()).isEqualTo(averageTemperatureInJune2016);
-    }
-
-    @Test
-    public void givenInvalidSensortypeWhenGetAverageTemperaturePerMonthInYearsThenExceptionThrown() {
-        final LocalDate date = LocalDate.of(2019, JANUARY, 1);
-        timeTravelTo(clock, date.atStartOfDay());
-
-        final int[] someYears = {2015};
-
-        final SensorType invalidSensorType = null;
-
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> klimaatService.getAveragePerMonthInYears(SOME_SENSOR_CODE, invalidSensorType, someYears))
-            .withMessage("Unexpected SensorType [null]");
     }
 
     @Test

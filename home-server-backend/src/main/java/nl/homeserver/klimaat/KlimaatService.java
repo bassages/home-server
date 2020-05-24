@@ -1,14 +1,11 @@
 package nl.homeserver.klimaat;
 
-import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
-import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -41,7 +38,6 @@ import nl.homeserver.DatePeriod;
 
 @Service
 public class KlimaatService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(KlimaatService.class);
 
     static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
@@ -78,14 +74,6 @@ public class KlimaatService {
         this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
         this.messagingTemplate = messagingTemplate;
         this.clock = clock;
-    }
-
-    private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
-        final int maxNrOfMinutes = IntStream.of(NR_OF_MINUTES_TO_DETERMINE_TREND_FOR, NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR).max().getAsInt();
-        final LocalDateTime cleanUpAllBefore = now(clock).minusMinutes(maxNrOfMinutes);
-        LOGGER.info("cleanUpRecentlyReceivedKlimaats before {}", cleanUpAllBefore);
-        recentlyReceivedKlimaatsPerKlimaatSensorCode.values()
-                                                    .forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().isBefore(cleanUpAllBefore)));
     }
 
     @Scheduled(cron = EVERY_15_MINUTES_PAST_THE_HOUR)
@@ -165,17 +153,13 @@ public class KlimaatService {
     }
 
     private BigDecimal getAverage(final String sensorCode, final SensorType sensorType, final DatePeriod period) {
-        if (sensorType == TEMPERATUUR) {
-            return klimaatRepository.getAverageTemperatuur(sensorCode,
-                                                           period.getFromDate().atStartOfDay(),
-                                                           period.getToDate().atStartOfDay());
-        } else if (sensorType == LUCHTVOCHTIGHEID) {
-            return klimaatRepository.getAverageLuchtvochtigheid(sensorCode,
-                                                                period.getFromDate().atStartOfDay(),
-                                                                period.getToDate().atStartOfDay());
-        } else {
-            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
-        }
+        final LocalDateTime fromDateTime = period.getFromDate().atStartOfDay();
+        final LocalDateTime toDateTime = period.getToDate().atStartOfDay();
+
+        return switch (sensorType) {
+            case LUCHTVOCHTIGHEID -> klimaatRepository.getAverageLuchtvochtigheid(sensorCode, fromDateTime, toDateTime);
+            case TEMPERATUUR -> klimaatRepository.getAverageTemperatuur(sensorCode, fromDateTime, toDateTime);
+        };
     }
 
     public RealtimeKlimaat getMostRecent(final String klimaatSensorCode) {
@@ -196,6 +180,14 @@ public class KlimaatService {
         recentlyReceivedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(),
                                                                      klimaatSensorCode -> new ArrayList<>()).add(klimaat);
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
+    }
+
+    private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
+        final int maxNrOfMinutes = IntStream.of(NR_OF_MINUTES_TO_DETERMINE_TREND_FOR, NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR).max().getAsInt();
+        final LocalDateTime cleanUpAllBefore = now(clock).minusMinutes(maxNrOfMinutes);
+        LOGGER.info("cleanUpRecentlyReceivedKlimaats before {}", cleanUpAllBefore);
+        recentlyReceivedKlimaatsPerKlimaatSensorCode.values()
+                .forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().isBefore(cleanUpAllBefore)));
     }
 
     List<List<GemiddeldeKlimaatPerMaand>> getAveragePerMonthInYears(final String sensorCode,
@@ -268,30 +260,20 @@ public class KlimaatService {
                              final SensorType sensorType,
                              final DatePeriod period,
                              final int limit) {
-        if (sensorType == TEMPERATUUR) {
-            return getHighestTemperature(sensorCode, period, limit);
-        } else if (sensorType == LUCHTVOCHTIGHEID) {
-            return getHighestHumidity(sensorCode, period, limit);
-        } else {
-            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
-        }
+        return switch (sensorType) {
+            case LUCHTVOCHTIGHEID -> getHighestHumidity(sensorCode, period, limit);
+            case TEMPERATUUR -> getHighestTemperature(sensorCode, period, limit);
+        };
     }
 
     List<Klimaat> getLowest(final String sensorCode,
                             final SensorType sensorType,
                             final DatePeriod period,
                             final int limit) {
-        if (sensorType == TEMPERATUUR) {
-            return getLowestTemperature(sensorCode, period, limit);
-        } else if (sensorType == LUCHTVOCHTIGHEID) {
-            return getLowestHumidity(sensorCode, period, limit);
-        } else {
-            throw new IllegalArgumentException(createUnexpectedSensorTypeErrorMessage(sensorType));
-        }
-    }
-
-    private String createUnexpectedSensorTypeErrorMessage(final SensorType sensorType) {
-        return format("Unexpected SensorType [%s]", sensorType);
+        return switch (sensorType) {
+            case LUCHTVOCHTIGHEID -> getLowestHumidity(sensorCode, period, limit);
+            case TEMPERATUUR -> getLowestTemperature(sensorCode, period, limit);
+        };
     }
 
     private List<Klimaat> getLowestTemperature(final String sensorCode, final DatePeriod period, final int limit) {
