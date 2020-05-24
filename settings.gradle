@@ -1,3 +1,2 @@
 include 'home-server-frontend',
-        'home-server-backend',
-        'home-server-db-maintainance'
+        'home-server-backend'
