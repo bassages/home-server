@@ -1,6 +1,5 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
