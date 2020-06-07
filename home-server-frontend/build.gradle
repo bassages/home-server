@@ -20,7 +20,7 @@ clean.doFirst {
 }
 
 task buildAngularApplication(type: NpmTask) {
-    description = 'npm run build'
+    description = 'Build frontend application'
 
     // Force npmInstall to run (for some reason it won't run after the first clean build, it reports UP-TO-DATE)
     npmInstall.outputs.upToDateWhen { false }

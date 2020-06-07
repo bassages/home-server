@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng lint && ng serve --open --proxy-config proxy.conf.json",
-    "build": "ng lint && ng build --prod",
+    "build": "ng lint && ng test --watch=false --browsers=ChromeHeadless && ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
