@@ -95,7 +95,7 @@ public class VerbruikServiceTest {
         assertThat(verbruikPerUurOpDag).hasSize(24);
 
         final VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
-        assertThat(verbruikKostenForHour1.getUur()).isEqualTo(0);
+        assertThat(verbruikKostenForHour1.getUur()).isZero();
         assertThat(verbruikKostenForHour1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour1);
 
         final VerbruikInUurOpDag verbruikKostenForHour2 = verbruikPerUurOpDag.get(1);

@@ -68,8 +68,10 @@ public class KlimaatControllerTest {
     public void givenNoKlimaatSensorExistsWithGivenCodeWhenAddThenExceptionIsThrown() {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
+        final KlimaatDto klimaatDto = mock(KlimaatDto.class);
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.add(NOT_EXISTING_SENSOR_CODE, mock(KlimaatDto.class)))
+                .isThrownBy(() -> klimaatController.add(NOT_EXISTING_SENSOR_CODE, klimaatDto))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
 
@@ -112,8 +114,11 @@ public class KlimaatControllerTest {
     public void givenNoKlimaatSensorExistsWithGivenCodeWhenGetHighestThenExceptionIsThrown() {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
+        final LocalDate now = now();
+        final String sensorType = TEMPERATUUR.name();
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.getHighest(NOT_EXISTING_SENSOR_CODE, TEMPERATUUR.name(), now(), now(), 1234))
+                .isThrownBy(() -> klimaatController.getHighest(NOT_EXISTING_SENSOR_CODE, sensorType, now, now, 1234))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
 
@@ -137,8 +142,11 @@ public class KlimaatControllerTest {
     public void givenNoKlimaatSensorExistsWithGivenCodeWhenGetLowestThenExceptionIsThrown() {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
+        final LocalDate now = now();
+        final String sensorType = TEMPERATUUR.name();
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.getLowest(NOT_EXISTING_SENSOR_CODE, TEMPERATUUR.name(), now(), now(), 1234))
+                .isThrownBy(() -> klimaatController.getLowest(NOT_EXISTING_SENSOR_CODE, sensorType, now, now, 1234))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
 
@@ -177,8 +185,10 @@ public class KlimaatControllerTest {
     public void givenNoKlimaatSensorExistsWithGivenCodeWhenFindAllInPeriodThenExceptionIsThrown() {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
+        final LocalDate now = now();
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.findAllInPeriod(NOT_EXISTING_SENSOR_CODE, now(), now()))
+                .isThrownBy(() -> klimaatController.findAllInPeriod(NOT_EXISTING_SENSOR_CODE, now, now))
                 .withMessage(EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST);
     }
 
@@ -212,8 +222,10 @@ public class KlimaatControllerTest {
     public void givenNonExistingKlimaatSensorCodeWhenUpdateThenException() {
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
 
+        final KlimaatSensorDto klimaatSensorDto = mock(KlimaatSensorDto.class);
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-            .isThrownBy(() -> klimaatController.update(NOT_EXISTING_SENSOR_CODE, mock(KlimaatSensorDto.class)))
+            .isThrownBy(() -> klimaatController.update(NOT_EXISTING_SENSOR_CODE, klimaatSensorDto))
             .withMessage("KlimaatSensor [DOES_NOT_EXISTS] does not exist");
     }
 
@@ -232,8 +244,10 @@ public class KlimaatControllerTest {
         when(klimaatSensor.getCode()).thenReturn(NOT_EXISTING_SENSOR_CODE);
         when(klimaatService.getKlimaatSensorByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
 
+        final String code = klimaatSensor.getCode();
+
         assertThatExceptionOfType(ResourceNotFoundException.class)
-                .isThrownBy(() -> klimaatController.delete(klimaatSensor.getCode()))
+                .isThrownBy(() -> klimaatController.delete(code))
                 .withMessage("KlimaatSensor [DOES_NOT_EXISTS] does not exist");
     }
 }

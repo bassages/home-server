@@ -43,7 +43,7 @@ public class MeterstandHealthTest {
 
         final Health health = meterstandHealth.health();
 
-        assertThat(health.getDetails().get("message")).isEqualTo("No Meterstand registered yet");
+        assertThat(health.getDetails()).containsEntry("message", "No Meterstand registered yet");
         assertThat(health.getStatus()).isEqualTo(UNKNOWN);
     }
 
@@ -57,7 +57,7 @@ public class MeterstandHealthTest {
 
         final Health health = meterstandHealth.health();
 
-        assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T10:00:00");
+        assertThat(health.getDetails()).containsEntry("message", "Most recent valid Meterstand was saved at 2017-02-05T10:00:00");
         assertThat(health.getStatus()).isEqualTo(UP);
     }
 
@@ -71,7 +71,7 @@ public class MeterstandHealthTest {
 
         final Health health = meterstandHealth.health();
 
-        assertThat(health.getDetails().get("message")).isEqualTo("Most recent valid Meterstand was saved at 2017-02-05T09:59:59. Which is more than 5 minutes ago.");
+        assertThat(health.getDetails()).containsEntry("message", "Most recent valid Meterstand was saved at 2017-02-05T09:59:59. Which is more than 5 minutes ago.");
         assertThat(health.getStatus()).isEqualTo(DOWN);
     }
 }

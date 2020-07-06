@@ -141,8 +141,9 @@ public class OpgenomenVermogenHousekeepingTest {
         opgenomenVermogenHousekeeping.start();
 
         final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Keep: OpgenomenVermogen[datumtijd=2016-01-01T00:00:01,id=2"));
-        assertThat(loggedEvents).haveExactly(1, new MessageContaining("[DEBUG] Delete: OpgenomenVermogen[datumtijd=2016-01-01T00:00,id=1"));
+        assertThat(loggedEvents)
+                .haveExactly(1, new MessageContaining("[DEBUG] Keep: OpgenomenVermogen[datumtijd=2016-01-01T00:00:01,id=2"))
+                .haveExactly(1, new MessageContaining("[DEBUG] Delete: OpgenomenVermogen[datumtijd=2016-01-01T00:00,id=1"));
     }
 
     @Test
