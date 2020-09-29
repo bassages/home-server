@@ -93,4 +93,13 @@ public class DateTimePeriodTest {
 
         assertThat(period.startsOnOrAfter(start.plusMinutes(1))).isFalse();
     }
+
+    @Test
+    public void whenToStringThenStringRepresentationIsReturned() {
+        final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
+
+        final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
+
+        assertThat(period.toString()).isEqualTo("DateTimePeriod(startDateTime=2015-01-01T00:00, endDateTime=2015-01-11T00:00, toDateTime=2015-01-11T00:00:00.000000001)");
+    }
 }
