@@ -65,7 +65,9 @@ public class SlimmeMeterControllerIntegrationTest {
     @WithMockUser
     @Test
     public void whenPostValidRequestToMeterstandEndpointThenMeterstandAndOpgenomenVermogenSaved() throws Exception {
-        final String content = "{\"datumtijd\":\"2018-05-03T13:14:15\",\"stroomOpgenomenVermogenInWatt\":640,\"stroomTarief1\":12.422,\"stroomTarief2\":26.241,\"gas\":664.242,\"stroomTariefIndicator\":2}\n";
+        final String content = """
+                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2}
+                """;
 
         mockMvc.perform(post("/api/slimmemeter").contentType(MediaType.APPLICATION_JSON).content(content))
                .andExpect(status().isCreated());

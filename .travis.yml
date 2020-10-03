@@ -1,6 +1,6 @@
 language: java
 jdk:
-- openjdk14
+- openjdk15
 script: "./gradlew clean build jacocoTestreport sonarqube"
 addons:
   sonarcloud:

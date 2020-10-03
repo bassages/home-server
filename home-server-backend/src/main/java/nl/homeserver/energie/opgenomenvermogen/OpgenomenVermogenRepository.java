@@ -15,49 +15,71 @@ import org.springframework.data.repository.query.Param;
 @Transactional
 public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVermogen, Long> {
 
-    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd >= :van AND ov.datumtijd < :tot ORDER BY ov.datumtijd")
+    @Query(value = """
+        SELECT ov
+          FROM OpgenomenVermogen ov
+         WHERE ov.datumtijd >= :van
+           AND ov.datumtijd < :tot
+      ORDER BY ov.datumtijd""")
     List<OpgenomenVermogen> getOpgenomenVermogen(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Nullable
-    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
+    @Query(value = """
+        SELECT ov 
+          FROM OpgenomenVermogen ov
+         WHERE ov.datumtijd = (
+                SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent
+            )""")
     OpgenomenVermogen getMostRecent();
 
     @Nullable
-    @Query(value = "SELECT ov FROM OpgenomenVermogen ov WHERE ov.datumtijd = (SELECT MIN(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent)")
+    @Query(value = """
+        SELECT ov
+          FROM OpgenomenVermogen ov
+         WHERE ov.datumtijd = (
+                SELECT MIN(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent
+            )""")
     OpgenomenVermogen getOldest();
 
-    @Query(value = "SELECT date FROM (" +
-                   "  SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date, " +
-                   "         COUNT(id) AS nr_of_records " +
-                   "    FROM opgenomen_vermogen " +
-                   "   WHERE datumtijd >= :fromDate " +
-                   "     AND datumtijd < :toDate " +
-                   "   GROUP BY date " +
-                   "     HAVING nr_of_records > :maxNrOfRowsPerDay " +
-                   "   ORDER BY nr_of_records DESC " +
-                   " )", nativeQuery = true)
+    @Query(value = """
+       SELECT date FROM (
+         SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
+                COUNT(id) AS nr_of_records
+           FROM opgenomen_vermogen
+          WHERE datumtijd >= :fromDate
+            AND datumtijd < :toDate
+          GROUP BY date
+            HAVING nr_of_records > :maxNrOfRowsPerDay
+          ORDER BY nr_of_records DESC
+       )""", nativeQuery = true)
     List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
                                                           @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
     @Nullable
-    @Query(value = "  SELECT watt " +
-                   "    FROM opgenomen_vermogen " +
-                   "   WHERE datumtijd >= :fromDate AND datumtijd < :toDate " +
-                   "GROUP BY watt " +
-                   "ORDER BY COUNT(id) DESC " +
-                   "LIMIT 1;", nativeQuery = true)
+    @Query(value = """
+        SELECT watt
+          FROM opgenomen_vermogen
+         WHERE datumtijd >= :fromDate AND datumtijd < :toDate
+      GROUP BY watt
+      ORDER BY COUNT(id) DESC
+         LIMIT 1""", nativeQuery = true)
     Integer findMostCommonWattInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
-    @Query(value = "SELECT COUNT(id) FROM OpgenomenVermogen o " +
-                   " WHERE datumtijd >= :fromDate AND datumtijd < :toDate")
+    @Query(value = """
+        SELECT COUNT(id)
+          FROM OpgenomenVermogen
+         WHERE datumtijd >= :fromDate
+           AND datumtijd < :toDate""")
     long countNumberOfRecordsInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
-    @Query(value = "  SELECT watt, COUNT(id) AS numberOfRecords " +
-                   "    FROM opgenomen_vermogen " +
-                   "   WHERE datumtijd >= :fromDateTime AND datumtijd < :toDateTime " +
-                   "     AND watt >= :fromWatt AND watt < :toWatt " +
-                   "GROUP BY watt", nativeQuery = true)
-    List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDateTime") LocalDateTime fromDateTime, @Param("toDateTime") LocalDateTime toDate,
+    @Query(value = """
+        SELECT watt, COUNT(id) AS numberOfRecords
+          FROM opgenomen_vermogen
+         WHERE datumtijd >= :fromDateTime AND datumtijd < :toDateTime
+           AND watt >= :fromWatt AND watt < :toWatt
+      GROUP BY watt""", nativeQuery = true)
+    List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDateTime") LocalDateTime fromDateTime,
+                                                        @Param("toDateTime") LocalDateTime toDate,
                                                         @Param("fromWatt") int fromWatt, @Param("toWatt") int toWatt);
 }

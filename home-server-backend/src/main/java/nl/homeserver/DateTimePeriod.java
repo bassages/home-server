@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
+import lombok.ToString;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import lombok.Data;
 
 @Data
+@ToString
 public class DateTimePeriod {
 
     private final LocalDateTime startDateTime;
@@ -32,8 +32,8 @@ public class DateTimePeriod {
         return startDateTime;
     }
 
-    public static DateTimePeriod aPeriodWithEndDateTime(final LocalDateTime startDate, final LocalDateTime endDateTime) {
-        return new DateTimePeriod(startDate, endDateTime.plusNanos(1));
+    public static DateTimePeriod aPeriodWithEndDateTime(final LocalDateTime startDateTime, final LocalDateTime endDateTime) {
+        return new DateTimePeriod(startDateTime, endDateTime.plusNanos(1));
     }
 
     public static DateTimePeriod aPeriodWithToDateTime(final LocalDateTime fromDateTime, final LocalDateTime toDateTime) {
@@ -57,14 +57,5 @@ public class DateTimePeriod {
         return Stream.iterate(from, date -> date.plusDays(1))
                      .limit(DAYS.between(from, to))
                      .collect(toList());
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("startDateTime", startDateTime)
-                .append("endDateTime", endDateTime)
-                .append("toDateTime", toDateTime)
-                .toString();
     }
 }
