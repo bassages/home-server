@@ -63,12 +63,12 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
          WHERE datumtijd >= :fromDate AND datumtijd < :toDate
       GROUP BY watt
       ORDER BY COUNT(id) DESC
-         LIMIT 1""",nativeQuery = true)
+         LIMIT 1""", nativeQuery = true)
     Integer findMostCommonWattInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
     @Query(value = """
         SELECT COUNT(id)
-          FROM OpgenomenVermogen o
+          FROM OpgenomenVermogen
          WHERE datumtijd >= :fromDate
            AND datumtijd < :toDate""")
     long countNumberOfRecordsInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
