@@ -5,3 +5,5 @@ developmentDatabase
 classes
 home-server-db
 *.iml
+out
+build

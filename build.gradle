@@ -7,6 +7,8 @@ plugins {
     id "org.sonarqube" version '3.0'
 }
 
+def homeFrontendVersion = '1.0.2'
+
 jacoco {
     toolVersion = '0.8.6'
 }
@@ -102,22 +104,14 @@ bootRun {
     systemProperties System.properties
 }
 
-def recursive = false
-processResources.dependsOn getRootProject().project('home-server-frontend')
-                                           .getTasksByName('buildAngularApplication', recursive)[0]
 processResources.doLast {
-    def frontendArtifacts = '../home-server-frontend/dist'
-    def resourcesDirectory = 'build/resources/main/static'
-
     println '-----------------------------------------------------------------------------------'
-    println 'Copy front-end artifacts'
-    println 'From: [' + frontendArtifacts + '] To: [' + resourcesDirectory + ']'
-    println '-----------------------------------------------------------------------------------'
+    println 'Download frontend release zip'
+    ant.get(src: "https://github.com/bassages/home-frontend/releases/download/${homeFrontendVersion}/home-frontend.zip", dest: 'build')
 
-    copy {
-        from frontendArtifacts
-        into resourcesDirectory
-    }
+    println 'Unzip frontend release artifact to be included in static resources of backend artifact'
+    ant.unzip(src: 'build/home-frontend.zip', dest: 'build/resources/main/static')
+    println '-----------------------------------------------------------------------------------'
 }
 
 test {
