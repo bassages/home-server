@@ -1,6 +1,6 @@
 # home-server
 
-<a href="https://travis-ci.org/bassages/home-server" taget="_blank"><img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
+<a href="https://travis-ci.com/bassages/home-server" taget="_blank"><img src="https://travis-ci.org/bassages/home-server.svg?branch=master" alt="Travis CI badge"></a>
 <a href="https://sonarcloud.io/dashboard?id=home-server%3Ahome-server-backend" target="_blank"><img src="https://sonarcloud.io/api/project_badges/measure?project=home-server%3Ahome-server-backend&metric=coverage" alt="SonarCloud"></a>
 <a href="https://sonarcloud.io/dashboard?id=home-server%3Ahome-server-backend" target="_blank"><img src="https://sonarcloud.io/api/project_badges/measure?project=home-server%3Ahome-server-backend&metric=code_smells" alt="SonarCloud"></a>
 <a href="https://sonarcloud.io/dashboard?id=home-server%3Ahome-server-backend" target="_blank"><img src="https://sonarcloud.io/api/project_badges/measure?project=home-server%3Ahome-server-backend&metric=bugs" alt="SonarCloud"></a>
