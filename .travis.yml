@@ -1,18 +1,23 @@
 language: java
+
 jdk:
 - openjdk15
 script: "./gradlew clean build jacocoTestreport sonarqube"
+
 addons:
   sonarcloud:
     organization: bassages-github
+
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
   - home-server-frontend/node_modules/
+
 deploy:
   provider: releases
   overwrite: true
@@ -24,3 +29,6 @@ deploy:
   on:
     repo: bassages/home-server
     tags: true
+
+notifications:
+  email: false
