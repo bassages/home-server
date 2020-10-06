@@ -25,7 +25,7 @@ deploy:
   file_glob: true
   api_key:
     secure: Vn4FUrCVGmi9P/m7MRuHG6dupgUDTIGxCyLKRzCmpwnHudCN4uO1FPmU+QnTNFxZR9/ZiVy+UMJinoxJCliRRPO/MarPsjiKJ/OBu2N+Q8paBL8cT0Ov4ia249vTzs0qzCy3n4n7G4PNg/CS9xiJPRNkCdSM5JzFH6Tv2RJyl0erVYSmyeV+RbXpe6NXTsrDBzKuVaJgw9hhaw91lBWtBldHUTLf42u8BGZn+9JqrUkfVw3/wklG0n70tDBxomDpryXoC0frkIwYws7SkE4NltPShO3yq5xGubChIdFGtJ3skmnoHbQ3D/A40BrqpCHECAZSi5+Iz3Xi7QN8OZkPxeFhkPqvGOBEV4BNkG/R3Ws8Q4Gz6i97AzeRFDR3zR6ScqXv9xsyNrhOTnC1iEI6dnEN5dP8/BTn/kNMXNZXdRfFk7UoMFrqemEbqrsbSrqep9y5nUjLEmwo4ERJoZz9iJ82BlYQIaeeb+Il1Q3mrWLrzGUOXUiUn+cZu2jdAik0FSmH9RNAaGl1NuE70cB4t6keZfzjFlD+g5PSFaQWtbdrA9kX5fEV4NhXQlBld3MZDi7gvDV0tJjDfvs+5lcPDmpcMRkcXRb9YoL74JIeUxNKX0uea5jZHn2EA+Z2Q3Z9VQjzPdc/00wq7LVzdOMMKjgCk371kK1bxeVKt/KaU1A=
-  file: home-server-backend/build/libs/*.jar
+  file: build/libs/*.jar
   on:
     repo: bassages/home-server
     tags: true
