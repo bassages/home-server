@@ -30,22 +30,25 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     Meterstand getMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     @Nullable
-    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)")
+    @Query(value = """
+        SELECT m FROM Meterstand m 
+         WHERE m.dateTime = (SELECT MIN(dateTime) FROM Meterstand m WHERE m.dateTime BETWEEN :van AND :totEnMet)
+        """)
     Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     List<Meterstand> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     @Query(value = """
-           SELECT date FROM (
-             SELECT PARSEDATETIME(FORMATDATETIME(date_time, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
-                    COUNT(id) AS nr_of_records
-               FROM meterstand
-              WHERE date_time >= :fromDate
-                AND date_time < :toDate
-              GROUP BY date
-                HAVING nr_of_records > :maxNrOfRowsPerDay
-              ORDER BY nr_of_records DESC
-            )""", nativeQuery = true)
+       SELECT date FROM (
+         SELECT PARSEDATETIME(FORMATDATETIME(date_time, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
+                COUNT(id) AS nr_of_records
+           FROM meterstand
+          WHERE date_time >= :fromDate
+            AND date_time < :toDate
+          GROUP BY date
+            HAVING nr_of_records > :maxNrOfRowsPerDay
+          ORDER BY nr_of_records DESC
+        )""", nativeQuery = true)
     List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
                                                           @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);

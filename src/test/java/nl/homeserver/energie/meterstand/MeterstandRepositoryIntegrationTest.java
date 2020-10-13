@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.Test;
@@ -43,5 +44,22 @@ public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTe
 
         assertThat(datesWithMoreThan2RowsBeforeToDate).hasSize(1);
         assertThat(datesWithMoreThan2RowsBeforeToDate.get(0).toLocalDateTime().toLocalDate()).isEqualTo(dayBeforeToDateWith3Records);
+    }
+
+    @Test
+    public void shouldFindOldestInPeriod() {
+        final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
+
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(1)).build());
+
+        final Meterstand oldestInPeriod = aMeterstand().withDateTime(fromDateTime.plusDays(2)).build();
+        entityManager.persist(oldestInPeriod);
+
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(3)).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(4)).build());
+
+        final Meterstand actual = meterstandRepository.getOldestInPeriod(oldestInPeriod.getDateTime(), fromDateTime.plusYears(1));
+        assertThat(actual).isEqualTo(oldestInPeriod);
     }
 }
