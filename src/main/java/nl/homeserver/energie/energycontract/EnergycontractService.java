@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import static java.time.LocalDateTime.now;
 
@@ -15,43 +15,43 @@ import nl.homeserver.cache.CacheService;
 
 @Service
 @AllArgsConstructor
-public class EnergiecontractService {
+public class EnergycontractService {
 
     private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
 
-    private final EnergiecontractToDateRecalculator energiecontractToDateRecalculator;
+    private final EnergycontractToDateRecalculator energycontractToDateRecalculator;
     private final EnergiecontractRepository energiecontractRepository;
     private final CacheService cacheService;
     private final Clock clock;
 
-    List<Energiecontract> getAll() {
+    List<Energycontract> getAll() {
         return energiecontractRepository.findAll();
     }
 
-    Energiecontract getCurrent() {
+    Energycontract getCurrent() {
         final LocalDateTime now = now(clock);
         return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
-    Energiecontract save(final Energiecontract energiecontract) {
-        final Energiecontract savedEnergieContract = energiecontractRepository.save(energiecontract);
-        energiecontractToDateRecalculator.recalculate();
+    Energycontract save(final Energycontract energycontract) {
+        final Energycontract savedEnergieContract = energiecontractRepository.save(energycontract);
+        energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
         return savedEnergieContract;
     }
 
     void delete(final long id) {
         energiecontractRepository.deleteById(id);
-        energiecontractToDateRecalculator.recalculate();
+        energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
-    public List<Energiecontract> findAllInInPeriod(final DateTimePeriod period) {
+    public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
         return energiecontractRepository.findValidInPeriod(period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
-    Energiecontract getById(final long id) {
+    Energycontract getById(final long id) {
         return energiecontractRepository.getOne(id);
     }
 }

@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.energie.meterstand.MeterstandOpDag;
 import nl.homeserver.energie.meterstand.MeterstandService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -46,10 +47,12 @@ public class MindergasnlService {
     private final Provider<HttpClientBuilder> httpClientBuilder;
     private final Clock clock;
 
+    @Transactional(readOnly = true)
     Optional<MindergasnlSettings> findOne() {
         return mindergasnlSettingsRepository.findOneByIdIsNotNull();
     }
 
+    @Transactional
     MindergasnlSettings save(final MindergasnlSettings mindergasnlSettings) {
         final Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = mindergasnlSettingsRepository.findOneByIdIsNotNull();
 

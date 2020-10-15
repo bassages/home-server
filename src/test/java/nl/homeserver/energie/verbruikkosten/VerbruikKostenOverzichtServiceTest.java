@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import nl.homeserver.energie.energycontract.Energycontract;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.energiecontract.Energiecontract;
-import nl.homeserver.energie.energiecontract.EnergiecontractService;
+import nl.homeserver.energie.energycontract.EnergycontractService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VerbruikKostenOverzichtServiceTest {
@@ -35,7 +35,7 @@ public class VerbruikKostenOverzichtServiceTest {
     @Mock
     private VerbruikProvider verbruikProvider;
     @Mock
-    private EnergiecontractService energiecontractService;
+    private EnergycontractService energycontractService;
     @Mock
     private Clock clock;
 
@@ -61,7 +61,7 @@ public class VerbruikKostenOverzichtServiceTest {
         assertThat(verbruikKostenOverzicht.getStroomKostenNormaal()).isNull();
         assertThat(verbruikKostenOverzicht.getStroomVerbruikNormaal()).isNull();
 
-        verifyNoMoreInteractions(verbruikProvider, energiecontractService);
+        verifyNoMoreInteractions(verbruikProvider, energycontractService);
     }
 
     @Test
@@ -72,21 +72,21 @@ public class VerbruikKostenOverzichtServiceTest {
         final LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atStartOfDay();
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        final Energiecontract energiecontract1 = new Energiecontract();
-        energiecontract1.setValidFrom(LocalDate.of(2000, JANUARY, 1));
-        energiecontract1.setValidTo(from.plusDays(1).toLocalDate());
-        energiecontract1.setGasPerKuub(new BigDecimal("10"));
-        energiecontract1.setStroomPerKwhDalTarief(new BigDecimal("20"));
-        energiecontract1.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
+        final Energycontract energycontract1 = new Energycontract();
+        energycontract1.setValidFrom(LocalDate.of(2000, JANUARY, 1));
+        energycontract1.setValidTo(from.plusDays(1).toLocalDate());
+        energycontract1.setGasPerKuub(new BigDecimal("10"));
+        energycontract1.setStroomPerKwhDalTarief(new BigDecimal("20"));
+        energycontract1.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
 
-        final Energiecontract energiecontract2 = new Energiecontract();
-        energiecontract2.setValidFrom(energiecontract1.getValidTo());
-        energiecontract2.setValidTo(null);
-        energiecontract2.setGasPerKuub(new BigDecimal("40"));
-        energiecontract2.setStroomPerKwhDalTarief(new BigDecimal("50"));
-        energiecontract2.setStroomPerKwhNormaalTarief(new BigDecimal("60"));
+        final Energycontract energycontract2 = new Energycontract();
+        energycontract2.setValidFrom(energycontract1.getValidTo());
+        energycontract2.setValidTo(null);
+        energycontract2.setGasPerKuub(new BigDecimal("40"));
+        energycontract2.setStroomPerKwhDalTarief(new BigDecimal("50"));
+        energycontract2.setStroomPerKwhNormaalTarief(new BigDecimal("60"));
 
-        when(energiecontractService.findAllInInPeriod(period)).thenReturn(List.of(energiecontract1, energiecontract2));
+        when(energycontractService.findAllInInPeriod(period)).thenReturn(List.of(energycontract1, energycontract2));
 
         when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)))).thenReturn(new BigDecimal("1.111"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
@@ -112,13 +112,13 @@ public class VerbruikKostenOverzichtServiceTest {
         final LocalDate day = LocalDate.of(2016, JANUARY, 4);
         final DateTimePeriod period = aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
-        final Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setValidFrom(LocalDate.of(2000, JANUARY, 1));
-        energiecontract.setValidTo(null);
-        energiecontract.setGasPerKuub(new BigDecimal("10"));
-        energiecontract.setStroomPerKwhDalTarief(new BigDecimal("20"));
-        energiecontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
-        when(energiecontractService.findAllInInPeriod(period)).thenReturn(List.of(energiecontract));
+        final Energycontract energycontract = new Energycontract();
+        energycontract.setValidFrom(LocalDate.of(2000, JANUARY, 1));
+        energycontract.setValidTo(null);
+        energycontract.setGasPerKuub(new BigDecimal("10"));
+        energycontract.setStroomPerKwhDalTarief(new BigDecimal("20"));
+        energycontract.setStroomPerKwhNormaalTarief(new BigDecimal("30"));
+        when(energycontractService.findAllInInPeriod(period)).thenReturn(List.of(energycontract));
 
         when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()))).thenReturn(new BigDecimal("1.000"));
         when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay()), DAL)).thenReturn(new BigDecimal("2.000"));

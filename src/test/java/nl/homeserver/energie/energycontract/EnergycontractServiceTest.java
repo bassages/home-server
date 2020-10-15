@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.JANUARY;
@@ -24,13 +24,13 @@ import nl.homeserver.DateTimePeriod;
 import nl.homeserver.cache.CacheService;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EnergiecontractServiceTest {
+public class EnergycontractServiceTest {
 
     @InjectMocks
-    private EnergiecontractService energiecontractService;
+    private EnergycontractService energycontractService;
 
     @Mock
-    private EnergiecontractToDateRecalculator energiecontractToDateRecalculator;
+    private EnergycontractToDateRecalculator energycontractToDateRecalculator;
     @Mock
     private EnergiecontractRepository energiecontractRepository;
     @Mock
@@ -41,18 +41,18 @@ public class EnergiecontractServiceTest {
     @Test
     public void whenGetByIdThenDelegatedToRepository() {
         final long id = 132L;
-        final Energiecontract energiecontract = mock(Energiecontract.class);
-        when(energiecontractRepository.getOne(id)).thenReturn(energiecontract);
+        final Energycontract energycontract = mock(Energycontract.class);
+        when(energiecontractRepository.getOne(id)).thenReturn(energycontract);
 
-        assertThat(energiecontractService.getById(id)).isSameAs(energiecontract);
+        assertThat(energycontractService.getById(id)).isSameAs(energycontract);
     }
 
     @Test
     public void whenGetAllThenDelegatedToRepository() {
-        final List<Energiecontract> all = List.of(mock(Energiecontract.class), mock(Energiecontract.class));
+        final List<Energycontract> all = List.of(mock(Energycontract.class), mock(Energycontract.class));
         when(energiecontractRepository.findAll()).thenReturn(all);
 
-        assertThat(energiecontractService.getAll()).isSameAs(all);
+        assertThat(energycontractService.getAll()).isSameAs(all);
     }
 
     @Test
@@ -60,16 +60,16 @@ public class EnergiecontractServiceTest {
         final LocalDate today = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, today.atStartOfDay());
 
-        final Energiecontract energiecontract = mock(Energiecontract.class);
-        when(energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(today)).thenReturn(energiecontract);
+        final Energycontract energycontract = mock(Energycontract.class);
+        when(energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(today)).thenReturn(energycontract);
 
-        assertThat(energiecontractService.getCurrent()).isSameAs(energiecontract);
+        assertThat(energycontractService.getCurrent()).isSameAs(energycontract);
     }
 
     @Test
     public void whenDeleteThenDeletedFromRepository() {
         final long id = 12;
-        energiecontractService.delete(id);
+        energycontractService.delete(id);
 
         verify(energiecontractRepository).deleteById(id);
     }
@@ -77,7 +77,7 @@ public class EnergiecontractServiceTest {
     @Test
     public void whenDeleteThenAllCachesCleared() {
         final long id = 12;
-        energiecontractService.delete(id);
+        energycontractService.delete(id);
 
         verify(cacheService).clearAll();
     }
@@ -85,33 +85,33 @@ public class EnergiecontractServiceTest {
     @Test
     public void whenDeleteThenValidToRecalculated() {
         final long id = 12;
-        energiecontractService.delete(id);
+        energycontractService.delete(id);
 
-        verify(energiecontractToDateRecalculator).recalculate();
+        verify(energycontractToDateRecalculator).recalculate();
     }
 
     @Test
     public void whenSaveThenSavedByRepository() {
-        final Energiecontract energiecontract = mock(Energiecontract.class);
-        energiecontractService.save(energiecontract);
+        final Energycontract energycontract = mock(Energycontract.class);
+        energycontractService.save(energycontract);
 
-        verify(energiecontractRepository).save(energiecontract);
+        verify(energiecontractRepository).save(energycontract);
     }
 
     @Test
     public void whenSaveThenAllCachesCleared() {
-        final Energiecontract energiecontract = mock(Energiecontract.class);
-        energiecontractService.save(energiecontract);
+        final Energycontract energycontract = mock(Energycontract.class);
+        energycontractService.save(energycontract);
 
         verify(cacheService).clearAll();
     }
 
     @Test
     public void whenSaveThenValidToRecalculated() {
-        final Energiecontract energiecontract = mock(Energiecontract.class);
-        energiecontractService.save(energiecontract);
+        final Energycontract energycontract = mock(Energycontract.class);
+        energycontractService.save(energycontract);
 
-        verify(energiecontractToDateRecalculator).recalculate();
+        verify(energycontractToDateRecalculator).recalculate();
     }
 
     @Test
@@ -120,11 +120,11 @@ public class EnergiecontractServiceTest {
         final LocalDateTime to = from.plusDays(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
 
-        final List<Energiecontract> energiecontractsInPeriod = List.of(mock(Energiecontract.class), mock(Energiecontract.class));
+        final List<Energycontract> energiecontractsInPeriod = List.of(mock(Energycontract.class), mock(Energycontract.class));
 
         when(energiecontractRepository.findValidInPeriod(from.toLocalDate(), to.toLocalDate()))
                                       .thenReturn(energiecontractsInPeriod);
 
-        assertThat(energiecontractService.findAllInInPeriod(period)).isSameAs(energiecontractsInPeriod);
+        assertThat(energycontractService.findAllInInPeriod(period)).isSameAs(energiecontractsInPeriod);
     }
 }

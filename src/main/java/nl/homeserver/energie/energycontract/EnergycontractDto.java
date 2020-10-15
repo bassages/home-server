@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-class EnergiecontractDto {
+class EnergycontractDto {
 
     private Long id;
     private LocalDate validFrom;

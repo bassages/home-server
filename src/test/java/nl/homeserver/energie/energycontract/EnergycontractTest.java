@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import static nl.homeserver.energie.StroomTariefIndicator.DAL;
 import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
@@ -12,40 +12,40 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EnergiecontractTest {
+public class EnergycontractTest {
 
     @Test
     public void givenStroomPerKwhNormaalTariefSetWhenGetStroomKostenNormaalThenReturned() {
-        final Energiecontract energiecontract = new Energiecontract();
+        final Energycontract energycontract = new Energycontract();
         final BigDecimal normaalTarief = new BigDecimal("20.121231");
-        energiecontract.setStroomPerKwhNormaalTarief(normaalTarief);
+        energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
 
-        assertThat(energiecontract.getStroomKosten(NORMAAL)).isSameAs(normaalTarief);
+        assertThat(energycontract.getStroomKosten(NORMAAL)).isSameAs(normaalTarief);
     }
 
     @Test
     public void givenStroomPerKwhDalTariefSetWhenGetStroomKostenDalThenReturned() {
-        final Energiecontract energiecontract = new Energiecontract();
+        final Energycontract energycontract = new Energycontract();
         final BigDecimal dalTarief = new BigDecimal("785.7453");
-        energiecontract.setStroomPerKwhDalTarief(dalTarief);
+        energycontract.setStroomPerKwhDalTarief(dalTarief);
 
-        assertThat(energiecontract.getStroomKosten(DAL)).isSameAs(dalTarief);
+        assertThat(energycontract.getStroomKosten(DAL)).isSameAs(dalTarief);
     }
 
     @Test
     public void givenStroomPerKwhDalTariefNullWhenGetStroomKostenDalThenNormaalReturned() {
-        final Energiecontract energiecontract = new Energiecontract();
+        final Energycontract energycontract = new Energycontract();
         final BigDecimal normaalTarief = new BigDecimal("123.121231");
-        energiecontract.setStroomPerKwhNormaalTarief(normaalTarief);
+        energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
 
-        assertThat(energiecontract.getStroomKosten(DAL)).isSameAs(normaalTarief);
+        assertThat(energycontract.getStroomKosten(DAL)).isSameAs(normaalTarief);
     }
 
     @Test
     public void givenWhenGetStroomHostenOnbekendThenZeroReturned() {
-        final Energiecontract energiecontract = new Energiecontract();
+        final Energycontract energycontract = new Energycontract();
 
-        assertThat(energiecontract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
+        assertThat(energycontract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
     }
 
 }

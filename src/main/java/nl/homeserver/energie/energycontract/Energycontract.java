@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -22,8 +22,8 @@ import nl.homeserver.energie.StroomTariefIndicator;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table
-public class Energiecontract {
+@Table(name = "ENERGIECONTRACT")
+public class Energycontract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

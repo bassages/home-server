@@ -13,14 +13,14 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
+import nl.homeserver.energie.energycontract.Energycontract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.StroomTariefIndicator;
-import nl.homeserver.energie.energiecontract.Energiecontract;
-import nl.homeserver.energie.energiecontract.EnergiecontractService;
+import nl.homeserver.energie.energycontract.EnergycontractService;
 
 @Service
 public class VerbruikKostenOverzichtService {
@@ -32,12 +32,12 @@ public class VerbruikKostenOverzichtService {
     @Autowired
     private VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching;
 
-    private final EnergiecontractService energiecontractService;
+    private final EnergycontractService energycontractService;
     private final Clock clock;
 
-    VerbruikKostenOverzichtService(final EnergiecontractService energiecontractService,
+    VerbruikKostenOverzichtService(final EnergycontractService energycontractService,
                                    final Clock clock) {
-        this.energiecontractService = energiecontractService;
+        this.energycontractService = energycontractService;
         this.clock = clock;
     }
 
@@ -101,7 +101,7 @@ public class VerbruikKostenOverzichtService {
 
     private VerbruikKosten getNotCachedGasVerbruikInPeriode(final VerbruikProvider verbruikProvider,
                                                             final DateTimePeriod period) {
-        return energiecontractService.findAllInInPeriod(period)
+        return energycontractService.findAllInInPeriod(period)
                                      .stream()
                                      .map(energieContract -> this.getGasVerbruikKosten(verbruikProvider, energieContract, period))
                                      .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
@@ -111,7 +111,7 @@ public class VerbruikKostenOverzichtService {
     private VerbruikKosten getNotCachedStroomVerbruikInPeriode(final VerbruikProvider verbruikProvider,
                                                                final DateTimePeriod period,
                                                                final StroomTariefIndicator stroomTariefIndicator) {
-        return energiecontractService.findAllInInPeriod(period)
+        return energycontractService.findAllInInPeriod(period)
                                      .stream()
                                      .map(energieContract -> this.getStroomVerbruikKosten(verbruikProvider, energieContract, stroomTariefIndicator, period))
                                      .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
@@ -119,37 +119,37 @@ public class VerbruikKostenOverzichtService {
     }
 
     private VerbruikKosten getGasVerbruikKosten(final VerbruikProvider verbruikProvider,
-                                                final Energiecontract energiecontract,
+                                                final Energycontract energycontract,
                                                 final DateTimePeriod period) {
-        final DateTimePeriod subPeriod = getSubPeriod(energiecontract, period);
+        final DateTimePeriod subPeriod = getSubPeriod(energycontract, period);
 
         final BigDecimal verbruik = verbruikProvider.getGasVerbruik(subPeriod);
 
         BigDecimal kosten = null;
         if (verbruik != null) {
-            kosten = energiecontract.getGasPerKuub().multiply(verbruik);
+            kosten = energycontract.getGasPerKuub().multiply(verbruik);
         }
         return new VerbruikKosten(verbruik, kosten);
     }
 
     private VerbruikKosten getStroomVerbruikKosten(final VerbruikProvider verbruikProvider,
-                                                   final Energiecontract energiecontract,
+                                                   final Energycontract energycontract,
                                                    final StroomTariefIndicator stroomTariefIndicator,
                                                    final DateTimePeriod period) {
-        final DateTimePeriod subPeriod = getSubPeriod(energiecontract, period);
+        final DateTimePeriod subPeriod = getSubPeriod(energycontract, period);
 
         final BigDecimal verbruik = verbruikProvider.getStroomVerbruik(subPeriod, stroomTariefIndicator);
 
         BigDecimal kosten = null;
         if (verbruik != null) {
-            kosten = energiecontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik);
+            kosten = energycontract.getStroomKosten(stroomTariefIndicator).multiply(verbruik);
         }
         return new VerbruikKosten(verbruik, kosten);
     }
 
-    private DateTimePeriod getSubPeriod(final Energiecontract energiecontract, final DateTimePeriod period) {
-        final LocalDateTime subFrom = max(period.getFromDateTime(), energiecontract.getValidFrom().atStartOfDay());
-        final LocalDateTime subTo = min(period.getToDateTime(), energiecontract.getValidTo() != null ? energiecontract.getValidTo().atStartOfDay() : null);
+    private DateTimePeriod getSubPeriod(final Energycontract energycontract, final DateTimePeriod period) {
+        final LocalDateTime subFrom = max(period.getFromDateTime(), energycontract.getValidFrom().atStartOfDay());
+        final LocalDateTime subTo = min(period.getToDateTime(), energycontract.getValidTo() != null ? energycontract.getValidTo().atStartOfDay() : null);
         return aPeriodWithToDateTime(subFrom, subTo);
     }
 }

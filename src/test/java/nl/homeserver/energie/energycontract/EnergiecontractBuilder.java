@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import static java.math.BigDecimal.ZERO;
 
@@ -30,13 +30,13 @@ public class EnergiecontractBuilder {
         return this;
     }
 
-    public Energiecontract build() {
-        final Energiecontract energiecontract = new Energiecontract();
-        energiecontract.setGasPerKuub(gasPerKuub);
-        energiecontract.setStroomPerKwhNormaalTarief(stroomPerKwhNormaalTarief);
-        energiecontract.setStroomPerKwhDalTarief(stroomPerKwhDalTarief);
-        energiecontract.setValidFrom(validFrom);
-        energiecontract.setValidTo(validTo);
-        return energiecontract;
+    public Energycontract build() {
+        final Energycontract energycontract = new Energycontract();
+        energycontract.setGasPerKuub(gasPerKuub);
+        energycontract.setStroomPerKwhNormaalTarief(stroomPerKwhNormaalTarief);
+        energycontract.setStroomPerKwhDalTarief(stroomPerKwhDalTarief);
+        energycontract.setValidFrom(validFrom);
+        energycontract.setValidTo(validTo);
+        return energycontract;
     }
 }

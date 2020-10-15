@@ -1,4 +1,4 @@
-package nl.homeserver.energie.energiecontract;
+package nl.homeserver.energie.energycontract;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,15 +10,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 @Transactional
-interface EnergiecontractRepository extends JpaRepository<Energiecontract, Long> {
+interface EnergiecontractRepository extends JpaRepository<Energycontract, Long> {
 
     @Query(value = """
                     SELECT e
-                      FROM Energiecontract e
+                      FROM Energycontract e
                      WHERE (e.validFrom < :to) AND (e.validTo IS NULL OR e.validTo > :from)
                   ORDER BY e.validFrom""")
-    List<Energiecontract> findValidInPeriod(@Param("from") final LocalDate from,
-                                            @Param("to") final LocalDate to);
+    List<Energycontract> findValidInPeriod(@Param("from") final LocalDate from,
+                                           @Param("to") final LocalDate to);
 
-    Energiecontract findFirstByValidFromLessThanEqualOrderByValidFromDesc(@Param("validFrom") LocalDate validFrom);
+    Energycontract findFirstByValidFromLessThanEqualOrderByValidFromDesc(@Param("validFrom") LocalDate validFrom);
 }
