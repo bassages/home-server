@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.cache.CacheService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -24,15 +25,18 @@ public class EnergycontractService {
     private final CacheService cacheService;
     private final Clock clock;
 
+    @Transactional(readOnly = true)
     List<Energycontract> getAll() {
         return energiecontractRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     Energycontract getCurrent() {
         final LocalDateTime now = now(clock);
         return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
+    @Transactional
     Energycontract save(final Energycontract energycontract) {
         final Energycontract savedEnergieContract = energiecontractRepository.save(energycontract);
         energycontractToDateRecalculator.recalculate();
@@ -40,17 +44,20 @@ public class EnergycontractService {
         return savedEnergieContract;
     }
 
+    @Transactional
     void delete(final long id) {
         energiecontractRepository.deleteById(id);
         energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }
 
+    @Transactional
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
         return energiecontractRepository.findValidInPeriod(period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
+    @Transactional
     Energycontract getById(final long id) {
         return energiecontractRepository.getOne(id);
     }
