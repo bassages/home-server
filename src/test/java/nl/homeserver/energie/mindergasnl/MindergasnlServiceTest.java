@@ -189,7 +189,9 @@ public class MindergasnlServiceTest {
 
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             httpPost.getEntity().writeTo(baos);
-            assertThat(baos).hasToString("{ \"date\": \"2018-01-01\", \"reading\": 12412.812 }");
+            assertThat(baos).hasToString("""
+                { "date": "2018-01-01", "reading": 12412.812 }
+                """);
         }
     }
 

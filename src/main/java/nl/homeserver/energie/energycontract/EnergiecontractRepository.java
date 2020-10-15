@@ -10,10 +10,11 @@ import java.util.List;
 interface EnergiecontractRepository extends JpaRepository<Energycontract, Long> {
 
     @Query(value = """
-                    SELECT e
-                      FROM Energycontract e
-                     WHERE (e.validFrom < :to) AND (e.validTo IS NULL OR e.validTo > :from)
-                  ORDER BY e.validFrom""")
+        SELECT e
+          FROM Energycontract e
+         WHERE (e.validFrom < :to) AND (e.validTo IS NULL OR e.validTo > :from)
+      ORDER BY e.validFrom
+      """)
     List<Energycontract> findValidInPeriod(@Param("from") final LocalDate from,
                                            @Param("to") final LocalDate to);
 

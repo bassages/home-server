@@ -78,17 +78,17 @@ public class MindergasnlService {
 
         final DatePeriod period = aPeriodWithToDate(yesterday, today);
 
-        final List<MeterstandOpDag> yesterdaysLastMeterstand = meterstandService.getPerDag(period);
+        final List<MeterstandOpDag> yesterdaysLastMeterReading = meterstandService.getPerDag(period);
 
-        if (isEmpty(yesterdaysLastMeterstand)) {
-            LOGGER.warn("Failed to upload to mindergas.nl because no meterstand could be found for date {}", yesterday);
+        if (isEmpty(yesterdaysLastMeterReading)) {
+            LOGGER.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday);
             return;
         }
 
-        final BigDecimal gasStand = yesterdaysLastMeterstand.get(0).getMeterstand().getGas();
+        final BigDecimal gasReading = yesterdaysLastMeterReading.get(0).getMeterstand().getGas();
 
         try (final CloseableHttpClient httpClient = httpClientBuilder.get().build()){
-            final HttpPost request = createRequest(yesterday, gasStand, settings.getAuthenticatietoken());
+            final HttpPost request = createRequest(yesterday, gasReading, settings.getAuthenticatietoken());
             final CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);
         } catch (final Exception ex) {
@@ -97,15 +97,18 @@ public class MindergasnlService {
     }
 
     private HttpPost createRequest(final LocalDate day,
-                                   final BigDecimal gasStand,
-                                   final String authenticatietoken) throws UnsupportedEncodingException {
+                                   final BigDecimal gasReading,
+                                   final String authenticationToken) throws UnsupportedEncodingException {
         final HttpPost request = new HttpPost(METERSTAND_UPLOAD_ENDPOINT_URL);
 
-        final String message = String.format("{ \"date\": \"%s\", \"reading\": %s }", day.format(ofPattern("yyyy-MM-dd")), gasStand.toString());
+        final String message = """
+            { "date": "%s", "reading": %s }
+            """.formatted(day.format(ofPattern("yyyy-MM-dd")), gasReading.toString());
+
         LOGGER.info("Upload to mindergas.nl: {}", message);
 
         request.addHeader(HEADER_NAME_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        request.addHeader(HEADER_NAME_AUTH_TOKEN, authenticatietoken);
+        request.addHeader(HEADER_NAME_AUTH_TOKEN, authenticationToken);
 
         final StringEntity params = new StringEntity(message);
         request.setEntity(params);
