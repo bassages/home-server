@@ -26,18 +26,18 @@ public class EnergycontractService {
     private final Clock clock;
 
     @Transactional(readOnly = true)
-    List<Energycontract> getAll() {
+    public List<Energycontract> getAll() {
         return energiecontractRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    Energycontract getCurrent() {
+    public Energycontract getCurrent() {
         final LocalDateTime now = now(clock);
         return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
     @Transactional
-    Energycontract save(final Energycontract energycontract) {
+    public Energycontract save(final Energycontract energycontract) {
         final Energycontract savedEnergieContract = energiecontractRepository.save(energycontract);
         energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
@@ -45,7 +45,7 @@ public class EnergycontractService {
     }
 
     @Transactional
-    void delete(final long id) {
+    public void delete(final long id) {
         energiecontractRepository.deleteById(id);
         energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
@@ -54,11 +54,12 @@ public class EnergycontractService {
     @Transactional
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
-        return energiecontractRepository.findValidInPeriod(period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
+        return energiecontractRepository.findValidInPeriod(
+                period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
     @Transactional
-    Energycontract getById(final long id) {
+    public Energycontract getById(final long id) {
         return energiecontractRepository.getOne(id);
     }
 }
