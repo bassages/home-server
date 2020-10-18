@@ -14,11 +14,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 class EnergycontractToDateRecalculator {
 
-    private final EnergiecontractRepository energiecontractRepository;
+    private final EnergycontractRepository energycontractRepository;
 
     void recalculate() {
         Sort ordering = Sort.by(Sort.Direction.ASC, "validFrom");
-        final List<Energycontract> energycontracts = energiecontractRepository.findAll(ordering);
+        final List<Energycontract> energycontracts = energycontractRepository.findAll(ordering);
 
         Energycontract previousEnergycontract = null;
         for (int i = 0; i < energycontracts.size(); i++) {
@@ -28,13 +28,13 @@ class EnergycontractToDateRecalculator {
                 final LocalDate validTo = currentEnergycontract.getValidFrom();
                 if (notEqual(previousEnergycontract.getValidTo(), validTo)) {
                     previousEnergycontract.setValidTo(validTo);
-                    energiecontractRepository.save(previousEnergycontract);
+                    energycontractRepository.save(previousEnergycontract);
                 }
             }
 
             if (i == (energycontracts.size() - 1) && currentEnergycontract.getValidTo() != null) {
                 currentEnergycontract.setValidTo(null);
-                energiecontractRepository.save(currentEnergycontract);
+                energycontractRepository.save(currentEnergycontract);
             }
             previousEnergycontract = currentEnergycontract;
         }

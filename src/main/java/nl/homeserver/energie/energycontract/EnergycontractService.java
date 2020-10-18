@@ -15,51 +15,46 @@ import nl.homeserver.cache.CacheService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class EnergycontractService {
 
     private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
 
     private final EnergycontractToDateRecalculator energycontractToDateRecalculator;
-    private final EnergiecontractRepository energiecontractRepository;
+    private final EnergycontractRepository energycontractRepository;
     private final CacheService cacheService;
     private final Clock clock;
 
-    @Transactional(readOnly = true)
     public List<Energycontract> getAll() {
-        return energiecontractRepository.findAll();
+        return energycontractRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     public Energycontract getCurrent() {
         final LocalDateTime now = now(clock);
-        return energiecontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
+        return energycontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
-    @Transactional
     public Energycontract save(final Energycontract energycontract) {
-        final Energycontract savedEnergieContract = energiecontractRepository.save(energycontract);
+        final Energycontract savedEnergieContract = energycontractRepository.save(energycontract);
         energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
         return savedEnergieContract;
     }
 
-    @Transactional
     public void delete(final long id) {
-        energiecontractRepository.deleteById(id);
+        energycontractRepository.deleteById(id);
         energycontractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }
 
-    @Transactional
     @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
     public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
-        return energiecontractRepository.findValidInPeriod(
+        return energycontractRepository.findValidInPeriod(
                 period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
-    @Transactional
     public Energycontract getById(final long id) {
-        return energiecontractRepository.getOne(id);
+        return energycontractRepository.getOne(id);
     }
 }

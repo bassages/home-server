@@ -16,14 +16,14 @@ import nl.homeserver.RepositoryIntegrationTest;
 public class EnergycontractRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
-    private EnergiecontractRepository energiecontractRepository;
+    private EnergycontractRepository energycontractRepository;
 
     @Test
     public void givenNoEnergieContractsExistsWhenFindAllInInPeriodThenNothingFound() {
         final LocalDate from = LocalDate.of(2018, NOVEMBER, 23);
         final LocalDate to = LocalDate.of(2018, DECEMBER, 12);
 
-        assertThat(energiecontractRepository.findValidInPeriod(from, to)).isEmpty();
+        assertThat(energycontractRepository.findValidInPeriod(from, to)).isEmpty();
     }
 
     @Test
@@ -40,26 +40,26 @@ public class EnergycontractRepositoryIntegrationTest extends RepositoryIntegrati
                                                                            .withValidTo(null).build();
         entityManager.persist(energycontractFrom2019);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2016, JANUARY, 1), LocalDate.of(2017, JANUARY, 1)))
-                                            .isEmpty();
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2016, JANUARY, 1), LocalDate.of(2017, JANUARY, 1)))
+                                           .isEmpty();
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2017, JANUARY, 1), LocalDate.of(2017, JANUARY, 2)))
-                                            .containsExactly(energycontract2017);
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2017, JANUARY, 1), LocalDate.of(2017, JANUARY, 2)))
+                                           .containsExactly(energycontract2017);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2017, DECEMBER, 31), LocalDate.of(2018, JANUARY, 1)))
-                                            .containsExactly(energycontract2017);
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2017, DECEMBER, 31), LocalDate.of(2018, JANUARY, 1)))
+                                           .containsExactly(energycontract2017);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2017, DECEMBER, 31), LocalDate.of(2018, JANUARY, 2)))
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2017, DECEMBER, 31), LocalDate.of(2018, JANUARY, 2)))
                                            .containsExactly(energycontract2017, energycontract2018);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2019, JANUARY, 1), LocalDate.of(2019, JANUARY, 2)))
-                                            .containsExactly(energycontractFrom2019);
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2019, JANUARY, 1), LocalDate.of(2019, JANUARY, 2)))
+                                           .containsExactly(energycontractFrom2019);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(2035, JANUARY, 1), LocalDate.of(2035, JANUARY, 2)))
-                                            .containsExactly(energycontractFrom2019);
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(2035, JANUARY, 1), LocalDate.of(2035, JANUARY, 2)))
+                                           .containsExactly(energycontractFrom2019);
 
-        assertThat(energiecontractRepository.findValidInPeriod(LocalDate.of(1900, JANUARY, 1), LocalDate.of(2035, JANUARY, 1)))
-                                            .containsExactly(energycontract2017, energycontract2018, energycontractFrom2019);
+        assertThat(energycontractRepository.findValidInPeriod(LocalDate.of(1900, JANUARY, 1), LocalDate.of(2035, JANUARY, 1)))
+                                           .containsExactly(energycontract2017, energycontract2018, energycontractFrom2019);
 
     }
 }

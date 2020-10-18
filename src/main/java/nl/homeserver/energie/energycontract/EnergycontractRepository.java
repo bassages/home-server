@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.util.List;
 
-interface EnergiecontractRepository extends JpaRepository<Energycontract, Long> {
+interface EnergycontractRepository extends JpaRepository<Energycontract, Long> {
 
     @Query(value = """
         SELECT e

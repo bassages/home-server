@@ -24,7 +24,7 @@ public class EnergycontractToDateRecalculatorTest {
     private EnergycontractToDateRecalculator energycontractToDateRecalculator;
 
     @Mock
-    private EnergiecontractRepository energiecontractRepository;
+    private EnergycontractRepository energycontractRepository;
 
     @Test
     public void givenMultipleEnergiecontractsWithoutValidToWhenRecalculateThenSetAndSaved() {
@@ -37,7 +37,7 @@ public class EnergycontractToDateRecalculatorTest {
         final Energycontract energycontract3 = new Energycontract();
         energycontract3.setValidFrom(LocalDate.of(2017, JANUARY, 12));
 
-        when(energiecontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract1, energycontract2, energycontract3));
+        when(energycontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract1, energycontract2, energycontract3));
 
         energycontractToDateRecalculator.recalculate();
 
@@ -45,8 +45,8 @@ public class EnergycontractToDateRecalculatorTest {
         assertThat(energycontract2.getValidTo()).isEqualTo(energycontract3.getValidFrom());
         assertThat(energycontract3.getValidTo()).isNull();
 
-        verify(energiecontractRepository).save(energycontract1);
-        verify(energiecontractRepository).save(energycontract2);
+        verify(energycontractRepository).save(energycontract1);
+        verify(energycontractRepository).save(energycontract2);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class EnergycontractToDateRecalculatorTest {
         energycontract3.setValidFrom(energycontract2.getValidTo());
         energycontract3.setValidTo(null);
 
-        when(energiecontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract1, energycontract2, energycontract3));
+        when(energycontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract1, energycontract2, energycontract3));
 
         energycontractToDateRecalculator.recalculate();
 
@@ -71,7 +71,7 @@ public class EnergycontractToDateRecalculatorTest {
         assertThat(energycontract2.getValidTo()).isEqualTo(LocalDate.of(2017, JANUARY, 14));
         assertThat(energycontract3.getValidTo()).isNull();
 
-        verify(energiecontractRepository, never()).save(any(Energycontract.class));
+        verify(energycontractRepository, never()).save(any(Energycontract.class));
     }
 
     @Test
@@ -79,12 +79,12 @@ public class EnergycontractToDateRecalculatorTest {
         final Energycontract energycontract = new Energycontract();
         energycontract.setValidTo(LocalDate.of(2017, JANUARY, 1));
 
-        when(energiecontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract));
+        when(energycontractRepository.findAll(any(Sort.class))).thenReturn(List.of(energycontract));
 
         energycontractToDateRecalculator.recalculate();
 
         assertThat(energycontract.getValidTo()).isNull();
 
-        verify(energiecontractRepository).save(energycontract);
+        verify(energycontractRepository).save(energycontract);
     }
 }
