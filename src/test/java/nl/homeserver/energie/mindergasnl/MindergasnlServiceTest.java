@@ -1,5 +1,6 @@
 package nl.homeserver.energie.mindergasnl;
 
+import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
@@ -76,89 +77,84 @@ public class MindergasnlServiceTest {
     private ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
 
     @Test
-    public void givenNoSettingsExistsWhenSaveSettingsThenDelegatedToRepository() {
+    public void givenNoSettingsExistsWhenSaveThenSavedInToRepository() {
+        // given
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
-
         final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
 
         when(mindergasnlSettingsRepository.save(mindergasnlSettings)).thenReturn(mindergasnlSettings);
 
-        assertThat(mindergasnlService.save(mindergasnlSettings)).isEqualTo(mindergasnlSettings);
+        // when
+        final MindergasnlSettings savedMindergasnlSettings = mindergasnlService.save(mindergasnlSettings);
+
+        // then
+        assertThat(savedMindergasnlSettings).isEqualTo(mindergasnlSettings);
     }
 
     @Test
-    public void givenSettingsExistsWhenSaveSettingsThenDelegatedToRepository() {
+    public void givenSettingsExistsWhenSaveThenDelegatedToRepository() {
+        // given
         final MindergasnlSettings existingMindergasnlSettings = new MindergasnlSettings();
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(existingMindergasnlSettings));
 
         final MindergasnlSettings updatedMindergasnlSettings = new MindergasnlSettings();
-        updatedMindergasnlSettings .setAutomatischUploaden(false);
+        updatedMindergasnlSettings.setAutomatischUploaden(false);
         updatedMindergasnlSettings.setAuthenticatietoken("newToken");
 
         when(mindergasnlSettingsRepository.save(any(MindergasnlSettings.class))).then(returnsFirstArg());
 
-        assertThat(mindergasnlService.save(updatedMindergasnlSettings)).isEqualTo(existingMindergasnlSettings);
+        // when
+        final MindergasnlSettings savedMindergasnlSettings = mindergasnlService.save(updatedMindergasnlSettings);
 
-        assertThat(existingMindergasnlSettings.getAuthenticatietoken()).isSameAs(updatedMindergasnlSettings.getAuthenticatietoken());
-        assertThat(existingMindergasnlSettings.isAutomatischUploaden()).isSameAs(updatedMindergasnlSettings.isAutomatischUploaden());
+        // then
+        assertThat(savedMindergasnlSettings).isEqualTo(existingMindergasnlSettings);
+        assertThat(existingMindergasnlSettings.getAuthenticatietoken()).isSameAs(
+                updatedMindergasnlSettings.getAuthenticatietoken());
+        assertThat(existingMindergasnlSettings.isAutomatischUploaden()).isSameAs(
+                updatedMindergasnlSettings.isAutomatischUploaden());
     }
 
     @Test
-    public void givenMindergasnlSettingExistWhenFindOneSettingsThenOptionalContainingMindergasnlSettingsReturned() {
+    public void givenMindergasnlSettingExistWhenFindOneThenOptionalContainingMindergasnlSettingsReturned() {
+        // given
         final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
-
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
-        assertThat(mindergasnlService.findOne()).contains(mindergasnlSettings);
+        // when
+        final Optional<MindergasnlSettings> actual = mindergasnlService.findOne();
+
+        // then
+        assertThat(actual).contains(mindergasnlSettings);
     }
 
     @Test
     public void givenMindergasnlSettingNotExistWhenFindOneSettingsThenEmptyOptionalReturned() {
-        final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
-
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
-
-        assertThat(mindergasnlService.findOne()).contains(mindergasnlSettings);
-    }
-
-    @Test
-    public void givenNoMindergasnlSettingsExistWhenUploadMeterstandWhenEnabledThenNotUploaded() {
-        timeTravelTo(clock, LocalDate.of(2018, 1, 2).atTime(17, 9));
-
+        // given
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
 
-        mindergasnlService.uploadMeterstandWhenEnabled();
+        // when
+        final Optional<MindergasnlSettings> actualMinderGasnlSettings = mindergasnlService.findOne();
 
-        verifyNoMoreInteractions(meterstandService, httpClientBuilder);
+        // then
+        assertThat(actualMinderGasnlSettings).isEmpty();
     }
 
     @Test
-    public void givenAutomaticUploadIsDisabledWhenUploadMeterstandWhenEnabledThenNotUploaded() {
-        timeTravelTo(clock, LocalDate.of(2018, 1, 2).atTime(17, 9));
-
-        final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
-        mindergasnlSettings.setAutomatischUploaden(false);
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
-
-        mindergasnlService.uploadMeterstandWhenEnabled();
-
-        verifyNoMoreInteractions(meterstandService, httpClientBuilder);
-    }
-
-    @Test
-    public void givenAutomaticUploadIsEnabledWhenUploadMeterstandWhenEnabledThenUploaded() throws Exception {
-        final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+    public void givenSomeMinderGasnlSettingsWhenUploadMeterstandThenUploaded() throws Exception {
+        // given
+        final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
         final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
+        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
+                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
 
-        final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        final DatePeriod expectedPeriod = aPeriodWithToDate(
+                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
         when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
 
         when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
@@ -167,64 +163,77 @@ public class MindergasnlServiceTest {
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_CREATED);
 
-        mindergasnlService.uploadMeterstandWhenEnabled();
+        // when
+        mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
+        // then
         verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
 
         assertThat(httpUriRequestCaptor.getValue()).isExactlyInstanceOf(HttpPost.class);
-        final HttpPost httpPost = (HttpPost)httpUriRequestCaptor.getValue();
+        final HttpPost httpPost = (HttpPost) httpUriRequestCaptor.getValue();
 
         assertThat(httpPost.getURI()).hasScheme("http");
         assertThat(httpPost.getURI()).hasHost("www.mindergas.nl");
 
         assertThat(httpPost.getHeaders(MindergasnlService.HEADER_NAME_AUTH_TOKEN))
-                           .extracting(Header::getValue)
-                           .containsExactly(mindergasnlSettings.getAuthenticatietoken());
+                .extracting(Header::getValue)
+                .containsExactly(mindergasnlSettings.getAuthenticatietoken());
 
         assertThat(httpPost.getHeaders(MindergasnlService.HEADER_NAME_CONTENT_TYPE))
-                           .extracting(Header::getValue)
-                           .containsExactly(APPLICATION_JSON.getMimeType());
+                .extracting(Header::getValue)
+                .containsExactly(APPLICATION_JSON.getMimeType());
 
         assertThat(httpPost.getEntity()).isNotNull();
 
         try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             httpPost.getEntity().writeTo(baos);
             assertThat(baos).hasToString("""
-                { "date": "2018-01-01", "reading": 12412.812 }
-                """);
+                    { "date": "2018-01-01", "reading": 12412.812 }
+                    """);
         }
     }
 
     @Test
     public void givenYesterdaysMeterstandIsUnknownWhenUploadMeterstandWhenEnabledThenNotUploaded() {
-        final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+        // given
+        final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
-        final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        final DatePeriod expectedPeriod = aPeriodWithToDate(
+                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
         when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(emptyList());
 
-        mindergasnlService.uploadMeterstandWhenEnabled();
+        loggingRule.setLevel(Level.WARN);
 
+        // when
+        mindergasnlService.uploadMeterstand(mindergasnlSettings);
+
+        // then
         verify(meterstandService).getPerDag(eq(expectedPeriod));
         verifyNoMoreInteractions(httpClientBuilder);
+
+        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        assertThat(loggingEvent.getFormattedMessage()).isEqualTo(
+                "Failed to upload to mindergas.nl because no meter reading could be found for date 2018-01-01");
+        assertThat(loggingEvent.getLevel()).isEqualTo(Level.WARN);
     }
 
     @Test
     public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged() throws Exception {
+        // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
         final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
+        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
+                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
 
         final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
         when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
@@ -238,8 +247,10 @@ public class MindergasnlServiceTest {
 
         loggingRule.setLevel(Level.ERROR);
 
-        mindergasnlService.uploadMeterstandWhenEnabled();
+        // when
+        mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
+        // then
         verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
 
         final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
@@ -249,28 +260,45 @@ public class MindergasnlServiceTest {
 
     @Test
     public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged() {
+        // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
-        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
         final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
+        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
+                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
 
-        final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
+        final DatePeriod expectedPeriod = aPeriodWithToDate(
+                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
         when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
 
         final RuntimeException runtimeException = new RuntimeException("FUBAR");
         when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
         loggingRule.setLevel(Level.ERROR);
 
-        mindergasnlService.uploadMeterstandWhenEnabled();
+        // when
+        mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
+        // then
         final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
         assertThat(loggingEvent.getFormattedMessage()).isEqualTo("Failed to upload to mindergas.nl");
         assertThat(loggingEvent.getThrowableProxy().getClassName()).isEqualTo(runtimeException.getClass().getName());
+    }
+
+    @Test
+    public void whenFindOneThenRetievedFromRepository() {
+        // given
+        final Optional<MindergasnlSettings> mindergasnlSettings = Optional.of(mock(MindergasnlSettings.class));
+        when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(mindergasnlSettings);
+
+        // when
+        final Optional<MindergasnlSettings> actualResult = mindergasnlService.findOne();
+
+        // then
+        assertThat(actualResult).isSameAs(mindergasnlSettings);
     }
 }

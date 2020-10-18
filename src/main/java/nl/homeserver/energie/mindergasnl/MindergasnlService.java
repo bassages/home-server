@@ -31,13 +31,13 @@ import nl.homeserver.energie.meterstand.MeterstandService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class MindergasnlService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MindergasnlService.class);
 
     private static final String METER_READING_UPLOAD_URL = "http://www.mindergas.nl/api/gas_meter_readings";
-    private static final String THREE_AM = "0 0 3 * * *";
 
     static final String HEADER_NAME_CONTENT_TYPE = "content-type";
     static final String HEADER_NAME_AUTH_TOKEN = "AUTH-TOKEN";
@@ -47,14 +47,12 @@ public class MindergasnlService {
     private final Provider<HttpClientBuilder> httpClientBuilder;
     private final Clock clock;
 
-    @Transactional(readOnly = true)
-    Optional<MindergasnlSettings> findOne() {
+    public Optional<MindergasnlSettings> findOne() {
         return mindergasnlSettingsRepository.findOneByIdIsNotNull();
     }
 
-    @Transactional
-    MindergasnlSettings save(final MindergasnlSettings mindergasnlSettings) {
-        final Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = mindergasnlSettingsRepository.findOneByIdIsNotNull();
+    public MindergasnlSettings save(final MindergasnlSettings mindergasnlSettings) {
+        final Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = findOne();
 
         if (optionalExistingMindergasnlSettings.isPresent()) {
             final MindergasnlSettings existingMindergasnlSettings = optionalExistingMindergasnlSettings.get();
@@ -66,13 +64,7 @@ public class MindergasnlService {
         }
     }
 
-    @Scheduled(cron = THREE_AM)
-    public void uploadMeterstandWhenEnabled() {
-        findOne().filter(MindergasnlSettings::isAutomatischUploaden)
-                 .ifPresent(this::uploadMeterstand);
-    }
-
-    private void uploadMeterstand(final MindergasnlSettings settings) {
+    public void uploadMeterstand(final MindergasnlSettings settings) {
         final LocalDate today = LocalDate.now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
