@@ -18,21 +18,48 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
     // Please note that BETWEEN in HQL is INCLUSIVE!
 
     @Nullable
-    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(mostrecent.dateTime) FROM Meterstand mostrecent)")
+    @Query(value = """
+        SELECT m
+          FROM Meterstand m
+         WHERE m.dateTime = (
+                             SELECT MAX(mostrecent.dateTime)
+                               FROM Meterstand mostrecent
+                            )
+        """)
     Meterstand getMostRecent();
 
     @Nullable
-    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MIN(oldest.dateTime) FROM Meterstand oldest)")
+    @Query(value = """
+        SELECT m
+          FROM Meterstand m
+         WHERE m.dateTime = (
+                             SELECT MIN(oldest.dateTime)
+                               FROM Meterstand oldest
+                            )
+        """)
     Meterstand getOldest();
 
     @Nullable
-    @Query(value = "SELECT m FROM Meterstand m WHERE m.dateTime = (SELECT MAX(dateTime) from Meterstand m where m.dateTime BETWEEN :van AND :totEnMet)")
+    @Query(value = """
+        SELECT m
+          FROM Meterstand m
+         WHERE m.dateTime = (
+                             SELECT MAX(m1.dateTime)
+                               FROM Meterstand m1
+                              WHERE m1.dateTime BETWEEN :van AND :totEnMet
+                            )
+        """)
     Meterstand getMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     @Nullable
     @Query(value = """
-        SELECT m FROM Meterstand m 
-         WHERE m.dateTime = (SELECT MIN(dateTime) FROM Meterstand m WHERE m.dateTime BETWEEN :van AND :totEnMet)
+        SELECT m
+          FROM Meterstand m 
+         WHERE m.dateTime = (
+                             SELECT MIN(m1.dateTime)
+                               FROM Meterstand m1
+                              WHERE m1.dateTime BETWEEN :van AND :totEnMet
+                            )
         """)
     Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
@@ -45,9 +72,9 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
            FROM meterstand
           WHERE date_time >= :fromDate
             AND date_time < :toDate
-          GROUP BY date
-            HAVING nr_of_records > :maxNrOfRowsPerDay
-          ORDER BY nr_of_records DESC
+       GROUP BY date
+         HAVING nr_of_records > :maxNrOfRowsPerDay
+       ORDER BY nr_of_records DESC
         )""", nativeQuery = true)
     List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
                                                           @Param("toDate") LocalDate toDate,
