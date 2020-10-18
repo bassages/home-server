@@ -21,7 +21,7 @@ public final class DatePeriod {
 
     private final DateTimePeriod dateTimePeriod;
 
-    public DatePeriod(final DateTimePeriod dateTimePeriod) {
+    private DatePeriod(final DateTimePeriod dateTimePeriod) {
         this.dateTimePeriod = dateTimePeriod;
     }
 
