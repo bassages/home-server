@@ -30,10 +30,12 @@ import nl.homeserver.config.Paths;
 class KlimaatController {
 
     private final KlimaatService klimaatService;
+    private final KlimaatSensorService klimaatSensorService;
+    private final IncomingKlimaatService incomingKlimaatService;
 
     @GetMapping("sensors")
     public List<KlimaatSensor> getAllKlimaatSensors() {
-        return klimaatService.getAllKlimaatSensors();
+        return klimaatSensorService.getAll();
     }
 
     @PostMapping("sensors/{sensorCode}")
@@ -47,26 +49,28 @@ class KlimaatController {
         klimaat.setTemperatuur(klimaatDto.getTemperatuur());
         klimaat.setKlimaatSensor(klimaatSensor);
 
-        klimaatService.add(klimaat);
+        incomingKlimaatService.add(klimaat);
     }
 
     @PutMapping("sensors/{sensorCode}")
-    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode, @RequestBody final KlimaatSensorDto klimaatSensorDto) {
+    public KlimaatSensor update(@PathVariable("sensorCode") final String sensorCode,
+                                @RequestBody final KlimaatSensorDto klimaatSensorDto) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
         existingKlimaatSensor.setOmschrijving(klimaatSensorDto.getOmschrijving());
-        return klimaatService.update(existingKlimaatSensor);
+        return klimaatSensorService.save(existingKlimaatSensor);
     }
 
     @DeleteMapping("sensors/{sensorCode}")
     public void delete(@PathVariable("sensorCode") final String sensorCode) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
-        klimaatService.delete(existingKlimaatSensor);
+        klimaatService.deleteByKlimaatSensor(existingKlimaatSensor);
+        klimaatSensorService.delete(existingKlimaatSensor);
     }
 
     @GetMapping(path = "{sensorCode}/meest-recente")
     public RealtimeKlimaat getMostRecent(@PathVariable("sensorCode") final String sensorCode) {
         getKlimaatSensorExpectingOne(sensorCode);
-        return klimaatService.getMostRecent(sensorCode);
+        return incomingKlimaatService.getMostRecent(sensorCode);
     }
 
     @GetMapping(path = "{sensorCode}/hoogste")
@@ -114,7 +118,7 @@ class KlimaatController {
     }
 
     private KlimaatSensor getKlimaatSensorExpectingOne(final String klimaatSensorCode) {
-        return klimaatService.getKlimaatSensorByCode(klimaatSensorCode)
-                             .orElseThrow(() -> new ResourceNotFoundException("KlimaatSensor", klimaatSensorCode));
+        return klimaatSensorService.getByCode(klimaatSensorCode)
+                                   .orElseThrow(() -> new ResourceNotFoundException("KlimaatSensor", klimaatSensorCode));
     }
 }

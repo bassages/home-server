@@ -1,13 +1,9 @@
 package nl.homeserver.klimaat;
 
-import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.springframework.boot.actuate.health.Health.down;
-import static org.springframework.boot.actuate.health.Health.unknown;
-import static org.springframework.boot.actuate.health.Health.up;
-import static org.springframework.boot.actuate.health.Status.DOWN;
-import static org.springframework.boot.actuate.health.Status.UP;
+import lombok.AllArgsConstructor;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
@@ -17,11 +13,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.springframework.boot.actuate.health.Health.*;
+import static org.springframework.boot.actuate.health.Status.DOWN;
+import static org.springframework.boot.actuate.health.Status.UP;
 
 @Component
 @AllArgsConstructor
@@ -31,18 +28,20 @@ class KlimaatSensorHealth implements HealthIndicator {
 
     private static final String DETAIL_KEY_MESSAGE = "message";
 
-    private final KlimaatService klimaatService;
+    private final IncomingKlimaatService incomingKlimaatService;
+    private final KlimaatSensorService klimaatSensorService;
     private final Clock clock;
 
     @Override
     public Health health() {
-        final List<KlimaatSensor> allKlimaatSensors = klimaatService.getAllKlimaatSensors();
+        final List<KlimaatSensor> allKlimaatSensors = klimaatSensorService.getAll();
 
         if (isEmpty(allKlimaatSensors)) {
             return unknown().withDetail(DETAIL_KEY_MESSAGE, "No KlimaatSensors found.").build();
         }
 
-        final Map<KlimaatSensor, RealtimeKlimaat> mostRecentlyRegisteredKlimaatPerSensor = getMostRecentlyRegisteredKlimaatPerSensor(allKlimaatSensors);
+        final Map<KlimaatSensor, RealtimeKlimaat> mostRecentlyRegisteredKlimaatPerSensor =
+                getMostRecentlyRegisteredKlimaatPerSensor(allKlimaatSensors);
 
         if (noSensorHasRegisteredKlimaat(mostRecentlyRegisteredKlimaatPerSensor)) {
             return unknown().withDetail(DETAIL_KEY_MESSAGE, "No Klimaat registered yet.").build();
@@ -53,7 +52,8 @@ class KlimaatSensorHealth implements HealthIndicator {
         }
     }
 
-    private boolean noSensorHasRegisteredKlimaat(final Map<KlimaatSensor, RealtimeKlimaat> mostRecentlyRegisteredKlimaatPerSensor) {
+    private boolean noSensorHasRegisteredKlimaat(
+            final Map<KlimaatSensor, RealtimeKlimaat> mostRecentlyRegisteredKlimaatPerSensor) {
         return mostRecentlyRegisteredKlimaatPerSensor.values().stream().allMatch(Objects::isNull);
     }
 
@@ -85,11 +85,12 @@ class KlimaatSensorHealth implements HealthIndicator {
         return mostRecentRealtimeKlimaat.getDatumtijd().isBefore(now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES));
     }
 
-    private Map<KlimaatSensor, RealtimeKlimaat> getMostRecentlyRegisteredKlimaatPerSensor(final List<KlimaatSensor> allKlimaatSensors) {
+    private Map<KlimaatSensor, RealtimeKlimaat> getMostRecentlyRegisteredKlimaatPerSensor(
+            final List<KlimaatSensor> allKlimaatSensors) {
         final Map<KlimaatSensor, RealtimeKlimaat> mostRecentlyRegisteredKlimaatPerSensor = new HashMap<>();
 
         for (final KlimaatSensor klimaatSensor : allKlimaatSensors) {
-            final RealtimeKlimaat mostRecent = klimaatService.getMostRecent(klimaatSensor.getCode());
+            final RealtimeKlimaat mostRecent = incomingKlimaatService.getMostRecent(klimaatSensor.getCode());
             mostRecentlyRegisteredKlimaatPerSensor.put(klimaatSensor, mostRecent);
         }
         return mostRecentlyRegisteredKlimaatPerSensor;
