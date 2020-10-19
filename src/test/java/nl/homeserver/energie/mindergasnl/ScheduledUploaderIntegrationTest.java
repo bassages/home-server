@@ -11,8 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.verify;
 )
 public class ScheduledUploaderIntegrationTest {
 
-    static final String EVERY_SECOND = "0/1 * * * * ?";
+    static final String EVERY_SECOND = "0/2 * * * * ?";
 
     @SpyBean
     private ScheduledUploader scheduledUploader;
@@ -31,7 +30,7 @@ public class ScheduledUploaderIntegrationTest {
     @Test
     public void whenTheApplicationIsRunningThenUploadingToMindergasnlIsScheduled() {
         await()
-            .atMost(Duration.ofMillis(2500))
+            .atMost(Duration.ofMillis(4100))
             .untilAsserted(() -> verify(scheduledUploader, times(2)).uploadMeterstandWhenEnabled());
     }
 }
