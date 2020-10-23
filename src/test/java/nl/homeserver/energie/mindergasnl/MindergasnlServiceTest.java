@@ -1,5 +1,36 @@
 package nl.homeserver.energie.mindergasnl;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.CaptureLogging;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.energie.meterstand.MeterstandOpDag;
+import nl.homeserver.energie.meterstand.MeterstandService;
+import org.apache.http.Header;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import javax.inject.Provider;
+import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -12,72 +43,35 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Provider;
-
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.energie.meterstand.MeterstandOpDag;
-import nl.homeserver.energie.meterstand.MeterstandService;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MindergasnlServiceTest {
 
     @InjectMocks
-    private MindergasnlService mindergasnlService;
+    MindergasnlService mindergasnlService;
 
     @Mock
-    private MindergasnlSettingsRepository mindergasnlSettingsRepository;
+    MindergasnlSettingsRepository mindergasnlSettingsRepository;
     @Mock
-    private MeterstandService meterstandService;
+    MeterstandService meterstandService;
     @Mock
-    private Provider<HttpClientBuilder> httpClientBuilderProvider;
+    Provider<HttpClientBuilder> httpClientBuilderProvider;
     @Mock
-    private HttpClientBuilder httpClientBuilder;
+    HttpClientBuilder httpClientBuilder;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Mock
-    private CloseableHttpClient closeableHttpClient;
+    CloseableHttpClient closeableHttpClient;
     @Mock
-    private CloseableHttpResponse closeableHttpResponse;
+    CloseableHttpResponse closeableHttpResponse;
     @Mock
-    private StatusLine statusLine;
-
-    @Rule
-    public final LoggingRule loggingRule = new LoggingRule(MindergasnlService.class);
+    StatusLine statusLine;
 
     @Captor
-    private ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
+    ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
 
     @Test
-    public void givenNoSettingsExistsWhenSaveThenSavedInToRepository() {
+    void givenNoSettingsExistsWhenSaveThenSavedInToRepository() {
         // given
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
         final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
@@ -115,7 +109,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenMindergasnlSettingExistWhenFindOneThenOptionalContainingMindergasnlSettingsReturned() {
+    void givenMindergasnlSettingExistWhenFindOneThenOptionalContainingMindergasnlSettingsReturned() {
         // given
         final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
@@ -128,7 +122,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenMindergasnlSettingNotExistWhenFindOneSettingsThenEmptyOptionalReturned() {
+    void givenMindergasnlSettingNotExistWhenFindOneSettingsThenEmptyOptionalReturned() {
         // given
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
 
@@ -140,7 +134,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenSomeMinderGasnlSettingsWhenUploadMeterstandThenUploaded() throws Exception {
+    void givenSomeMinderGasnlSettingsWhenUploadMeterstandThenUploaded() throws Exception {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
@@ -193,8 +187,11 @@ public class MindergasnlServiceTest {
         }
     }
 
+    @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenYesterdaysMeterstandIsUnknownWhenUploadMeterstandWhenEnabledThenNotUploaded() {
+    void givenYesterdaysMeterstandIsUnknownWhenUploadMeterstandWhenEnabledThenNotUploaded(
+            final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
+
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
@@ -206,8 +203,6 @@ public class MindergasnlServiceTest {
                 currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
         when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(emptyList());
 
-        loggingRule.setLevel(Level.WARN);
-
         // when
         mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
@@ -215,16 +210,19 @@ public class MindergasnlServiceTest {
         verify(meterstandService).getPerDag(eq(expectedPeriod));
         verifyNoMoreInteractions(httpClientBuilder);
 
-        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
         assertThat(loggingEvent.getFormattedMessage()).isEqualTo(
                 "Failed to upload to mindergas.nl because no meter reading could be found for date 2018-01-01");
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.WARN);
     }
 
+    @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged() throws Exception {
+    public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged(
+            final ArgumentCaptor<LoggingEvent> loggerEventCaptor) throws Exception {
+
         // given
-        final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+        final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
@@ -245,23 +243,24 @@ public class MindergasnlServiceTest {
 
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
-        loggingRule.setLevel(Level.ERROR);
-
         // when
         mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
         // then
         verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
 
-        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
         assertThat(loggingEvent.getFormattedMessage()).isEqualTo("Failed to upload to mindergas.nl. HTTP status code: 403");
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.ERROR);
     }
 
+    @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged() {
+    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
+            final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
+
         // given
-        final LocalDateTime currentDateTime = LocalDate.of(2018, 1, 2).atTime(17, 9);
+        final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
@@ -278,13 +277,12 @@ public class MindergasnlServiceTest {
 
         final RuntimeException runtimeException = new RuntimeException("FUBAR");
         when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
-        loggingRule.setLevel(Level.ERROR);
 
         // when
         mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
         // then
-        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
         assertThat(loggingEvent.getFormattedMessage()).isEqualTo("Failed to upload to mindergas.nl");
         assertThat(loggingEvent.getThrowableProxy().getClassName()).isEqualTo(runtimeException.getClass().getName());
     }

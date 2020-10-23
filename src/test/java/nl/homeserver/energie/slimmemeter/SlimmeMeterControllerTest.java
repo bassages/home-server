@@ -1,11 +1,20 @@
 package nl.homeserver.energie.slimmemeter;
 
-import static ch.qos.logback.classic.Level.INFO;
-import static ch.qos.logback.classic.Level.OFF;
-import static java.math.BigDecimal.TEN;
-import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.CaptureLogging;
+import nl.homeserver.energie.StroomTariefIndicator;
+import nl.homeserver.energie.meterstand.Meterstand;
+import nl.homeserver.energie.meterstand.MeterstandService;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogen;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,45 +22,29 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static java.math.BigDecimal.TEN;
+import static nl.homeserver.energie.StroomTariefIndicator.NORMAAL;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.energie.StroomTariefIndicator;
-import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandService;
-import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogen;
-import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenService;
-
-@RunWith(MockitoJUnitRunner.class)
-public class SlimmeMeterControllerTest {
+@ExtendWith(MockitoExtension.class)
+class SlimmeMeterControllerTest {
 
     @InjectMocks
-    private SlimmeMeterController slimmeMeterController;
+    SlimmeMeterController slimmeMeterController;
 
     @Mock
-    private OpgenomenVermogenService opgenomenVermogenService;
+    OpgenomenVermogenService opgenomenVermogenService;
     @Mock
-    private MeterstandService meterstandService;
-
-    @Rule
-    public final LoggingRule loggingRule = new LoggingRule(SlimmeMeterController.class);
+    MeterstandService meterstandService;
 
     @Captor
-    private ArgumentCaptor<Meterstand> meterstandCaptor;
+    ArgumentCaptor<Meterstand> meterstandCaptor;
     @Captor
-    private ArgumentCaptor<OpgenomenVermogen> opgenomenVermogenCaptor;
+    ArgumentCaptor<OpgenomenVermogen> opgenomenVermogenCaptor;
 
     @Test
-    public void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
+    void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
         final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         final LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
         dsmr42Reading.setDatumtijd(dateTime);
@@ -93,36 +86,22 @@ public class SlimmeMeterControllerTest {
         assertThat(opgenomenVermogenCaptor.getValue().getTariefIndicator()).isEqualTo(stroomTariefIndicator);
     }
 
+    @CaptureLogging(SlimmeMeterController.class)
     @Test
-    public void givenLogLevelIsInfoWhenSaveThenLoggedAtLevelInfo() {
+    void whenSaveThenLoggedAtLevelInfo(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
+        // given
         final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
         dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
         dsmr42Reading.setGas(TEN);
         dsmr42Reading.setStroomTarief1(TEN);
         dsmr42Reading.setStroomTarief2(TEN);
 
-        loggingRule.setLevel(INFO);
-
+        // when
         slimmeMeterController.save(dsmr42Reading);
 
-        final LoggingEvent loggingEvent = loggingRule.getLoggedEventCaptor().getValue();
+        // then
+        final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
         assertThat(loggingEvent.getFormattedMessage()).startsWith("Dsmr42Reading(");
     }
-
-    @Test
-    public void givenLogLevelIsOffWhenSaveThenNothingLogged() {
-        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
-        dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
-        dsmr42Reading.setGas(TEN);
-        dsmr42Reading.setStroomTarief1(TEN);
-        dsmr42Reading.setStroomTarief2(TEN);
-
-        loggingRule.setLevel(OFF);
-
-        slimmeMeterController.save(dsmr42Reading);
-
-        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
-    }
-
 }
