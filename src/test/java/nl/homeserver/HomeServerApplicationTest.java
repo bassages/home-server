@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HomeServerApplicationTest {
 
     @Test
-    void whenGetClockThenSystemDefautClockReturned() {
+    void whenGetClockThenSystemDefaultClockReturned() {
         final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
         final Clock clock = homeServerApplication.getClock();
