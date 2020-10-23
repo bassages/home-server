@@ -2,6 +2,7 @@ package nl.homeserver;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import org.junit.jupiter.api.extension.*;
@@ -13,9 +14,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class LogCaptorExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback, ParameterResolver {
     private Logger logger;
-    private Appender mockAppender;
+    private Appender<ILoggingEvent> mockAppender;
     private ArgumentCaptor<LoggingEvent> loggingEventCaptor;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void beforeTestExecution(final ExtensionContext context) {
         final CaptureLogging annotation = context.getElement()
