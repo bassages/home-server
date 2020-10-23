@@ -7,15 +7,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EnergycontractTest {
+@ExtendWith(MockitoExtension.class)
+class EnergycontractTest {
 
     @Test
-    public void givenStroomPerKwhNormaalTariefSetWhenGetStroomKostenNormaalThenReturned() {
+    void givenStroomPerKwhNormaalTariefSetWhenGetStroomKostenNormaalThenReturned() {
         final Energycontract energycontract = new Energycontract();
         final BigDecimal normaalTarief = new BigDecimal("20.121231");
         energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
@@ -24,7 +24,7 @@ public class EnergycontractTest {
     }
 
     @Test
-    public void givenStroomPerKwhDalTariefSetWhenGetStroomKostenDalThenReturned() {
+    void givenStroomPerKwhDalTariefSetWhenGetStroomKostenDalThenReturned() {
         final Energycontract energycontract = new Energycontract();
         final BigDecimal dalTarief = new BigDecimal("785.7453");
         energycontract.setStroomPerKwhDalTarief(dalTarief);
@@ -33,7 +33,7 @@ public class EnergycontractTest {
     }
 
     @Test
-    public void givenStroomPerKwhDalTariefNullWhenGetStroomKostenDalThenNormaalReturned() {
+    void givenStroomPerKwhDalTariefNullWhenGetStroomKostenDalThenNormaalReturned() {
         final Energycontract energycontract = new Energycontract();
         final BigDecimal normaalTarief = new BigDecimal("123.121231");
         energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
@@ -42,10 +42,9 @@ public class EnergycontractTest {
     }
 
     @Test
-    public void givenWhenGetStroomHostenOnbekendThenZeroReturned() {
+    void whenGetStroomHostenOnbekendThenZeroReturned() {
         final Energycontract energycontract = new Energycontract();
 
         assertThat(energycontract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
     }
-
 }

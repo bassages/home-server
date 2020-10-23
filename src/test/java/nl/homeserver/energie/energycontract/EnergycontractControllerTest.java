@@ -1,31 +1,29 @@
 package nl.homeserver.energie.energycontract;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EnergycontractControllerTest {
+@ExtendWith(MockitoExtension.class)
+class EnergycontractControllerTest {
 
     @InjectMocks
-    private EnergycontractController energycontractController;
+    EnergycontractController energycontractController;
 
     @Mock
-    private EnergycontractService energycontractService;
+    EnergycontractService energycontractService;
 
     @Test
-    public void givenANewEnergyContractWhenSaveThenDelegatedToService() {
+    void givenANewEnergyContractWhenSaveThenDelegatedToService() {
         when(energycontractService.save(any())).then(returnsFirstArg());
         final EnergycontractDto energieContractDto = mock(EnergycontractDto.class);
         when(energieContractDto.getId()).thenReturn(null);
@@ -37,7 +35,7 @@ public class EnergycontractControllerTest {
     }
 
     @Test
-    public void givenAnExistingEnergyContractWhenSaveThenDelegatedToService() {
+    void givenAnExistingEnergyContractWhenSaveThenDelegatedToService() {
         when(energycontractService.save(any())).then(returnsFirstArg());
 
         final long id = 13451L;
@@ -55,7 +53,7 @@ public class EnergycontractControllerTest {
     }
 
     @Test
-    public void whenDeleteThenDelegatedToService() {
+    void whenDeleteThenDelegatedToService() {
         final long id = 1234L;
 
         energycontractController.delete(id);
@@ -64,7 +62,7 @@ public class EnergycontractControllerTest {
     }
 
     @Test
-    public void whenGetAllThenDelegatedToService() {
+    void whenGetAllThenDelegatedToService() {
         final List<Energycontract> allEnergieContracts = List.of(mock(Energycontract.class), mock(Energycontract.class));
         when(energycontractService.getAll()).thenReturn(allEnergieContracts);
 
@@ -72,7 +70,7 @@ public class EnergycontractControllerTest {
     }
 
     @Test
-    public void whenGetCurrentlyValidEnergiecontractThenDelegatedToService() {
+    void whenGetCurrentlyValidEnergiecontractThenDelegatedToService() {
         final Energycontract currentlyValid = mock(Energycontract.class);
         when(energycontractService.getCurrent()).thenReturn(currentlyValid);
 

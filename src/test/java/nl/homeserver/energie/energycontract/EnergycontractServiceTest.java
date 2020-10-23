@@ -14,32 +14,32 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.cache.CacheService;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EnergycontractServiceTest {
+@ExtendWith(MockitoExtension.class)
+class EnergycontractServiceTest {
 
     @InjectMocks
-    private EnergycontractService energycontractService;
+    EnergycontractService energycontractService;
 
     @Mock
-    private EnergycontractToDateRecalculator energycontractToDateRecalculator;
+    EnergycontractToDateRecalculator energycontractToDateRecalculator;
     @Mock
-    private EnergycontractRepository energycontractRepository;
+    EnergycontractRepository energycontractRepository;
     @Mock
-    private CacheService cacheService;
+    CacheService cacheService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Test
-    public void whenGetByIdThenDelegatedToRepository() {
+    void whenGetByIdThenDelegatedToRepository() {
         final long id = 132L;
         final Energycontract energycontract = mock(Energycontract.class);
         when(energycontractRepository.getOne(id)).thenReturn(energycontract);
@@ -48,7 +48,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenGetAllThenDelegatedToRepository() {
+    void whenGetAllThenDelegatedToRepository() {
         final List<Energycontract> all = List.of(mock(Energycontract.class), mock(Energycontract.class));
         when(energycontractRepository.findAll()).thenReturn(all);
 
@@ -56,7 +56,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenGetCurrentThenDelegatedToRepository() {
+    void whenGetCurrentThenDelegatedToRepository() {
         final LocalDate today = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, today.atStartOfDay());
 
@@ -67,7 +67,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenDeleteThenDeletedFromRepository() {
+    void whenDeleteThenDeletedFromRepository() {
         final long id = 12;
         energycontractService.delete(id);
 
@@ -75,7 +75,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenDeleteThenAllCachesCleared() {
+    void whenDeleteThenAllCachesCleared() {
         final long id = 12;
         energycontractService.delete(id);
 
@@ -83,7 +83,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenDeleteThenValidToRecalculated() {
+    void whenDeleteThenValidToRecalculated() {
         final long id = 12;
         energycontractService.delete(id);
 
@@ -91,7 +91,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenSaveThenSavedByRepository() {
+    void whenSaveThenSavedByRepository() {
         final Energycontract energycontract = mock(Energycontract.class);
         energycontractService.save(energycontract);
 
@@ -99,7 +99,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenSaveThenAllCachesCleared() {
+    void whenSaveThenAllCachesCleared() {
         final Energycontract energycontract = mock(Energycontract.class);
         energycontractService.save(energycontract);
 
@@ -107,7 +107,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenSaveThenValidToRecalculated() {
+    void whenSaveThenValidToRecalculated() {
         final Energycontract energycontract = mock(Energycontract.class);
         energycontractService.save(energycontract);
 
@@ -115,7 +115,7 @@ public class EnergycontractServiceTest {
     }
 
     @Test
-    public void whenFindAllThenRetrievedFromRepository() {
+    void whenFindAllThenRetrievedFromRepository() {
         final LocalDateTime from = LocalDate.of(2018, APRIL, 21).atStartOfDay();
         final LocalDateTime to = from.plusDays(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);

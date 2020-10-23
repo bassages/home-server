@@ -1,22 +1,20 @@
 package nl.homeserver;
 
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
-import static java.time.Month.SEPTEMBER;
-import static nl.homeserver.DateTimePeriod.aPeriodWithEndDateTime;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Test;
+import static java.time.Month.*;
+import static nl.homeserver.DateTimePeriod.aPeriodWithEndDateTime;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class DateTimePeriodTest {
+class DateTimePeriodTest {
 
     @Test
-    public void whenCreateDateTimePeriodWithEndDateTimeThenToDateTimeIsSet() {
+    void whenCreateDateTimePeriodWithEndDateTimeThenToDateTimeIsSet() {
         final LocalDateTime fromDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
         final LocalDateTime endDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
 
@@ -28,7 +26,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void whenCreateDateTimePeriodWithToDateTimeThenEndDateTimeIsSet() {
+    void whenCreateDateTimePeriodWithToDateTimeThenEndDateTimeIsSet() {
         final LocalDateTime startDateTime = LocalDateTime.of(2017, SEPTEMBER, 12, 13, 57);
         final LocalDateTime toDateTime = LocalDateTime.of(2017, DECEMBER, 1, 5, 7);
 
@@ -40,7 +38,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void givenPeriodOfASingleDayThenNumberOfDaysIsOne() {
+    void givenPeriodOfASingleDayThenNumberOfDaysIsOne() {
         final LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
         final LocalDateTime to = from.plusDays(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
@@ -51,7 +49,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void givenPeriodOfFiveDaysThenNumberOfDaysIsFive() {
+    void givenPeriodOfFiveDaysThenNumberOfDaysIsFive() {
         final LocalDateTime from = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
         final LocalDateTime to = from.plusDays(5);
         final DateTimePeriod period = aPeriodWithEndDateTime(from, to);
@@ -68,7 +66,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void givenPeriodThatStartsOnGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsOnGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
         final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
@@ -77,7 +75,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void givenPeriodThatStartsAfterGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsAfterGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
         final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
@@ -86,7 +84,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void givenPeriodThatStartsBeforeGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsBeforeGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
         final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
@@ -95,7 +93,7 @@ public class DateTimePeriodTest {
     }
 
     @Test
-    public void whenToStringThenStringRepresentationIsReturned() {
+    void whenToStringThenStringRepresentationIsReturned() {
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
         final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));

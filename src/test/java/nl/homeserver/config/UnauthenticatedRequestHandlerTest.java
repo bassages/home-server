@@ -6,20 +6,20 @@ import static org.mockito.Mockito.verify;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.AuthenticationException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UnauthenticatedRequestHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class UnauthenticatedRequestHandlerTest {
 
     @InjectMocks
-    private UnauthenticatedRequestHandler unauthenticatedRequestHandler;
+    UnauthenticatedRequestHandler unauthenticatedRequestHandler;
 
     @Test
-    public void whenCommenceThenStatusUnauthorizedIsSetOnResponse() throws Exception {
+    void whenCommenceThenStatusUnauthorizedIsSetOnResponse() throws Exception {
         final HttpServletRequest request = mock(HttpServletRequest.class);
         final HttpServletResponse response = mock(HttpServletResponse.class);
         final AuthenticationException error = mock(AuthenticationException.class);

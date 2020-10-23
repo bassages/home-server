@@ -1,10 +1,10 @@
 package nl.homeserver.klimaat;
 
 import nl.homeserver.ResourceNotFoundException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,31 +22,30 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatControllerTest {
-
-    @InjectMocks
-    private KlimaatController klimaatController;
-
-    @Mock
-    private KlimaatService klimaatService;
-    @Mock
-    private KlimaatSensorService klimaatSensorService;
-    @Mock
-    private IncomingKlimaatService incomingKlimaatService;
-
-    @Mock
-    private KlimaatSensor klimaatSensor;
-
+@ExtendWith(MockitoExtension.class)
+class KlimaatControllerTest {
     private static final String EXISTING_SENSOR_CODE = "LIVINGROOM";
     private static final String NOT_EXISTING_SENSOR_CODE = "DOES_NOT_EXISTS";
     private static final String EXPECTED_MESSAGE_WHEN_KLIMAATSENSOR_DOES_NOT_EXIST = "KlimaatSensor [" + NOT_EXISTING_SENSOR_CODE + "] does not exist";
 
+    @InjectMocks
+    KlimaatController klimaatController;
+
+    @Mock
+    KlimaatService klimaatService;
+    @Mock
+    KlimaatSensorService klimaatSensorService;
+    @Mock
+    IncomingKlimaatService incomingKlimaatService;
+
+    @Mock
+    KlimaatSensor klimaatSensor;
+
     @Captor
-    private ArgumentCaptor<Klimaat> klimaatCaptor;
+    ArgumentCaptor<Klimaat> klimaatCaptor;
 
     @Test
-    public void whenAddThenKlimaatSensorSetAndDelegatedToIncomingKlimaatService() {
+    void whenAddThenKlimaatSensorSetAndDelegatedToIncomingKlimaatService() {
         final String sensorCode = "LIVINGROOM";
         when(klimaatSensorService.getByCode(sensorCode)).thenReturn(Optional.of(klimaatSensor));
 
@@ -63,7 +62,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNoKlimaatSensorExistsWithGivenCodeWhenAddThenExceptionIsThrown() {
+    void givenNoKlimaatSensorExistsWithGivenCodeWhenAddThenExceptionIsThrown() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         final KlimaatDto klimaatDto = mock(KlimaatDto.class);
@@ -74,7 +73,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenGetMostRecentThenDelegatedToIncomingKlimaatService() {
+    void whenGetMostRecentThenDelegatedToIncomingKlimaatService() {
         when(klimaatSensorService.getByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
         final RealtimeKlimaat realtimeKlimaat = mock(RealtimeKlimaat.class);
@@ -84,7 +83,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNoKlimaatSensorExistsWithGivenCodeWhenGetMostRecentThenExceptionIsThrown() {
+    void givenNoKlimaatSensorExistsWithGivenCodeWhenGetMostRecentThenExceptionIsThrown() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
@@ -93,7 +92,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenGetHighestThenDelegatedToService() {
+    void whenGetHighestThenDelegatedToService() {
         when(klimaatSensorService.getByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
         final List<Klimaat> highestKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
@@ -112,7 +111,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNoKlimaatSensorExistsWithGivenCodeWhenGetHighestThenExceptionIsThrown() {
+    void givenNoKlimaatSensorExistsWithGivenCodeWhenGetHighestThenExceptionIsThrown() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         final LocalDate now = now();
@@ -124,7 +123,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenGetLowestThenDelegatedToService() {
+    void whenGetLowestThenDelegatedToService() {
         when(klimaatSensorService.getByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
         final List<Klimaat> higestKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
@@ -140,7 +139,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNoKlimaatSensorExistsWithGivenCodeWhenGetLowestThenExceptionIsThrown() {
+    void givenNoKlimaatSensorExistsWithGivenCodeWhenGetLowestThenExceptionIsThrown() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         final LocalDate now = now();
@@ -152,7 +151,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenGetAveragePerMonthThenDelegatedToService() {
+    void whenGetAveragePerMonthThenDelegatedToService() {
         final SensorType sensorType = LUCHTVOCHTIGHEID;
         final int[] years = new int[] {2017, 2018};
 
@@ -169,7 +168,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenFindAllInPeriodThenDelegatedToSerice() {
+    void whenFindAllInPeriodThenDelegatedToSerice() {
         final LocalDate from = LocalDate.of(2018, JANUARY, 12);
         final LocalDate to = LocalDate.of(2018, JANUARY, 27);
 
@@ -183,7 +182,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNoKlimaatSensorExistsWithGivenCodeWhenFindAllInPeriodThenExceptionIsThrown() {
+    void givenNoKlimaatSensorExistsWithGivenCodeWhenFindAllInPeriodThenExceptionIsThrown() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(empty());
 
         final LocalDate now = now();
@@ -194,7 +193,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void whenGetAllKlimaatSensorsThenDelegatedToService() {
+    void whenGetAllKlimaatSensorsThenDelegatedToService() {
         final List<KlimaatSensor> allKlimaatSensors = List.of(klimaatSensor);
         when(klimaatSensorService.getAll()).thenReturn(allKlimaatSensors);
 
@@ -202,7 +201,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenExistingKlimaatSensorCodeWhenUpdateThenUpdatedByServiceAndReturned() {
+    void givenExistingKlimaatSensorCodeWhenUpdateThenUpdatedByServiceAndReturned() {
         final KlimaatSensor existingKlimaatSensor = mock(KlimaatSensor.class);
 
         final String omschrijving = "The new Description";
@@ -220,7 +219,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNonExistingKlimaatSensorCodeWhenUpdateThenException() {
+    void givenNonExistingKlimaatSensorCodeWhenUpdateThenException() {
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
 
         final KlimaatSensorDto klimaatSensorDto = mock(KlimaatSensorDto.class);
@@ -231,7 +230,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenExistingKlimaatSensorCodeWhenDeleteThenDeletedByServices() {
+    void givenExistingKlimaatSensorCodeWhenDeleteThenDeletedByServices() {
         when(klimaatSensor.getCode()).thenReturn(EXISTING_SENSOR_CODE);
         when(klimaatSensorService.getByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
@@ -244,7 +243,7 @@ public class KlimaatControllerTest {
     }
 
     @Test
-    public void givenNonExistingKlimaatSensorCodeWheDeleteThenException() {
+    void givenNonExistingKlimaatSensorCodeWheDeleteThenException() {
         when(klimaatSensor.getCode()).thenReturn(NOT_EXISTING_SENSOR_CODE);
         when(klimaatSensorService.getByCode(NOT_EXISTING_SENSOR_CODE)).thenReturn(Optional.empty());
 

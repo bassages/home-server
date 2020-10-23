@@ -1,24 +1,24 @@
 package nl.homeserver.cache;
 
-import static org.mockito.Mockito.verify;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CacheControllerTest {
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class CacheControllerTest {
 
     @InjectMocks
-    private CacheController cacheController;
+    CacheController cacheController;
 
     @Mock
-    private CacheService cacheService;
+    CacheService cacheService;
 
     @Test
-    public void whenClearAllThenDelegatedToCacheService() {
+    void whenClearAllThenDelegatedToCacheService() {
         cacheController.clearAll();
         verify(cacheService).clearAll();
     }

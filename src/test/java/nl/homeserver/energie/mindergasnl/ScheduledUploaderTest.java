@@ -1,26 +1,26 @@
 package nl.homeserver.energie.mindergasnl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ScheduledUploaderTest {
+@ExtendWith(MockitoExtension.class)
+class ScheduledUploaderTest {
 
     @Mock
-    private MindergasnlService mindergasnlService;
+    MindergasnlService mindergasnlService;
 
     @InjectMocks
-    private ScheduledUploader scheduledUploader;
+    ScheduledUploader scheduledUploader;
 
     @Test
-    public void givenNoMindergasnlSettingsExistWhenUploadMeterstandWhenEnabledThenNotUploaded() {
+    void givenNoMindergasnlSettingsExistWhenUploadMeterstandWhenEnabledThenNotUploaded() {
         // given
         when(mindergasnlService.findOne()).thenReturn(Optional.empty());
 
@@ -32,7 +32,7 @@ public class ScheduledUploaderTest {
     }
 
     @Test
-    public void givenAutomaticUploadIsDisabledWhenUploadMeterstandWhenEnabledThenNotUploaded() {
+    void givenAutomaticUploadIsDisabledWhenUploadMeterstandWhenEnabledThenNotUploaded() {
         // given
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(false);
@@ -46,7 +46,7 @@ public class ScheduledUploaderTest {
     }
 
     @Test
-    public void givenAutomaticUploadIsEnabledWhenUploadMeterstandWhenEnabledThenUploaded() throws Exception {
+    void givenAutomaticUploadIsEnabledWhenUploadMeterstandWhenEnabledThenUploaded() throws Exception {
         // given
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);

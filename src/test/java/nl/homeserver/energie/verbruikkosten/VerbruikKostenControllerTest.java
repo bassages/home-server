@@ -1,39 +1,38 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import nl.homeserver.DatePeriod;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import nl.homeserver.DatePeriod;
-
-@RunWith(MockitoJUnitRunner.class)
-public class VerbruikKostenControllerTest {
+@ExtendWith(MockitoExtension.class)
+class VerbruikKostenControllerTest {
 
     @InjectMocks
-    private VerbruikKostenController verbruikKostenController;
+    VerbruikKostenController verbruikKostenController;
 
     @Mock
-    private VerbruikService verbruikService;
+    VerbruikService verbruikService;
 
     @Captor
-    private ArgumentCaptor<DatePeriod> datePeriodCaptor;
+    ArgumentCaptor<DatePeriod> datePeriodCaptor;
 
     @Test
-    public void whenGetGemiddeldeVerbruikPerDagThenDelegatedToVerbruikService() {
+    void whenGetGemiddeldeVerbruikPerDagThenDelegatedToVerbruikService() {
         final VerbruikKostenOverzicht verbruikKostenOverzicht = mock(VerbruikKostenOverzicht.class);
         when(verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(datePeriodCaptor.capture())).thenReturn(verbruikKostenOverzicht);
 
@@ -49,7 +48,7 @@ public class VerbruikKostenControllerTest {
     }
 
     @Test
-    public void whenGetVerbruikPerDagThenDelegatedToVerbruikService() {
+    void whenGetVerbruikPerDagThenDelegatedToVerbruikService() {
         final List<VerbruikKostenOpDag> verbruikKostenPerDag = List.of(mock(VerbruikKostenOpDag.class));
         when(verbruikService.getVerbruikPerDag(datePeriodCaptor.capture())).thenReturn(verbruikKostenPerDag);
 
@@ -65,7 +64,7 @@ public class VerbruikKostenControllerTest {
     }
 
     @Test
-    public void whenGetVerbruikPerUurOpDagThenDelegatedToVerbruikService() {
+    void whenGetVerbruikPerUurOpDagThenDelegatedToVerbruikService() {
         final List<VerbruikInUurOpDag> verbruikPerUurOpDag = List.of(mock(VerbruikInUurOpDag.class));
         final LocalDate day = LocalDate.of(2017, 4, 2);
         when(verbruikService.getVerbruikPerUurOpDag(day)).thenReturn(verbruikPerUurOpDag);
@@ -74,7 +73,7 @@ public class VerbruikKostenControllerTest {
     }
 
     @Test
-    public void whenGetVerbruikPerJaarThenDelegatedToVerbruikService() {
+    void whenGetVerbruikPerJaarThenDelegatedToVerbruikService() {
         final List<VerbruikInJaar> verbruikPerJaar = List.of(mock(VerbruikInJaar.class));
         when(verbruikService.getVerbruikPerJaar()).thenReturn(verbruikPerJaar);
 
@@ -82,7 +81,7 @@ public class VerbruikKostenControllerTest {
     }
 
     @Test
-    public void whenGetVerbruikPerMaandInJaarThenDelegatedToVerbruikService() {
+    void whenGetVerbruikPerMaandInJaarThenDelegatedToVerbruikService() {
         final int year = 2018;
 
         final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = List.of(mock(VerbruikInMaandInJaar.class));

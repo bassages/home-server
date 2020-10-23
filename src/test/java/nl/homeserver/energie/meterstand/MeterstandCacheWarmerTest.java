@@ -1,41 +1,41 @@
 package nl.homeserver.energie.meterstand;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.YearMonth;
+
 import static java.time.Month.DECEMBER;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.YearMonth;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
-public class MeterstandCacheWarmerTest {
+@ExtendWith(MockitoExtension.class)
+class MeterstandCacheWarmerTest {
 
     @InjectMocks
-    private MeterstandCacheWarmer meterstandCacheWarmer;
+    MeterstandCacheWarmer meterstandCacheWarmer;
 
     @Mock
-    private MeterstandController meterstandController;
+    MeterstandController meterstandController;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<LocalDate> fromDateCaptor;
+    ArgumentCaptor<LocalDate> fromDateCaptor;
     @Captor
-    private ArgumentCaptor<LocalDate> toDateCaptor;
+    ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    public void whenWarmupInitialCacheThenMeterstandenPerDagWarmedup() {
+    void whenWarmupInitialCacheThenMeterstandenPerDagWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
         meterstandCacheWarmer.warmupInitialCache();
@@ -76,12 +76,11 @@ public class MeterstandCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupDailyCacheThenMeterstandenPerDagWarmedup() {
+    void whenWarmupDailyCacheThenMeterstandenPerDagWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
         meterstandCacheWarmer.warmupDailyCache();
 
         verify(meterstandController).perDag(LocalDate.of(2017, DECEMBER, 1), LocalDate.of(2017, DECEMBER, 31));
     }
-
 }

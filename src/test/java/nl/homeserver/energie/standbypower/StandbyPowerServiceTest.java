@@ -1,5 +1,23 @@
 package nl.homeserver.energie.standbypower;
 
+import nl.homeserver.energie.opgenomenvermogen.NumberOfRecordsPerWatt;
+import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenRepository;
+import nl.homeserver.energie.verbruikkosten.ActuallyRegisteredVerbruikProvider;
+import nl.homeserver.energie.verbruikkosten.VerbruikForVirtualUsageProvider;
+import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
+import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
@@ -10,45 +28,26 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import nl.homeserver.energie.opgenomenvermogen.NumberOfRecordsPerWatt;
-import nl.homeserver.energie.verbruikkosten.ActuallyRegisteredVerbruikProvider;
-import nl.homeserver.energie.verbruikkosten.VerbruikForVirtualUsageProvider;
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
-import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenRepository;
-
-@RunWith(MockitoJUnitRunner.class)
-public class StandbyPowerServiceTest {
+@ExtendWith(MockitoExtension.class)
+class StandbyPowerServiceTest {
 
     @InjectMocks
-    private StandbyPowerService standbyPowerService;
+    StandbyPowerService standbyPowerService;
 
     @Mock
-    private OpgenomenVermogenRepository opgenomenVermogenRepository;
+    OpgenomenVermogenRepository opgenomenVermogenRepository;
     @Mock
-    private VerbruikKostenOverzichtService verbruikKostenOverzichtService;
+    VerbruikKostenOverzichtService verbruikKostenOverzichtService;
     @Mock
-    private ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
+    ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
 
     @Mock
-    private VerbruikKostenOverzicht actualVko;
+    VerbruikKostenOverzicht actualVko;
     @Mock
-    private VerbruikKostenOverzicht standByPowerVko;
+    VerbruikKostenOverzicht standByPowerVko;
 
     @Test
-    public void whenGetStandbyPowerThenReturned() {
+    void whenGetStandbyPowerThenReturned() {
         final YearMonth month = YearMonth.of(2018, 1);
         final LocalDateTime from = LocalDate.of(2018, JANUARY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2018, FEBRUARY, 1).atStartOfDay();

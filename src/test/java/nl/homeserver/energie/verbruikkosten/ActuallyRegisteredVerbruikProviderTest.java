@@ -1,36 +1,36 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.math.BigDecimal.TEN;
-import static java.time.Month.MAY;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.*;
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.energie.StroomTariefIndicator;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static java.math.BigDecimal.TEN;
+import static java.time.Month.MAY;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.StroomTariefIndicator;
-
-@RunWith(MockitoJUnitRunner.class)
-public class ActuallyRegisteredVerbruikProviderTest {
+@ExtendWith(MockitoExtension.class)
+class ActuallyRegisteredVerbruikProviderTest {
 
     @InjectMocks
-    private ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
+    ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
 
     @Mock
     private VerbruikRepository verbruikRepository;
 
     @Test
-    public void whenGetGasVerbruikThenRepositoryAskedForOneHourBefore() {
+    void whenGetGasVerbruikThenRepositoryAskedForOneHourBefore() {
         final LocalDateTime from = LocalDate.of(2019, MAY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2019, MAY, 5).atStartOfDay();
 
@@ -44,7 +44,7 @@ public class ActuallyRegisteredVerbruikProviderTest {
     }
 
     @Test
-    public void givenTariefPeriodeNormaalWhenGetStroomVerbruikThenDelegatedToRepository() {
+    void givenTariefPeriodeNormaalWhenGetStroomVerbruikThenDelegatedToRepository() {
         final LocalDateTime from = LocalDate.of(2019, MAY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2019, MAY, 5).atStartOfDay();
 
@@ -58,7 +58,7 @@ public class ActuallyRegisteredVerbruikProviderTest {
     }
 
     @Test
-    public void givenTariefPeriodeDalWhenGetStroomVerbruikThenDelegatedToRepository() {
+    void givenTariefPeriodeDalWhenGetStroomVerbruikThenDelegatedToRepository() {
         final LocalDateTime from = LocalDate.of(2019, MAY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2019, MAY, 5).atStartOfDay();
 
@@ -72,10 +72,9 @@ public class ActuallyRegisteredVerbruikProviderTest {
     }
 
     @Test
-    public void givenUnsupportedTariefPeriodeWhenGetStroomVerbruikThenException() {
+    void givenUnsupportedTariefPeriodeWhenGetStroomVerbruikThenException() {
         final LocalDateTime from = LocalDate.of(2019, MAY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2019, MAY, 5).atStartOfDay();
-
 
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
         assertThatExceptionOfType(IllegalArgumentException.class)

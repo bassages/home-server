@@ -1,5 +1,12 @@
 package nl.homeserver.energie.verbruikkosten;
 
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.energie.StroomTariefIndicator;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.SEPTEMBER;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
@@ -7,21 +14,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import org.junit.Test;
-
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.StroomTariefIndicator;
-
-public class VerbruikForVirtualUsageProviderTest {
+class VerbruikForVirtualUsageProviderTest {
 
     private static final LocalDate WEEKDAY = LocalDate.of(2018, SEPTEMBER, 12);
     private static final LocalDate WEEKENDDAY = LocalDate.of(2018, SEPTEMBER, 15);
 
     @Test
-    public void whenGetGasVerbruikThenZeroReturned() {
+    void whenGetGasVerbruikThenZeroReturned() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(100);
 
         final BigDecimal gasVerbruik = verbruikForVirtualUsageProvider.getGasVerbruik(mock(DateTimePeriod.class));
@@ -30,7 +29,7 @@ public class VerbruikForVirtualUsageProviderTest {
     }
 
     @Test
-    public void whenGetStroomVerbruikNormaalForWeekDayThenReturned() {
+    void whenGetStroomVerbruikNormaalForWeekDayThenReturned() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(1000);
 
         final DateTimePeriod period = aPeriodWithToDateTime(WEEKDAY.atStartOfDay(), WEEKDAY.plusDays(1).atStartOfDay());
@@ -41,7 +40,7 @@ public class VerbruikForVirtualUsageProviderTest {
     }
 
     @Test
-    public void whenGetStroomVerbruikDalForWeekDayThenReturned() {
+    void whenGetStroomVerbruikDalForWeekDayThenReturned() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(1000);
 
         final DateTimePeriod period = aPeriodWithToDateTime(WEEKDAY.atStartOfDay(), WEEKDAY.plusDays(1).atStartOfDay());
@@ -52,7 +51,7 @@ public class VerbruikForVirtualUsageProviderTest {
     }
 
     @Test
-    public void whenGetStroomVerbruikNormaalForWeekendDayThenReturned() {
+    void whenGetStroomVerbruikNormaalForWeekendDayThenReturned() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(1000);
 
         final DateTimePeriod period = aPeriodWithToDateTime(WEEKENDDAY.atStartOfDay(), WEEKENDDAY.plusDays(1)
@@ -64,7 +63,7 @@ public class VerbruikForVirtualUsageProviderTest {
     }
 
     @Test
-    public void whenGetStroomVerbruikDalForWeekendDayThenReturned() {
+    void whenGetStroomVerbruikDalForWeekendDayThenReturned() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(1000);
 
         final DateTimePeriod period = aPeriodWithToDateTime(WEEKENDDAY.atStartOfDay(), WEEKENDDAY.plusDays(1).atStartOfDay());
@@ -75,7 +74,7 @@ public class VerbruikForVirtualUsageProviderTest {
     }
 
     @Test
-    public void whenGetStroomVerbruikForUnexpectedStroomTariefIndicatorThenExceptio() {
+    void whenGetStroomVerbruikForUnexpectedStroomTariefIndicatorThenExceptio() {
         final VerbruikForVirtualUsageProvider verbruikForVirtualUsageProvider = new VerbruikForVirtualUsageProvider(1000);
         final DateTimePeriod period = aPeriodWithToDateTime(WEEKENDDAY.atStartOfDay(), WEEKENDDAY.plusDays(1).atStartOfDay());
 

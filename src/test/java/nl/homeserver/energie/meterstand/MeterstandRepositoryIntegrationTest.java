@@ -9,18 +9,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nl.homeserver.RepositoryIntegrationTest;
 
-public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
+class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
-    private MeterstandRepository meterstandRepository;
+    MeterstandRepository meterstandRepository;
 
     @Test
-    public void shouldFindDatesBeforeToDateWithMoreRowsThan() {
+    void shouldFindDatesBeforeToDateWithMoreRowsThan() {
         final LocalDate fromDate = LocalDate.of(2017, JANUARY, 3);
         entityManager.persist(aMeterstand().withDateTime(fromDate.minusDays(1).atTime(0, 0, 0)).build());
         entityManager.persist(aMeterstand().withDateTime(fromDate.minusDays(1).atTime(12, 0, 9)).build());
@@ -47,7 +47,7 @@ public class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTe
     }
 
     @Test
-    public void shouldFindOldestInPeriod() {
+    void shouldFindOldestInPeriod() {
         final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
 
         entityManager.persist(aMeterstand().withDateTime(fromDateTime).build());

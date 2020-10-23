@@ -1,34 +1,32 @@
 package nl.homeserver.energie.mindergasnl;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @DirtiesContext
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestPropertySource(
     locations = "/integrationtests.properties",
     properties = "mindergasnl.scheduleduploader.cron=" + ScheduledUploaderIntegrationTest.EVERY_SECOND
 )
-public class ScheduledUploaderIntegrationTest {
+class ScheduledUploaderIntegrationTest {
 
     static final String EVERY_SECOND = "0/2 * * * * ?";
 
     @SpyBean
-    private ScheduledUploader scheduledUploader;
+    ScheduledUploader scheduledUploader;
 
     @Test
-    public void whenTheApplicationIsRunningThenUploadingToMindergasnlIsScheduled() {
+    void whenTheApplicationIsRunningThenUploadingToMindergasnlIsScheduled() {
         await()
             .atMost(Duration.ofMillis(4100))
             .untilAsserted(() -> verify(scheduledUploader, times(2)).uploadMeterstandWhenEnabled());
