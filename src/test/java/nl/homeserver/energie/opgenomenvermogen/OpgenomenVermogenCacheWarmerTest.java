@@ -1,5 +1,16 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
+import java.time.LocalDate;
+
 import static java.time.Month.DECEMBER;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -8,42 +19,32 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.time.Clock;
-import java.time.LocalDate;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
-public class OpgenomenVermogenCacheWarmerTest {
+@ExtendWith(MockitoExtension.class)
+class OpgenomenVermogenCacheWarmerTest {
 
     @InjectMocks
-    private OpgenomenVermogenCacheWarmer opgenomenVermogenCacheWarmer;
+    OpgenomenVermogenCacheWarmer opgenomenVermogenCacheWarmer;
 
     @Mock
-    private OpgenomenVermogenController opgenomenVermogenController;
+    OpgenomenVermogenController opgenomenVermogenController;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<LocalDate> fromDateCaptor;
+    ArgumentCaptor<LocalDate> fromDateCaptor;
     @Captor
-    private ArgumentCaptor<LocalDate> toDateCaptor;
+    ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    public void whenWarmupInitialCacheThenOpgenomenVermogenHistoryWarmedup() {
+    void whenWarmupInitialCacheThenOpgenomenVermogenHistoryWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         opgenomenVermogenCacheWarmer.warmupInitialCache();
 
-        verify(opgenomenVermogenController, times(14)).getOpgenomenVermogenHistory(fromDateCaptor.capture(),
-                                                                                   toDateCaptor.capture(),
-                                                                                   eq(MINUTES.toMillis(3)));
+        verify(opgenomenVermogenController, times(14))
+                .getOpgenomenVermogenHistory(fromDateCaptor.capture(),
+                                             toDateCaptor.capture(),
+                                             eq(MINUTES.toMillis(3)));
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
                 LocalDate.of(2017, DECEMBER, 16),
@@ -81,14 +82,14 @@ public class OpgenomenVermogenCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupDailyCacheThenOpgenomenVermogenHistoryWarmedup() {
+    void whenWarmupDailyCacheThenOpgenomenVermogenHistoryWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
         opgenomenVermogenCacheWarmer.warmupDailyCache();
 
-        verify(opgenomenVermogenController).getOpgenomenVermogenHistory(LocalDate.of(2017, DECEMBER, 29),
-                                                                        LocalDate.of(2017, DECEMBER, 30),
-                                                                        MINUTES.toMillis(3));
+        verify(opgenomenVermogenController).getOpgenomenVermogenHistory(
+                LocalDate.of(2017, DECEMBER, 29),
+                LocalDate.of(2017, DECEMBER, 30),
+                MINUTES.toMillis(3));
     }
-
 }

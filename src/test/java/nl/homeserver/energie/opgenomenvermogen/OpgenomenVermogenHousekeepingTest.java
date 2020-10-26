@@ -1,5 +1,6 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
+import static ch.qos.logback.classic.Level.DEBUG;
 import static java.time.Month.JANUARY;
 import static nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -17,37 +18,33 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import nl.homeserver.CaptureLogging;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.MessageContaining;
+import nl.homeserver.ContainsMessageAtLevel;
 import nl.homeserver.cache.CacheService;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OpgenomenVermogenHousekeepingTest {
+@ExtendWith(MockitoExtension.class)
+class OpgenomenVermogenHousekeepingTest {
 
     @InjectMocks
-    private OpgenomenVermogenHousekeeping opgenomenVermogenHousekeeping;
+    OpgenomenVermogenHousekeeping opgenomenVermogenHousekeeping;
 
     @Mock
-    private OpgenomenVermogenRepository opgenomenVermogenRepository;
+    OpgenomenVermogenRepository opgenomenVermogenRepository;
     @Mock
-    private CacheService cacheService;
+    CacheService cacheService;
     @Mock
-    private Clock clock;
-
-    @Rule
-    public final LoggingRule loggingRule = new LoggingRule(OpgenomenVermogenHousekeeping.class);
+    Clock clock;
 
     @Test
-    public void whenDailyCleanupThenCacheCleared() {
+    void whenDailyCleanupThenCacheCleared() {
         useSystemDefaultClock(clock);
 
         opgenomenVermogenHousekeeping.start();
@@ -56,7 +53,7 @@ public class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    public void whenStartThenPastMonthIsCleanedUp() {
+    void whenStartThenPastMonthIsCleanedUp() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -69,7 +66,7 @@ public class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    public void givengivenMultipleOpgenomenVermogenInOneMinuteWithSameWattWhenCleanupThenMostRecentInMinuteIsKept() {
+    void givengivenMultipleOpgenomenVermogenInOneMinuteWithSameWattWhenCleanupThenMostRecentInMinuteIsKept() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -94,7 +91,7 @@ public class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    public void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentWattWhenCleanupThenHighestWattIsKept() {
+    void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentWattWhenCleanupThenHighestWattIsKept() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -118,8 +115,9 @@ public class OpgenomenVermogenHousekeepingTest {
         verify(opgenomenVermogenRepository).deleteById(opgenomenVermogen3.getId());
     }
 
+    @CaptureLogging(OpgenomenVermogenHousekeeping.class)
     @Test
-    public void givenLogLevelIsDebugWhenCleanupThenKeptAndDeletedOpgenomensAreLoggedAtThatLevel() {
+    void whenCleanupThenKeptAndDeletedOpgenomensAreLogged(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -136,38 +134,10 @@ public class OpgenomenVermogenHousekeepingTest {
         when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                 .thenReturn(List.of(deleted, kept));
 
-        loggingRule.setLevel(Level.DEBUG);
-
         opgenomenVermogenHousekeeping.start();
 
-        final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents)
-                .haveExactly(1, new MessageContaining("[DEBUG] Keep: OpgenomenVermogen[datumtijd=2016-01-01T00:00:01,id=2"))
-                .haveExactly(1, new MessageContaining("[DEBUG] Delete: OpgenomenVermogen[datumtijd=2016-01-01T00:00,id=1"));
-    }
-
-    @Test
-    public void givenLogLevelIsOffWhenCleanupThenKeptAndDeletedOpgenomensAreNotLogged() {
-        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
-
-        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
-        timeTravelTo(clock, currentDateTime);
-
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                        .thenReturn(List.of(dayToCleanupAsTimeStamp));
-
-        final OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).build();
-        final OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(dayToCleanup.atTime(0, 0, 1)).build();
-
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
-                .thenReturn(List.of(deleted, kept));
-
-        loggingRule.setLevel(Level.OFF);
-
-        opgenomenVermogenHousekeeping.start();
-
-        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
+        assertThat(loggerEventCaptor.getAllValues())
+            .haveExactly(1, new ContainsMessageAtLevel("Keep: OpgenomenVermogen[datumtijd=2016-01-01T00:00:01,id=2", DEBUG))
+            .haveExactly(1, new ContainsMessageAtLevel("Delete: OpgenomenVermogen[datumtijd=2016-01-01T00:00,id=1", DEBUG));
     }
 }

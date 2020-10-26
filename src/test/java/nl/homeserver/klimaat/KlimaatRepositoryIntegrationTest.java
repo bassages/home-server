@@ -5,18 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nl.homeserver.RepositoryIntegrationTest;
 
-public class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
+class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
-    private KlimaatRepos klimaatRepository;
+    KlimaatRepos klimaatRepository;
 
     @Test
-    public void whenDeleteByKlimaatSensorThenDeleted() {
+    void whenDeleteByKlimaatSensorThenDeleted() {
         final String klimaatSensorCode = "GARDEN";
         final KlimaatSensor klimaatSensor = KlimaatSensorBuilder.aKlimaatSensor().withCode(klimaatSensorCode).build();
 

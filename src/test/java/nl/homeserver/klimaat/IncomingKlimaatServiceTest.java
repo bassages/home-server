@@ -1,13 +1,13 @@
 package nl.homeserver.klimaat;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.math.BigDecimal;
@@ -32,38 +32,38 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@RunWith(MockitoJUnitRunner.class)
-public class IncomingKlimaatServiceTest {
+@ExtendWith(MockitoExtension.class)
+class IncomingKlimaatServiceTest {
 
     private static final String SOME_SENSOR_CODE = "someSensorCode";
 
     @InjectMocks
-    private IncomingKlimaatService incomingKlimaatService;
+    IncomingKlimaatService incomingKlimaatService;
 
     @Mock
-    private KlimaatService klimaatService;
+    KlimaatService klimaatService;
     @Mock
-    private KlimaatSensorService klimaatSensorService;
+    KlimaatSensorService klimaatSensorService;
     @Mock
-    private SimpMessagingTemplate simpMessagingTemplate;
+    SimpMessagingTemplate simpMessagingTemplate;
     @Mock
-    private KlimaatSensorValueTrendService klimaatSensorValueTrendService;
+    KlimaatSensorValueTrendService klimaatSensorValueTrendService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<RealtimeKlimaat> realtimeKlimaatCaptor;
+    ArgumentCaptor<RealtimeKlimaat> realtimeKlimaatCaptor;
     @Captor
-    private ArgumentCaptor<Klimaat> klimaatCaptor;
+    ArgumentCaptor<Klimaat> klimaatCaptor;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", klimaatService);
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {
+    void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
@@ -101,7 +101,7 @@ public class IncomingKlimaatServiceTest {
     }
 
     @Test
-    public void whenAddThenAddedToRecentlyReceivedKlimaatsPerSensorCode() {
+    void whenAddThenAddedToRecentlyReceivedKlimaatsPerSensorCode() {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
@@ -120,7 +120,7 @@ public class IncomingKlimaatServiceTest {
     }
 
     @Test
-    public void givenKlimaatWithoutDatumtijdWhenAddThenDatumtijdIsSetToCurrent() {
+    void givenKlimaatWithoutDatumtijdWhenAddThenDatumtijdIsSetToCurrent() {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
@@ -136,7 +136,7 @@ public class IncomingKlimaatServiceTest {
     }
 
     @Test
-    public void whenAddThenOldItemsRemovedFromRecentlyReceivedKlimaatsPerSensorCode() {
+    void whenAddThenOldItemsRemovedFromRecentlyReceivedKlimaatsPerSensorCode() {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
@@ -168,7 +168,7 @@ public class IncomingKlimaatServiceTest {
     }
 
     @Test
-    public void whenSaveThenOneKlimaatPerSensorSavedWithAverageSensorValues() {
+    void whenSaveThenOneKlimaatPerSensorSavedWithAverageSensorValues() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 2);
         timeTravelTo(clock, currentDateTime);
@@ -218,14 +218,14 @@ public class IncomingKlimaatServiceTest {
     }
 
     @Test
-    public void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
+    void givenNoRecentlyReceivedKlimaatWhenGetMostRecentThenMostRecentIsNull() {
         final RealtimeKlimaat mostRecent = incomingKlimaatService.getMostRecent(SOME_SENSOR_CODE);
 
         assertThat(mostRecent).isNull();
     }
 
     @Test
-    public void givenMultipleRecentlyAddedKlimaatWhenGetMostRecentThenMostRecentIsReturned() {
+    void givenMultipleRecentlyAddedKlimaatWhenGetMostRecentThenMostRecentIsReturned() {
         final LocalDate date = LocalDate.of(2016, SEPTEMBER, 1);
         timeTravelTo(clock, date.atStartOfDay());
 
@@ -247,7 +247,7 @@ public class IncomingKlimaatServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, List<Klimaat>> getRecentlyReceivedKlimaatPerSensorCode() {
+    Map<String, List<Klimaat>> getRecentlyReceivedKlimaatPerSensorCode() {
         return (Map<String, List<Klimaat>>) getField(incomingKlimaatService, "recentlyAddedKlimaatsPerKlimaatSensorCode");
     }
 }

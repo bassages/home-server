@@ -1,10 +1,10 @@
 package nl.homeserver.energie.standbypower;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -12,29 +12,25 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import nl.homeserver.energie.standbypower.StandbyPowerController;
-import nl.homeserver.energie.standbypower.StandbyPowerInPeriod;
-import nl.homeserver.energie.standbypower.StandbyPowerService;
-
-@RunWith(MockitoJUnitRunner.class)
-public class StandbyPowerControllerTest {
+@ExtendWith(MockitoExtension.class)
+class StandbyPowerControllerTest {
 
     @InjectMocks
-    private StandbyPowerController standbyPowerController;
+    StandbyPowerController standbyPowerController;
 
     @Mock
-    private StandbyPowerService standbyPowerService;
+    StandbyPowerService standbyPowerService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Test
-    public void whenGetStandbyPowerForYearThen12MonthsReturned() {
+    void whenGetStandbyPowerForYearThen12MonthsReturned() {
         final LocalDate date = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, date.atStartOfDay());
 

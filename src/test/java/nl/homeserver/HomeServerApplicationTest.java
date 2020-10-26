@@ -1,18 +1,18 @@
 package nl.homeserver;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import java.time.Clock;
 import java.util.concurrent.Executor;
 
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class HomeServerApplicationTest {
+class HomeServerApplicationTest {
 
     @Test
-    public void whenGetClockThenSystemDefautClockReturned() {
+    void whenGetClockThenSystemDefaultClockReturned() {
         final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
         final Clock clock = homeServerApplication.getClock();
@@ -21,7 +21,7 @@ public class HomeServerApplicationTest {
     }
 
     @Test
-    public void whenGetHttpClientBuilderThenReturned() {
+    void whenGetHttpClientBuilderThenReturned() {
         final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
         final HttpClientBuilder httpClientBuilder = homeServerApplication.getHttpClientBuilder();
@@ -30,7 +30,7 @@ public class HomeServerApplicationTest {
     }
 
     @Test
-    public void whenGeTaskExcecutorThenReturned() {
+    void whenGetTaskExcecutorThenReturned() {
         final HomeServerApplication homeServerApplication = new HomeServerApplication();
 
         final Executor taskExecutor = homeServerApplication.getTaskExecutor();

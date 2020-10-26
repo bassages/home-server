@@ -1,44 +1,35 @@
 package nl.homeserver.energie.meterstand;
 
-import static java.time.Month.FEBRUARY;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-import static org.springframework.boot.actuate.health.Status.DOWN;
-import static org.springframework.boot.actuate.health.Status.UNKNOWN;
-import static org.springframework.boot.actuate.health.Status.UP;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.actuate.health.Health;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.actuate.health.Health;
+import static java.time.Month.FEBRUARY;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.boot.actuate.health.Status.*;
 
-import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandBuilder;
-import nl.homeserver.energie.meterstand.MeterstandHealth;
-import nl.homeserver.energie.meterstand.MeterstandService;
-
-@RunWith(MockitoJUnitRunner.class)
-public class MeterstandHealthTest {
+@ExtendWith(MockitoExtension.class)
+class MeterstandHealthTest {
 
     @InjectMocks
-    private MeterstandHealth meterstandHealth;
+    MeterstandHealth meterstandHealth;
 
     @Mock
-    private MeterstandService meterstandService;
+    MeterstandService meterstandService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Test
-    public void givenNoMeterstandExistsWhenGetHealthThenHealthIsUnknown() {
-        timeTravelTo(clock, LocalDate.of(2017, FEBRUARY, 5).atTime(10, 0, 0));
-
+    void givenNoMeterstandExistsWhenGetHealthThenHealthIsUnknown() {
         when(meterstandService.getMostRecent()).thenReturn(null);
 
         final Health health = meterstandHealth.health();
@@ -48,7 +39,7 @@ public class MeterstandHealthTest {
     }
 
     @Test
-    public void givenMostRecentMeterstandIsFiveMinutesOldWhenGetHealthThenHealthIsUp() {
+    void givenMostRecentMeterstandIsFiveMinutesOldWhenGetHealthThenHealthIsUp() {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 
@@ -62,7 +53,7 @@ public class MeterstandHealthTest {
     }
 
     @Test
-    public void givenMostRecentMeterstandIsMoreThenFiveMinutesOldWhenGetHealthThenHealthIsDown() {
+    void givenMostRecentMeterstandIsMoreThenFiveMinutesOldWhenGetHealthThenHealthIsDown() {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 

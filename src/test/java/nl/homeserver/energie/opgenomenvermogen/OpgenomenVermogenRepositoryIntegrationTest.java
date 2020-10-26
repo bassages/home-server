@@ -9,18 +9,18 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nl.homeserver.RepositoryIntegrationTest;
 
-public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTest {
+class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
-    private OpgenomenVermogenRepository opgenomenVermogenRepository;
+    OpgenomenVermogenRepository opgenomenVermogenRepository;
 
     @Test
-    public void shouldFindDatesBeforeToDateWithMoreRowsThan() {
+    void shouldFindDatesBeforeToDateWithMoreRowsThan() {
         final LocalDate fromDate = LocalDate.of(2017, JANUARY, 10);
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(fromDate.minusDays(1).atTime(0, 0, 0)).build());
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(fromDate.minusDays(1).atTime(12, 0, 9)).build());
@@ -47,7 +47,7 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
     }
 
     @Test
-    public void shouldFindMostCommonWattInPeriod() {
+    void shouldFindMostCommonWattInPeriod() {
         final LocalDate day = LocalDate.of(2017, JANUARY, 10);
 
         entityManager.persist(aOpgenomenVermogen().withWatt(2).withDatumTijd(day.atStartOfDay()).build());
@@ -65,7 +65,7 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
     }
 
     @Test
-    public void shouldCountNumberOfRecordsInPeriod() {
+    void shouldCountNumberOfRecordsInPeriod() {
         final LocalDate day = LocalDate.of(2017, JANUARY, 10);
 
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(day.atStartOfDay()).build());
@@ -81,7 +81,7 @@ public class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegr
     }
 
     @Test
-    public void shouldGetNumberOfRecordsInRange() {
+    void shouldGetNumberOfRecordsInRange() {
         final LocalDate day = LocalDate.of(2017, JANUARY, 10);
 
         entityManager.persist(aOpgenomenVermogen().withWatt(9).withDatumTijd(day.atStartOfDay()).build());

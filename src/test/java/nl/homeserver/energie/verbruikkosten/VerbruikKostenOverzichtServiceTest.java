@@ -1,5 +1,21 @@
 package nl.homeserver.energie.verbruikkosten;
 
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.energie.energycontract.Energycontract;
+import nl.homeserver.energie.energycontract.EnergycontractService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static java.time.Month.JANUARY;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.energie.StroomTariefIndicator.DAL;
@@ -9,43 +25,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import nl.homeserver.energie.energycontract.Energycontract;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.energycontract.EnergycontractService;
-
-@RunWith(MockitoJUnitRunner.class)
-public class VerbruikKostenOverzichtServiceTest {
+@ExtendWith(MockitoExtension.class)
+class VerbruikKostenOverzichtServiceTest {
 
     @InjectMocks
-    private VerbruikKostenOverzichtService verbruikKostenOverzichtService;
+    VerbruikKostenOverzichtService verbruikKostenOverzichtService;
 
     @Mock
-    private VerbruikProvider verbruikProvider;
+    VerbruikProvider verbruikProvider;
     @Mock
-    private EnergycontractService energycontractService;
+    EnergycontractService energycontractService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         setField(verbruikKostenOverzichtService, "verbruikKostenOverzichtServiceProxyWithEnabledCaching", verbruikKostenOverzichtService);
     }
 
     @Test
-    public void whenGetForPeriodInFutureThenNoOtherServicesCalledAndUsageIsZero() {
+    void whenGetForPeriodInFutureThenNoOtherServicesCalledAndUsageIsZero() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 1).atStartOfDay());
 
         final LocalDateTime from = LocalDateTime.of(2016, JANUARY, 2, 10, 6);
@@ -65,7 +64,7 @@ public class VerbruikKostenOverzichtServiceTest {
     }
 
     @Test
-    public void givenMultipleEnergycontractsWhenGetForPeriodInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
+    void givenMultipleEnergycontractsWhenGetForPeriodInThePastThenUsagesAndCostsAreRetrievedFromCacheAndCostsAreCalculatedBasedOnValidEnergycontract() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atStartOfDay());
 
         final LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
@@ -88,9 +87,9 @@ public class VerbruikKostenOverzichtServiceTest {
 
         when(energycontractService.findAllInInPeriod(period)).thenReturn(List.of(energycontract1, energycontract2));
 
-        when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)))).thenReturn(new BigDecimal("1.111"));
-        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
-        when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), NORMAAL)).thenReturn(new BigDecimal("3.333"));
+        lenient().when(verbruikProvider.getGasVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)))).thenReturn(new BigDecimal("1.111"));
+        lenient().when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), DAL)).thenReturn(new BigDecimal("2.222"));
+        lenient().when(verbruikProvider.getStroomVerbruik(aPeriodWithToDateTime(from, from.plusDays(1)), NORMAAL)).thenReturn(new BigDecimal("3.333"));
 
         final VerbruikKostenOverzicht verbruikKostenOverzicht = verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(verbruikProvider, period);
 
@@ -103,7 +102,7 @@ public class VerbruikKostenOverzichtServiceTest {
     }
 
     @Test
-    public void whenGetVerbruikPerDagForCurrentDayThenUsageAreRetrievedFromNonCachedService() {
+    void whenGetVerbruikPerDagForCurrentDayThenUsageAreRetrievedFromNonCachedService() {
         timeTravelTo(clock, LocalDate.of(2016, JANUARY, 4).atTime(14, 43, 13));
 
         final VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching = mock(VerbruikKostenOverzichtService.class);

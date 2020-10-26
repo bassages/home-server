@@ -1,5 +1,19 @@
 package nl.homeserver.energie.meterstand;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -8,40 +22,24 @@ import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-@RunWith(MockitoJUnitRunner.class)
-public class MeterstandServiceTest {
+@ExtendWith(MockitoExtension.class)
+class MeterstandServiceTest {
 
     @InjectMocks
-    private MeterstandService meterstandService;
+    MeterstandService meterstandService;
 
     @Mock
-    private MeterstandRepository meterstandRepository;
+    MeterstandRepository meterstandRepository;
     @Mock
-    private Clock clock;
+    Clock clock;
     @Mock
-    private SimpMessagingTemplate messagingTemplate;
+    SimpMessagingTemplate messagingTemplate;
 
     @Test
-    public void whenSaveThenDelegatedToRepositoryAndEventSend() {
+    void whenSaveThenDelegatedToRepositoryAndEventSend() {
         final Meterstand meterstand = aMeterstand().build();
         when(meterstandRepository.save(meterstand)).thenReturn(meterstand);
 
@@ -53,7 +51,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void givenMeterstandAlreadySavedWhenGetMostRecentThenMostRecentReturned() {
+    void givenMeterstandAlreadySavedWhenGetMostRecentThenMostRecentReturned() {
         when(meterstandRepository.save(any(Meterstand.class))).then(returnsFirstArg());
 
         final Meterstand meterstand = aMeterstand().build();
@@ -63,7 +61,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void givenNoMeterstandSavedYetWhenGetMostRecentThenMostRecentIsRetrievedFromRepository() {
+    void givenNoMeterstandSavedYetWhenGetMostRecentThenMostRecentIsRetrievedFromRepository() {
         final Meterstand meterstand = mock(Meterstand.class);
         when(meterstandRepository.getMostRecent()).thenReturn(meterstand);
 
@@ -71,7 +69,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetOldestDelegatedToRepository() {
+    void whenGetOldestDelegatedToRepository() {
         final Meterstand oldestMeterstand = aMeterstand().build();
 
         when(meterstandRepository.getOldest()).thenReturn(oldestMeterstand);
@@ -80,7 +78,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetOldestOfTodayThenReturned() {
+    void whenGetOldestOfTodayThenReturned() {
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
@@ -103,7 +101,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void givenNoMeterstandExistsInNextHourWhenGetOldestOfTodayThenGasNotOverWritten() {
+    void givenNoMeterstandExistsInNextHourWhenGetOldestOfTodayThenGasNotOverWritten() {
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
@@ -126,7 +124,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void givenNoMeterstandExistsInPeriodWhenGetOldestOfTodayThenNullReturned() {
+    void givenNoMeterstandExistsInPeriodWhenGetOldestOfTodayThenNullReturned() {
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
@@ -142,7 +140,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetPerDagForTodayThenNonCachedMeterstandReturned() {
+    void whenGetPerDagForTodayThenNonCachedMeterstandReturned() {
         setCachedMeterstandService(null);
 
         final LocalDate today = LocalDate.of(2017, JANUARY, 13);
@@ -161,7 +159,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetPerDagForYesterdayThenCachedMeterstandReturned() {
+    void whenGetPerDagForYesterdayThenCachedMeterstandReturned() {
         final MeterstandService cachedMeterstandService = mock(MeterstandService.class);
         setCachedMeterstandService(cachedMeterstandService);
 
@@ -181,7 +179,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetPerDagForFutureThenNullReturned() {
+    void whenGetPerDagForFutureThenNullReturned() {
         final LocalDate today = LocalDate.of(2017, JANUARY, 13);
         timeTravelTo(clock, today.atStartOfDay());
 
@@ -195,7 +193,7 @@ public class MeterstandServiceTest {
     }
 
     @Test
-    public void whenGetPotentiallyCachedMeestRecenteMeterstandOpDagThenDelegatedToRepository() {
+    void whenGetPotentiallyCachedMeestRecenteMeterstandOpDagThenDelegatedToRepository() {
         final LocalDate day = LocalDate.of(2016, MARCH, 12);
 
         final Meterstand meterstand = mock(Meterstand.class);
@@ -204,7 +202,7 @@ public class MeterstandServiceTest {
         assertThat(meterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day)).isSameAs(meterstand);
     }
 
-    private void setCachedMeterstandService(final MeterstandService cachedMeterstandService) {
+    private void setCachedMeterstandService(@Nullable final MeterstandService cachedMeterstandService) {
         setField(meterstandService, "meterstandServiceProxyWithEnabledCaching", cachedMeterstandService);
     }
 }

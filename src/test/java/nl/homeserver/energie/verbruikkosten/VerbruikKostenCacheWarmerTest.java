@@ -1,45 +1,45 @@
 package nl.homeserver.energie.verbruikkosten;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.YearMonth;
+
 import static java.time.Month.DECEMBER;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.YearMonth;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
-public class VerbruikKostenCacheWarmerTest {
+@ExtendWith(MockitoExtension.class)
+class VerbruikKostenCacheWarmerTest {
 
     @InjectMocks
-    private VerbruikKostenCacheWarmer verbruikKostenCacheWarmer;
+    VerbruikKostenCacheWarmer verbruikKostenCacheWarmer;
 
     @Mock
-    private VerbruikKostenController verbruikKostenController;
+    VerbruikKostenController verbruikKostenController;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<LocalDate> fromDateCaptor;
+    ArgumentCaptor<LocalDate> fromDateCaptor;
     @Captor
-    private ArgumentCaptor<LocalDate> toDateCaptor;
+    ArgumentCaptor<LocalDate> toDateCaptor;
     @Captor
-    private ArgumentCaptor<LocalDate> dateCaptor;
+    ArgumentCaptor<LocalDate> dateCaptor;
     @Captor
-    private ArgumentCaptor<Integer> yearCaptor;
+    ArgumentCaptor<Integer> yearCaptor;
 
     @Test
-    public void whenWarmupInitialCacheThenVerbruikPerUurOpDagWarmedup() {
+    void whenWarmupInitialCacheThenVerbruikPerUurOpDagWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         verbruikKostenCacheWarmer.warmupInitialCache();
@@ -65,12 +65,13 @@ public class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupInitialCacheThenVerbruikPerDagWarmedup() {
+    void whenWarmupInitialCacheThenVerbruikPerDagWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
         verbruikKostenCacheWarmer.warmupInitialCache();
 
-        verify(verbruikKostenController, times(13)).getVerbruikPerDag(fromDateCaptor.capture(), toDateCaptor.capture());
+        verify(verbruikKostenController, times(13)).getVerbruikPerDag(
+                fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
                 LocalDate.of(2016, 12, 1),
@@ -106,7 +107,7 @@ public class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupInitialCacheThenVerbruikPerMaandInJaarWarmedup() {
+    void whenWarmupInitialCacheThenVerbruikPerMaandInJaarWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         verbruikKostenCacheWarmer.warmupInitialCache();
@@ -117,7 +118,7 @@ public class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupInitialCacheThenVerbruikPerJaarWarmedup() {
+    void whenWarmupInitialCacheThenVerbruikPerJaarWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         verbruikKostenCacheWarmer.warmupInitialCache();

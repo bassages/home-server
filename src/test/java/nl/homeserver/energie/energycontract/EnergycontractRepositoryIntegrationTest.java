@@ -8,18 +8,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nl.homeserver.RepositoryIntegrationTest;
 
-public class EnergycontractRepositoryIntegrationTest extends RepositoryIntegrationTest {
+class EnergycontractRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Autowired
-    private EnergycontractRepository energycontractRepository;
+    EnergycontractRepository energycontractRepository;
 
     @Test
-    public void givenNoEnergieContractsExistsWhenFindAllInInPeriodThenNothingFound() {
+    void givenNoEnergieContractsExistsWhenFindAllInInPeriodThenNothingFound() {
         final LocalDate from = LocalDate.of(2018, NOVEMBER, 23);
         final LocalDate to = LocalDate.of(2018, DECEMBER, 12);
 
@@ -27,7 +27,7 @@ public class EnergycontractRepositoryIntegrationTest extends RepositoryIntegrati
     }
 
     @Test
-    public void givenMultipleEnergycontractsWhenFindValidInInPeriodThenFound() {
+    void givenMultipleEnergycontractsWhenFindValidInInPeriodThenFound() {
         final Energycontract energycontract2017 = anEnergiecontract().withValidFrom(LocalDate.of(2017, JANUARY, 1))
                                                                        .withValidTo(LocalDate.of(2018, JANUARY, 1)).build();
         entityManager.persist(energycontract2017);

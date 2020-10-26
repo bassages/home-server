@@ -1,19 +1,19 @@
 package nl.homeserver;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ControllerExceptionHandlerTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith(MockitoExtension.class)
+class ControllerExceptionHandlerTest {
 
     @Test
-    public void givenDataIntegrityViolationExceptionWhenCreateResponseThenErrorResponseCreated() {
+    void givenDataIntegrityViolationExceptionWhenCreateResponseThenErrorResponseCreated() {
         final ControllerExceptionHandler controllerExceptionHandler = new ControllerExceptionHandler();
 
         final String message = "FUBAR";
@@ -28,7 +28,7 @@ public class ControllerExceptionHandlerTest {
     }
 
     @Test
-    public void givenResourceNotFoundExceptionWhenCreateResponseThenErrorResponseCreated() {
+    void givenResourceNotFoundExceptionWhenCreateResponseThenErrorResponseCreated() {
         final ControllerExceptionHandler controllerExceptionHandler = new ControllerExceptionHandler();
 
         final String message = "FUBAR";

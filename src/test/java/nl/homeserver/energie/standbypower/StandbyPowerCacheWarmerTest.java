@@ -1,31 +1,31 @@
 package nl.homeserver.energie.standbypower;
 
-import static java.time.Month.JUNE;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static java.time.Month.JUNE;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class StandbyPowerCacheWarmerTest {
+@ExtendWith(MockitoExtension.class)
+class StandbyPowerCacheWarmerTest {
 
     @InjectMocks
-    private StandbyPowerCacheWarmer standbyPowerCacheWarmer;
+    StandbyPowerCacheWarmer standbyPowerCacheWarmer;
 
     @Mock
-    private StandbyPowerController standbyPowerController;
+    StandbyPowerController standbyPowerController;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Test
-    public void whenWarmupInitialCacheThenStandbyPowerCacheWarmedUp() {
+    void whenWarmupInitialCacheThenStandbyPowerCacheWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         standbyPowerCacheWarmer.warmupInitialCache();
@@ -35,7 +35,7 @@ public class StandbyPowerCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupDailyCacheThenStandbyPowerCacheWarmedUp() {
+    void whenWarmupDailyCacheThenStandbyPowerCacheWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         standbyPowerCacheWarmer.warmupDailyCache();

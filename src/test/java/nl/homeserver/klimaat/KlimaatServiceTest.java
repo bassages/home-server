@@ -1,12 +1,12 @@
 package nl.homeserver.klimaat;
 
 import nl.homeserver.DatePeriod;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -28,26 +28,26 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatServiceTest {
+@ExtendWith(MockitoExtension.class)
+class KlimaatServiceTest {
 
     private static final String SOME_SENSOR_CODE = "someSensorCode";
 
     @InjectMocks
-    private KlimaatService klimaatService;
+    KlimaatService klimaatService;
 
     @Mock
-    private KlimaatRepos klimaatRepository;
+    KlimaatRepos klimaatRepository;
     @Mock
-    private Clock clock;
+    Clock clock;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", klimaatService);
     }
 
     @Test
-    public void whenGetHighestTemperatureThenDelegatedToRepository() {
+    void whenGetHighestTemperatureThenDelegatedToRepository() {
         // given
         final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
         final LocalDate to = from.plusDays(1);
@@ -70,7 +70,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetLowestTemperatureThenDelegatedToRepository() {
+    void whenGetLowestTemperatureThenDelegatedToRepository() {
         // given
         final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
         final LocalDate to = from.plusDays(1);
@@ -93,7 +93,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetHighestHumidityThenDelegatedToRepository() {
+    void whenGetHighestHumidityThenDelegatedToRepository() {
         // given
         final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
         final LocalDate to = from.plusDays(1);
@@ -115,7 +115,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetLowestHumidityThenDelegatedToRepository() {
+    void whenGetLowestHumidityThenDelegatedToRepository() {
         // given
         final LocalDate from = LocalDate.of(2016, SEPTEMBER, 1);
         final LocalDate to = from.plusDays(1);
@@ -137,7 +137,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetAverageHumidityPerMonthInYearsThenAveragesReturned() {
+    void whenGetAverageHumidityPerMonthInYearsThenAveragesReturned() {
         // given
         final LocalDate date = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, date.atStartOfDay());
@@ -145,7 +145,7 @@ public class KlimaatServiceTest {
         final int[] years = {2017, 2018};
 
         final BigDecimal averageHumidityInJune2017 = new BigDecimal("22.18");
-        when(klimaatRepository.getAverageLuchtvochtigheid(SOME_SENSOR_CODE,
+        lenient().when(klimaatRepository.getAverageLuchtvochtigheid(SOME_SENSOR_CODE,
                                                           LocalDate.of(2017, JUNE, 1).atStartOfDay(),
                                                           LocalDate.of(2017, JULY, 1).atStartOfDay()))
                               .thenReturn(averageHumidityInJune2017);
@@ -172,7 +172,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetAverageTemperaturePerMonthInYearsThenAveragesReturned() {
+    void whenGetAverageTemperaturePerMonthInYearsThenAveragesReturned() {
         // given
         final LocalDate date = LocalDate.of(2019, JANUARY, 1);
         timeTravelTo(clock, date.atStartOfDay());
@@ -180,7 +180,7 @@ public class KlimaatServiceTest {
         final int[] years = {2016};
 
         final BigDecimal averageTemperatureInJune2016 = new BigDecimal("22.18");
-        when(klimaatRepository.getAverageTemperatuur(
+        lenient().when(klimaatRepository.getAverageTemperatuur(
                 SOME_SENSOR_CODE, LocalDate.of(2016, JUNE, 1).atStartOfDay(),
                                   LocalDate.of(2016, JULY, 1).atStartOfDay()))
                               .thenReturn(averageTemperatureInJune2016);
@@ -202,7 +202,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetInPeriodBeforeCurrentDateTimeThenRetrievedFromCache() {
+    void whenGetInPeriodBeforeCurrentDateTimeThenRetrievedFromCache() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
@@ -224,7 +224,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetInPeriodIncludingCurrentDateThenRetrievedFromRepository() {
+    void whenGetInPeriodIncludingCurrentDateThenRetrievedFromRepository() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
@@ -244,10 +244,9 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenGetPotentiallyCachedAllInPeriodThenRetrievedFromRepository() {
+    void whenGetPotentiallyCachedAllInPeriodThenRetrievedFromRepository() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
-        timeTravelTo(clock, currentDateTime);
 
         final DatePeriod period = aPeriodWithToDate(currentDateTime.toLocalDate(), currentDateTime.plusDays(1).toLocalDate());
 
@@ -266,7 +265,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void givenRequestedYearIsInFutureWhenGetAveragePerMonthInYearsThenResultsAreEmpty() {
+    void givenRequestedYearIsInFutureWhenGetAveragePerMonthInYearsThenResultsAreEmpty() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
@@ -291,7 +290,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void givenRequestedYearIsInPastWhenGetAveragePerMonthInYearsThenResultsRequestedFromRepository() {
+    void givenRequestedYearIsInPastWhenGetAveragePerMonthInYearsThenResultsRequestedFromRepository() {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
@@ -316,7 +315,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void givenSomeKlimaatWhenSaveThenDelegatedToRepository() {
+    void givenSomeKlimaatWhenSaveThenDelegatedToRepository() {
         // given
         final Klimaat someKlimaat = aKlimaat().build();
 
@@ -328,7 +327,7 @@ public class KlimaatServiceTest {
     }
 
     @Test
-    public void whenDeleteByKlimaatSensorThenDelegatedByRepository() {
+    void whenDeleteByKlimaatSensorThenDelegatedByRepository() {
         // when
         klimaatService.deleteByKlimaatSensor(KlimaatSensorBuilder.aKlimaatSensor().withCode(SOME_SENSOR_CODE).build());
 

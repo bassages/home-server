@@ -1,33 +1,34 @@
 package nl.homeserver.cache;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WarmupDailyCacheTest {
+@ExtendWith(MockitoExtension.class)
+class WarmupDailyCacheTest {
 
     private static final String FIELDNAME_WARMUP_CACHE_DAILY = "warmupCacheDaily";
 
-    private WarmupDailyCache warmupDailyCache;
+    WarmupDailyCache warmupDailyCache;
 
     @Mock
-    private DailyCacheWarmer dailyCacheWarmer;
+    DailyCacheWarmer dailyCacheWarmer;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         warmupDailyCache = new WarmupDailyCache(List.of(dailyCacheWarmer));
     }
 
     @Test
-    public void givenWarmupDisabledWhenConsiderDailyWarmupThenNoWarmup() {
+    void givenWarmupDisabledWhenConsiderDailyWarmupThenNoWarmup() {
         setWarmupCacheDisabled();
 
         warmupDailyCache.considerDailyWarmup();
@@ -36,7 +37,7 @@ public class WarmupDailyCacheTest {
     }
 
     @Test
-    public void givenWarmupEnabledWhenConsiderDailyWarmupThenWarmup() {
+    void givenWarmupEnabledWhenConsiderDailyWarmupThenWarmup() {
         setWarmupCacheEnabled();
 
         warmupDailyCache.considerDailyWarmup();

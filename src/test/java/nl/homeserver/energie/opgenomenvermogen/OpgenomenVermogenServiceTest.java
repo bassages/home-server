@@ -15,29 +15,31 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import nl.homeserver.DatePeriod;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OpgenomenVermogenServiceTest {
+@ExtendWith(MockitoExtension.class)
+class OpgenomenVermogenServiceTest {
 
     @InjectMocks
-    private OpgenomenVermogenService opgenomenVermogenService;
+    OpgenomenVermogenService opgenomenVermogenService;
 
     @Mock
-    private OpgenomenVermogenRepository opgenomenVermogenRepository;
+    OpgenomenVermogenRepository opgenomenVermogenRepository;
     @Mock
-    private SimpMessagingTemplate messagingTemplate;
+    SimpMessagingTemplate messagingTemplate;
 
     @Test
-    public void givenOneDayPeriodWhenGetHistoryPerHalfDayThenMaxOpgenomenVermogensPerHalfDayReturned() {
+    void givenOneDayPeriodWhenGetHistoryPerHalfDayThenMaxOpgenomenVermogensPerHalfDayReturned() {
         final LocalDate day = LocalDate.of(2018, JANUARY, 6);
         final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
 
@@ -62,7 +64,7 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void whenGetMostRecentThenDelegatedToRepository() {
+    void whenGetMostRecentThenDelegatedToRepository() {
         final OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
 
         when(opgenomenVermogenRepository.getMostRecent()).thenReturn(mostRecent);
@@ -71,7 +73,7 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void whenSaveThenSavedInRepositoryAndMessageSendToTopic() {
+    void whenSaveThenSavedInRepositoryAndMessageSendToTopic() {
         final OpgenomenVermogen opgenomenVermogen = mock(OpgenomenVermogen.class);
 
         when(opgenomenVermogenRepository.save(any(OpgenomenVermogen.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
@@ -81,12 +83,13 @@ public class OpgenomenVermogenServiceTest {
     }
 
     @Test
-    public void whenGetPotentiallyCachedHistoryThenReturned() {
+    void whenGetPotentiallyCachedHistoryThenReturned() {
         final LocalDate day = LocalDate.of(2018, JANUARY, 6);
         final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
 
-        when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay()))
-                .thenReturn(emptyList());
+        when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(),
+                                                              period.getToDate().atStartOfDay()))
+                                        .thenReturn(emptyList());
 
         final List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
 

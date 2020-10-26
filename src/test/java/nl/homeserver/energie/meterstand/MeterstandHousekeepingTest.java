@@ -1,18 +1,17 @@
 package nl.homeserver.energie.meterstand;
 
-import static ch.qos.logback.classic.Level.DEBUG;
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.CaptureLogging;
+import nl.homeserver.ContainsMessageAtLevel;
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Clock;
@@ -20,43 +19,33 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static ch.qos.logback.classic.Level.DEBUG;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.LoggingRule;
-import nl.homeserver.MessageContaining;
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
-
-@RunWith(MockitoJUnitRunner.class)
-public class MeterstandHousekeepingTest {
+@ExtendWith(MockitoExtension.class)
+class MeterstandHousekeepingTest {
 
     @InjectMocks
-    private MeterstandHousekeeping meterstandHousekeeping;
+    MeterstandHousekeeping meterstandHousekeeping;
 
     @Mock
-    private MeterstandRepository meterstandRepository;
+    MeterstandRepository meterstandRepository;
     @Mock
-    private CacheService cacheService;
+    CacheService cacheService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
-
-    @Rule
-    public final LoggingRule loggingRule = new LoggingRule(MeterstandHousekeeping.class);
+    ArgumentCaptor<List<Meterstand>> deletedMeterstandCaptor;
 
     @Test
-    public void whenCleanUpThenCachesCleared() {
+    void whenCleanUpThenCachesCleared() {
         useSystemDefaultClock(clock);
 
         meterstandHousekeeping.start();
@@ -66,7 +55,7 @@ public class MeterstandHousekeepingTest {
     }
 
     @Test
-    public void whenStartThenPastMonthIsCleanedUp() {
+    void whenStartThenPastMonthIsCleanedUp() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -79,7 +68,7 @@ public class MeterstandHousekeepingTest {
     }
 
     @Test
-    public void givenOnlyASingleMeterstandExistsWhenCleanupThenNoneDeleted() {
+    void givenOnlyASingleMeterstandExistsWhenCleanupThenNoneDeleted() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -101,7 +90,7 @@ public class MeterstandHousekeepingTest {
     }
 
     @Test
-    public void whenCleanupThenAllButFirstAndLastMeterstandPerHourAreDeleted() {
+    void whenCleanupThenAllButFirstAndLastMeterstandPerHourAreDeleted() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -134,8 +123,9 @@ public class MeterstandHousekeepingTest {
         assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsExactly(meterstand6, meterstand7);
     }
 
+    @CaptureLogging(MeterstandHousekeeping.class)
     @Test
-    public void whenCleanupThenKeptAndDeletedMeterstandenAreLogged() {
+    void whenCleanupThenKeptAndDeletedMeterstandenAreLogged(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -154,41 +144,11 @@ public class MeterstandHousekeepingTest {
                                                         dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(List.of(meterstand1, meterstand2, meterstand3));
 
-        loggingRule.setLevel(DEBUG);
-
         meterstandHousekeeping.start();
 
-        final List<LoggingEvent> loggedEvents = loggingRule.getLoggedEventCaptor().getAllValues();
-        assertThat(loggedEvents)
-                .haveExactly(1, new MessageContaining("[DEBUG] Keep first in hour 12: Meterstand[dateTime=2016-01-01T12:00,gas=0.000,id=1"))
-                .haveExactly(1, new MessageContaining("[DEBUG] Keep last in hour 12: Meterstand[dateTime=2016-01-01T12:30,gas=0.000,id=3"))
-                .haveExactly(1, new MessageContaining("[DEBUG] Delete: Meterstand[dateTime=2016-01-01T12:15,gas=0.000,id=2"));
-    }
-
-    @Test
-    public void givenLogLevelIsOffWhenCleanupThenNothingLogged() {
-        final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
-
-        final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
-        timeTravelTo(clock, currentDateTime);
-
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
-        when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                .thenReturn(List.of(dayToCleanupAsTimeStamp));
-
-        final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
-        final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
-        final Meterstand meterstand3 = aMeterstand().withId(3).withDateTime(dayToCleanup.atTime(12, 30, 0)).build();
-
-        when(meterstandRepository.findByDateTimeBetween(dayToCleanup.atStartOfDay(),
-                                                        dayToCleanup.atStartOfDay().plusDays(1).minusNanos(1)))
-                                 .thenReturn(List.of(meterstand1, meterstand2, meterstand3));
-
-        loggingRule.setLevel(Level.OFF);
-
-        meterstandHousekeeping.start();
-
-        assertThat(loggingRule.getLoggedEventCaptor().getAllValues()).isEmpty();
+        assertThat(loggerEventCaptor.getAllValues())
+                .haveExactly(1, new ContainsMessageAtLevel("Keep first in hour 12: Meterstand[dateTime=2016-01-01T12:00,gas=0.000,id=1", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand[dateTime=2016-01-01T12:30,gas=0.000,id=3", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand[dateTime=2016-01-01T12:15,gas=0.000,id=2", DEBUG));
     }
 }

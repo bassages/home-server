@@ -1,18 +1,17 @@
 package nl.homeserver;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
-public class DatePeriodTest {
+class DatePeriodTest {
 
     @Test
-    public void whenCreateDatePeriodWithEndDateThenToDateIsSet() {
+    void whenCreateDatePeriodWithEndDateThenToDateIsSet() {
         final LocalDate startDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
         final LocalDate endDate = LocalDate.of(2017, Month.DECEMBER, 1);
 
@@ -24,7 +23,7 @@ public class DatePeriodTest {
     }
 
     @Test
-    public void whenCreateDatePeriodWithToDateThenEndDateIsSet() {
+    void whenCreateDatePeriodWithToDateThenEndDateIsSet() {
         final LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
         final LocalDate toDate = LocalDate.of(2017, Month.DECEMBER, 1);
 
@@ -36,7 +35,7 @@ public class DatePeriodTest {
     }
 
     @Test
-    public void givenTwoWeekThenNumberOfWeekendDaysIsFour() {
+    void givenTwoWeekThenNumberOfWeekendDaysIsFour() {
         final LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
         final LocalDate toDate = fromDate.plusDays(14);
 
@@ -48,7 +47,7 @@ public class DatePeriodTest {
     }
 
     @Test
-    public void givenTwoWeekThenNumberOfWeekDaysIsTen() {
+    void givenTwoWeekThenNumberOfWeekDaysIsTen() {
         final LocalDate fromDate = LocalDate.of(2017, Month.SEPTEMBER, 12);
         final LocalDate toDate = fromDate.plusDays(14);
 
@@ -60,7 +59,7 @@ public class DatePeriodTest {
     }
 
     @Test
-    public void testEqualsAndHashCode() {
+    void testEqualsAndHashCode() {
         EqualsVerifier.forClass(DatePeriod.class).verify();
     }
 }

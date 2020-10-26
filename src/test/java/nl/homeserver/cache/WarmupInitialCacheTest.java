@@ -1,34 +1,34 @@
 package nl.homeserver.cache;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@RunWith(MockitoJUnitRunner.class)
-public class WarmupInitialCacheTest {
+@ExtendWith(MockitoExtension.class)
+class WarmupInitialCacheTest {
 
     private static final String FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START = "warmupCacheOnApplicationStart";
 
-    private WarmupInitialCache warmupInitialCache;
+    WarmupInitialCache warmupInitialCache;
 
     @Mock
-    private InitialCacheWarmer initialCacheWarmer;
+    InitialCacheWarmer initialCacheWarmer;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         warmupInitialCache = new WarmupInitialCache(List.of(initialCacheWarmer));
     }
 
     @Test
-    public void givenWarmupDisabledWhenApplicationStartedThenNoWarmup() {
+    void givenWarmupDisabledWhenApplicationStartedThenNoWarmup() {
         setWarmupCacheDisabled();
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
@@ -37,7 +37,7 @@ public class WarmupInitialCacheTest {
     }
 
     @Test
-    public void givenWarmupEnabledWhenApplicationStartedThenWarmup() {
+    void givenWarmupEnabledWhenApplicationStartedThenWarmup() {
         setWarmupCacheEnabled();
 
         warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));

@@ -1,46 +1,40 @@
 package nl.homeserver.klimaat;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.List;
+
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JUNE;
 import static nl.homeserver.klimaat.KlimaatSensorBuilder.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.AdditionalMatchers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatCacheWarmerTest {
+@ExtendWith(MockitoExtension.class)
+class KlimaatCacheWarmerTest {
 
     @InjectMocks
-    private KlimaatCacheWarmer klimaatCacheWarmer;
+    KlimaatCacheWarmer klimaatCacheWarmer;
 
     @Mock
-    private KlimaatController klimaatController;
+    KlimaatController klimaatController;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Captor
-    private ArgumentCaptor<LocalDate> fromDateCaptor;
+    ArgumentCaptor<LocalDate> fromDateCaptor;
     @Captor
-    private ArgumentCaptor<LocalDate> toDateCaptor;
+    ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    public void whenWarmupInitialCacheThenClimatePerDayWarmedup() {
+    void whenWarmupInitialCacheThenClimatePerDayWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         final String sensorCode = "SOME_NICE_CODE";
@@ -49,7 +43,8 @@ public class KlimaatCacheWarmerTest {
 
         klimaatCacheWarmer.warmupInitialCache();
 
-        verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode), fromDateCaptor.capture(), toDateCaptor.capture());
+        verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode),
+                fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
                 LocalDate.of(2017, DECEMBER, 23),
@@ -73,7 +68,7 @@ public class KlimaatCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupInitialCacheThenClimateAveragesWarmedup() {
+    void whenWarmupInitialCacheThenClimateAveragesWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         final String sensorCode = "SOME_NICE_CODE";
@@ -92,7 +87,7 @@ public class KlimaatCacheWarmerTest {
     }
 
     @Test
-    public void whenWarmupDailyCacheThenClimatePerDayWarmedup() {
+    void whenWarmupDailyCacheThenClimatePerDayWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
         final String sensorCode = "SOME_FANCY_SENSOR";
@@ -101,7 +96,8 @@ public class KlimaatCacheWarmerTest {
 
         klimaatCacheWarmer.warmupDailyCache();
 
-        verify(klimaatController).findAllInPeriod(sensorCode, LocalDate.of(2017, DECEMBER, 29), LocalDate.of(2017, DECEMBER, 30));
+        verify(klimaatController).findAllInPeriod(sensorCode,
+                LocalDate.of(2017, DECEMBER, 29), LocalDate.of(2017, DECEMBER, 30));
     }
 
 }

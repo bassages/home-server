@@ -1,10 +1,10 @@
 package nl.homeserver.klimaat;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.actuate.health.Health;
 
 import java.time.Clock;
@@ -21,24 +21,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.actuate.health.Status.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatSensorHealthTest {
+@ExtendWith(MockitoExtension.class)
+class KlimaatSensorHealthTest {
 
     @InjectMocks
-    private KlimaatSensorHealth klimaatSensorHealth;
+    KlimaatSensorHealth klimaatSensorHealth;
 
     @Mock
-    private KlimaatSensorService klimaatSensorService;
+    KlimaatSensorService klimaatSensorService;
     @Mock
-    private IncomingKlimaatService incomingKlimaatService;
+    IncomingKlimaatService incomingKlimaatService;
     @Mock
-    private Clock clock;
+    Clock clock;
 
     @Test
-    public void whenNoKlimaatExistsThenHealthIsUnknown() {
+    void whenNoKlimaatExistsThenHealthIsUnknown() {
         // given
-        timeTravelTo(clock, LocalDate.of(2017, FEBRUARY, 5).atStartOfDay());
-
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
 
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
@@ -53,7 +51,7 @@ public class KlimaatSensorHealthTest {
     }
 
     @Test
-    public void givenNoSensorsExistThenHealthIsUnknown() {
+    void givenNoSensorsExistThenHealthIsUnknown() {
         // given
         when(klimaatSensorService.getAll()).thenReturn(emptyList());
 
@@ -66,7 +64,7 @@ public class KlimaatSensorHealthTest {
     }
 
     @Test
-    public void whenMostRecentMeterstandIsTenMinutesOldThenHealthIsUp() {
+    void whenMostRecentMeterstandIsTenMinutesOldThenHealthIsUp() {
         // given
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
@@ -86,7 +84,7 @@ public class KlimaatSensorHealthTest {
     }
 
     @Test
-    public void whenMostRecentMeterstandIsMoreThenTenMinutesOldThenHealthIsDown() {
+    void whenMostRecentMeterstandIsMoreThenTenMinutesOldThenHealthIsDown() {
         // given
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
@@ -106,7 +104,7 @@ public class KlimaatSensorHealthTest {
     }
 
     @Test
-    public void whenOneOfMultipleSensorsIsDownThenHealthIsDown() {
+    void whenOneOfMultipleSensorsIsDownThenHealthIsDown() {
         // given
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
@@ -133,7 +131,7 @@ public class KlimaatSensorHealthTest {
     }
 
     @Test
-    public void whenAllOfMultipleSensorsAreUpThenHealthIsUp() {
+    void whenAllOfMultipleSensorsAreUpThenHealthIsUp() {
         // given
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);

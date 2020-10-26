@@ -1,12 +1,12 @@
 package nl.homeserver.klimaat;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,19 +16,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatSensorServiceTest {
+@ExtendWith(MockitoExtension.class)
+class KlimaatSensorServiceTest {
 
     private static final String SOME_SENSOR_CODE = "someSensorCode";
 
     @InjectMocks
-    private KlimaatSensorService klimaatSensorService;
+    KlimaatSensorService klimaatSensorService;
 
     @Mock
-    private KlimaatSensorRepository klimaatSensorRepository;
+    KlimaatSensorRepository klimaatSensorRepository;
 
     @Test
-    public void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
+    void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
         // given
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
@@ -41,7 +41,7 @@ public class KlimaatSensorServiceTest {
     }
 
     @Test
-    public void whenGetAllThenDelegatedToRepository() {
+    void whenGetAllThenDelegatedToRepository() {
         // given
         final List<KlimaatSensor> klimaatSensors = List.of(mock(KlimaatSensor.class), mock(KlimaatSensor.class));
         when(klimaatSensorRepository.findAll()).thenReturn(klimaatSensors);
@@ -54,7 +54,7 @@ public class KlimaatSensorServiceTest {
     }
 
     @Test
-    public void whenUpdateThenSavedByRepositoryAndReturned() {
+    void whenUpdateThenSavedByRepositoryAndReturned() {
         // given
         final KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
         when(klimaatSensorRepository.save(klimaatSensor)).thenAnswer(AdditionalAnswers.returnsFirstArg());
@@ -67,7 +67,7 @@ public class KlimaatSensorServiceTest {
     }
 
     @Test
-    public void whenDeleteThenDeletedByRepository() {
+    void whenDeleteThenDeletedByRepository() {
         // given
         final KlimaatSensor klimaatSensor = mock(KlimaatSensor.class);
 
@@ -79,7 +79,7 @@ public class KlimaatSensorServiceTest {
     }
 
     @Test
-    public void givenNotExistingSensorCodeWhenGetOrCreateIfNonExistsThenCreated() {
+    void givenNotExistingSensorCodeWhenGetOrCreateIfNonExistsThenCreated() {
         // given
         final ArgumentCaptor<KlimaatSensor> klimaatSensorArgumentCaptor = ArgumentCaptor.forClass(KlimaatSensor.class);
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.empty());
@@ -100,7 +100,7 @@ public class KlimaatSensorServiceTest {
     }
 
     @Test
-    public void givenExistingSensorCodeWhenGetOrCreateIfNonExistsThenReturned() {
+    void givenExistingSensorCodeWhenGetOrCreateIfNonExistsThenReturned() {
         // given
         final KlimaatSensor existingKlimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.of(existingKlimaatSensor));

@@ -5,28 +5,28 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CacheServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CacheServiceTest {
 
     @InjectMocks
-    private CacheService cacheService;
+    CacheService cacheService;
 
     @Mock
-    private CacheManager cacheManager;
+    CacheManager cacheManager;
 
     @Mock
-    private Cache cache1, cache2, cache3;
+    Cache cache1, cache2, cache3;
 
     @Test
-    public void givenSingleCacheWhenClearThenCleared() {
+    void givenSingleCacheWhenClearThenCleared() {
         final String nameOfCache1 = "nameOfCache1";
         when(cacheManager.getCache(nameOfCache1)).thenReturn(cache1);
 
@@ -36,7 +36,7 @@ public class CacheServiceTest {
     }
 
     @Test
-    public void givenThreeCachesWhenClearAllThenEveryCacheCleared() {
+    void givenThreeCachesWhenClearAllThenEveryCacheCleared() {
         final String nameOfCache1 = "nameOfCache1";
         final String nameOfCache2 = "nameOfCache2";
         final String nameOfCache3 = "nameOfCache3";

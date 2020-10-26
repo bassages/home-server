@@ -1,33 +1,30 @@
 package nl.homeserver.energie.energycontract;
 
-import static java.time.Month.JANUARY;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.Sort;
+import static java.time.Month.JANUARY;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EnergycontractToDateRecalculatorTest {
+@ExtendWith(MockitoExtension.class)
+class EnergycontractToDateRecalculatorTest {
 
     @InjectMocks
-    private EnergycontractToDateRecalculator energycontractToDateRecalculator;
+    EnergycontractToDateRecalculator energycontractToDateRecalculator;
 
     @Mock
-    private EnergycontractRepository energycontractRepository;
+    EnergycontractRepository energycontractRepository;
 
     @Test
-    public void givenMultipleEnergiecontractsWithoutValidToWhenRecalculateThenSetAndSaved() {
+    void givenMultipleEnergiecontractsWithoutValidToWhenRecalculateThenSetAndSaved() {
         final Energycontract energycontract1 = new Energycontract();
         energycontract1.setValidFrom(LocalDate.of(2017, JANUARY, 1));
 
@@ -50,7 +47,7 @@ public class EnergycontractToDateRecalculatorTest {
     }
 
     @Test
-    public void givenValidToAreAlreadyValidWhenRecalculateThenNothingSaved() {
+    void givenValidToAreAlreadyValidWhenRecalculateThenNothingSaved() {
         final Energycontract energycontract1 = new Energycontract();
         energycontract1.setValidFrom(LocalDate.of(2017, JANUARY, 1));
         energycontract1.setValidTo(LocalDate.of(2017, JANUARY, 5));
@@ -75,7 +72,7 @@ public class EnergycontractToDateRecalculatorTest {
     }
 
     @Test
-    public void givenSingleEnergiecontractsWithValidToDateWhenRecalculateThenValidToIsClearedAndSaved() {
+    void givenSingleEnergiecontractsWithValidToDateWhenRecalculateThenValidToIsClearedAndSaved() {
         final Energycontract energycontract = new Energycontract();
         energycontract.setValidTo(LocalDate.of(2017, JANUARY, 1));
 

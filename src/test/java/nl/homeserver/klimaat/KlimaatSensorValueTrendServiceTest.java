@@ -1,31 +1,31 @@
 package nl.homeserver.klimaat;
 
-import static java.time.Month.JULY;
-import static java.util.Collections.emptyList;
-import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import static java.time.Month.JULY;
+import static java.util.Collections.emptyList;
+import static nl.homeserver.klimaat.KlimaatBuilder.aKlimaat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class KlimaatSensorValueTrendServiceTest {
+@ExtendWith(MockitoExtension.class)
+class KlimaatSensorValueTrendServiceTest {
 
     @InjectMocks
-    private KlimaatSensorValueTrendService klimaatSensorValueTrendService;
+    KlimaatSensorValueTrendService klimaatSensorValueTrendService;
 
     @Mock
-    private KlimaatSensor klimaatSensor;
+    KlimaatSensor klimaatSensor;
 
     @Test
-    public void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() {
+    void givenTemperatureRisesWhenDetermineValueTrendThenTrendIsUp() {
         final LocalDate day = LocalDate.of(2016, JULY, 1);
 
         final List<Klimaat> klimaats = List.of(
@@ -38,7 +38,7 @@ public class KlimaatSensorValueTrendServiceTest {
     }
 
     @Test
-    public void givenTemperatureDropsWhenDetermineValueTrendThenTrendIsDown() {
+    void givenTemperatureDropsWhenDetermineValueTrendThenTrendIsDown() {
         final LocalDate day = LocalDate.of(2016, JULY, 1);
 
         final List<Klimaat> klimaats = List.of(
@@ -51,7 +51,7 @@ public class KlimaatSensorValueTrendServiceTest {
     }
 
     @Test
-    public void givenTemperatureRemainsTheSameWhenDetermineValueTrendThenTrendIsStable() {
+    void givenTemperatureRemainsTheSameWhenDetermineValueTrendThenTrendIsStable() {
         final LocalDate day = LocalDate.of(2016, JULY, 1);
 
         final List<Klimaat> klimaats = List.of(
@@ -65,7 +65,7 @@ public class KlimaatSensorValueTrendServiceTest {
     }
 
     @Test
-    public void givenNotEnoughValidSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
+    void givenNotEnoughValidSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
         final LocalDate day = LocalDate.of(2016, JULY, 1);
 
         final BigDecimal invalidTemperatuur = null;
@@ -80,7 +80,7 @@ public class KlimaatSensorValueTrendServiceTest {
     }
 
     @Test
-    public void givenNotEnoughSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
+    void givenNotEnoughSamplesWhenDetermineValueTrendThenTrendIsUndetermined() {
         assertThat(klimaatSensorValueTrendService.determineValueTrend(emptyList(), Klimaat::getTemperatuur)).isEqualTo(Trend.UNKNOWN);
     }
 }
