@@ -13,7 +13,9 @@ import nl.homeserver.config.Paths;
 class UserController {
 
     @GetMapping
-    public Principal user(final Principal user) {
-        return user;
+    public UserDto user(final Principal user) {
+        final UserDto userDto = new UserDto();
+        userDto.setName(user.getName());
+        return userDto;
     }
 }
