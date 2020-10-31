@@ -77,7 +77,7 @@ dependencies {
     implementation('commons-io:commons-io:2.8.0')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.11')
-    implementation('org.apache.httpcomponents:httpclient:4.5.12')
+    implementation('org.apache.httpcomponents:httpclient:4.5.13')
     implementation('org.apache.commons:commons-math3:3.6.1')
     implementation('javax.inject:javax.inject:1')
     implementation('javax.xml.bind:jaxb-api:2.3.0')
