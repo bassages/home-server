@@ -80,7 +80,7 @@ dependencies {
     implementation('org.apache.httpcomponents:httpclient:4.5.12')
     implementation('org.apache.commons:commons-math3:3.6.1')
     implementation('javax.inject:javax.inject:1')
-    implementation('javax.xml.bind:jaxb-api:2.3.0')
+    implementation('javax.xml.bind:jaxb-api:2.3.1')
     implementation('com.google.code.findbugs:jsr305:3.0.2')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
