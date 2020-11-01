@@ -21,6 +21,13 @@ jacocoTestReport {
     }
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 sonarqube {
     properties {
         property "sonar.host.url", "https://sonarcloud.io"
