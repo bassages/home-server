@@ -1,5 +1,18 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
+import nl.homeserver.DatePeriod;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.List;
+
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -7,25 +20,7 @@ import static nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenBuilder.a
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.AdditionalAnswers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-
-import nl.homeserver.DatePeriod;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OpgenomenVermogenServiceTest {
