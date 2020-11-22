@@ -97,6 +97,7 @@ dependencies {
     testImplementation('nl.jqno.equalsverifier:equalsverifier:3.5')
     testImplementation('org.awaitility:awaitility:4.0.3')
 
+    runtimeOnly('org.flywaydb:flyway-core')
     runtimeOnly('com.h2database:h2')
     runtimeOnly('org.hibernate:hibernate-java8')
     runtimeOnly('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
