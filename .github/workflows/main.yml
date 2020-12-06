@@ -28,4 +28,6 @@ jobs:
       - name: Build with Gradle and start SonarQube analysys
         uses: eskatos/gradle-command-action@v1
         with:
-          arguments: build jacocoTestReport sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          arguments: build jacocoTestReport sonarqube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
