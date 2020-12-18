@@ -7,9 +7,9 @@
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=home-server&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=home-server)
 
 ## Features
-- Ontvangen van slimme meter data en deze opslaan in een database
-- Ontvangen van klimaat sensor data (temperatuur en luchtvochtigheid) en deze opslaan in een database
-- Mogelijkheid om gas meterstanden dagelijks automatisch te uploaden naar mindergas.nl
+- Provides a RESTful API to store and query data related to a [smart meter](https://en.wikipedia.org/wiki/Smart_meter)
+- Provides a RESTful API to store and query data related to environmental sensor readings (temperature and humidity)
+- Ability to send gas meter readings to [mindergas.nl](https://mindergas.nl) on a daily basis
 
 ## Links
 * [home-sensors](https://github.com/bassages/home-sensors)
