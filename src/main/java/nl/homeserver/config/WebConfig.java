@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.RESET_CONTENT;
 
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.http.CacheControl;
@@ -15,6 +16,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+
+    @Value("${home-server.enable-ssl}")
+    private boolean enableSsl;
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
             "classpath:/META-INF/resources/",
@@ -46,6 +50,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
                 .antMatchers(Paths.LOGIN).permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
+
+        if (enableSsl) {
+            http.requiresChannel().anyRequest().requiresSecure();
+        }
     }
 
     @Override
