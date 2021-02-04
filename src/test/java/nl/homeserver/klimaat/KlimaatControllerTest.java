@@ -19,7 +19,6 @@ import static nl.homeserver.klimaat.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.klimaat.SensorType.TEMPERATUUR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,8 +101,8 @@ class KlimaatControllerTest {
         final LocalDate to = LocalDate.of(2018, JANUARY, 27);
         final int limit = 20;
 
-        when(klimaatService.getHighest(eq(EXISTING_SENSOR_CODE), eq(sensorType),
-                                       eq(aPeriodWithToDate(from, to)), eq(limit)))
+        when(klimaatService.getHighest(EXISTING_SENSOR_CODE, sensorType,
+                                       aPeriodWithToDate(from, to), limit))
                             .thenReturn(highestKlimaats);
 
         assertThat(klimaatController.getHighest(EXISTING_SENSOR_CODE, sensorType.name(), from, to, limit))
@@ -133,9 +132,9 @@ class KlimaatControllerTest {
         final LocalDate to = LocalDate.of(2018, JANUARY, 27);
         final int limit = 20;
 
-        when(klimaatService.getLowest(eq(EXISTING_SENSOR_CODE), eq(sensorType), eq(aPeriodWithToDate(from, to)), eq(limit))).thenReturn(higestKlimaats);
+        when(klimaatService.getLowest(EXISTING_SENSOR_CODE, sensorType, aPeriodWithToDate(from, to), limit)).thenReturn(higestKlimaats);
 
-        assertThat(klimaatController.getLowest(EXISTING_SENSOR_CODE, sensorType.name(), from , to, limit)).isSameAs(higestKlimaats);
+        assertThat(klimaatController.getLowest(EXISTING_SENSOR_CODE, sensorType.name(), from, to, limit)).isSameAs(higestKlimaats);
     }
 
     @Test
@@ -176,7 +175,7 @@ class KlimaatControllerTest {
 
         final List<Klimaat> allInPeriod = List.of(mock(Klimaat.class), mock(Klimaat.class));
 
-        when(klimaatService.getInPeriod(eq(EXISTING_SENSOR_CODE), eq(aPeriodWithToDate(from, to)))).thenReturn(allInPeriod);
+        when(klimaatService.getInPeriod(EXISTING_SENSOR_CODE, aPeriodWithToDate(from, to))).thenReturn(allInPeriod);
 
         assertThat(klimaatController.findAllInPeriod(EXISTING_SENSOR_CODE, from, to)).isSameAs(allInPeriod);
     }

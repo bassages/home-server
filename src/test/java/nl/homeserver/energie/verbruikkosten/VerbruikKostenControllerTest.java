@@ -15,7 +15,6 @@ import java.time.Year;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -85,7 +84,7 @@ class VerbruikKostenControllerTest {
         final int year = 2018;
 
         final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = List.of(mock(VerbruikInMaandInJaar.class));
-        when(verbruikService.getVerbruikPerMaandInJaar(eq(Year.of(year)))).thenReturn(verbruikPerMaandInJaar);
+        when(verbruikService.getVerbruikPerMaandInJaar(Year.of(year))).thenReturn(verbruikPerMaandInJaar);
 
         assertThat(verbruikKostenController.getVerbruikPerMaandInJaar(year)).isEqualTo(verbruikPerMaandInJaar);
     }

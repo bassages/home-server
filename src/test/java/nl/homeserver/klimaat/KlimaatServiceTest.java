@@ -214,7 +214,7 @@ class KlimaatServiceTest {
                 currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
 
         final List<Klimaat> cachedKlimaats = List.of(mock(Klimaat.class), mock(Klimaat.class));
-        when(cachedProxy.getPotentiallyCachedAllInPeriod(eq(SOME_SENSOR_CODE), eq(period))).thenReturn(cachedKlimaats);
+        when(cachedProxy.getPotentiallyCachedAllInPeriod(SOME_SENSOR_CODE, period)).thenReturn(cachedKlimaats);
 
         // when
         final List<Klimaat> inPeriod = klimaatService.getInPeriod(SOME_SENSOR_CODE, period);

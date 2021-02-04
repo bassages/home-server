@@ -15,7 +15,6 @@ import java.util.List;
 import static java.time.Month.*;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -54,8 +53,8 @@ class OpgenomenVermogenControllerTest {
         final long subPeriodLengthInSeconds = 1;
         final List<OpgenomenVermogen> opgenomenVermogens = List.of(
                 mock(OpgenomenVermogen.class), mock(OpgenomenVermogen.class));
-        when(opgenomenVermogenService.getPotentiallyCachedHistory(eq(DatePeriod.aPeriodWithToDate(from, to)),
-                                                                  eq(Duration.ofSeconds(1))))
+        when(opgenomenVermogenService.getPotentiallyCachedHistory(DatePeriod.aPeriodWithToDate(from, to),
+                                                                  Duration.ofSeconds(1)))
                                      .thenReturn(opgenomenVermogens);
 
         // when
@@ -76,8 +75,8 @@ class OpgenomenVermogenControllerTest {
         final long subPeriodLengthInSeconds = 1;
         final List<OpgenomenVermogen> opgenomenVermogens = List.of(
                 mock(OpgenomenVermogen.class), mock(OpgenomenVermogen.class));
-        when(opgenomenVermogenService.getHistory(eq(DatePeriod.aPeriodWithToDate(from, to)),
-                                                 eq(Duration.ofSeconds(1))))
+        when(opgenomenVermogenService.getHistory(DatePeriod.aPeriodWithToDate(from, to),
+                                                 Duration.ofSeconds(1)))
                                      .thenReturn(opgenomenVermogens);
 
         // when
