@@ -167,15 +167,16 @@ class VerbruikServiceTest {
 
         final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
 
-        assertThat(verbruikPerJaar).hasSize(2);
-
-        final VerbruikInJaar verbruikInJaar2018 = verbruikPerJaar.get(0);
-        assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
-        assertThat(verbruikInJaar2018.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
-
-        final VerbruikInJaar verbruikInJaar2019 = verbruikPerJaar.get(1);
-        assertThat(verbruikInJaar2019.getJaar()).isEqualTo(2019);
-        assertThat(verbruikInJaar2019.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
+        assertThat(verbruikPerJaar).satisfiesExactly(
+                verbruikInJaar2018 -> {
+                    assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
+                    assertThat(verbruikInJaar2018.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
+                },
+                verbruikInJaar2019 -> {
+                    assertThat(verbruikInJaar2019.getJaar()).isEqualTo(2019);
+                    assertThat(verbruikInJaar2019.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
+                }
+        );
     }
 
     @Test

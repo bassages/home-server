@@ -40,45 +40,59 @@ class MeterstandServiceTest {
 
     @Test
     void whenSaveThenDelegatedToRepositoryAndEventSend() {
+        // given
         final Meterstand meterstand = aMeterstand().build();
         when(meterstandRepository.save(meterstand)).thenReturn(meterstand);
 
+        // when
         final Meterstand savedMeterstand = meterstandService.save(meterstand);
 
+        // then
         assertThat(savedMeterstand).isSameAs(meterstand);
-
         verify(messagingTemplate).convertAndSend(MeterstandService.TOPIC, meterstand);
     }
 
     @Test
     void givenMeterstandAlreadySavedWhenGetMostRecentThenMostRecentReturned() {
+        // given
         when(meterstandRepository.save(any(Meterstand.class))).then(returnsFirstArg());
 
+        // when
         final Meterstand meterstand = aMeterstand().build();
         final Meterstand savedMeterstand = meterstandService.save(meterstand);
 
+        // then
         assertThat(meterstandService.getMostRecent()).isEqualTo(savedMeterstand);
     }
 
     @Test
     void givenNoMeterstandSavedYetWhenGetMostRecentThenMostRecentIsRetrievedFromRepository() {
+        // given
         final Meterstand meterstand = mock(Meterstand.class);
         when(meterstandRepository.getMostRecent()).thenReturn(meterstand);
 
-        assertThat(meterstandService.getMostRecent()).isEqualTo(meterstand);
+        // when
+        final Meterstand mostRecent = meterstandService.getMostRecent();
+
+        // then
+        assertThat(mostRecent).isEqualTo(meterstand);
     }
 
     @Test
     void whenGetOldestDelegatedToRepository() {
+        // given
         final Meterstand oldestMeterstand = aMeterstand().build();
 
+        // when
         when(meterstandRepository.getOldest()).thenReturn(oldestMeterstand);
 
+        // then
         assertThat(meterstandService.getOldest()).isSameAs(oldestMeterstand);
     }
 
     @Test
     void whenGetOldestOfTodayThenReturned() {
+        // given
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
@@ -94,7 +108,10 @@ class MeterstandServiceTest {
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandGas);
 
+        // when
         final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+
+        // then
         assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
         assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
         assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandGas.getGas());
@@ -102,6 +119,7 @@ class MeterstandServiceTest {
 
     @Test
     void givenNoMeterstandExistsInNextHourWhenGetOldestOfTodayThenGasNotOverWritten() {
+        // given
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
 
         timeTravelTo(clock, today.atStartOfDay());
@@ -113,11 +131,13 @@ class MeterstandServiceTest {
 
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandElectricity);
-
         when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(null);
 
+        // when
         final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
+
+        // then
         assertThat(oldestOfToday.getStroomTarief1()).isEqualTo(oldestMeterstandElectricity.getStroomTarief1());
         assertThat(oldestOfToday.getStroomTarief2()).isEqualTo(oldestMeterstandElectricity.getStroomTarief2());
         assertThat(oldestOfToday.getGas()).isEqualTo(oldestMeterstandElectricity.getGas());
@@ -125,22 +145,24 @@ class MeterstandServiceTest {
 
     @Test
     void givenNoMeterstandExistsInPeriodWhenGetOldestOfTodayThenNullReturned() {
+        // given
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
-
         timeTravelTo(clock, today.atStartOfDay());
-
         when(meterstandRepository.getOldestInPeriod(any(LocalDateTime.class), any(LocalDateTime.class)))
                                  .thenReturn(null);
 
+        // when
         final Meterstand oldestOfToday = meterstandService.getOldestOfToday();
-        assertThat(oldestOfToday).isNull();
 
+        // then
+        assertThat(oldestOfToday).isNull();
         verify(meterstandRepository).getOldestInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1));
         verifyNoMoreInteractions(meterstandRepository);
     }
 
     @Test
     void whenGetPerDagForTodayThenNonCachedMeterstandReturned() {
+        // given
         setCachedMeterstandService(null);
 
         final LocalDate today = LocalDate.of(2017, JANUARY, 13);
@@ -151,15 +173,19 @@ class MeterstandServiceTest {
         when(meterstandRepository.getMostRecentInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1)))
                 .thenReturn(mostRecentMeterstandOfToday);
 
+        // when
         final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(today, today.plusDays(1)));
 
-        assertThat(meterstandPerDag).hasSize(1);
-        assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(today);
-        assertThat(meterstandPerDag.get(0).getMeterstand()).isSameAs(mostRecentMeterstandOfToday);
+        // then
+        assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
+            assertThat(meterstandOpDag.getDag()).isEqualTo(today);
+            assertThat(meterstandOpDag.getMeterstand()).isSameAs(mostRecentMeterstandOfToday);
+        });
     }
 
     @Test
     void whenGetPerDagForYesterdayThenCachedMeterstandReturned() {
+        // given
         final MeterstandService cachedMeterstandService = mock(MeterstandService.class);
         setCachedMeterstandService(cachedMeterstandService);
 
@@ -171,35 +197,47 @@ class MeterstandServiceTest {
         final Meterstand mostRecentMeterstandOfYesterday = mock(Meterstand.class);
         when(cachedMeterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(yesterday)).thenReturn(mostRecentMeterstandOfYesterday);
 
+        // when
         final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(yesterday, yesterday.plusDays(1)));
 
-        assertThat(meterstandPerDag).hasSize(1);
-        assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(yesterday);
-        assertThat(meterstandPerDag.get(0).getMeterstand()).isSameAs(mostRecentMeterstandOfYesterday);
+        // then
+        assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
+            assertThat(meterstandOpDag.getDag()).isEqualTo(yesterday);
+            assertThat(meterstandOpDag.getMeterstand()).isSameAs(mostRecentMeterstandOfYesterday);
+        });
     }
 
     @Test
     void whenGetPerDagForFutureThenNullReturned() {
+        // given
         final LocalDate today = LocalDate.of(2017, JANUARY, 13);
         timeTravelTo(clock, today.atStartOfDay());
 
         final LocalDate tomorrow = today.plusDays(1);
 
+        // when
         final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(tomorrow, tomorrow.plusDays(1)));
 
-        assertThat(meterstandPerDag).hasSize(1);
-        assertThat(meterstandPerDag.get(0).getDag()).isEqualTo(tomorrow);
-        assertThat(meterstandPerDag.get(0).getMeterstand()).isNull();
+        // then
+        assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
+            assertThat(meterstandOpDag.getDag()).isEqualTo(tomorrow);
+            assertThat(meterstandOpDag.getMeterstand()).isNull();
+        });
     }
 
     @Test
     void whenGetPotentiallyCachedMeestRecenteMeterstandOpDagThenDelegatedToRepository() {
+        // given
         final LocalDate day = LocalDate.of(2016, MARCH, 12);
 
         final Meterstand meterstand = mock(Meterstand.class);
         when(meterstandRepository.getMostRecentInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusNanos(1))).thenReturn(meterstand);
 
-        assertThat(meterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day)).isSameAs(meterstand);
+        // when
+        final Meterstand potentiallyCachedMeestRecenteMeterstandOpDag = meterstandService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
+
+        // then
+        assertThat(potentiallyCachedMeestRecenteMeterstandOpDag).isSameAs(meterstand);
     }
 
     private void setCachedMeterstandService(@Nullable final MeterstandService cachedMeterstandService) {

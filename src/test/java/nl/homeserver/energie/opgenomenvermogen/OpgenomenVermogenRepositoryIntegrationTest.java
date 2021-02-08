@@ -42,8 +42,8 @@ class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTe
 
         final List<Timestamp> datesWithMoreThan2RowsBeforeToDate = opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
-        assertThat(datesWithMoreThan2RowsBeforeToDate).hasSize(1);
-        assertThat(datesWithMoreThan2RowsBeforeToDate.get(0).toLocalDateTime().toLocalDate()).isEqualTo(dayBeforeToDateWith3Records);
+        assertThat(datesWithMoreThan2RowsBeforeToDate)
+                .satisfiesExactly(timestamp -> assertThat(timestamp.toLocalDateTime().toLocalDate()).isEqualTo(dayBeforeToDateWith3Records));
     }
 
     @Test
