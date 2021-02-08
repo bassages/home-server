@@ -42,8 +42,10 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
         final List<Timestamp> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
-        assertThat(datesWithMoreThan2RowsBeforeToDate).hasSize(1);
-        assertThat(datesWithMoreThan2RowsBeforeToDate.get(0).toLocalDateTime().toLocalDate()).isEqualTo(dayBeforeToDateWith3Records);
+        assertThat(datesWithMoreThan2RowsBeforeToDate).satisfiesExactly(dateWithMoreThan2RowsBeforeToDate -> {
+            final LocalDate date = dateWithMoreThan2RowsBeforeToDate.toLocalDateTime().toLocalDate();
+            assertThat(date).isEqualTo(dayBeforeToDateWith3Records);
+        });
     }
 
     @Test

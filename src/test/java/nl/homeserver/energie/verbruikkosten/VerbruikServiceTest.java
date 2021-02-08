@@ -57,15 +57,15 @@ class VerbruikServiceTest {
 
         final List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
-        assertThat(verbruikPerDag).hasSize(2);
-
-        final VerbruikKostenOpDag verbruikKostenDay1 = verbruikPerDag.get(0);
-        assertThat(verbruikKostenDay1.getDag()).isEqualTo(from);
-        assertThat(verbruikKostenDay1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
-
-        final VerbruikKostenOpDag verbruikKostenDay2 = verbruikPerDag.get(1);
-        assertThat(verbruikKostenDay2.getDag()).isEqualTo(from.plusDays(1));
-        assertThat(verbruikKostenDay2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
+        assertThat(verbruikPerDag).satisfiesExactly(
+                verbruikKostenDay1 -> {
+                    assertThat(verbruikKostenDay1.getDag()).isEqualTo(from);
+                    assertThat(verbruikKostenDay1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
+                },
+                verbruikKostenDay2 -> {
+                    assertThat(verbruikKostenDay2.getDag()).isEqualTo(from.plusDays(1));
+                    assertThat(verbruikKostenDay2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
+                });
     }
 
     @Test

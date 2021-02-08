@@ -119,8 +119,10 @@ class MeterstandHousekeepingTest {
 
         verify(meterstandRepository, times(2)).deleteInBatch(deletedMeterstandCaptor.capture());
 
-        assertThat(deletedMeterstandCaptor.getAllValues().get(0)).containsExactly(meterstand2, meterstand3);
-        assertThat(deletedMeterstandCaptor.getAllValues().get(1)).containsExactly(meterstand6, meterstand7);
+        assertThat(deletedMeterstandCaptor.getAllValues()).satisfiesExactly(
+                deletedMeterstandenHour12 -> assertThat(deletedMeterstandenHour12).containsExactly(meterstand2, meterstand3),
+                deletedMeterstandenHour13 -> assertThat(deletedMeterstandenHour13).containsExactly(meterstand6, meterstand7)
+        );
     }
 
     @CaptureLogging(MeterstandHousekeeping.class)
