@@ -59,9 +59,7 @@ compileTestJava {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
 }
 
-if (System.getenv("TRAVIS_TAG") != null) {
-    version = System.getenv("TRAVIS_TAG")
-} else if (System.getenv("GITHUB_TAG") != null) {
+if (System.getenv("GITHUB_TAG") != null) {
     version = System.getenv("GITHUB_TAG")
     logger.info('Creating release from GitHub action workflow. Version: ' + version)
 } else {
