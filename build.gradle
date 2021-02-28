@@ -74,7 +74,7 @@ jar {
 
 dependencies {
     annotationProcessor('org.projectlombok:lombok:1.18.18')
-    compileOnly('org.projectlombok:lombok:1.18.16')
+    compileOnly('org.projectlombok:lombok:1.18.18')
 
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-cache')
@@ -100,7 +100,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation('org.assertj:assertj-core:3.19.0')
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.5.3')
+    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.5.5')
     testImplementation('org.awaitility:awaitility:4.0.3')
 
     runtimeOnly('org.flywaydb:flyway-core')
