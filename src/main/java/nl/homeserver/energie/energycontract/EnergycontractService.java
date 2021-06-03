@@ -55,6 +55,6 @@ public class EnergycontractService {
     }
 
     public Energycontract getById(final long id) {
-        return energycontractRepository.getOne(id);
+        return energycontractRepository.getById(id);
     }
 }

@@ -90,7 +90,7 @@ class MeterstandHousekeeping {
                 meterstandenInOneHour.forEach(meterstand -> LOGGER.debug("Delete: {}", ReflectionToStringBuilder.toString(meterstand, SHORT_PREFIX_STYLE)));
             }
 
-            meterstandRepository.deleteInBatch(meterstandenInOneHour);
+            meterstandRepository.deleteAllInBatch(meterstandenInOneHour);
         }
     }
 }
