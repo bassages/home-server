@@ -42,7 +42,7 @@ class EnergycontractServiceTest {
     void whenGetByIdThenDelegatedToRepository() {
         final long id = 132L;
         final Energycontract energycontract = mock(Energycontract.class);
-        when(energycontractRepository.getOne(id)).thenReturn(energycontract);
+        when(energycontractRepository.getById(id)).thenReturn(energycontract);
 
         assertThat(energycontractService.getById(id)).isSameAs(energycontract);
     }
