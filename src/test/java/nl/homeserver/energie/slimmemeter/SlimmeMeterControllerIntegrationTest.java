@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create",
                                   "cache.warmup.on-application-start:false" })
-public class SlimmeMeterControllerIntegrationTest {
+class SlimmeMeterControllerIntegrationTest {
 
     @Autowired
     WebApplicationContext context;
