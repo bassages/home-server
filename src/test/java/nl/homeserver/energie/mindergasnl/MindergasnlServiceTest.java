@@ -44,7 +44,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MindergasnlServiceTest {
+class MindergasnlServiceTest {
 
     @InjectMocks
     MindergasnlService mindergasnlService;
@@ -86,7 +86,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenSettingsExistsWhenSaveThenDelegatedToRepository() {
+    void givenSettingsExistsWhenSaveThenDelegatedToRepository() {
         // given
         final MindergasnlSettings existingMindergasnlSettings = new MindergasnlSettings();
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(existingMindergasnlSettings));
@@ -149,7 +149,7 @@ public class MindergasnlServiceTest {
 
         final DatePeriod expectedPeriod = aPeriodWithToDate(
                 currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        when(meterstandService.getPerDag(expectedPeriod)).thenReturn(List.of(yesterDaysMeterstand));
 
         when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
@@ -201,13 +201,13 @@ public class MindergasnlServiceTest {
 
         final DatePeriod expectedPeriod = aPeriodWithToDate(
                 currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(emptyList());
+        when(meterstandService.getPerDag(expectedPeriod)).thenReturn(emptyList());
 
         // when
         mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
         // then
-        verify(meterstandService).getPerDag(eq(expectedPeriod));
+        verify(meterstandService).getPerDag(expectedPeriod);
         verifyNoMoreInteractions(httpClientBuilder);
 
         final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
@@ -218,7 +218,7 @@ public class MindergasnlServiceTest {
 
     @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged(
+    void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged(
             final ArgumentCaptor<LoggingEvent> loggerEventCaptor) throws Exception {
 
         // given
@@ -234,7 +234,7 @@ public class MindergasnlServiceTest {
                 currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
 
         final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        when(meterstandService.getPerDag(expectedPeriod)).thenReturn(List.of(yesterDaysMeterstand));
 
         when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
@@ -256,7 +256,7 @@ public class MindergasnlServiceTest {
 
     @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
+    void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
             final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
 
         // given
@@ -273,7 +273,7 @@ public class MindergasnlServiceTest {
 
         final DatePeriod expectedPeriod = aPeriodWithToDate(
                 currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        when(meterstandService.getPerDag(expectedPeriod)).thenReturn(List.of(yesterDaysMeterstand));
 
         final RuntimeException runtimeException = new RuntimeException("FUBAR");
         when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
@@ -288,7 +288,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void whenFindOneThenRetievedFromRepository() {
+    void whenFindOneThenRetievedFromRepository() {
         // given
         final Optional<MindergasnlSettings> mindergasnlSettings = Optional.of(mock(MindergasnlSettings.class));
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(mindergasnlSettings);
