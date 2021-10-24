@@ -1,16 +1,15 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static ch.qos.logback.classic.Level.DEBUG;
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import nl.homeserver.CaptureLogging;
+import nl.homeserver.ContainsMessageAtLevel;
+import nl.homeserver.cache.CacheService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Timestamp;
 import java.time.Clock;
@@ -18,17 +17,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import nl.homeserver.CaptureLogging;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import ch.qos.logback.classic.spi.LoggingEvent;
-import nl.homeserver.ContainsMessageAtLevel;
-import nl.homeserver.cache.CacheService;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static ch.qos.logback.classic.Level.DEBUG;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OpgenomenVermogenHousekeepingTest {
@@ -137,7 +132,7 @@ class OpgenomenVermogenHousekeepingTest {
         opgenomenVermogenHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-            .haveExactly(1, new ContainsMessageAtLevel("Keep: OpgenomenVermogen[datumtijd=2016-01-01T00:00:01,id=2", DEBUG))
-            .haveExactly(1, new ContainsMessageAtLevel("Delete: OpgenomenVermogen[datumtijd=2016-01-01T00:00,id=1", DEBUG));
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, watt=0, tariefIndicator=NORMAAL)", DEBUG))
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, watt=0, tariefIndicator=NORMAAL)", DEBUG));
     }
 }
