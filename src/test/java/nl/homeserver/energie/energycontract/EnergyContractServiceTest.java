@@ -24,10 +24,10 @@ import nl.homeserver.cache.CacheService;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EnergycontractServiceTest {
+class EnergyContractServiceTest {
 
     @InjectMocks
-    EnergycontractService energycontractService;
+    EnergyContractService energycontractService;
 
     @Mock
     EnergycontractToDateRecalculator energycontractToDateRecalculator;

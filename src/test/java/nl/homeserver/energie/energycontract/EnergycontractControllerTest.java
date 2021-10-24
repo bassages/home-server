@@ -20,7 +20,7 @@ class EnergycontractControllerTest {
     EnergycontractController energycontractController;
 
     @Mock
-    EnergycontractService energycontractService;
+    EnergyContractService energycontractService;
 
     @Test
     void givenANewEnergyContractWhenSaveThenDelegatedToService() {

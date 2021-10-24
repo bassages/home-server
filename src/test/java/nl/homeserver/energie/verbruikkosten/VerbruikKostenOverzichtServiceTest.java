@@ -2,7 +2,7 @@ package nl.homeserver.energie.verbruikkosten;
 
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.energycontract.Energycontract;
-import nl.homeserver.energie.energycontract.EnergycontractService;
+import nl.homeserver.energie.energycontract.EnergyContractService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ class VerbruikKostenOverzichtServiceTest {
     @Mock
     VerbruikProvider verbruikProvider;
     @Mock
-    EnergycontractService energycontractService;
+    EnergyContractService energycontractService;
     @Mock
     Clock clock;
 

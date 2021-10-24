@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @AllArgsConstructor
-public class EnergycontractService {
+public class EnergyContractService {
 
-    private static final String CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD = "energiecontractenInPeriod";
+    private static final String CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD = "energyContractsInPeriod";
 
     private final EnergycontractToDateRecalculator energycontractToDateRecalculator;
     private final EnergycontractRepository energycontractRepository;
@@ -48,7 +48,7 @@ public class EnergycontractService {
         cacheService.clearAll();
     }
 
-    @Cacheable(cacheNames = CACHE_NAME_ENERGIECONTRACTEN_IN_PERIOD)
+    @Cacheable(cacheNames = CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD)
     public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
         return energycontractRepository.findValidInPeriod(
                 period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());

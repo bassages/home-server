@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.StroomTariefIndicator;
-import nl.homeserver.energie.energycontract.EnergycontractService;
+import nl.homeserver.energie.energycontract.EnergyContractService;
 
 @Service
 public class VerbruikKostenOverzichtService {
@@ -32,10 +32,10 @@ public class VerbruikKostenOverzichtService {
     @Autowired
     private VerbruikKostenOverzichtService verbruikKostenOverzichtServiceProxyWithEnabledCaching;
 
-    private final EnergycontractService energycontractService;
+    private final EnergyContractService energycontractService;
     private final Clock clock;
 
-    VerbruikKostenOverzichtService(final EnergycontractService energycontractService,
+    VerbruikKostenOverzichtService(final EnergyContractService energycontractService,
                                    final Clock clock) {
         this.energycontractService = energycontractService;
         this.clock = clock;

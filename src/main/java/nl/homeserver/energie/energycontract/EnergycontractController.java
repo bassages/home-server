@@ -18,7 +18,7 @@ import nl.homeserver.config.Paths;
 @RequestMapping(Paths.API + "/energycontract")
 class EnergycontractController {
 
-    private final EnergycontractService energycontractService;
+    private final EnergyContractService energycontractService;
 
     @GetMapping
     public List<Energycontract> getAll() {

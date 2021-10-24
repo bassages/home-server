@@ -2,16 +2,15 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
          updateCheck="false"
          monitoring="off"
-         dynamicConfig="false"
-         maxBytesLocalHeap="50M">
+         dynamicConfig="false">
 
-    <cache name="energiecontractenInPeriod" />
-    <cache name="gasVerbruikInPeriode" />
-    <cache name="stroomVerbruikInPeriode" />
-    <cache name="energieVerbruikInPeriode" />
-    <cache name="opgenomenVermogenHistory" />
-    <cache name="meestRecenteMeterstandOpDag" />
-    <cache name="klimaatInPeriod" />
-    <cache name="averageKlimaatInMonth" />
-    <cache name="standbyPower" />
+    <cache name="energyContractsInPeriod" maxEntriesLocalHeap="20" />
+    <cache name="gasVerbruikInPeriode" maxEntriesLocalHeap="100" />
+    <cache name="stroomVerbruikInPeriode" maxEntriesLocalHeap="100" />
+    <cache name="energieVerbruikInPeriode" maxEntriesLocalHeap="100"  />
+    <cache name="opgenomenVermogenHistory" maxEntriesLocalHeap="100" />
+    <cache name="meestRecenteMeterstandOpDag" maxEntriesLocalHeap="100" />
+    <cache name="klimaatInPeriod" maxEntriesLocalHeap="100" />
+    <cache name="averageKlimaatInMonth" maxEntriesLocalHeap="48" />
+    <cache name="standbyPower" maxEntriesLocalHeap="48" />
 </ehcache>
