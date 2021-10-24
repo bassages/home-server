@@ -1,17 +1,15 @@
 package nl.homeserver;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.util.stream.Collectors.toList;
+import lombok.Data;
+import lombok.ToString;
+import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
-import lombok.ToString;
-import org.apache.commons.lang3.Validate;
-
-import lombok.Data;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Data
 @ToString
@@ -56,6 +54,6 @@ public class DateTimePeriod {
 
         return Stream.iterate(from, date -> date.plusDays(1))
                      .limit(DAYS.between(from, to))
-                     .collect(toList());
+                     .toList();
     }
 }

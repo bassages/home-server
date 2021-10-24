@@ -1,24 +1,22 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.time.LocalDate.now;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.LongStream.rangeClosed;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.AllArgsConstructor;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
+import static java.time.LocalDate.now;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.LongStream.rangeClosed;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @AllArgsConstructor
@@ -49,7 +47,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     private void warmupVerbruikPerDag(final LocalDate today) {
         LOGGER.info("Warmup of cache verbruikPerDag");
         rangeClosed(0, MONTHS.length).boxed()
-                                     .collect(toList())
+                                     .toList()
                                      .stream()
                                      .sorted(reverseOrder())
                                      .forEach(monthsToSubtract -> verbruikKostenController.getVerbruikPerDag(today.minusMonths(monthsToSubtract).with(firstDayOfMonth()),
@@ -58,7 +56,8 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
 
     private void warmupVerbruikPerMaandInJaar(final LocalDate today) {
         LOGGER.info("Warmup of cache verbruikPerMaandInJaar");
-        rangeClosed(0, 1).boxed().collect(toList())
+        rangeClosed(0, 1).boxed()
+                         .toList()
                          .stream()
                          .sorted(reverseOrder())
                          .forEach(yearsToSubTract -> verbruikKostenController.getVerbruikPerMaandInJaar(today.minusYears(yearsToSubTract).getYear()));

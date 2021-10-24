@@ -1,23 +1,21 @@
 package nl.homeserver.energie.meterstand;
 
-import static java.time.LocalDate.now;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.LongStream.rangeClosed;
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.AllArgsConstructor;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
+import static java.time.LocalDate.now;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.LongStream.rangeClosed;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @AllArgsConstructor
@@ -36,7 +34,7 @@ class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
         LOGGER.info("Warmup of cache meterstandenPerDag");
         rangeClosed(0, MONTHS.length).boxed()
-                                     .collect(toList())
+                                     .toList()
                                      .stream()
                                      .sorted(reverseOrder())
                                      .forEach(monthsToSubtract -> meterstandController.perDag(today.minusMonths(monthsToSubtract).with(firstDayOfMonth()),

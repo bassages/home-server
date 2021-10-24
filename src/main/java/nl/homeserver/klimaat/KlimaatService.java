@@ -10,7 +10,6 @@ import java.time.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Service
@@ -61,7 +60,7 @@ public class KlimaatService {
         return IntStream.of(years)
                         .mapToObj(Year::of)
                         .map(year -> getAveragePerMonthInYear(sensorCode, sensorType, year))
-                        .collect(toList());
+                        .toList();
     }
 
     private List<GemiddeldeKlimaatPerMaand> getAveragePerMonthInYear(final String sensorCode,
@@ -70,7 +69,7 @@ public class KlimaatService {
         return IntStream.rangeClosed(1, Month.values().length)
                         .mapToObj(month -> YearMonth.of(year.getValue(), month))
                         .map(yearMonth -> getAverageInMonthOfYear(sensorCode, sensorType, yearMonth))
-                        .collect(toList());
+                        .toList();
     }
 
     private GemiddeldeKlimaatPerMaand getAverageInMonthOfYear(final String sensorCode,
@@ -128,7 +127,7 @@ public class KlimaatService {
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestLowestTemperatureOnDay(sensorCode, day))
-                                .collect(toList());
+                                .toList();
     }
 
     private List<Klimaat> getLowestHumidity(final String sensorCode, final DatePeriod period, final int limit) {
@@ -136,7 +135,7 @@ public class KlimaatService {
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestLowestHumidityOnDay(sensorCode, day))
-                                .collect(toList());
+                                .toList();
     }
 
     private List<Klimaat> getHighestTemperature(final String sensorCode, final DatePeriod period, final int limit) {
@@ -144,7 +143,7 @@ public class KlimaatService {
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestHighestTemperatureOnDay(sensorCode, day))
-                                .collect(toList());
+                                .toList();
     }
 
     private List<Klimaat> getHighestHumidity(final String sensorCode, final DatePeriod period, final int limit) {
@@ -152,7 +151,7 @@ public class KlimaatService {
                                 .stream()
                                 .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestHighestHumidityOnDay(sensorCode, day))
-                                .collect(toList());
+                                .toList();
     }
 
     private List<Klimaat> getNotCachedAllInPeriod(final String klimaatSensorCode, final DatePeriod period) {

@@ -1,27 +1,22 @@
 package nl.homeserver.energie.verbruikkosten;
 
+import lombok.AllArgsConstructor;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.energie.meterstand.Meterstand;
+import nl.homeserver.energie.meterstand.MeterstandService;
+import org.springframework.stereotype.Service;
+
+import java.time.*;
+import java.util.List;
+import java.util.stream.IntStream;
+
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static java.util.EnumSet.allOf;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandService;
 
 @Service
 @AllArgsConstructor
@@ -34,19 +29,19 @@ class VerbruikService {
     List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(final LocalDate day) {
         return IntStream.range(0, 24)
                         .mapToObj(hourOfDay -> getVerbruikInUur(day, hourOfDay))
-                        .collect(toList());
+                        .toList();
     }
 
     List<VerbruikInMaandInJaar> getVerbruikPerMaandInJaar(final Year year) {
         return allOf(Month.class).stream()
                                  .map(monthInYear -> getVerbruikInMaand(YearMonth.of(year.getValue(), monthInYear)))
-                                 .collect(toList());
+                                 .toList();
     }
 
     List<VerbruikKostenOpDag> getVerbruikPerDag(final DatePeriod period) {
         return period.getDays().stream()
                                .map(this::getVerbruikOpDag)
-                               .collect(toList());
+                               .toList();
     }
 
     List<VerbruikInJaar> getVerbruikPerJaar() {
@@ -62,7 +57,7 @@ class VerbruikService {
 
         return IntStream.range(from, to)
                         .mapToObj(year -> getVerbruikInJaar(Year.of(year)))
-                        .collect(toList());
+                        .toList();
     }
 
     VerbruikKostenOverzicht getGemiddeldeVerbruikEnKostenInPeriode(final DatePeriod period) {

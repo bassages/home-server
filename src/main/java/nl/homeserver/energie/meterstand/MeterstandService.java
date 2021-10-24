@@ -1,22 +1,19 @@
 package nl.homeserver.energie.meterstand;
 
-import static java.time.LocalDate.now;
-import static java.util.stream.Collectors.toList;
+import nl.homeserver.DatePeriod;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
-import nl.homeserver.DatePeriod;
+import static java.time.LocalDate.now;
 
 @Service
 public class MeterstandService {
@@ -81,7 +78,7 @@ public class MeterstandService {
     public List<MeterstandOpDag> getPerDag(final DatePeriod period) {
         return period.getDays().stream()
                                .map(this::getMeterstandOpDag)
-                               .collect(toList());
+                               .toList();
     }
 
     private MeterstandOpDag getMeterstandOpDag(final LocalDate day) {

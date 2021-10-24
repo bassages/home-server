@@ -1,9 +1,12 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import lombok.AllArgsConstructor;
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -11,15 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.housekeeping.HousekeepingSchedule;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +46,7 @@ public class OpgenomenVermogenHousekeeping {
         return opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                 .stream()
                 .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
-                .collect(toList());
+                .toList();
     }
 
     private void cleanup(final LocalDate day) {
@@ -73,11 +69,11 @@ public class OpgenomenVermogenHousekeeping {
         final List<OpgenomenVermogen> opgenomenVermogensToKeep = opgenomenVermogensByMinute.values()
                                                                                            .stream()
                                                                                            .map(this::getOpgenomenVermogenToKeepInMinute)
-                                                                                           .collect(toList());
+                                                                                           .toList();
 
         final List<OpgenomenVermogen> opgenomenVermogensToDelete = opgenomenVermogensInOneHour.stream()
                                                                                         .filter(opgenomenVermogen -> !opgenomenVermogensToKeep.contains(opgenomenVermogen))
-                                                                                        .collect(toList());
+                                                                                        .toList();
 
         log(opgenomenVermogensToDelete, opgenomenVermogensToKeep);
 
@@ -86,8 +82,8 @@ public class OpgenomenVermogenHousekeeping {
 
     private void log(final List<OpgenomenVermogen> opgenomenVermogensToDelete, final List<OpgenomenVermogen> opgenomenVermogensToKeep) {
         if (LOGGER.isDebugEnabled()) {
-            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.debug("Keep: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
-            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.debug("Delete: {}", ReflectionToStringBuilder.toString(opgenomenVermogen, SHORT_PREFIX_STYLE)));
+            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.debug("Keep: {}", opgenomenVermogen));
+            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.debug("Delete: {}", opgenomenVermogen));
         }
     }
 
