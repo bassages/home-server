@@ -99,7 +99,7 @@ dependencies {
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation('org.assertj:assertj-core:3.21.0')
     testImplementation('nl.jqno.equalsverifier:equalsverifier:3.7.2')
-    testImplementation('org.awaitility:awaitility:4.1.0')
+    testImplementation('org.awaitility:awaitility:4.1.1')
 
     runtimeOnly('org.flywaydb:flyway-core')
     runtimeOnly('com.h2database:h2')
