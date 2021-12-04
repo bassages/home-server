@@ -98,6 +98,6 @@ class DateTimePeriodTest {
 
         final DateTimePeriod period = aPeriodWithEndDateTime(start, start.plusDays(10));
 
-        assertThat(period).hasToString("DateTimePeriod(startDateTime=2015-01-01T00:00, endDateTime=2015-01-11T00:00, toDateTime=2015-01-11T00:00:00.000000001)");
+        assertThat(period).hasToString("DateTimePeriod(startDateTime=2015-01-01T00:00, toDateTime=2015-01-11T00:00:00.000000001)");
     }
 }

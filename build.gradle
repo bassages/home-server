@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.6.0'
+    id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'jacoco'
@@ -104,7 +104,6 @@ dependencies {
     runtimeOnly('org.flywaydb:flyway-core')
     runtimeOnly('com.h2database:h2')
     runtimeOnly('org.hibernate:hibernate-java8')
-    runtimeOnly('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 }
 
 // Spring Boot Actuator’s info endpoint automatically publishes information about your build

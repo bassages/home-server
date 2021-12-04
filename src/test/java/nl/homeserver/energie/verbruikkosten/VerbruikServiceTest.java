@@ -2,7 +2,6 @@ package nl.homeserver.energie.verbruikkosten;
 
 import nl.homeserver.DatePeriod;
 import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandBuilder;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,16 +42,16 @@ class VerbruikServiceTest {
         final LocalDate to = LocalDate.of(2016, JANUARY, 4);
         final DatePeriod period = aPeriodWithToDate(from, to);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1))))
+                aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1)), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForDay1);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay())))
+                aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForDay2);
 
         final List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
@@ -72,16 +71,16 @@ class VerbruikServiceTest {
     void whenGetVerbruikPerUurOpDagThenVerbruikKostenOverzichtServiceIsCalledForAllHoursInDay() {
         final LocalDate day = LocalDate.of(2016, JANUARY, 2);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(day.atStartOfDay(), day.atStartOfDay().plusHours(1))))
+                aPeriodWithToDateTime(day.atStartOfDay(), day.atStartOfDay().plusHours(1)), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForHour1);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForHour2 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(day.atStartOfDay().plusHours(1), day.atStartOfDay().plusHours(2))))
+                aPeriodWithToDateTime(day.atStartOfDay().plusHours(1), day.atStartOfDay().plusHours(2)), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForHour2);
 
         final List<VerbruikInUurOpDag> verbruikPerUurOpDag = verbruikService.getVerbruikPerUurOpDag(day);
@@ -98,8 +97,8 @@ class VerbruikServiceTest {
 
         range(0, 24).forEach(hour ->
             verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
-                    actuallyRegisteredVerbruikProvider,
-                    aPeriodWithToDateTime(day.atStartOfDay().plusHours(hour), day.atStartOfDay().plusHours(hour + 1)))
+                    aPeriodWithToDateTime(day.atStartOfDay().plusHours(hour), day.atStartOfDay().plusHours(hour + 1)), actuallyRegisteredVerbruikProvider
+            )
         );
     }
 
@@ -107,18 +106,18 @@ class VerbruikServiceTest {
     void whenGetVerbruikPerMaandInJaarThenVerbruikKostenOverzichtServiceIsCalledForAllMonthsInYear() {
         final int year = 2018;
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
                 aPeriodWithToDateTime(LocalDate.of(year, JANUARY, 1).atStartOfDay(),
-                                      LocalDate.of(year, FEBRUARY, 1).atStartOfDay())))
+                                      LocalDate.of(year, FEBRUARY, 1).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForJanuary);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForFebruary = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForFebruary = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
                 aPeriodWithToDateTime(LocalDate.of(year, FEBRUARY, 1).atStartOfDay(),
-                                      LocalDate.of(year, MARCH, 1).atStartOfDay())))
+                                      LocalDate.of(year, MARCH, 1).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForFebruary);
 
         final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = verbruikService.getVerbruikPerMaandInJaar(Year.of(year));
@@ -137,7 +136,7 @@ class VerbruikServiceTest {
                 final LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
                 final LocalDateTime to = LocalDate.of(year, month + 1, 1).atStartOfDay();
                 verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
-                        actuallyRegisteredVerbruikProvider, aPeriodWithToDateTime(from, to));
+                        aPeriodWithToDateTime(from, to), actuallyRegisteredVerbruikProvider);
             }
         );
     }
@@ -151,18 +150,18 @@ class VerbruikServiceTest {
                 .withDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay()).build();
         when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
                 aPeriodWithToDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay(),
-                                      LocalDate.of(2019, JANUARY, 1).atStartOfDay())))
+                                      LocalDate.of(2019, JANUARY, 1).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtFor2018);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2019 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtFor2019 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
                 aPeriodWithToDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay(),
-                                      LocalDate.of(2020, JANUARY, 1).atStartOfDay())))
+                                      LocalDate.of(2020, JANUARY, 1).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtFor2019);
 
         final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
@@ -194,16 +193,16 @@ class VerbruikServiceTest {
         final LocalDate to = LocalDate.of(2016, JANUARY, 4);
         final DatePeriod period = aPeriodWithToDate(from, to);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay1 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1))))
+                aPeriodWithToDateTime(from.atStartOfDay(), from.atStartOfDay().plusDays(1)), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForDay1);
 
-        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = new VerbruikKostenOverzicht();
+        final VerbruikKostenOverzicht verbruikKostenOverzichtForDay2 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
-                actuallyRegisteredVerbruikProvider,
-                aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay())))
+                aPeriodWithToDateTime(from.plusDays(1).atStartOfDay(), from.plusDays(2).atStartOfDay()), actuallyRegisteredVerbruikProvider
+        ))
                                            .thenReturn(verbruikKostenOverzichtForDay2);
 
         final VerbruikKostenOverzicht gemiddeldeVerbruikEnKostenInPeriode =

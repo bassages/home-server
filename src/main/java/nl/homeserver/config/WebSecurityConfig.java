@@ -1,35 +1,23 @@
 package nl.homeserver.config;
 
-import static org.springframework.http.HttpStatus.RESET_CONTENT;
-
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.http.CacheControl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import static org.springframework.http.HttpStatus.RESET_CONTENT;
 
 @EnableWebSecurity
-public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${home-server.enable-ssl}")
     private boolean enableSsl;
 
-    private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
-            "classpath:/META-INF/resources/",
-            "classpath:/resources/",
-            "classpath:/static/",
-            "classpath:/public/"
-    };
-
     private final UnauthenticatedRequestHandler unauthenticatedRequestHandler;
 
-    public WebConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler) {
+    public WebSecurityConfig(final UnauthenticatedRequestHandler unauthenticatedRequestHandler) {
         this.unauthenticatedRequestHandler = unauthenticatedRequestHandler;
     }
 
@@ -54,16 +42,5 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
         if (enableSsl) {
             http.requiresChannel().anyRequest().requiresSecure();
         }
-    }
-
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/index.html")
-                .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
-                .setCacheControl(CacheControl.noStore());
-
-        registry.addResourceHandler("/**")
-                .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
-                .setCachePeriod((int) TimeUnit.DAYS.toSeconds(14L));
     }
 }

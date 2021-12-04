@@ -23,7 +23,7 @@ import nl.homeserver.energie.StroomTariefIndicator;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "ENERGIECONTRACT")
-public class Energycontract {
+public class EnergyContract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -21,40 +21,40 @@ public class EnergyContractService {
 
     private static final String CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD = "energyContractsInPeriod";
 
-    private final EnergycontractToDateRecalculator energycontractToDateRecalculator;
-    private final EnergycontractRepository energycontractRepository;
+    private final EnergyContractToDateRecalculator energyContractToDateRecalculator;
+    private final EnergyContractRepository energyContractRepository;
     private final CacheService cacheService;
     private final Clock clock;
 
-    public List<Energycontract> getAll() {
-        return energycontractRepository.findAll();
+    public List<EnergyContract> getAll() {
+        return energyContractRepository.findAll();
     }
 
-    public Energycontract getCurrent() {
+    public EnergyContract getCurrent() {
         final LocalDateTime now = now(clock);
-        return energycontractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
+        return energyContractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(now.toLocalDate());
     }
 
-    public Energycontract save(final Energycontract energycontract) {
-        final Energycontract savedEnergieContract = energycontractRepository.save(energycontract);
-        energycontractToDateRecalculator.recalculate();
+    public EnergyContract save(final EnergyContract energyContract) {
+        final EnergyContract savedEnergyContract = energyContractRepository.save(energyContract);
+        energyContractToDateRecalculator.recalculate();
         cacheService.clearAll();
-        return savedEnergieContract;
+        return savedEnergyContract;
     }
 
     public void delete(final long id) {
-        energycontractRepository.deleteById(id);
-        energycontractToDateRecalculator.recalculate();
+        energyContractRepository.deleteById(id);
+        energyContractToDateRecalculator.recalculate();
         cacheService.clearAll();
     }
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD)
-    public List<Energycontract> findAllInInPeriod(final DateTimePeriod period) {
-        return energycontractRepository.findValidInPeriod(
+    public List<EnergyContract> findAllInInPeriod(final DateTimePeriod period) {
+        return energyContractRepository.findValidInPeriod(
                 period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
     }
 
-    public Energycontract getById(final long id) {
-        return energycontractRepository.getById(id);
+    public EnergyContract getById(final long id) {
+        return energyContractRepository.getById(id);
     }
 }

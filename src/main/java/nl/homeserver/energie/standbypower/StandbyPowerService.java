@@ -94,10 +94,10 @@ class StandbyPowerService {
     }
 
     private VerbruikKostenOverzicht getStandbyPowerVko(final int mostCommonWattInCurrentQuarter, final DateTimePeriod period) {
-        return verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(new VerbruikForVirtualUsageProvider(mostCommonWattInCurrentQuarter), period);
+        return verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, new VerbruikForVirtualUsageProvider(mostCommonWattInCurrentQuarter));
     }
 
     private VerbruikKostenOverzicht getActualVko(final DateTimePeriod period) {
-        return verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period);
+        return verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider);
     }
 }

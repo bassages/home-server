@@ -71,27 +71,25 @@ class VerbruikService {
         final LocalDateTime from = LocalDate.of(year.getValue(), JANUARY, 1).atStartOfDay();
         final LocalDateTime to = from.plusYears(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInJaar(year.getValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        return new VerbruikInJaar(year.getValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 
     private VerbruikInUurOpDag getVerbruikInUur(final LocalDate day, final int hour) {
         final LocalDateTime from = day.atStartOfDay().plusHours(hour);
         final LocalDateTime to = from.plusHours(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInUurOpDag(hour, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        return new VerbruikInUurOpDag(hour, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 
     private VerbruikInMaandInJaar getVerbruikInMaand(final YearMonth yearMonth) {
         final LocalDateTime from = yearMonth.atDay(1).atStartOfDay();
         final LocalDateTime to = from.plusMonths(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 
     private VerbruikKostenOpDag getVerbruikOpDag(final LocalDate day) {
-        final LocalDateTime from = day.atStartOfDay();
-        final LocalDateTime to = day.atStartOfDay().plusDays(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikKostenOpDag(day, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        final DateTimePeriod period = DateTimePeriod.of(day);
+        return new VerbruikKostenOpDag(day, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 }

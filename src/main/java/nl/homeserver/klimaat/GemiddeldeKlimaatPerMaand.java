@@ -1,11 +1,10 @@
 package nl.homeserver.klimaat;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import lombok.Getter;
 
 import javax.annotation.Nullable;
-
-import lombok.Getter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 class GemiddeldeKlimaatPerMaand {
 

@@ -1,8 +1,7 @@
 package nl.homeserver.energie.meterstand;
 
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.DatePeriod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,31 +14,19 @@ import java.util.Optional;
 
 import static java.time.LocalDate.now;
 
+@RequiredArgsConstructor
 @Service
 public class MeterstandService {
 
-    private static final String CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG = "meestRecenteMeterstandOpDag";
-
     static final String TOPIC = "/topic/meterstand";
 
-    // Needed to make use of use caching annotations
-    @Autowired
-    private MeterstandService meterstandServiceProxyWithEnabledCaching;
-
+    private final MostResentMeterstandOpDagService mostResentMeterstandOpDagService;
     private final MeterstandRepository meterstandRepository;
     private final Clock clock;
     private final SimpMessagingTemplate messagingTemplate;
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<Meterstand> mostRecentlySavedMeterstand = Optional.empty();
-
-    MeterstandService(final MeterstandRepository meterstandRepository,
-                      final Clock clock,
-                      final SimpMessagingTemplate messagingTemplate) {
-        this.meterstandRepository = meterstandRepository;
-        this.clock = clock;
-        this.messagingTemplate = messagingTemplate;
-    }
 
     public Meterstand save(final Meterstand meterstand) {
         final Meterstand savedMeterStand = meterstandRepository.save(meterstand);
@@ -91,20 +78,9 @@ public class MeterstandService {
         if (day.isAfter(today)) {
             return null;
         } else if (day.isEqual(today)) {
-            return getNonCachedMeestRecenteMeterstandOpDag(day);
+            return mostResentMeterstandOpDagService.getNotCachedMeestRecenteMeterstandOpDag(day);
         } else {
-            return meterstandServiceProxyWithEnabledCaching.getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
+            return mostResentMeterstandOpDagService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
         }
-    }
-
-    @Cacheable(cacheNames = CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG)
-    public Meterstand getPotentiallyCachedMeestRecenteMeterstandOpDag(final LocalDate day) {
-        return getNonCachedMeestRecenteMeterstandOpDag(day);
-    }
-
-    private Meterstand getNonCachedMeestRecenteMeterstandOpDag(final LocalDate day) {
-        final LocalDateTime van = day.atStartOfDay();
-        final LocalDateTime totEnMet = day.atStartOfDay().plusDays(1).minusNanos(1);
-        return meterstandRepository.getMostRecentInPeriod(van, totEnMet);
     }
 }

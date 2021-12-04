@@ -17,8 +17,13 @@ public class DateTimePeriod {
 
     private final LocalDateTime startDateTime;
 
+    @ToString.Exclude
     private final LocalDateTime endDateTime;
     private final LocalDateTime toDateTime;
+
+    public static DateTimePeriod of (final LocalDate day) {
+        return aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
+    }
 
     private DateTimePeriod(final LocalDateTime startDateTime, final LocalDateTime toDateTime) {
         this.startDateTime = startDateTime;

@@ -21,6 +21,10 @@ public final class DatePeriod {
 
     private final DateTimePeriod dateTimePeriod;
 
+    public static DatePeriod of(final LocalDate day) {
+        return aPeriodWithToDate(day, day.plusDays(1));
+    }
+
     private DatePeriod(final DateTimePeriod dateTimePeriod) {
         this.dateTimePeriod = dateTimePeriod;
     }

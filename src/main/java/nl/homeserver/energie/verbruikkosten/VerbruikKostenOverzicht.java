@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
 public class VerbruikKostenOverzicht {
 
     @Getter

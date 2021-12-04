@@ -16,14 +16,14 @@ class VerbruikKostenOverzichten {
     }
 
     VerbruikKostenOverzicht averageToSingle() {
-        final VerbruikKostenOverzicht verbruikKostenOverzicht = new VerbruikKostenOverzicht();
-        verbruikKostenOverzicht.setStroomVerbruikDal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikDal, 3));
-        verbruikKostenOverzicht.setStroomVerbruikNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3));
-        verbruikKostenOverzicht.setGasVerbruik(getAverage(all, VerbruikKostenOverzicht::getGasVerbruik, 3));
-        verbruikKostenOverzicht.setStroomKostenDal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenDal, 2));
-        verbruikKostenOverzicht.setStroomKostenNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenNormaal, 2));
-        verbruikKostenOverzicht.setGasKosten(getAverage(all, VerbruikKostenOverzicht::getGasKosten, 2));
-        return verbruikKostenOverzicht;
+        return VerbruikKostenOverzicht.builder()
+            .stroomVerbruikDal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikDal, 3))
+            .stroomVerbruikNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomVerbruikNormaal, 3))
+            .gasVerbruik(getAverage(all, VerbruikKostenOverzicht::getGasVerbruik, 3))
+            .stroomKostenDal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenDal, 2))
+            .stroomKostenNormaal(getAverage(all, VerbruikKostenOverzicht::getStroomKostenNormaal, 2))
+            .gasKosten(getAverage(all, VerbruikKostenOverzicht::getGasKosten, 2))
+            .build();
     }
 
     private BigDecimal getAverage(final Collection<VerbruikKostenOverzicht> verbruikKostenOverzichten,

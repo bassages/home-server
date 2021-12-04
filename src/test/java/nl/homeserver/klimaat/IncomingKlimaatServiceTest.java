@@ -56,11 +56,6 @@ class IncomingKlimaatServiceTest {
     @Captor
     ArgumentCaptor<Klimaat> klimaatCaptor;
 
-    @BeforeEach
-    void setup() {
-        setField(klimaatService, "klimaatServiceProxyWithEnabledCaching", klimaatService);
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     void whenAddThenRealtimeKlimaatSendToRealtimeTopic() {

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @DirtiesContext
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(
     locations = "/integrationtests.properties",
     properties = "mindergasnl.scheduleduploader.cron=" + ScheduledUploaderIntegrationTest.EVERY_SECOND
