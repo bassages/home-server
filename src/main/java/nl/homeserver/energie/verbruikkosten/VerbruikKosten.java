@@ -30,4 +30,8 @@ class VerbruikKosten {
         }
         return kosten.setScale(KOSTEN_SCALE, HALF_UP);
     }
+
+    public static VerbruikKosten empty() {
+        return new VerbruikKosten(null, null);
+    }
 }
