@@ -1,9 +1,20 @@
 package nl.homeserver.energie.mindergasnl;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.energie.meterstand.MeterstandOpDag;
+import nl.homeserver.energie.meterstand.MeterstandService;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Provider;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -11,30 +22,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Provider;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.energie.meterstand.MeterstandOpDag;
-import nl.homeserver.energie.meterstand.MeterstandService;
-import org.springframework.transaction.annotation.Transactional;
-
+@Slf4j
 @Service
 @Transactional
 @AllArgsConstructor
 public class MindergasnlService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MindergasnlService.class);
 
     private static final String METER_READING_UPLOAD_URL = "http://www.mindergas.nl/api/gas_meter_readings";
 
@@ -72,7 +68,7 @@ public class MindergasnlService {
         final List<MeterstandOpDag> yesterdaysLastMeterReading = meterstandService.getPerDag(period);
 
         if (isEmpty(yesterdaysLastMeterReading)) {
-            LOGGER.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday);
+            log.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday);
             return;
         }
 
@@ -83,7 +79,7 @@ public class MindergasnlService {
             final CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);
         } catch (final Exception ex) {
-            LOGGER.error("Failed to upload to mindergas.nl", ex);
+            log.error("Failed to upload to mindergas.nl", ex);
         }
     }
 
@@ -96,7 +92,7 @@ public class MindergasnlService {
             { "date": "%s", "reading": %s }
             """.formatted(day.format(ofPattern("yyyy-MM-dd")), gasReading.toString());
 
-        LOGGER.info("Upload to mindergas.nl: {}", message);
+        log.info("Upload to mindergas.nl: {}", message);
 
         request.addHeader(HEADER_NAME_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
         request.addHeader(HEADER_NAME_AUTH_TOKEN, authenticationToken);
@@ -109,7 +105,7 @@ public class MindergasnlService {
     private void logErrorWhenNoSuccess(final CloseableHttpResponse response) {
         final int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 201) {
-            LOGGER.error("Failed to upload to mindergas.nl. HTTP status code: {}", statusCode);
+            log.error("Failed to upload to mindergas.nl. HTTP status code: {}", statusCode);
         }
     }
 }

@@ -1,22 +1,7 @@
 package nl.homeserver.energie.standbypower;
 
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.apache.commons.lang3.ObjectUtils.max;
-import static org.apache.commons.lang3.ObjectUtils.min;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.opgenomenvermogen.NumberOfRecordsPerWatt;
@@ -26,12 +11,24 @@ import nl.homeserver.energie.verbruikkosten.ActuallyRegisteredVerbruikProvider;
 import nl.homeserver.energie.verbruikkosten.VerbruikForVirtualUsageProvider;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Optional;
+
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static org.apache.commons.lang3.ObjectUtils.max;
+import static org.apache.commons.lang3.ObjectUtils.min;
+
+@Slf4j
 @Service
 @AllArgsConstructor
 class StandbyPowerService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(StandbyPowerService.class);
 
     private static final String CACHE_NAME_STANDBY_POWER = "standbyPower";
 
@@ -41,7 +38,7 @@ class StandbyPowerService {
 
     @Cacheable(CACHE_NAME_STANDBY_POWER)
     public Optional<StandbyPowerInPeriod> getStandbyPower(final YearMonth yearMonth) {
-        LOGGER.info("getStandbyPower for yearMonth: {}", yearMonth);
+        log.info("getStandbyPower for yearMonth: {}", yearMonth);
         final Optional<DatePeriod> period = getPeriod(yearMonth);
         return period.flatMap(this::forPeriod);
     }

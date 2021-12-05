@@ -1,9 +1,9 @@
 package nl.homeserver.energie.verbruikkosten;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -16,13 +16,11 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.LongStream.rangeClosed;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.slf4j.LoggerFactory.getLogger;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
-
-    private static final Logger LOGGER = getLogger(VerbruikKostenCacheWarmer.class);
 
     private static final Month[] MONTHS = Month.values();
 
@@ -39,13 +37,13 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     private void warmupVerbruikPerUurOpDag(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerUurOpDag");
+        log.info("Warmup of cache verbruikPerUurOpDag");
         aPeriodWithToDate(today.minusDays(14), today).getDays()
                                                      .forEach(verbruikKostenController::getVerbruikPerUurOpDag);
     }
 
     private void warmupVerbruikPerDag(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerDag");
+        log.info("Warmup of cache verbruikPerDag");
         rangeClosed(0, MONTHS.length).boxed()
                                      .toList()
                                      .stream()
@@ -55,7 +53,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     private void warmupVerbruikPerMaandInJaar(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerMaandInJaar");
+        log.info("Warmup of cache verbruikPerMaandInJaar");
         rangeClosed(0, 1).boxed()
                          .toList()
                          .stream()
@@ -64,7 +62,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     private void warmupVerbruikPerJaar() {
-        LOGGER.info("Warmup of cache verbruikPerJaar");
+        log.info("Warmup of cache verbruikPerJaar");
         verbruikKostenController.getVerbruikPerJaar();
     }
 
@@ -73,13 +71,13 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
-        LOGGER.info("Warmup of cache verbruikPerUurOpDag");
+        log.info("Warmup of cache verbruikPerUurOpDag");
         verbruikKostenController.getVerbruikPerUurOpDag(yesterday);
 
-        LOGGER.info("Warmup of cache verbruikPerDag");
+        log.info("Warmup of cache verbruikPerDag");
         verbruikKostenController.getVerbruikPerDag(yesterday.with(firstDayOfMonth()), yesterday.with(lastDayOfMonth()));
 
-        LOGGER.info("Warmup of cache verbruikPerMaandInJaar");
+        log.info("Warmup of cache verbruikPerMaandInJaar");
         verbruikKostenController.getVerbruikPerMaandInJaar(yesterday.getYear());
 
         warmupVerbruikPerJaar();

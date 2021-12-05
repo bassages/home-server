@@ -1,10 +1,9 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.CacheService;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,10 @@ import java.util.Map;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class OpgenomenVermogenHousekeeping {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpgenomenVermogenHousekeeping.class);
 
     private static final int NR_OF_ROWS_TO_KEEP_PER_MINUTE = 1;
     private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = NR_OF_ROWS_TO_KEEP_PER_MINUTE * 60;
@@ -35,10 +33,10 @@ public class OpgenomenVermogenHousekeeping {
 
     @Scheduled(cron = HousekeepingSchedule.OPGENOMEN_VERMOGEN_CLEANUP)
     public void start() {
-        LOGGER.info("Start housekeeping of OpgenomenVermogen");
+        log.info("Start housekeeping of OpgenomenVermogen");
         findDaysToCleanup().forEach(this::cleanup);
         cacheService.clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
-        LOGGER.info("Finished housekeeping of OpgenomenVermogen");
+        log.info("Finished housekeeping of OpgenomenVermogen");
     }
 
     private List<LocalDate> findDaysToCleanup() {
@@ -50,7 +48,7 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private void cleanup(final LocalDate day) {
-        LOGGER.info("Cleanup day {}", day);
+        log.info("Cleanup day {}", day);
 
         final List<OpgenomenVermogen> opgenomenVermogensOnDay = opgenomenVermogenRepository.getOpgenomenVermogen(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
@@ -61,7 +59,7 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private void cleanupHour(final int hour, final List<OpgenomenVermogen> opgenomenVermogensInOneHour) {
-        LOGGER.debug("Cleanup hour {}", hour);
+        log.debug("Cleanup hour {}", hour);
 
         final Map<Integer, List<OpgenomenVermogen>> opgenomenVermogensByMinute = opgenomenVermogensInOneHour.stream()
                                                                                                             .collect(groupingBy(opgenomenVermogen -> opgenomenVermogen.getDatumtijd().getMinute()));
@@ -81,9 +79,9 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private void log(final List<OpgenomenVermogen> opgenomenVermogensToDelete, final List<OpgenomenVermogen> opgenomenVermogensToKeep) {
-        if (LOGGER.isDebugEnabled()) {
-            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> LOGGER.debug("Keep: {}", opgenomenVermogen));
-            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> LOGGER.debug("Delete: {}", opgenomenVermogen));
+        if (log.isDebugEnabled()) {
+            opgenomenVermogensToKeep.forEach(opgenomenVermogen -> log.debug("Keep: {}", opgenomenVermogen));
+            opgenomenVermogensToDelete.forEach(opgenomenVermogen -> log.debug("Delete: {}", opgenomenVermogen));
         }
     }
 

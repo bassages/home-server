@@ -1,23 +1,19 @@
 package nl.homeserver.energie.standbypower;
 
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
-
+@Slf4j
 @Component
 @AllArgsConstructor
 class StandbyPowerCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
-
-    private static final Logger LOGGER = getLogger(StandbyPowerCacheWarmer.class);
 
     private final StandbyPowerController standbyPowerController;
     private final Clock clock;
@@ -34,7 +30,7 @@ class StandbyPowerCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private void warmupCache() {
         final LocalDate today = LocalDate.now(clock);
-        LOGGER.info("Warmup of cache standbyPower");
+        log.info("Warmup of cache standbyPower");
         Stream.of(today.getYear(), today.getYear() - 1)
               .sorted()
               .forEach(standbyPowerController::getStandbyPower);

@@ -1,7 +1,6 @@
 package nl.homeserver.klimaat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,10 +20,9 @@ import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
 
+@Slf4j
 @Service
 public class IncomingKlimaatService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IncomingKlimaatService.class);
-
     static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
     private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 18;
@@ -135,7 +133,7 @@ public class IncomingKlimaatService {
                                             .max()
                                             .getAsInt();
         final LocalDateTime cleanUpAllBefore = now(clock).minusMinutes(maxNrOfMinutes);
-        LOGGER.info("cleanUpRecentlyAddedKlimaats before {}", cleanUpAllBefore);
+        log.info("cleanUpRecentlyAddedKlimaats before {}", cleanUpAllBefore);
         recentlyAddedKlimaatsPerKlimaatSensorCode.values()
                 .forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().isBefore(cleanUpAllBefore)));
     }

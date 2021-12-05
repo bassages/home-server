@@ -1,31 +1,24 @@
 package nl.homeserver.energie.slimmemeter;
 
-import static java.math.RoundingMode.HALF_UP;
-
-import org.apache.commons.lang3.builder.RecursiveToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.config.Paths;
 import nl.homeserver.energie.StroomTariefIndicator;
 import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogen;
 import nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenService;
+import org.apache.commons.lang3.builder.RecursiveToStringStyle;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+import static java.math.RoundingMode.HALF_UP;
+
+@Slf4j
 @RestController
 @RequestMapping(Paths.API + "/slimmemeter")
 @AllArgsConstructor
 class SlimmeMeterController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SlimmeMeterController.class);
 
     private final OpgenomenVermogenService opgenomenVermogenService;
     private final MeterstandService meterstandService;
@@ -36,8 +29,8 @@ class SlimmeMeterController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void save(final @RequestBody Dsmr42Reading dsmr42Reading) {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(dsmr42Reading.toString(), new RecursiveToStringStyle());
+        if (log.isInfoEnabled()) {
+            log.info(dsmr42Reading.toString(), new RecursiveToStringStyle());
         }
 
         saveMeterstand(dsmr42Reading);

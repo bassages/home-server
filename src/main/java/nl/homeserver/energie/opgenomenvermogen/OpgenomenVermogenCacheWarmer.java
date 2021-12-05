@@ -1,25 +1,22 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static java.time.LocalDate.now;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
+import static java.time.LocalDate.now;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
-
+@Slf4j
 @Component
 @AllArgsConstructor
 class OpgenomenVermogenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
-    private static final Logger LOGGER = getLogger(OpgenomenVermogenCacheWarmer.class);
-
     private final OpgenomenVermogenController opgenomenVermogenController;
     private final Clock clock;
 
@@ -27,7 +24,7 @@ class OpgenomenVermogenCacheWarmer implements InitialCacheWarmer, DailyCacheWarm
     public void warmupInitialCache() {
         final LocalDate today = LocalDate.now(clock);
 
-        LOGGER.info("Warmup of cache opgenomenVermogenHistory");
+        log.info("Warmup of cache opgenomenVermogenHistory");
         aPeriodWithToDate(today.minusDays(14), today).getDays()
                                                      .forEach(day -> opgenomenVermogenController.getOpgenomenVermogenHistory(day,
                                                                                                                              day.plusDays(1),
@@ -40,7 +37,7 @@ class OpgenomenVermogenCacheWarmer implements InitialCacheWarmer, DailyCacheWarm
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
-        LOGGER.info("Warmup of cache opgenomenVermogenHistory");
+        log.info("Warmup of cache opgenomenVermogenHistory");
         opgenomenVermogenController.getOpgenomenVermogenHistory(yesterday, today, MINUTES.toMillis(3));
     }
 }

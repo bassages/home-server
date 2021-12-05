@@ -1,26 +1,23 @@
 package nl.homeserver.klimaat;
 
-import static java.time.LocalDate.now;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
+import static java.time.LocalDate.now;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
-
+@Slf4j
 @Component
 @AllArgsConstructor
 class KlimaatCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
-
-    private static final Logger LOGGER = getLogger(KlimaatCacheWarmer.class);
 
     private final KlimaatController klimaatController;
     private final Clock clock;
@@ -29,16 +26,16 @@ class KlimaatCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
     public void warmupInitialCache() {
         final LocalDate today = now(clock);
 
-        LOGGER.info("Warmup of cache klimaat");
+        log.info("Warmup of cache klimaat");
 
         final List<KlimaatSensor> klimaatSensors = klimaatController.getAllKlimaatSensors();
 
         for (final KlimaatSensor klimaatSensor : klimaatSensors) {
-            LOGGER.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
+            log.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
             aPeriodWithToDate(today.minusDays(7), today).getDays()
                                                         .forEach(day -> klimaatController.findAllInPeriod(klimaatSensor.getCode(), day, day.plusDays(1)));
 
-            LOGGER.info("Warmup of cache klimaat averages for sensor {}", klimaatSensor);
+            log.info("Warmup of cache klimaat averages for sensor {}", klimaatSensor);
             final int[] years = {today.getYear(), today.getYear() - 1, today.getYear() - 2};
             Stream.of(SensorType.values())
                   .forEach(sentortype -> klimaatController.getAverage(klimaatSensor.getCode(), sentortype.name(), years));
@@ -54,7 +51,7 @@ class KlimaatCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
         final List<KlimaatSensor> klimaatSensors = klimaatController.getAllKlimaatSensors();
 
         for (final KlimaatSensor klimaatSensor : klimaatSensors) {
-            LOGGER.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
+            log.info("Warmup of cache klimaat history for sensor {}", klimaatSensor);
             klimaatController.findAllInPeriod(klimaatSensor.getCode(), yesterday, today);
         }
     }
