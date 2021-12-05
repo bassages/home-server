@@ -6,9 +6,12 @@ import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.time.Month.JANUARY;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Data
@@ -21,8 +24,20 @@ public class DateTimePeriod {
     private final LocalDateTime endDateTime;
     private final LocalDateTime toDateTime;
 
-    public static DateTimePeriod of (final LocalDate day) {
+    public static DateTimePeriod of(final LocalDate day) {
         return aPeriodWithToDateTime(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
+    }
+
+    public static DateTimePeriod of(final YearMonth yearMonth) {
+        final LocalDateTime from = yearMonth.atDay(1).atStartOfDay();
+        final LocalDateTime to = from.plusMonths(1);
+        return aPeriodWithToDateTime(from, to);
+    }
+
+    public static DateTimePeriod of(final Year year) {
+        final LocalDateTime from = LocalDate.of(year.getValue(), JANUARY, 1).atStartOfDay();
+        final LocalDateTime to = from.plusYears(1);
+        return aPeriodWithToDateTime(from, to);
     }
 
     private DateTimePeriod(final LocalDateTime startDateTime, final LocalDateTime toDateTime) {

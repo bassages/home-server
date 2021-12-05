@@ -11,7 +11,6 @@ import java.time.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
 import static java.util.EnumSet.allOf;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -68,9 +67,7 @@ class VerbruikService {
     }
 
     private VerbruikInJaar getVerbruikInJaar(final Year year) {
-        final LocalDateTime from = LocalDate.of(year.getValue(), JANUARY, 1).atStartOfDay();
-        final LocalDateTime to = from.plusYears(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final DateTimePeriod period = DateTimePeriod.of(year);
         return new VerbruikInJaar(year.getValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 
@@ -82,9 +79,7 @@ class VerbruikService {
     }
 
     private VerbruikInMaandInJaar getVerbruikInMaand(final YearMonth yearMonth) {
-        final LocalDateTime from = yearMonth.atDay(1).atStartOfDay();
-        final LocalDateTime to = from.plusMonths(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final DateTimePeriod period = DateTimePeriod.of(yearMonth);
         return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider));
     }
 
