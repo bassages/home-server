@@ -5,7 +5,6 @@ import nl.homeserver.DatePeriod;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,11 +48,11 @@ public class MeterstandService {
         final LocalDateTime van = today.atStartOfDay();
         final LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
 
-        final Meterstand oudsteStroomStandOpDag = meterstandRepository.getOldestInPeriod(van, totEnMet);
+        final Meterstand oudsteStroomStandOpDag = meterstandRepository.findOldestInPeriod(van, totEnMet);
 
         if (oudsteStroomStandOpDag != null) {
             // Gas is registered once every hour, in the hour AFTER it actually is used. Compensate for that hour
-            final Meterstand oudsteGasStandOpDag = meterstandRepository.getOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
+            final Meterstand oudsteGasStandOpDag = meterstandRepository.findOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
 
             if (oudsteGasStandOpDag != null) {
                 oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
@@ -63,20 +62,17 @@ public class MeterstandService {
     }
 
     public List<MeterstandOpDag> getPerDag(final DatePeriod period) {
-        return period.getDays().stream()
-                               .map(this::getMeterstandOpDag)
-                               .toList();
+        return period.getDays()
+                     .stream()
+                     .map(day -> new MeterstandOpDag(day, getMeesteRecenteMeterstandOpDag(day).orElse(null)))
+                     .toList();
     }
 
-    private MeterstandOpDag getMeterstandOpDag(final LocalDate day) {
-        return new MeterstandOpDag(day, getMeesteRecenteMeterstandOpDag(day));
-    }
-
-    @Nullable
-    private Meterstand getMeesteRecenteMeterstandOpDag(final LocalDate day) {
+    public Optional<Meterstand> getMeesteRecenteMeterstandOpDag(final LocalDate day) {
         final LocalDate today = now(clock);
+
         if (day.isAfter(today)) {
-            return null;
+            return Optional.empty();
         } else if (day.isEqual(today)) {
             return mostResentMeterstandOpDagService.getNotCachedMeestRecenteMeterstandOpDag(day);
         } else {

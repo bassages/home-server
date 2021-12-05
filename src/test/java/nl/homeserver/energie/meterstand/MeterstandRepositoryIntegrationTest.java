@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    void shouldFindOldestInPeriod() {
+    void givenMultipleMeterstanInPeriodWhenFindOldestInPeriodThenOldestIsReturned() {
+        // given
         final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
 
         entityManager.persist(aMeterstand().withDateTime(fromDateTime).build());
@@ -61,7 +63,40 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
         entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(3)).build());
         entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(4)).build());
 
-        final Meterstand actual = meterstandRepository.getOldestInPeriod(oldestInPeriod.getDateTime(), fromDateTime.plusYears(1));
+        // when
+        final Meterstand actual = meterstandRepository.findOldestInPeriod(oldestInPeriod.getDateTime(), fromDateTime.plusYears(1));
+
+        // then
         assertThat(actual).isEqualTo(oldestInPeriod);
+    }
+
+    @Test
+    void givenMultipleMeterstandInPeriodWhenFindMostRecentInPeriodThenMostRecentIsReturned() {
+        // given
+        final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
+
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(1)).build());
+        entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(3)).build());
+        final Meterstand mostRecent = aMeterstand().withDateTime(fromDateTime.plusDays(4)).build();
+        entityManager.persist(mostRecent);
+
+        // when
+        final Optional<Meterstand> actual = meterstandRepository.findMostRecentInPeriod(fromDateTime, fromDateTime.plusYears(1));
+
+        // then
+        assertThat(actual).contains(mostRecent);
+    }
+
+    @Test
+    void givenNoMeterstandInPeriodWhenFindMostRecentInPeriodThenEmptyOptionalIsReturned() {
+        // given
+        final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
+
+        // when
+        final Optional<Meterstand> actual = meterstandRepository.findMostRecentInPeriod(fromDateTime, fromDateTime.plusYears(1));
+
+        // then
+        assertThat(actual).isEmpty();
     }
 }

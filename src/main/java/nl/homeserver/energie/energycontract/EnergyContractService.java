@@ -1,22 +1,21 @@
 package nl.homeserver.energie.energycontract;
 
-import static java.time.LocalDateTime.now;
+import lombok.RequiredArgsConstructor;
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.cache.CacheService;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.cache.CacheService;
-import org.springframework.transaction.annotation.Transactional;
+import static java.time.LocalDateTime.now;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EnergyContractService {
 
     private static final String CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD = "energyContractsInPeriod";

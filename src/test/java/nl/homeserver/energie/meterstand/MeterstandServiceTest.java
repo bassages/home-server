@@ -12,6 +12,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.JANUARY;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
@@ -100,11 +101,11 @@ class MeterstandServiceTest {
                                                               .withStroomTarief2(new BigDecimal("200.000"))
                                                               .build();
 
-        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
+        when(meterstandRepository.findOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandElectricity);
 
         final Meterstand oldestMeterstandGas = aMeterstand().withGas(new BigDecimal("965.000")).build();
-        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
+        when(meterstandRepository.findOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandGas);
 
         // when
@@ -128,9 +129,9 @@ class MeterstandServiceTest {
                                                               .withGas(new BigDecimal("999.000"))
                                                               .build();
 
-        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
+        when(meterstandRepository.findOldestInPeriod(today.atStartOfDay(), today.atStartOfDay().plusDays(1).minusNanos(1)))
                                  .thenReturn(oldestMeterstandElectricity);
-        when(meterstandRepository.getOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
+        when(meterstandRepository.findOldestInPeriod(today.atStartOfDay().plusHours(1), today.atStartOfDay().plusDays(1).plusHours(1).minusNanos(1)))
                                  .thenReturn(null);
 
         // when
@@ -147,7 +148,7 @@ class MeterstandServiceTest {
         // given
         final LocalDate today = LocalDate.of(2017, JANUARY, 8);
         timeTravelTo(clock, today.atStartOfDay());
-        when(meterstandRepository.getOldestInPeriod(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(meterstandRepository.findOldestInPeriod(any(LocalDateTime.class), any(LocalDateTime.class)))
                                  .thenReturn(null);
 
         // when
@@ -155,7 +156,7 @@ class MeterstandServiceTest {
 
         // then
         assertThat(oldestOfToday).isNull();
-        verify(meterstandRepository).getOldestInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1));
+        verify(meterstandRepository).findOldestInPeriod(today.atStartOfDay(), today.plusDays(1).atStartOfDay().minusNanos(1));
         verifyNoMoreInteractions(meterstandRepository);
     }
 
@@ -167,7 +168,8 @@ class MeterstandServiceTest {
         timeTravelTo(clock, today.atStartOfDay());
 
         final Meterstand mostRecentMeterstandOfToday = mock(Meterstand.class);
-        when(mostResentMeterstandOpDagService.getNotCachedMeestRecenteMeterstandOpDag(today)).thenReturn(mostRecentMeterstandOfToday);
+        when(mostResentMeterstandOpDagService.getNotCachedMeestRecenteMeterstandOpDag(today))
+                .thenReturn(Optional.of(mostRecentMeterstandOfToday));
 
         // when
         final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(today, today.plusDays(1)));
@@ -189,7 +191,8 @@ class MeterstandServiceTest {
         final LocalDate yesterday = today.minusDays(1);
 
         final Meterstand mostRecentMeterstandOfYesterday = mock(Meterstand.class);
-        when(mostResentMeterstandOpDagService.getPotentiallyCachedMeestRecenteMeterstandOpDag(yesterday)).thenReturn(mostRecentMeterstandOfYesterday);
+        when(mostResentMeterstandOpDagService.getPotentiallyCachedMeestRecenteMeterstandOpDag(yesterday))
+                .thenReturn(Optional.of(mostRecentMeterstandOfYesterday));
 
         // when
         final List<MeterstandOpDag> meterstandPerDag = meterstandService.getPerDag(aPeriodWithToDate(yesterday, yesterday.plusDays(1)));

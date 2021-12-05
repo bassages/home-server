@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
@@ -39,7 +40,6 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
         """)
     Meterstand getOldest();
 
-    @Nullable
     @Query(value = """
         SELECT m
           FROM Meterstand m
@@ -49,19 +49,19 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
                               WHERE m1.dateTime BETWEEN :van AND :totEnMet
                             )
         """)
-    Meterstand getMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
+    Optional<Meterstand> findMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     @Nullable
     @Query(value = """
         SELECT m
-          FROM Meterstand m 
+          FROM Meterstand m
          WHERE m.dateTime = (
                              SELECT MIN(m1.dateTime)
                                FROM Meterstand m1
                               WHERE m1.dateTime BETWEEN :van AND :totEnMet
                             )
         """)
-    Meterstand getOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
+    Meterstand findOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     List<Meterstand> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
 

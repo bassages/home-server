@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,14 +29,15 @@ class MostResentMeterstandOpDagServiceTest {
         final LocalDate day = LocalDate.of(2017, JANUARY, 13);
 
         final Meterstand meestRecenteMeterstandOpDag = mock(Meterstand.class);
-        when(meterstandRepository.getMostRecentInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusNanos(1)))
-                .thenReturn(meestRecenteMeterstandOpDag);
+        when(meterstandRepository.findMostRecentInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay().minusNanos(1)))
+                .thenReturn(Optional.of(meestRecenteMeterstandOpDag));
 
         // when
-        final Meterstand meterstandPerDag = mostResentMeterstandOpDagService.getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
+        final Optional<Meterstand> meterstandPerDag = mostResentMeterstandOpDagService
+                .getPotentiallyCachedMeestRecenteMeterstandOpDag(day);
 
         // then
-        assertThat(meterstandPerDag).isSameAs(meestRecenteMeterstandOpDag);
+        assertThat(meterstandPerDag).contains(meestRecenteMeterstandOpDag);
     }
 
 }

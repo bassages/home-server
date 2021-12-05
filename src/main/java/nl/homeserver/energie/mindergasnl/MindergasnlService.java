@@ -2,8 +2,6 @@ package nl.homeserver.energie.mindergasnl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.energie.meterstand.MeterstandOpDag;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -19,12 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 @Slf4j
 @Service
@@ -63,19 +58,16 @@ public class MindergasnlService {
         final LocalDate today = LocalDate.now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
-        final DatePeriod period = aPeriodWithToDate(yesterday, today);
+        meterstandService
+            .getMeesteRecenteMeterstandOpDag(yesterday)
+            .ifPresentOrElse(
+                yesterdaysMostRecentMeterstand -> upload(settings, yesterday, yesterdaysMostRecentMeterstand.getGas()),
+                () -> log.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday));
+    }
 
-        final List<MeterstandOpDag> yesterdaysLastMeterReading = meterstandService.getPerDag(period);
-
-        if (isEmpty(yesterdaysLastMeterReading)) {
-            log.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday);
-            return;
-        }
-
-        final BigDecimal gasReading = yesterdaysLastMeterReading.get(0).getMeterstand().getGas();
-
+    private void upload(MindergasnlSettings settings, LocalDate day, BigDecimal gasReading) {
         try (final CloseableHttpClient httpClient = httpClientBuilder.get().build()){
-            final HttpPost request = createRequest(yesterday, gasReading, settings.getAuthenticatietoken());
+            final HttpPost request = createRequest(day, gasReading, settings.getAuthenticatietoken());
             final CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);
         } catch (final Exception ex) {

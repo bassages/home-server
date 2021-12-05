@@ -5,13 +5,12 @@ import static org.apache.commons.lang3.ObjectUtils.notEqual;
 import java.time.LocalDate;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class EnergyContractToDateRecalculator {
 
     private final EnergyContractRepository energyContractRepository;

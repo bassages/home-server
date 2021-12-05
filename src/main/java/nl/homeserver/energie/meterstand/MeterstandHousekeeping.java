@@ -1,6 +1,6 @@
 package nl.homeserver.energie.meterstand;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.CacheService;
 import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzichtService;
@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class MeterstandHousekeeping {
 
     private static final int NR_OF_ROWS_TO_KEEP_PER_HOUR = 2;
