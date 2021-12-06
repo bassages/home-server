@@ -1,8 +1,8 @@
 package nl.homeserver.energie.meterstand;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
-import static org.assertj.core.api.Assertions.assertThat;
+import nl.homeserver.RepositoryIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -10,10 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import nl.homeserver.RepositoryIntegrationTest;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
@@ -64,10 +63,10 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
         entityManager.persist(aMeterstand().withDateTime(fromDateTime.plusDays(4)).build());
 
         // when
-        final Meterstand actual = meterstandRepository.findOldestInPeriod(oldestInPeriod.getDateTime(), fromDateTime.plusYears(1));
+        final Optional<Meterstand> actual = meterstandRepository.findOldestInPeriod(oldestInPeriod.getDateTime(), fromDateTime.plusYears(1));
 
         // then
-        assertThat(actual).isEqualTo(oldestInPeriod);
+        assertThat(actual).contains(oldestInPeriod);
     }
 
     @Test

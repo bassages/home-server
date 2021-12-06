@@ -25,12 +25,12 @@ class MeterstandController {
 
     @GetMapping("meest-recente")
     public Meterstand getMostRecent() {
-        return meterstandService.getMostRecent();
+        return meterstandService.getMostRecent().orElse(null);
     }
 
     @GetMapping("oudste-vandaag")
     public Meterstand getOldestOfToday() {
-        return meterstandService.getOldestOfToday();
+        return meterstandService.findOldestOfToday().orElse(null);
     }
 
     @GetMapping("per-dag/{vanaf}/{tot}")

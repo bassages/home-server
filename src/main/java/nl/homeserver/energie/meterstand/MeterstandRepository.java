@@ -1,24 +1,21 @@
 package nl.homeserver.energie.meterstand;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 @Transactional
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
     // Please note that BETWEEN in HQL is INCLUSIVE!
 
-    @Nullable
     @Query(value = """
         SELECT m
           FROM Meterstand m
@@ -27,9 +24,8 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
                                FROM Meterstand mostrecent
                             )
         """)
-    Meterstand getMostRecent();
+    Optional<Meterstand> getMostRecent();
 
-    @Nullable
     @Query(value = """
         SELECT m
           FROM Meterstand m
@@ -38,7 +34,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
                                FROM Meterstand oldest
                             )
         """)
-    Meterstand getOldest();
+    Optional<Meterstand> getOldest();
 
     @Query(value = """
         SELECT m
@@ -51,7 +47,6 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
         """)
     Optional<Meterstand> findMostRecentInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
-    @Nullable
     @Query(value = """
         SELECT m
           FROM Meterstand m
@@ -61,7 +56,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
                               WHERE m1.dateTime BETWEEN :van AND :totEnMet
                             )
         """)
-    Meterstand findOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
+    Optional<Meterstand> findOldestInPeriod(@Param("van") LocalDateTime start, @Param("totEnMet") LocalDateTime end);
 
     List<Meterstand> findByDateTimeBetween(LocalDateTime start, LocalDateTime end);
 

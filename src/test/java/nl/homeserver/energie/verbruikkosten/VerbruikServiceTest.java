@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.*;
 import static java.util.stream.IntStream.range;
@@ -38,6 +39,7 @@ class VerbruikServiceTest {
 
     @Test
     void whenGetVerbruikPerDagForTwoDaysThenVerbruikKostenOverzichtServiceIsCalledForBothDays() {
+        // given
         final LocalDate from = LocalDate.of(2016, JANUARY, 2);
         final LocalDate to = LocalDate.of(2016, JANUARY, 4);
         final DatePeriod period = aPeriodWithToDate(from, to);
@@ -54,8 +56,10 @@ class VerbruikServiceTest {
         ))
                                            .thenReturn(verbruikKostenOverzichtForDay2);
 
+        // when
         final List<VerbruikKostenOpDag> verbruikPerDag = verbruikService.getVerbruikPerDag(period);
 
+        // then
         assertThat(verbruikPerDag).satisfiesExactly(
                 verbruikKostenDay1 -> {
                     assertThat(verbruikKostenDay1.getDag()).isEqualTo(from);
@@ -69,6 +73,7 @@ class VerbruikServiceTest {
 
     @Test
     void whenGetVerbruikPerUurOpDagThenVerbruikKostenOverzichtServiceIsCalledForAllHoursInDay() {
+        // given
         final LocalDate day = LocalDate.of(2016, JANUARY, 2);
 
         final VerbruikKostenOverzicht verbruikKostenOverzichtForHour1 = VerbruikKostenOverzicht.builder().build();
@@ -83,8 +88,10 @@ class VerbruikServiceTest {
         ))
                                            .thenReturn(verbruikKostenOverzichtForHour2);
 
+        // when
         final List<VerbruikInUurOpDag> verbruikPerUurOpDag = verbruikService.getVerbruikPerUurOpDag(day);
 
+        // then
         assertThat(verbruikPerUurOpDag).hasSize(24);
 
         final VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
@@ -104,6 +111,7 @@ class VerbruikServiceTest {
 
     @Test
     void whenGetVerbruikPerMaandInJaarThenVerbruikKostenOverzichtServiceIsCalledForAllMonthsInYear() {
+        // given
         final int year = 2018;
 
         final VerbruikKostenOverzicht verbruikKostenOverzichtForJanuary = VerbruikKostenOverzicht.builder().build();
@@ -120,8 +128,10 @@ class VerbruikServiceTest {
         ))
                                            .thenReturn(verbruikKostenOverzichtForFebruary);
 
+        // when
         final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = verbruikService.getVerbruikPerMaandInJaar(Year.of(year));
 
+        // then
         assertThat(verbruikPerMaandInJaar).hasSize(12);
 
         final VerbruikInMaandInJaar verbruikKostenForMonth1 = verbruikPerMaandInJaar.get(0);
@@ -143,12 +153,13 @@ class VerbruikServiceTest {
 
     @Test
     void givenMeterstandenExistsForTwoYearsWhenGetVerbruikPerJaarThenVerbruikKostenOverzichtServiceIsCalledForBothYears() {
+        // given
         final Meterstand meterstandFor2018 = aMeterstand().withDateTime(LocalDate.of(2018, JANUARY, 1).atStartOfDay()).build();
-        when(meterstandService.getOldest()).thenReturn(meterstandFor2018);
+        when(meterstandService.getOldest()).thenReturn(Optional.of(meterstandFor2018));
 
         final Meterstand meterstandFor2019 = aMeterstand()
                 .withDateTime(LocalDate.of(2019, JANUARY, 1).atStartOfDay()).build();
-        when(meterstandService.getMostRecent()).thenReturn(meterstandFor2019);
+        when(meterstandService.getMostRecent()).thenReturn(Optional.of(meterstandFor2019));
 
         final VerbruikKostenOverzicht verbruikKostenOverzichtFor2018 = VerbruikKostenOverzicht.builder().build();
         when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(
@@ -164,8 +175,10 @@ class VerbruikServiceTest {
         ))
                                            .thenReturn(verbruikKostenOverzichtFor2019);
 
+        // when
         final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
 
+        // then
         assertThat(verbruikPerJaar).satisfiesExactly(
                 verbruikInJaar2018 -> {
                     assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
@@ -180,15 +193,19 @@ class VerbruikServiceTest {
 
     @Test
     void givenNoMeterstandenExistsWhenGetVerbruikPerJaarThenResultIsEmpty() {
-        when(meterstandService.getOldest()).thenReturn(null);
+        // given
+        when(meterstandService.getOldest()).thenReturn(Optional.empty());
 
+        // when
         final List<VerbruikInJaar> verbruikPerJaar = verbruikService.getVerbruikPerJaar();
 
+        // then
         assertThat(verbruikPerJaar).isEmpty();
     }
 
     @Test
     void whenGetGemiddeldeVerbruikEnKostenInPeriodeThenAveragesAreReturned() {
+        // given
         final LocalDate from = LocalDate.of(2016, JANUARY, 2);
         final LocalDate to = LocalDate.of(2016, JANUARY, 4);
         final DatePeriod period = aPeriodWithToDate(from, to);
@@ -205,9 +222,11 @@ class VerbruikServiceTest {
         ))
                                            .thenReturn(verbruikKostenOverzichtForDay2);
 
+        // when
         final VerbruikKostenOverzicht gemiddeldeVerbruikEnKostenInPeriode =
                 verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(period);
 
+        // then
         assertThat(gemiddeldeVerbruikEnKostenInPeriode).isNotNull();
     }
 }

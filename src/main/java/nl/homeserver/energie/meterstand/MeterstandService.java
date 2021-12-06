@@ -34,31 +34,30 @@ public class MeterstandService {
         return savedMeterStand;
     }
 
-    public Meterstand getMostRecent() {
-        return mostRecentlySavedMeterstand.orElseGet(meterstandRepository::getMostRecent);
+    public Optional<Meterstand> getMostRecent() {
+        return mostRecentlySavedMeterstand.or(meterstandRepository::getMostRecent);
     }
 
-    public Meterstand getOldest() {
+    public Optional<Meterstand> getOldest() {
         return meterstandRepository.getOldest();
     }
 
-    Meterstand getOldestOfToday() {
+    Optional<Meterstand> findOldestOfToday() {
         final LocalDate today = now(clock);
-
-        final LocalDateTime van = today.atStartOfDay();
+        final LocalDateTime start = today.atStartOfDay();
         final LocalDateTime totEnMet = today.atStartOfDay().plusDays(1).minusNanos(1);
 
-        final Meterstand oudsteStroomStandOpDag = meterstandRepository.findOldestInPeriod(van, totEnMet);
+        final Optional<Meterstand> optionalOldestMeterReadingOnDay = meterstandRepository.findOldestInPeriod(start, totEnMet);
 
-        if (oudsteStroomStandOpDag != null) {
-            // Gas is registered once every hour, in the hour AFTER it actually is used. Compensate for that hour
-            final Meterstand oudsteGasStandOpDag = meterstandRepository.findOldestInPeriod(van.plusHours(1), totEnMet.plusHours(1));
+        optionalOldestMeterReadingOnDay.ifPresent(oldestMeterReadingOnDay -> {
+                // Gas is registered once every hour, in the hour AFTER it actually is used. Compensate for that hour
+            final Optional<Meterstand> optionalOldestGasMeterReadingOnDay = meterstandRepository.findOldestInPeriod(
+                    start.plusHours(1), totEnMet.plusHours(1));
 
-            if (oudsteGasStandOpDag != null) {
-                oudsteStroomStandOpDag.setGas(oudsteGasStandOpDag.getGas());
-            }
-        }
-        return oudsteStroomStandOpDag;
+            optionalOldestGasMeterReadingOnDay.ifPresent(oldestGasMeterReadingOnDay ->
+                    oldestMeterReadingOnDay.setGas(oldestGasMeterReadingOnDay.getGas()));
+        });
+        return optionalOldestMeterReadingOnDay;
     }
 
     public List<MeterstandOpDag> getPerDag(final DatePeriod period) {

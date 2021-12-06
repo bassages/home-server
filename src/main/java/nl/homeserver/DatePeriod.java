@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -67,6 +69,10 @@ public final class DatePeriod {
         return getDays().stream()
                         .filter(date -> !WEEKENDDAYS.contains(date.getDayOfWeek()))
                         .count();
+    }
+
+    public Stream<Integer> streamYears() {
+        return IntStream.rangeClosed(getFromDate().getYear(), getToDate().getYear()).boxed();
     }
 
     @Override

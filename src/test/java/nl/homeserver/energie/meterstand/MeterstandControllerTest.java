@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
@@ -27,30 +28,43 @@ class MeterstandControllerTest {
 
     @Test
     void whenGetMostRecentThenDelegatedToMeterstandService() {
+        // given
         final Meterstand mostRecentMeterstand = mock(Meterstand.class);
+        when(meterstandService.getMostRecent()).thenReturn(Optional.of(mostRecentMeterstand));
 
-        when(meterstandService.getMostRecent()).thenReturn(mostRecentMeterstand);
+        // when
+        final Meterstand mostRecent = meterstandController.getMostRecent();
 
-        assertThat(meterstandController.getMostRecent()).isEqualTo(mostRecentMeterstand);
+        // then
+        assertThat(mostRecent).isEqualTo(mostRecentMeterstand);
     }
 
     @Test
     void whenGetOldestOfTodayThenDelegatedToMeterstandService() {
-        final Meterstand oldestMeterstandOfToday = mock(Meterstand.class);
+        // given
+        final Meterstand oldestMeterReadingOfToday = mock(Meterstand.class);
+        when(meterstandService.findOldestOfToday()).thenReturn(Optional.of(oldestMeterReadingOfToday));
 
-        when(meterstandService.getOldestOfToday()).thenReturn(oldestMeterstandOfToday);
+        // when
+        final Meterstand oldestOfToday = meterstandController.getOldestOfToday();
 
-        assertThat(meterstandController.getOldestOfToday()).isEqualTo(oldestMeterstandOfToday);
+        // then
+        assertThat(oldestOfToday).isSameAs(oldestMeterReadingOfToday);
     }
 
     @Test
     void whenGetPerDagThenDelegatedToMeterstandService() {
+        // given
         final LocalDate from = LocalDate.of(2017, JANUARY, 1);
         final LocalDate to = LocalDate.of(2018, FEBRUARY, 2);
 
-        final List<MeterstandOpDag> meterstandenByDay = List.of(mock(MeterstandOpDag.class), mock(MeterstandOpDag.class));
-        when(meterstandService.getPerDag(DatePeriod.aPeriodWithToDate(from, to))).thenReturn(meterstandenByDay);
+        final List<MeterstandOpDag> meterReadingsPerDay = List.of(mock(MeterstandOpDag.class), mock(MeterstandOpDag.class));
+        when(meterstandService.getPerDag(DatePeriod.aPeriodWithToDate(from, to))).thenReturn(meterReadingsPerDay);
 
-        assertThat(meterstandController.perDag(from, to)).isEqualTo(meterstandenByDay);
+        // when
+        final List<MeterstandOpDag> actual = meterstandController.perDag(from, to);
+
+        // then
+        assertThat(actual).isSameAs(meterReadingsPerDay);
     }
 }
