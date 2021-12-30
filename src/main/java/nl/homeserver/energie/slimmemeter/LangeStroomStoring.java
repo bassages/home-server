@@ -1,17 +1,15 @@
 package nl.homeserver.energie.slimmemeter;
 
-import java.time.LocalDateTime;
-
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import lombok.Setter;
+import java.time.LocalDateTime;
 
+@Setter
 class LangeStroomStoring {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @Setter
     private LocalDateTime datumtijdEinde;
 
-    @Setter
     private Long duurVanStoringInSeconden;
 }

@@ -1,23 +1,23 @@
 package nl.homeserver.energie.energycontract;
 
-import static org.apache.commons.lang3.ObjectUtils.notEqual;
-
-import java.time.LocalDate;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
+
 @Service
 @RequiredArgsConstructor
 class EnergyContractToDateRecalculator {
+    private static final Sort ORDER_BY_VALID_FROM_ASC = Sort.by(Sort.Direction.ASC, "validFrom");
 
     private final EnergyContractRepository energyContractRepository;
 
     void recalculate() {
-        Sort ordering = Sort.by(Sort.Direction.ASC, "validFrom");
-        final List<EnergyContract> energyContracts = energyContractRepository.findAll(ordering);
+        final List<EnergyContract> energyContracts = energyContractRepository.findAll(ORDER_BY_VALID_FROM_ASC);
 
         EnergyContract previousEnergyContract = null;
         for (int i = 0; i < energyContracts.size(); i++) {

@@ -13,8 +13,8 @@ import java.util.List;
 
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class KlimaatServiceHelper {
     private static final String CACHE_NAME_AVERAGE_KLIMAAT_IN_MONTH = "averageKlimaatInMonth";
 

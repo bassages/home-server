@@ -1,6 +1,6 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.CacheService;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OpgenomenVermogenHousekeeping {
 
     private static final int NR_OF_ROWS_TO_KEEP_PER_MINUTE = 1;

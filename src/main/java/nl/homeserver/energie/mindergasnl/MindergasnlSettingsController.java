@@ -1,17 +1,12 @@
 package nl.homeserver.energie.mindergasnl;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.config.Paths;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(Paths.API + "/mindergasnl")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class MindergasnlSettingsController {
 
     private final MindergasnlService mindergasnlService;

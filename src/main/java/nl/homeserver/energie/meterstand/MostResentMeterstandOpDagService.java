@@ -21,7 +21,7 @@ public class MostResentMeterstandOpDagService {
         return getNotCachedMeestRecenteMeterstandOpDag(day);
     }
 
-    public Optional<Meterstand> getNotCachedMeestRecenteMeterstandOpDag(LocalDate day) {
+    public Optional<Meterstand> getNotCachedMeestRecenteMeterstandOpDag(final LocalDate day) {
         final LocalDateTime van = day.atStartOfDay();
         final LocalDateTime totEnMet = day.atStartOfDay().plusDays(1).minusNanos(1);
         return meterstandRepository.findMostRecentInPeriod(van, totEnMet);

@@ -27,7 +27,7 @@ class ActuallyRegisteredVerbruikProviderTest {
     ActuallyRegisteredVerbruikProvider actuallyRegisteredVerbruikProvider;
 
     @Mock
-    private VerbruikRepository verbruikRepository;
+    VerbruikRepository verbruikRepository;
 
     @Test
     void whenGetGasVerbruikThenRepositoryAskedForOneHourBefore() {

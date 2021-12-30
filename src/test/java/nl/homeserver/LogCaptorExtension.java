@@ -32,19 +32,19 @@ public class LogCaptorExtension implements BeforeTestExecutionCallback, AfterTes
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(final ExtensionContext context) {
         logger.detachAppender(mockAppender);
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext,
-                                     ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(final ParameterContext parameterContext,
+                                     final ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType() == ArgumentCaptor.class;
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext,
-                                   ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(final ParameterContext parameterContext,
+                                   final ExtensionContext extensionContext) throws ParameterResolutionException {
         return loggingEventCaptor;
     }
 }

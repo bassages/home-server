@@ -1,6 +1,6 @@
 package nl.homeserver.klimaat;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import static org.springframework.boot.actuate.health.Status.DOWN;
 import static org.springframework.boot.actuate.health.Status.UP;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class KlimaatSensorHealth implements HealthIndicator {
 
     private static final int MAXIMUM_KLIMAAT_AGE_IN_MINUTES = 10;
@@ -69,11 +69,11 @@ class KlimaatSensorHealth implements HealthIndicator {
 
         if (isDown(mostRecentlyReceivedKlimaatForSensor)) {
             return format("%s (%s) - Most recent valid klimaat was saved at %s. Which is more than %d minutes ago.",
-                          klimaatSensor.getCode(), DOWN.toString(),
+                          klimaatSensor.getCode(), DOWN,
                           formatDatumtijd(mostRecentlyReceivedKlimaatForSensor), MAXIMUM_KLIMAAT_AGE_IN_MINUTES);
         }
         return format("%s (%s) - Most recent valid klimaat was saved at %s.",
-                      klimaatSensor.getCode(), UP.toString(),
+                      klimaatSensor.getCode(), UP,
                       formatDatumtijd(mostRecentlyReceivedKlimaatForSensor));
     }
 

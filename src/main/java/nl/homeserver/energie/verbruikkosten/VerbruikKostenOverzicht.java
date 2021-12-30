@@ -1,38 +1,23 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Objects;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Objects;
+
+@Getter
+@Setter
 @Builder
 public class VerbruikKostenOverzicht {
 
-    @Getter
-    @Setter
     private BigDecimal stroomVerbruikDal;
-
-    @Getter
-    @Setter
     private BigDecimal stroomKostenDal;
-
-    @Getter
-    @Setter
     private BigDecimal stroomVerbruikNormaal;
-
-    @Getter
-    @Setter
     private BigDecimal stroomKostenNormaal;
-
-    @Getter
-    @Setter
     private BigDecimal gasVerbruik;
-
-    @Getter
-    @Setter
     private BigDecimal gasKosten;
 
     public BigDecimal getTotaalStroomKosten() {

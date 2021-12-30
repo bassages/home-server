@@ -1,6 +1,6 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.meterstand.Meterstand;
@@ -19,7 +19,7 @@ import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class VerbruikService {
 
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;

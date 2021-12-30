@@ -1,6 +1,6 @@
 package nl.homeserver.energie.standbypower;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.ObjectUtils.min;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class StandbyPowerService {
 
     private static final String CACHE_NAME_STANDBY_POWER = "standbyPower";

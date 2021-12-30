@@ -1,6 +1,6 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.StroomTariefIndicator;
@@ -19,7 +19,7 @@ import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OpgenomenVermogenService {
 
     static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";

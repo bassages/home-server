@@ -1,5 +1,6 @@
 package nl.homeserver.klimaat;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +23,7 @@ import static java.util.Comparator.comparing;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class IncomingKlimaatService {
     static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
@@ -41,18 +43,6 @@ public class IncomingKlimaatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final KlimaatService klimaatService;
     private final Clock clock;
-
-    IncomingKlimaatService(final KlimaatService klimaatService,
-                           final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
-                           final KlimaatSensorService klimaatSensorService,
-                           final SimpMessagingTemplate messagingTemplate,
-                           final Clock clock) {
-        this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
-        this.klimaatSensorService = klimaatSensorService;
-        this.messagingTemplate = messagingTemplate;
-        this.klimaatService = klimaatService;
-        this.clock = clock;
-    }
 
     @Scheduled(cron = EVERY_X_MINUTES_PAST_THE_HOUR)
     void save() {

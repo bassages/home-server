@@ -1,6 +1,6 @@
 package nl.homeserver.energie.standbypower;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.config.Paths;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,7 @@ import static java.util.Collections.reverseOrder;
 
 @RestController
 @RequestMapping(Paths.API + "/standby-power")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class StandbyPowerController {
 
     private final StandbyPowerService standbyPowerService;

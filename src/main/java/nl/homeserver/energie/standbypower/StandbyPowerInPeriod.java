@@ -1,30 +1,27 @@
 package nl.homeserver.energie.standbypower;
 
-import static java.math.RoundingMode.HALF_UP;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import lombok.Getter;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.energie.verbruikkosten.VerbruikKostenOverzicht;
+import static java.math.RoundingMode.HALF_UP;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class StandbyPowerInPeriod {
 
-    @Getter
     private LocalDate fromDate;
-    @Getter
     private LocalDate toDate;
-    @Getter
     private BigDecimal percentageOfTotalPeriod;
 
-    @Getter
     private Integer standbyPower;
-    @Getter
     private BigDecimal costsOfStandByPower;
-    @Getter
     private BigDecimal totalCostsOfPower;
-    @Getter
     private BigDecimal percentageOfTotalCost;
 
     StandbyPowerInPeriod(final DatePeriod period,
@@ -45,9 +42,5 @@ class StandbyPowerInPeriod {
                                                        .multiply(BigDecimal.valueOf(100)).setScale(0, HALF_UP);
 
         }
-    }
-
-    private StandbyPowerInPeriod() {
-        // Private zero args constructor
     }
 }

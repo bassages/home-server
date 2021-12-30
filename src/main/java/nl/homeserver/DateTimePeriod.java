@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static java.time.Month.JANUARY;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Data
 @ToString
@@ -64,6 +65,10 @@ public class DateTimePeriod {
 
     public boolean startsOnOrAfter(final LocalDateTime dateTime) {
         return startDateTime.isEqual(dateTime) || startDateTime.isAfter(dateTime);
+    }
+
+    public DatePeriod toDatePeriod() {
+        return aPeriodWithToDate(startDateTime.toLocalDate(), toDateTime.toLocalDate());
     }
 
     public List<LocalDate> getDays() {

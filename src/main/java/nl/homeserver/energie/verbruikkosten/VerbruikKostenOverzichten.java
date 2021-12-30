@@ -1,11 +1,12 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.math.RoundingMode.HALF_UP;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
+
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
 
 class VerbruikKostenOverzichten {
 
@@ -33,7 +34,7 @@ class VerbruikKostenOverzichten {
         final BigDecimal sum = verbruikKostenOverzichten.stream()
                                                         .map(attributeToAverageGetter)
                                                         .filter(Objects::nonNull)
-                                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                                                        .reduce(ZERO, BigDecimal::add);
 
         return sum.divide(new BigDecimal(verbruikKostenOverzichten.size()), HALF_UP).setScale(scale, HALF_UP);
     }

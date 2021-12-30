@@ -1,6 +1,6 @@
 package nl.homeserver.energie.slimmemeter;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.config.Paths;
 import nl.homeserver.energie.StroomTariefIndicator;
@@ -17,7 +17,7 @@ import static java.math.RoundingMode.HALF_UP;
 @Slf4j
 @RestController
 @RequestMapping(Paths.API + "/slimmemeter")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class SlimmeMeterController {
 
     private final OpgenomenVermogenService opgenomenVermogenService;

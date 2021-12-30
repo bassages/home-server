@@ -1,6 +1,6 @@
 package nl.homeserver.klimaat;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
@@ -16,7 +16,7 @@ import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class KlimaatCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private final KlimaatController klimaatController;

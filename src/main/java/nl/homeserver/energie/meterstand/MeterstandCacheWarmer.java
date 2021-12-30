@@ -1,6 +1,6 @@
 package nl.homeserver.energie.meterstand;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
@@ -18,7 +18,7 @@ import static java.util.stream.LongStream.rangeClosed;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
     private static final Month[] MONTHS = Month.values();
 

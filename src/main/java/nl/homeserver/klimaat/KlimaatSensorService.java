@@ -1,18 +1,16 @@
 package nl.homeserver.klimaat;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class KlimaatSensorService {
 
     private final KlimaatSensorRepository klimaatSensorRepository;
-
-    KlimaatSensorService(final KlimaatSensorRepository klimaatSensorRepository) {
-        this.klimaatSensorRepository = klimaatSensorRepository;
-    }
 
     KlimaatSensor getOrCreateIfNonExists(final String klimaatSensorCode) {
         return klimaatSensorRepository.findFirstByCode(klimaatSensorCode)

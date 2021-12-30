@@ -1,6 +1,6 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
@@ -19,10 +19,10 @@ import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
-    private static final Month[] MONTHS = Month.values();
+    private static final Month[] ALL_MONTHS = Month.values();
 
     private final VerbruikKostenController verbruikKostenController;
     private final Clock clock;
@@ -44,7 +44,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
 
     private void warmupVerbruikPerDag(final LocalDate today) {
         log.info("Warmup of cache verbruikPerDag");
-        rangeClosed(0, MONTHS.length).boxed()
+        rangeClosed(0, ALL_MONTHS.length).boxed()
                                      .toList()
                                      .stream()
                                      .sorted(reverseOrder())

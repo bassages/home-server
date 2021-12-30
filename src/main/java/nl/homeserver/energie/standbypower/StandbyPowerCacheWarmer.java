@@ -1,6 +1,6 @@
 package nl.homeserver.energie.standbypower;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
 import nl.homeserver.cache.InitialCacheWarmer;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class StandbyPowerCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
     private final StandbyPowerController standbyPowerController;

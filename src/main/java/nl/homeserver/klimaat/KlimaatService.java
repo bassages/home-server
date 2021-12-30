@@ -16,7 +16,7 @@ public class KlimaatService {
     private final KlimaatRepos klimaatRepository;
     private final Clock clock;
 
-    void save(Klimaat klimaat) {
+    void save(final Klimaat klimaat) {
         klimaatRepository.save(klimaat);
     }
 

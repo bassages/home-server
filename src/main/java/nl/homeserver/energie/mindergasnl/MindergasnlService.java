@@ -1,6 +1,6 @@
 package nl.homeserver.energie.mindergasnl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,7 +24,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 @Slf4j
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MindergasnlService {
 
     private static final String METER_READING_UPLOAD_URL = "http://www.mindergas.nl/api/gas_meter_readings";
@@ -65,7 +65,7 @@ public class MindergasnlService {
                 () -> log.warn("Failed to upload to mindergas.nl because no meter reading could be found for date {}", yesterday));
     }
 
-    private void upload(MindergasnlSettings settings, LocalDate day, BigDecimal gasReading) {
+    private void upload(final MindergasnlSettings settings, final LocalDate day, final BigDecimal gasReading) {
         try (final CloseableHttpClient httpClient = httpClientBuilder.get().build()){
             final HttpPost request = createRequest(day, gasReading, settings.getAuthenticatietoken());
             final CloseableHttpResponse response = httpClient.execute(request);

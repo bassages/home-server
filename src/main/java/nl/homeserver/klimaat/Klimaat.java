@@ -56,10 +56,6 @@ class Klimaat {
 
     public void setDatumtijd(@Nullable final LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
-        if (datumtijd != null) {
-            this.datum = datumtijd.toLocalDate();
-        } else {
-            this.datum = null;
-        }
+        this.datum = datumtijd == null ? null : datumtijd.toLocalDate();
     }
 }

@@ -1,28 +1,23 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static java.time.LocalDate.now;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import lombok.RequiredArgsConstructor;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.config.Paths;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.config.Paths;
+import static java.time.LocalDate.now;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @RestController
 @RequestMapping(Paths.API + "/opgenomen-vermogen")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class OpgenomenVermogenController {
 
     private final OpgenomenVermogenService opgenomenVermogenService;

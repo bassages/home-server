@@ -1,12 +1,11 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
+import lombok.Getter;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 
-import lombok.Getter;
+import static java.math.RoundingMode.HALF_UP;
 
 class VerbruikKosten {
 
@@ -25,10 +24,7 @@ class VerbruikKosten {
     }
 
     BigDecimal getKosten() {
-        if (kosten == null) {
-            return null;
-        }
-        return kosten.setScale(KOSTEN_SCALE, HALF_UP);
+        return kosten == null ? null : kosten.setScale(KOSTEN_SCALE, HALF_UP);
     }
 
     public static VerbruikKosten empty() {
