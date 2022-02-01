@@ -1,20 +1,16 @@
 package nl.homeserver.energie.meterstand;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import nl.homeserver.energie.StroomTariefIndicator;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import lombok.Getter;
-import lombok.Setter;
-import nl.homeserver.energie.StroomTariefIndicator;
-
+@ToString
 @Entity
 public class Meterstand {
 

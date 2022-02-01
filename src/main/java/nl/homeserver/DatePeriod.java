@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -20,6 +22,10 @@ public final class DatePeriod {
     private static final Set<DayOfWeek> WEEKENDDAYS = EnumSet.of(SATURDAY, SUNDAY);
 
     private final DateTimePeriod dateTimePeriod;
+
+    public static DatePeriod of(final LocalDate day) {
+        return aPeriodWithToDate(day, day.plusDays(1));
+    }
 
     private DatePeriod(final DateTimePeriod dateTimePeriod) {
         this.dateTimePeriod = dateTimePeriod;
@@ -63,6 +69,10 @@ public final class DatePeriod {
         return getDays().stream()
                         .filter(date -> !WEEKENDDAYS.contains(date.getDayOfWeek()))
                         .count();
+    }
+
+    public Stream<Integer> streamYears() {
+        return IntStream.rangeClosed(getFromDate().getYear(), getToDate().getYear()).boxed();
     }
 
     @Override

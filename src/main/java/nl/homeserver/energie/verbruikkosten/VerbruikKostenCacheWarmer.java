@@ -1,32 +1,28 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.time.LocalDate.now;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
-import static java.util.Comparator.reverseOrder;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.LongStream.rangeClosed;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static org.slf4j.LoggerFactory.getLogger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.InitialCacheWarmer;
+import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.slf4j.Logger;
-import org.springframework.stereotype.Component;
+import static java.time.LocalDate.now;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+import static java.util.Comparator.reverseOrder;
+import static java.util.stream.LongStream.rangeClosed;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
-import lombok.AllArgsConstructor;
-import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
-
+@Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
 
-    private static final Logger LOGGER = getLogger(VerbruikKostenCacheWarmer.class);
-
-    private static final Month[] MONTHS = Month.values();
+    private static final Month[] ALL_MONTHS = Month.values();
 
     private final VerbruikKostenController verbruikKostenController;
     private final Clock clock;
@@ -41,15 +37,15 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     private void warmupVerbruikPerUurOpDag(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerUurOpDag");
+        log.info("Warmup of cache verbruikPerUurOpDag");
         aPeriodWithToDate(today.minusDays(14), today).getDays()
                                                      .forEach(verbruikKostenController::getVerbruikPerUurOpDag);
     }
 
     private void warmupVerbruikPerDag(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerDag");
-        rangeClosed(0, MONTHS.length).boxed()
-                                     .collect(toList())
+        log.info("Warmup of cache verbruikPerDag");
+        rangeClosed(0, ALL_MONTHS.length).boxed()
+                                     .toList()
                                      .stream()
                                      .sorted(reverseOrder())
                                      .forEach(monthsToSubtract -> verbruikKostenController.getVerbruikPerDag(today.minusMonths(monthsToSubtract).with(firstDayOfMonth()),
@@ -57,15 +53,16 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     private void warmupVerbruikPerMaandInJaar(final LocalDate today) {
-        LOGGER.info("Warmup of cache verbruikPerMaandInJaar");
-        rangeClosed(0, 1).boxed().collect(toList())
+        log.info("Warmup of cache verbruikPerMaandInJaar");
+        rangeClosed(0, 1).boxed()
+                         .toList()
                          .stream()
                          .sorted(reverseOrder())
                          .forEach(yearsToSubTract -> verbruikKostenController.getVerbruikPerMaandInJaar(today.minusYears(yearsToSubTract).getYear()));
     }
 
     private void warmupVerbruikPerJaar() {
-        LOGGER.info("Warmup of cache verbruikPerJaar");
+        log.info("Warmup of cache verbruikPerJaar");
         verbruikKostenController.getVerbruikPerJaar();
     }
 
@@ -74,13 +71,13 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
-        LOGGER.info("Warmup of cache verbruikPerUurOpDag");
+        log.info("Warmup of cache verbruikPerUurOpDag");
         verbruikKostenController.getVerbruikPerUurOpDag(yesterday);
 
-        LOGGER.info("Warmup of cache verbruikPerDag");
+        log.info("Warmup of cache verbruikPerDag");
         verbruikKostenController.getVerbruikPerDag(yesterday.with(firstDayOfMonth()), yesterday.with(lastDayOfMonth()));
 
-        LOGGER.info("Warmup of cache verbruikPerMaandInJaar");
+        log.info("Warmup of cache verbruikPerMaandInJaar");
         verbruikKostenController.getVerbruikPerMaandInJaar(yesterday.getYear());
 
         warmupVerbruikPerJaar();

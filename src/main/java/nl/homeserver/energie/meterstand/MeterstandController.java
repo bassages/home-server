@@ -1,10 +1,8 @@
 package nl.homeserver.energie.meterstand;
 
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-
-import java.time.LocalDate;
-import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.config.Paths;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,25 +10,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.config.Paths;
+import java.time.LocalDate;
+import java.util.List;
+
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @RestController
 @RequestMapping(Paths.API + "/meterstanden")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class MeterstandController {
 
     private final MeterstandService meterstandService;
 
     @GetMapping("meest-recente")
     public Meterstand getMostRecent() {
-        return meterstandService.getMostRecent();
+        return meterstandService.getMostRecent().orElse(null);
     }
 
     @GetMapping("oudste-vandaag")
     public Meterstand getOldestOfToday() {
-        return meterstandService.getOldestOfToday();
+        return meterstandService.findOldestOfToday().orElse(null);
     }
 
     @GetMapping("per-dag/{vanaf}/{tot}")

@@ -1,27 +1,25 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
-import static java.time.LocalDateTime.from;
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import lombok.RequiredArgsConstructor;
+import nl.homeserver.DatePeriod;
+import nl.homeserver.DateTimePeriod;
+import nl.homeserver.energie.StroomTariefIndicator;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.LongStream;
 
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.DatePeriod;
-import nl.homeserver.DateTimePeriod;
-import nl.homeserver.energie.StroomTariefIndicator;
+import static java.time.LocalDateTime.from;
+import static java.util.Comparator.comparingInt;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OpgenomenVermogenService {
 
     static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
@@ -60,7 +58,7 @@ public class OpgenomenVermogenService {
                          .boxed()
                          .map(periodNumber -> this.toSubPeriod(dateTimePeriod.getFromDateTime(), periodNumber, subPeriodDuration))
                          .map(subPeriod -> this.getMaxOpgenomenVermogenInPeriode(opgenomenVermogenInPeriod, subPeriod))
-                         .collect(toList());
+                         .toList();
     }
 
     private DateTimePeriod toSubPeriod(final LocalDateTime from, final long periodNumber, final Duration subPeriodDuration) {

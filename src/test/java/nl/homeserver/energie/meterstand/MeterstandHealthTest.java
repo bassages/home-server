@@ -10,6 +10,7 @@ import org.springframework.boot.actuate.health.Health;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static java.time.Month.FEBRUARY;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -30,7 +31,7 @@ class MeterstandHealthTest {
 
     @Test
     void givenNoMeterstandExistsWhenGetHealthThenHealthIsUnknown() {
-        when(meterstandService.getMostRecent()).thenReturn(null);
+        when(meterstandService.getMostRecent()).thenReturn(Optional.empty());
 
         final Health health = meterstandHealth.health();
 
@@ -44,7 +45,7 @@ class MeterstandHealthTest {
         timeTravelTo(clock, fixedLocalDateTime);
 
         final Meterstand meterstandThatIsFiveMinutesOld = MeterstandBuilder.aMeterstand().withDateTime(fixedLocalDateTime.minusMinutes(5)).build();
-        when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
+        when(meterstandService.getMostRecent()).thenReturn(Optional.of(meterstandThatIsFiveMinutesOld));
 
         final Health health = meterstandHealth.health();
 
@@ -58,7 +59,7 @@ class MeterstandHealthTest {
         timeTravelTo(clock, fixedLocalDateTime);
 
         final Meterstand meterstandThatIsFiveMinutesOld = MeterstandBuilder.aMeterstand().withDateTime(fixedLocalDateTime.minusMinutes(5).minusSeconds(1)).build();
-        when(meterstandService.getMostRecent()).thenReturn(meterstandThatIsFiveMinutesOld);
+        when(meterstandService.getMostRecent()).thenReturn(Optional.of(meterstandThatIsFiveMinutesOld));
 
         final Health health = meterstandHealth.health();
 

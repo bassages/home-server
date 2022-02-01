@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.CaptureLogging;
 import nl.homeserver.DatePeriod;
+import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandOpDag;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import org.apache.http.Header;
@@ -40,11 +41,10 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MindergasnlServiceTest {
+class MindergasnlServiceTest {
 
     @InjectMocks
     MindergasnlService mindergasnlService;
@@ -86,7 +86,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void givenSettingsExistsWhenSaveThenDelegatedToRepository() {
+    void givenSettingsExistsWhenSaveThenDelegatedToRepository() {
         // given
         final MindergasnlSettings existingMindergasnlSettings = new MindergasnlSettings();
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(existingMindergasnlSettings));
@@ -138,18 +138,17 @@ public class MindergasnlServiceTest {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
+        final LocalDate yesterday = currentDateTime.minusDays(1).toLocalDate();
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
 
-        final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
-                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
-
-        final DatePeriod expectedPeriod = aPeriodWithToDate(
-                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        final Meterstand yesterDaysMostRecentMeterstand = aMeterstand()
+                .withGas(new BigDecimal("12412.812"))
+                .build();
+        when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
+                .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
         when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
@@ -195,19 +194,19 @@ public class MindergasnlServiceTest {
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
+        final LocalDate yesterday = currentDateTime.minusDays(1).toLocalDate();
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
 
-        final DatePeriod expectedPeriod = aPeriodWithToDate(
-                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(emptyList());
+        when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
+                .thenReturn(Optional.empty());
 
         // when
         mindergasnlService.uploadMeterstand(mindergasnlSettings);
 
         // then
-        verify(meterstandService).getPerDag(eq(expectedPeriod));
+        verify(meterstandService).getMeesteRecenteMeterstandOpDag(yesterday);
         verifyNoMoreInteractions(httpClientBuilder);
 
         final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
@@ -218,29 +217,28 @@ public class MindergasnlServiceTest {
 
     @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged(
+    void givenMinderGasNlRespondsWithOtherThanStatus201WhenUploadMeterstandThenErrorLogged(
             final ArgumentCaptor<LoggingEvent> loggerEventCaptor) throws Exception {
 
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
+        final LocalDate yesterday = currentDateTime.minusDays(1).toLocalDate();
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
 
-        final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
-                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
-
-        final DatePeriod expectedPeriod = aPeriodWithToDate(currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        final Meterstand yesterDaysMostRecentMeterstand = aMeterstand()
+                .withGas(new BigDecimal("12412.812"))
+                .build();
+        when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
+                .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
         when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
         when(closeableHttpClient.execute(any())).thenReturn(closeableHttpResponse);
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
-
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
         // when
@@ -256,24 +254,23 @@ public class MindergasnlServiceTest {
 
     @CaptureLogging(MindergasnlService.class)
     @Test
-    public void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
+    void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
             final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
 
         // given
         final LocalDateTime currentDateTime = LocalDate.of(2018, JANUARY, 2).atTime(17, 9);
         timeTravelTo(clock, currentDateTime);
+        final LocalDate yesterday = currentDateTime.minusDays(1).toLocalDate();
 
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
         mindergasnlSettings.setAuthenticatietoken("LetMeIn");
 
-        final BigDecimal yesterdaysGas = new BigDecimal("12412.812");
-        final MeterstandOpDag yesterDaysMeterstand = new MeterstandOpDag(
-                currentDateTime.minusDays(1).toLocalDate(), aMeterstand().withGas(yesterdaysGas).build());
-
-        final DatePeriod expectedPeriod = aPeriodWithToDate(
-                currentDateTime.minusDays(1).toLocalDate(), currentDateTime.toLocalDate());
-        when(meterstandService.getPerDag(eq(expectedPeriod))).thenReturn(List.of(yesterDaysMeterstand));
+        final Meterstand yesterDaysMostRecentMeterstand = aMeterstand()
+                .withGas(new BigDecimal("12412.812"))
+                .build();
+        when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
+                .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
         final RuntimeException runtimeException = new RuntimeException("FUBAR");
         when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
@@ -288,7 +285,7 @@ public class MindergasnlServiceTest {
     }
 
     @Test
-    public void whenFindOneThenRetievedFromRepository() {
+    void whenFindOneThenRetievedFromRepository() {
         // given
         final Optional<MindergasnlSettings> mindergasnlSettings = Optional.of(mock(MindergasnlSettings.class));
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(mindergasnlSettings);

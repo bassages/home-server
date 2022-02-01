@@ -15,7 +15,6 @@ import java.util.List;
 
 import static java.time.Month.JANUARY;
 import static java.util.Collections.emptyList;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.energie.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -35,8 +34,9 @@ class OpgenomenVermogenServiceTest {
 
     @Test
     void givenOneDayPeriodWhenGetHistoryPerHalfDayThenMaxOpgenomenVermogensPerHalfDayReturned() {
+        // given
         final LocalDate day = LocalDate.of(2018, JANUARY, 6);
-        final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
+        final DatePeriod period = DatePeriod.of(day);
 
         final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(0, 0)).withWatt(100).build();
         final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(2, 0)).withWatt(401).build();
@@ -50,8 +50,10 @@ class OpgenomenVermogenServiceTest {
                                         .thenReturn(List.of(opgenomenVermogenInFirstHalfOfDay1, opgenomenVermogenInFirstHalfOfDay2, opgenomenVermogenInFirstHalfOfDay3,
                                                            opgenomenVermogenInSecondHalfOfDay1, opgenomenVermogenInSecondHalfOfDay2, opgenomenVermogenInSecondHalfOfDay3));
 
+        // when
         final List<OpgenomenVermogen> history = opgenomenVermogenService.getHistory(period, Duration.ofHours(12));
 
+        // then
         assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
                            .containsExactly(tuple(day.atTime(0, 0), 401),
                                             tuple(day.atTime(12, 0), 601),
@@ -60,34 +62,44 @@ class OpgenomenVermogenServiceTest {
 
     @Test
     void whenGetMostRecentThenDelegatedToRepository() {
+        // given
         final OpgenomenVermogen mostRecent = mock(OpgenomenVermogen.class);
-
         when(opgenomenVermogenRepository.getMostRecent()).thenReturn(mostRecent);
 
-        assertThat(opgenomenVermogenService.getMostRecent()).isSameAs(mostRecent);
+        // when
+        final OpgenomenVermogen result = opgenomenVermogenService.getMostRecent();
+
+        // then
+        assertThat(result).isSameAs(mostRecent);
     }
 
     @Test
     void whenSaveThenSavedInRepositoryAndMessageSendToTopic() {
+        // given
         final OpgenomenVermogen opgenomenVermogen = mock(OpgenomenVermogen.class);
-
         when(opgenomenVermogenRepository.save(any(OpgenomenVermogen.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
+
+        // when
         opgenomenVermogenService.save(opgenomenVermogen);
 
+        // then
         verify(messagingTemplate).convertAndSend(OpgenomenVermogenService.TOPIC, opgenomenVermogen);
     }
 
     @Test
     void whenGetPotentiallyCachedHistoryThenReturned() {
+        // given
         final LocalDate day = LocalDate.of(2018, JANUARY, 6);
-        final DatePeriod period = aPeriodWithToDate(day, day.plusDays(1));
+        final DatePeriod period = DatePeriod.of(day);
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(),
                                                               period.getToDate().atStartOfDay()))
                                         .thenReturn(emptyList());
 
+        // when
         final List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
 
+        // then
         assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
                 .containsExactly(tuple(day.atTime(0, 0), 0),
                                  tuple(day.atTime(4, 0), 0),

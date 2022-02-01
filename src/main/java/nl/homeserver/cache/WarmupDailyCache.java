@@ -1,20 +1,16 @@
 package nl.homeserver.cache;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.util.List;
-
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import nl.homeserver.housekeeping.HousekeepingSchedule;
+import java.util.List;
 
+@Slf4j
 @Component
 class WarmupDailyCache {
-
-    private static final Logger LOGGER = getLogger(WarmupDailyCache.class);
 
     private final List<DailyCacheWarmer> dailyCacheWarmers;
 
@@ -28,9 +24,9 @@ class WarmupDailyCache {
     @Scheduled(cron = HousekeepingSchedule.WARMUP_CACHE)
     public void considerDailyWarmup() {
         if (warmupCacheDaily) {
-            LOGGER.info("Warmup cache start");
+            log.info("Warmup cache start");
             dailyCacheWarmers.forEach(DailyCacheWarmer::warmupDailyCache);
-            LOGGER.info("Warmup cache completed");
+            log.info("Warmup cache completed");
         }
     }
 }

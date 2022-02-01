@@ -1,13 +1,13 @@
 package nl.homeserver.energie.mindergasnl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 // If a Service/Component annotation is not present, the scheduling does not work.
 // Strangely enough the integrationtest is actually passing without this annotation?!?.
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 class ScheduledUploader {
     private final MindergasnlService mindergasnlService;
 

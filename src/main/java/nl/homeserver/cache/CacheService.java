@@ -2,15 +2,14 @@ package nl.homeserver.cache;
 
 import static java.lang.String.format;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CacheService {
 
     private final CacheManager cacheManager;

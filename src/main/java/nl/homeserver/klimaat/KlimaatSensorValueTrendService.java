@@ -1,13 +1,7 @@
 package nl.homeserver.klimaat;
 
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
-import static nl.homeserver.klimaat.Trend.DOWN;
-import static nl.homeserver.klimaat.Trend.STABLE;
-import static nl.homeserver.klimaat.Trend.UNKNOWN;
-import static nl.homeserver.klimaat.Trend.UP;
-import static org.apache.commons.collections4.CollectionUtils.size;
+import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -15,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.springframework.stereotype.Service;
+import static java.util.Objects.nonNull;
+import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
+import static nl.homeserver.klimaat.Trend.*;
+import static org.apache.commons.collections4.CollectionUtils.size;
 
 @Service
 class KlimaatSensorValueTrendService {
@@ -45,7 +41,7 @@ class KlimaatSensorValueTrendService {
     private List<Klimaat> getValidKlimaats(final List<Klimaat> klimaats, final Function<Klimaat, BigDecimal> sensorValueGetter) {
         return klimaats.stream()
                        .filter(klimaat -> nonNull(sensorValueGetter.apply(klimaat)))
-                       .collect(toList());
+                       .toList();
     }
 
     private BigDecimal calculateSlopeOfSensorValue(final List<Klimaat> klimaats, final Function<Klimaat, BigDecimal> sensorValueGetter) {

@@ -1,7 +1,11 @@
 package nl.homeserver.energie.standbypower;
 
-import static java.util.Collections.reverseOrder;
-import static java.util.stream.Collectors.toList;
+import lombok.RequiredArgsConstructor;
+import nl.homeserver.config.Paths;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Clock;
 import java.time.YearMonth;
@@ -9,17 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
-import nl.homeserver.config.Paths;
+import static java.util.Collections.reverseOrder;
 
 @RestController
 @RequestMapping(Paths.API + "/standby-power")
-@AllArgsConstructor
+@RequiredArgsConstructor
 class StandbyPowerController {
 
     private final StandbyPowerService standbyPowerService;
@@ -35,6 +33,6 @@ class StandbyPowerController {
                         .map(standbyPowerService::getStandbyPower)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .collect(toList());
+                        .toList();
     }
 }

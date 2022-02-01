@@ -1,10 +1,8 @@
 package nl.homeserver.user;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
-@Getter
-@Setter
+@Value
 public class UserDto {
-    private String name;
+    String name;
 }

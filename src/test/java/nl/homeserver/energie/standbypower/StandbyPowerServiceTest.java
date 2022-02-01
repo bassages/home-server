@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
@@ -68,22 +69,24 @@ class StandbyPowerServiceTest {
         when(opgenomenVermogenRepository.numberOfRecordsInRange(from, to, 8, 12))
                 .thenReturn(List.of(numberOfRecordsPerWatt1, numberOfRecordsPerWatt2));
 
-        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, aPeriodWithToDateTime(from, to)))
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(from, to), actuallyRegisteredVerbruikProvider))
                                            .thenReturn(actualVko);
-        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(any(VerbruikForVirtualUsageProvider.class), eq(aPeriodWithToDateTime(from, to))))
+        when(verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(eq(aPeriodWithToDateTime(from, to)), any(VerbruikForVirtualUsageProvider.class)))
                                            .thenReturn(standByPowerVko);
 
         when(standByPowerVko.getTotaalStroomKosten()).thenReturn(BigDecimal.valueOf(50));
         when(actualVko.getTotaalStroomKosten()).thenReturn(BigDecimal.valueOf(200));
 
-        final StandbyPowerInPeriod standbyPower = standbyPowerService.getStandbyPower(month).get();
+        final Optional<StandbyPowerInPeriod> optionalStandbyPower = standbyPowerService.getStandbyPower(month);
 
-        assertThat(standbyPower.getFromDate()).isEqualTo(from.toLocalDate());
-        assertThat(standbyPower.getToDate()).isEqualTo(to.toLocalDate());
-        assertThat(standbyPower.getPercentageOfTotalPeriod()).isEqualTo(new BigDecimal("30.00"));
-        assertThat(standbyPower.getStandbyPower()).isEqualTo(10);
-        assertThat(standbyPower.getTotalCostsOfPower()).isEqualTo(new BigDecimal("200"));
-        assertThat(standbyPower.getCostsOfStandByPower()).isEqualTo(new BigDecimal("50"));
-        assertThat(standbyPower.getPercentageOfTotalCost()).isEqualTo(new BigDecimal("25"));
+        assertThat(optionalStandbyPower).hasValueSatisfying(standbyPower-> {
+            assertThat(standbyPower.getFromDate()).isEqualTo(from.toLocalDate());
+            assertThat(standbyPower.getToDate()).isEqualTo(to.toLocalDate());
+            assertThat(standbyPower.getPercentageOfTotalPeriod()).isEqualTo(new BigDecimal("30.00"));
+            assertThat(standbyPower.getStandbyPower()).isEqualTo(10);
+            assertThat(standbyPower.getTotalCostsOfPower()).isEqualTo(new BigDecimal("200"));
+            assertThat(standbyPower.getCostsOfStandByPower()).isEqualTo(new BigDecimal("50"));
+            assertThat(standbyPower.getPercentageOfTotalCost()).isEqualTo(new BigDecimal("25"));
+        });
     }
 }

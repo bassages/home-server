@@ -1,30 +1,25 @@
 package nl.homeserver.energie.verbruikkosten;
 
-import static java.time.Month.JANUARY;
-import static java.util.Collections.emptyList;
-import static java.util.EnumSet.allOf;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import nl.homeserver.DatePeriod;
 import nl.homeserver.DateTimePeriod;
 import nl.homeserver.energie.meterstand.Meterstand;
 import nl.homeserver.energie.meterstand.MeterstandService;
+import org.springframework.stereotype.Service;
+
+import java.time.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
+
+import static java.util.EnumSet.allOf;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 class VerbruikService {
 
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
@@ -34,35 +29,39 @@ class VerbruikService {
     List<VerbruikInUurOpDag> getVerbruikPerUurOpDag(final LocalDate day) {
         return IntStream.range(0, 24)
                         .mapToObj(hourOfDay -> getVerbruikInUur(day, hourOfDay))
-                        .collect(toList());
+                        .toList();
     }
 
     List<VerbruikInMaandInJaar> getVerbruikPerMaandInJaar(final Year year) {
         return allOf(Month.class).stream()
                                  .map(monthInYear -> getVerbruikInMaand(YearMonth.of(year.getValue(), monthInYear)))
-                                 .collect(toList());
+                                 .toList();
     }
 
     List<VerbruikKostenOpDag> getVerbruikPerDag(final DatePeriod period) {
         return period.getDays().stream()
                                .map(this::getVerbruikOpDag)
-                               .collect(toList());
+                               .toList();
     }
 
     List<VerbruikInJaar> getVerbruikPerJaar() {
-        final Meterstand oldest = meterstandService.getOldest();
-        final Meterstand mostRecent = meterstandService.getMostRecent();
+        return getPeriodForWhichDataIsAvailable()
+                .stream()
+                .flatMap(DatePeriod::streamYears)
+                .map(year -> getVerbruikInJaar(Year.of(year)))
+                .toList();
+    }
 
-        if (oldest == null) {
-            return emptyList();
-        }
+    private Optional<DatePeriod> getPeriodForWhichDataIsAvailable() {
+        final Optional<Meterstand> optionalOldest = meterstandService.getOldest();
 
-        final int from = oldest.getDateTime().getYear();
-        final int to = mostRecent.getDateTime().plusYears(1).getYear();
-
-        return IntStream.range(from, to)
-                        .mapToObj(year -> getVerbruikInJaar(Year.of(year)))
-                        .collect(toList());
+        return optionalOldest.map(oldest -> {
+            final Optional<Meterstand> optionalMostRecent = meterstandService.getMostRecent();
+            final LocalDate from = oldest.getDateTime().toLocalDate();
+            final LocalDate to = optionalMostRecent.map(
+                    mostRecent -> mostRecent.getDateTime().toLocalDate()).orElse(from);
+            return aPeriodWithToDate(from, to);
+        });
     }
 
     VerbruikKostenOverzicht getGemiddeldeVerbruikEnKostenInPeriode(final DatePeriod period) {
@@ -73,30 +72,32 @@ class VerbruikService {
     }
 
     private VerbruikInJaar getVerbruikInJaar(final Year year) {
-        final LocalDateTime from = LocalDate.of(year.getValue(), JANUARY, 1).atStartOfDay();
-        final LocalDateTime to = from.plusYears(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInJaar(year.getValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        final DateTimePeriod period = DateTimePeriod.of(year);
+        final VerbruikKostenOverzicht verbruikEnKostenOverzicht = verbruikKostenOverzichtService
+                .getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider);
+        return new VerbruikInJaar(year.getValue(), verbruikEnKostenOverzicht);
     }
 
     private VerbruikInUurOpDag getVerbruikInUur(final LocalDate day, final int hour) {
         final LocalDateTime from = day.atStartOfDay().plusHours(hour);
         final LocalDateTime to = from.plusHours(1);
         final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInUurOpDag(hour, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        final VerbruikKostenOverzicht verbruikEnKostenOverzicht = verbruikKostenOverzichtService
+                .getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider);
+        return new VerbruikInUurOpDag(hour, verbruikEnKostenOverzicht);
     }
 
     private VerbruikInMaandInJaar getVerbruikInMaand(final YearMonth yearMonth) {
-        final LocalDateTime from = yearMonth.atDay(1).atStartOfDay();
-        final LocalDateTime to = from.plusMonths(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        final DateTimePeriod period = DateTimePeriod.of(yearMonth);
+        final VerbruikKostenOverzicht verbruikEnKostenOverzicht = verbruikKostenOverzichtService
+                .getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider);
+        return new VerbruikInMaandInJaar(yearMonth.getMonthValue(), verbruikEnKostenOverzicht);
     }
 
     private VerbruikKostenOpDag getVerbruikOpDag(final LocalDate day) {
-        final LocalDateTime from = day.atStartOfDay();
-        final LocalDateTime to = day.atStartOfDay().plusDays(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
-        return new VerbruikKostenOpDag(day, verbruikKostenOverzichtService.getVerbruikEnKostenOverzicht(actuallyRegisteredVerbruikProvider, period));
+        final DateTimePeriod period = DateTimePeriod.of(day);
+        final VerbruikKostenOverzicht verbruikEnKostenOverzicht = verbruikKostenOverzichtService
+                .getVerbruikEnKostenOverzicht(period, actuallyRegisteredVerbruikProvider);
+        return new VerbruikKostenOpDag(day, verbruikEnKostenOverzicht);
     }
 }

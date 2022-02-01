@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-class EnergycontractDto {
+class EnergyContractDto {
 
     private Long id;
     private LocalDate validFrom;

@@ -1,5 +1,7 @@
 package nl.homeserver.energie.meterstand;
 
+import nl.homeserver.energie.StroomTariefIndicator;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -11,6 +13,7 @@ public class MeterstandBuilder {
     private BigDecimal stroomTarief1 = new BigDecimal("0.000");
     private BigDecimal stroomTarief2 = new BigDecimal("0.000");
     private BigDecimal gas = new BigDecimal("0.000");
+    private StroomTariefIndicator stroomTariefIndicator = StroomTariefIndicator.ONBEKEND;
 
     private MeterstandBuilder() {
         // Hide public constructor
@@ -45,8 +48,14 @@ public class MeterstandBuilder {
         return this;
     }
 
+    public MeterstandBuilder withStroomTariefindicator(final StroomTariefIndicator stroomTariefIndicator) {
+        this.stroomTariefIndicator = stroomTariefIndicator;
+        return this;
+    }
+
     public Meterstand build() {
         final Meterstand meterstand = new Meterstand();
+        meterstand.setStroomTariefIndicator(stroomTariefIndicator);
         meterstand.setDateTime(datumtijd);
         meterstand.setId(id);
         meterstand.setStroomTarief1(stroomTarief1);

@@ -1,14 +1,15 @@
 package nl.homeserver.klimaat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.time.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,12 +20,11 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class IncomingKlimaatService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IncomingKlimaatService.class);
-
     static final String REALTIME_KLIMAAT_TOPIC = "/topic/klimaat";
 
     private static final int NR_OF_MINUTES_TO_DETERMINE_TREND_FOR = 18;
@@ -43,18 +43,6 @@ public class IncomingKlimaatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final KlimaatService klimaatService;
     private final Clock clock;
-
-    IncomingKlimaatService(final KlimaatService klimaatService,
-                           final KlimaatSensorValueTrendService klimaatSensorValueTrendService,
-                           final KlimaatSensorService klimaatSensorService,
-                           final SimpMessagingTemplate messagingTemplate,
-                           final Clock clock) {
-        this.klimaatSensorValueTrendService = klimaatSensorValueTrendService;
-        this.klimaatSensorService = klimaatSensorService;
-        this.messagingTemplate = messagingTemplate;
-        this.klimaatService = klimaatService;
-        this.clock = clock;
-    }
 
     @Scheduled(cron = EVERY_X_MINUTES_PAST_THE_HOUR)
     void save() {
@@ -105,7 +93,7 @@ public class IncomingKlimaatService {
         return recentlyAddedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>())
                                                         .stream()
                                                         .filter(klimaat -> klimaat.getDatumtijd().isAfter(from))
-                                                        .collect(toList());
+                                                        .toList();
     }
 
     @Nullable
@@ -135,23 +123,23 @@ public class IncomingKlimaatService {
                                             .max()
                                             .getAsInt();
         final LocalDateTime cleanUpAllBefore = now(clock).minusMinutes(maxNrOfMinutes);
-        LOGGER.info("cleanUpRecentlyAddedKlimaats before {}", cleanUpAllBefore);
+        log.info("cleanUpRecentlyAddedKlimaats before {}", cleanUpAllBefore);
         recentlyAddedKlimaatsPerKlimaatSensorCode.values()
                 .forEach(klimaats -> klimaats.removeIf(klimaat -> klimaat.getDatumtijd().isBefore(cleanUpAllBefore)));
     }
 
     private List<BigDecimal> getValidHumidities(final List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                          .filter(klimaat -> isValidKlimaatValue(klimaat.getLuchtvochtigheid()))
                           .map(Klimaat::getLuchtvochtigheid)
-                          .collect(toList());
+                          .filter(this::isValidKlimaatValue)
+                          .toList();
     }
 
     private List<BigDecimal> getValidTemperatures(final List<Klimaat> klimaatList) {
         return klimaatList.stream()
-                          .filter(klimaat -> isValidKlimaatValue(klimaat.getTemperatuur()))
                           .map(Klimaat::getTemperatuur)
-                          .collect(toList());
+                          .filter(this::isValidKlimaatValue)
+                          .toList();
     }
 
     private boolean isValidKlimaatValue(@Nullable final BigDecimal value) {

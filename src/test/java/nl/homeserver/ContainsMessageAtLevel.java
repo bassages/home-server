@@ -9,8 +9,8 @@ public class ContainsMessageAtLevel extends Condition<LoggingEvent> {
     private final Level expectedLevel;
     private final String expectedMessage;
 
-    public ContainsMessageAtLevel(String expectedMessage, final Level expectedLevel) {
-        super("Contains \"" + expectedMessage + "\" at level " + expectedLevel.toString());
+    public ContainsMessageAtLevel(final String expectedMessage, final Level expectedLevel) {
+        super("Contains \"" + expectedMessage + "\" at level " + expectedLevel);
         this.expectedMessage = expectedMessage;
         this.expectedLevel = expectedLevel;
     }

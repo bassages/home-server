@@ -117,7 +117,7 @@ class MeterstandHousekeepingTest {
 
         meterstandHousekeeping.start();
 
-        verify(meterstandRepository, times(2)).deleteInBatch(deletedMeterstandCaptor.capture());
+        verify(meterstandRepository, times(2)).deleteAllInBatch(deletedMeterstandCaptor.capture());
 
         assertThat(deletedMeterstandCaptor.getAllValues()).satisfiesExactly(
                 deletedMeterstandenHour12 -> assertThat(deletedMeterstandenHour12).containsExactly(meterstand2, meterstand3),
@@ -149,8 +149,8 @@ class MeterstandHousekeepingTest {
         meterstandHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-                .haveExactly(1, new ContainsMessageAtLevel("Keep first in hour 12: Meterstand[dateTime=2016-01-01T12:00,gas=0.000,id=1", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand[dateTime=2016-01-01T12:30,gas=0.000,id=3", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand[dateTime=2016-01-01T12:15,gas=0.000,id=2", DEBUG));
+                .haveExactly(1, new ContainsMessageAtLevel("Meterstand(id=1, dateTime=2016-01-01T12:00, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand(id=3, dateTime=2016-01-01T12:30, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand(id=2, dateTime=2016-01-01T12:15, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG));
     }
 }

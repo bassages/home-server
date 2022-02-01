@@ -30,13 +30,13 @@ public class EnergiecontractBuilder {
         return this;
     }
 
-    public Energycontract build() {
-        final Energycontract energycontract = new Energycontract();
-        energycontract.setGasPerKuub(gasPerKuub);
-        energycontract.setStroomPerKwhNormaalTarief(stroomPerKwhNormaalTarief);
-        energycontract.setStroomPerKwhDalTarief(stroomPerKwhDalTarief);
-        energycontract.setValidFrom(validFrom);
-        energycontract.setValidTo(validTo);
-        return energycontract;
+    public EnergyContract build() {
+        final EnergyContract energyContract = new EnergyContract();
+        energyContract.setGasPerKuub(gasPerKuub);
+        energyContract.setStroomPerKwhNormaalTarief(stroomPerKwhNormaalTarief);
+        energyContract.setStroomPerKwhDalTarief(stroomPerKwhDalTarief);
+        energyContract.setValidFrom(validFrom);
+        energyContract.setValidTo(validTo);
+        return energyContract;
     }
 }

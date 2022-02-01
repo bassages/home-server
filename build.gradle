@@ -1,16 +1,16 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.4.4'
+    id 'org.springframework.boot' version '2.6.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'com.github.ben-manes.versions' version '0.41.0'
     id 'jacoco'
-    id "org.sonarqube" version '3.1.1'
+    id "org.sonarqube" version '3.3'
 }
 
-def homeFrontendVersion = '1.4.0'
+def homeFrontendVersion = '1.5.0'
 
 jacoco {
-    toolVersion = '0.8.6'
+    toolVersion = '0.8.7'
 }
 
 jacocoTestReport {
@@ -40,12 +40,12 @@ sonarqube {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 java {
     toolchain{
-        languageVersion = JavaLanguageVersion.of(15)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -67,12 +67,13 @@ if (System.getenv("GITHUB_TAG") != null) {
 }
 
 jar {
+    //noinspection GroovyAssignabilityCheck
     archiveBaseName = 'home-server'
 }
 
 dependencies {
-    annotationProcessor('org.projectlombok:lombok:1.18.18')
-    compileOnly('org.projectlombok:lombok:1.18.18')
+    annotationProcessor('org.projectlombok:lombok:1.18.22')
+    compileOnly('org.projectlombok:lombok:1.18.22')
 
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-cache')
@@ -86,7 +87,7 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
     implementation('net.sf.ehcache:ehcache')
-    implementation('commons-io:commons-io:2.8.0')
+    implementation('commons-io:commons-io:2.11.0')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.12.0')
     implementation('org.apache.httpcomponents:httpclient:4.5.13')
@@ -97,14 +98,13 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('org.assertj:assertj-core:3.19.0')
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.5.5')
-    testImplementation('org.awaitility:awaitility:4.0.3')
+    testImplementation('org.assertj:assertj-core:3.22.0')
+    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.9')
+    testImplementation('org.awaitility:awaitility:4.1.1')
 
     runtimeOnly('org.flywaydb:flyway-core')
     runtimeOnly('com.h2database:h2')
     runtimeOnly('org.hibernate:hibernate-java8')
-    runtimeOnly('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 }
 
 // Spring Boot Actuator’s info endpoint automatically publishes information about your build

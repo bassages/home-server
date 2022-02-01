@@ -1,16 +1,15 @@
 package nl.homeserver.energie.opgenomenvermogen;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import javax.annotation.Nullable;
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVermogen, Long> {
@@ -25,7 +24,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
 
     @Nullable
     @Query(value = """
-        SELECT ov 
+        SELECT ov
           FROM OpgenomenVermogen ov
          WHERE ov.datumtijd = (
                 SELECT MAX(mostrecent.datumtijd) FROM OpgenomenVermogen mostrecent
@@ -41,6 +40,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
             )""")
     OpgenomenVermogen getOldest();
 
+    @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Query(value = """
        SELECT date FROM (
          SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
@@ -56,6 +56,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
                                                           @Param("toDate") LocalDate toDate,
                                                           @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
+    @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Nullable
     @Query(value = """
         SELECT watt
@@ -73,6 +74,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
            AND datumtijd < :toDate""")
     long countNumberOfRecordsInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
+    @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Query(value = """
         SELECT watt, COUNT(id) AS numberOfRecords
           FROM opgenomen_vermogen

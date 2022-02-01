@@ -12,39 +12,39 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class EnergycontractTest {
+class EnergyContractTest {
 
     @Test
     void givenStroomPerKwhNormaalTariefSetWhenGetStroomKostenNormaalThenReturned() {
-        final Energycontract energycontract = new Energycontract();
+        final EnergyContract energyContract = new EnergyContract();
         final BigDecimal normaalTarief = new BigDecimal("20.121231");
-        energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
+        energyContract.setStroomPerKwhNormaalTarief(normaalTarief);
 
-        assertThat(energycontract.getStroomKosten(NORMAAL)).isSameAs(normaalTarief);
+        assertThat(energyContract.getStroomKosten(NORMAAL)).isSameAs(normaalTarief);
     }
 
     @Test
     void givenStroomPerKwhDalTariefSetWhenGetStroomKostenDalThenReturned() {
-        final Energycontract energycontract = new Energycontract();
+        final EnergyContract energyContract = new EnergyContract();
         final BigDecimal dalTarief = new BigDecimal("785.7453");
-        energycontract.setStroomPerKwhDalTarief(dalTarief);
+        energyContract.setStroomPerKwhDalTarief(dalTarief);
 
-        assertThat(energycontract.getStroomKosten(DAL)).isSameAs(dalTarief);
+        assertThat(energyContract.getStroomKosten(DAL)).isSameAs(dalTarief);
     }
 
     @Test
     void givenStroomPerKwhDalTariefNullWhenGetStroomKostenDalThenNormaalReturned() {
-        final Energycontract energycontract = new Energycontract();
+        final EnergyContract energyContract = new EnergyContract();
         final BigDecimal normaalTarief = new BigDecimal("123.121231");
-        energycontract.setStroomPerKwhNormaalTarief(normaalTarief);
+        energyContract.setStroomPerKwhNormaalTarief(normaalTarief);
 
-        assertThat(energycontract.getStroomKosten(DAL)).isSameAs(normaalTarief);
+        assertThat(energyContract.getStroomKosten(DAL)).isSameAs(normaalTarief);
     }
 
     @Test
     void whenGetStroomHostenOnbekendThenZeroReturned() {
-        final Energycontract energycontract = new Energycontract();
+        final EnergyContract energyContract = new EnergyContract();
 
-        assertThat(energycontract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
+        assertThat(energyContract.getStroomKosten(ONBEKEND)).isSameAs(BigDecimal.ZERO);
     }
 }
