@@ -7,7 +7,7 @@ plugins {
     id "org.sonarqube" version '3.3'
 }
 
-def homeFrontendVersion = '1.7.0'
+def homeFrontendVersion = '1.7.1'
 
 jacoco {
     toolVersion = '0.8.8'
