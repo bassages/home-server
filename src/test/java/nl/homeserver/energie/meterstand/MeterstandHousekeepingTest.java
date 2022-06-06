@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,10 +74,10 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(List.of(meterstand));
@@ -96,10 +96,10 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -133,10 +133,10 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -149,8 +149,8 @@ class MeterstandHousekeepingTest {
         meterstandHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-                .haveExactly(1, new ContainsMessageAtLevel("Meterstand(id=1, dateTime=2016-01-01T12:00, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand(id=3, dateTime=2016-01-01T12:30, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand(id=2, dateTime=2016-01-01T12:15, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG));
+                .haveExactly(1, new ContainsMessageAtLevel("Keep first in hour 12: Meterstand(id=1, dateTime=2016-01-01T12:00, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand(id=3, dateTime=2016-01-01T12:30, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand(id=2, dateTime=2016-01-01T12:15, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG));
     }
 }

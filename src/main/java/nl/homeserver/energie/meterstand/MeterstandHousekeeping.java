@@ -8,6 +8,7 @@ import nl.homeserver.housekeeping.HousekeepingSchedule;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +44,7 @@ class MeterstandHousekeeping {
         final LocalDate today = LocalDate.now(clock);
         return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                                    .stream()
-                                   .map(timestamp -> timestamp.toLocalDateTime().toLocalDate())
+                                   .map(Date::toLocalDate)
                                    .toList();
     }
 

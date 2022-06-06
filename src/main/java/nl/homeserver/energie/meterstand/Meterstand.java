@@ -6,8 +6,10 @@ import lombok.Setter;
 import lombok.ToString;
 import nl.homeserver.energie.StroomTariefIndicator;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @ToString
@@ -22,8 +24,11 @@ public class Meterstand {
 
     @Column(nullable = false)
     @Getter
-    @Setter
     private LocalDateTime dateTime;
+
+    @Column
+    @Getter
+    private LocalDate date;
 
     @Column(nullable = false, precision = 8, scale = 3)
     @Getter
@@ -49,5 +54,10 @@ public class Meterstand {
 
     public void setStroomTariefIndicator(final StroomTariefIndicator stroomTariefIndicator) {
         this.stroomTariefIndicator = stroomTariefIndicator.getId();
+    }
+
+    public void setDateTime(@Nullable final LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+        this.date = dateTime == null ? null : dateTime.toLocalDate();
     }
 }

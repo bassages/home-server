@@ -13,6 +13,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,7 @@ class EnergyContractServiceTest {
     void whenGetByIdThenDelegatedToRepository() {
         final long id = 132L;
         final EnergyContract energyContract = mock(EnergyContract.class);
-        when(energyContractRepository.getById(id)).thenReturn(energyContract);
+        when(energyContractRepository.findById(id)).thenReturn(Optional.of(energyContract));
 
         assertThat(energyContractService.getById(id)).isSameAs(energyContract);
     }

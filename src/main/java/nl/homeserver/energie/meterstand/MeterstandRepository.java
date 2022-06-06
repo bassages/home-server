@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,7 +62,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
 
     @Query(value = """
        SELECT date FROM (
-         SELECT PARSEDATETIME(FORMATDATETIME(date_time, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
+         SELECT date,
                 COUNT(id) AS nr_of_records
            FROM meterstand
           WHERE date_time >= :fromDate
@@ -71,7 +71,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
          HAVING nr_of_records > :maxNrOfRowsPerDay
        ORDER BY nr_of_records DESC
         )""", nativeQuery = true)
-    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
-                                                          @Param("toDate") LocalDate toDate,
-                                                          @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
+    List<Date> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+                                                     @Param("toDate") LocalDate toDate,
+                                                     @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 }

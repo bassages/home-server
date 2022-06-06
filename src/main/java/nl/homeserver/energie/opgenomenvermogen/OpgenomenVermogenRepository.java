@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,19 +42,19 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
 
     @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Query(value = """
-       SELECT date FROM (
-         SELECT PARSEDATETIME(FORMATDATETIME(datumtijd, 'dd-MM-yyyy'), 'dd-MM-yyyy') AS date,
+       SELECT datum FROM (
+         SELECT datum,
                 COUNT(id) AS nr_of_records
            FROM opgenomen_vermogen
           WHERE datumtijd >= :fromDate
             AND datumtijd < :toDate
-          GROUP BY date
+          GROUP BY datum
             HAVING nr_of_records > :maxNrOfRowsPerDay
           ORDER BY nr_of_records DESC
        )""", nativeQuery = true)
-    List<Timestamp> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
-                                                          @Param("toDate") LocalDate toDate,
-                                                          @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
+    List<Date> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+                                                     @Param("toDate") LocalDate toDate,
+                                                     @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 
     @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Nullable

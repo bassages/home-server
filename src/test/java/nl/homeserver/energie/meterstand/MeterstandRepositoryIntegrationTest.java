@@ -4,7 +4,7 @@ import nl.homeserver.RepositoryIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,16 +40,16 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 8)).build());
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 1)).build());
 
-        final List<Timestamp> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
+        final List<Date> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
-        assertThat(datesWithMoreThan2RowsBeforeToDate).satisfiesExactly(dateWithMoreThan2RowsBeforeToDate -> {
-            final LocalDate date = dateWithMoreThan2RowsBeforeToDate.toLocalDateTime().toLocalDate();
-            assertThat(date).isEqualTo(dayBeforeToDateWith3Records);
-        });
+        assertThat(datesWithMoreThan2RowsBeforeToDate)
+                .singleElement()
+                .extracting(Date::toLocalDate)
+                .isEqualTo(dayBeforeToDateWith3Records);
     }
 
     @Test
-    void givenMultipleMeterstanInPeriodWhenFindOldestInPeriodThenOldestIsReturned() {
+    void givenMultipleMeterstandInPeriodWhenFindOldestInPeriodThenOldestIsReturned() {
         // given
         final LocalDateTime fromDateTime = LocalDate.of(2017, JANUARY, 3).atTime(0, 0, 0);
 

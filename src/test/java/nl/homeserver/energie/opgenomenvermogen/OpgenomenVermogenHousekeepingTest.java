@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Timestamp;
+import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,10 +67,10 @@ class OpgenomenVermogenHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                        .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                        .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(1).build();
         final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(1).build();
@@ -92,10 +92,10 @@ class OpgenomenVermogenHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                        .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                        .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(3).build();
         final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(2).build();
@@ -118,10 +118,10 @@ class OpgenomenVermogenHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Timestamp dayToCleanupAsTimeStamp = mock(Timestamp.class);
-        when(dayToCleanupAsTimeStamp.toLocalDateTime()).thenReturn(dayToCleanup.atStartOfDay());
+        final Date dayToCleanupAsSqlDate = mock(Date.class);
+        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                        .thenReturn(List.of(dayToCleanupAsTimeStamp));
+                                        .thenReturn(List.of(dayToCleanupAsSqlDate));
 
         final OpgenomenVermogen deleted = aOpgenomenVermogen().withId(1L).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).build();
         final OpgenomenVermogen kept = aOpgenomenVermogen().withId(2L).withDatumTijd(dayToCleanup.atTime(0, 0, 1)).build();
@@ -132,7 +132,7 @@ class OpgenomenVermogenHousekeepingTest {
         opgenomenVermogenHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, watt=0, tariefIndicator=NORMAAL)", DEBUG))
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, watt=0, tariefIndicator=NORMAAL)", DEBUG));
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, datum=2016-01-01, watt=0, tariefIndicator=NORMAAL)", DEBUG))
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, datum=2016-01-01, watt=0, tariefIndicator=NORMAAL)", DEBUG));
     }
 }
