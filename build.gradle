@@ -98,7 +98,7 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('org.assertj:assertj-core:3.23.0')
+    testImplementation('org.assertj:assertj-core:3.23.1')
     testImplementation('nl.jqno.equalsverifier:equalsverifier:3.10')
     testImplementation('org.awaitility:awaitility:4.2.0')
 
