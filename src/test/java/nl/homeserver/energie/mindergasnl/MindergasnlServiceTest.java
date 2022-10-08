@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -41,6 +42,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MindergasnlServiceTest {
 
+    private static final String MINDERGAS_API_URL = "http://testurl.somewhere";
+
     @InjectMocks
     MindergasnlService mindergasnlService;
 
@@ -64,6 +67,11 @@ class MindergasnlServiceTest {
 
     @Captor
     ArgumentCaptor<HttpUriRequest> httpUriRequestCaptor;
+
+    @BeforeEach
+    void setup() {
+        mindergasnlService.mindergasNlApiUrl = MINDERGAS_API_URL;
+    }
 
     @Test
     void givenNoSettingsExistsWhenSaveThenSavedInToRepository() {
@@ -161,7 +169,7 @@ class MindergasnlServiceTest {
         final HttpPost httpPost = (HttpPost) httpUriRequestCaptor.getValue();
 
         assertThat(httpPost.getURI()).hasScheme("http");
-        assertThat(httpPost.getURI()).hasHost("www.mindergas.nl");
+        assertThat(httpPost.getURI()).hasHost("testurl.somewhere");
 
         assertThat(httpPost.getHeaders(MindergasnlService.HEADER_NAME_AUTH_TOKEN))
                 .extracting(Header::getValue)

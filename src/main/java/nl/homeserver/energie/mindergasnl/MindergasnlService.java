@@ -29,7 +29,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 public class MindergasnlService {
 
     @Value("${home-server.mindergas.api.url}")
-    private String mindergasNlApiUrl;
+    protected String mindergasNlApiUrl;
 
     static final String HEADER_NAME_CONTENT_TYPE = "content-type";
     static final String HEADER_NAME_AUTH_TOKEN = "AUTH-TOKEN";
