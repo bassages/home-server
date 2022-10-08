@@ -9,6 +9,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,8 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 @RequiredArgsConstructor
 public class MindergasnlService {
 
-    private static final String METER_READING_UPLOAD_URL = "http://www.mindergas.nl/api/gas_meter_readings";
+    @Value("${home-server.mindergas.api.url}")
+    private String mindergasNlApiUrl;
 
     static final String HEADER_NAME_CONTENT_TYPE = "content-type";
     static final String HEADER_NAME_AUTH_TOKEN = "AUTH-TOKEN";
@@ -37,12 +39,12 @@ public class MindergasnlService {
     private final Provider<HttpClientBuilder> httpClientBuilder;
     private final Clock clock;
 
-    public Optional<MindergasnlSettings> findOne() {
+    public Optional<MindergasnlSettings> findSettings() {
         return mindergasnlSettingsRepository.findOneByIdIsNotNull();
     }
 
     public MindergasnlSettings save(final MindergasnlSettings mindergasnlSettings) {
-        final Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = findOne();
+        final Optional<MindergasnlSettings> optionalExistingMindergasnlSettings = findSettings();
 
         if (optionalExistingMindergasnlSettings.isPresent()) {
             final MindergasnlSettings existingMindergasnlSettings = optionalExistingMindergasnlSettings.get();
@@ -54,7 +56,7 @@ public class MindergasnlService {
         }
     }
 
-    public void uploadMeterstand(final MindergasnlSettings settings) {
+    public void uploadMostRecentMeterstand(final MindergasnlSettings settings) {
         final LocalDate today = LocalDate.now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
@@ -78,7 +80,7 @@ public class MindergasnlService {
     private HttpPost createRequest(final LocalDate day,
                                    final BigDecimal gasReading,
                                    final String authenticationToken) throws UnsupportedEncodingException {
-        final HttpPost request = new HttpPost(METER_READING_UPLOAD_URL);
+        final HttpPost request = new HttpPost(mindergasNlApiUrl);
 
         final String message = """
             { "date": "%s", "reading": %s }

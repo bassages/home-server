@@ -14,7 +14,7 @@ class WarmupInitialCache implements ApplicationListener<ApplicationReadyEvent> {
 
     private final List<InitialCacheWarmer> initialCacheWarmers;
 
-    @Value("${cache.warmup.on-application-start}")
+    @Value("${home-server.cache.warmup.on-application-start}")
     private boolean warmupCacheOnApplicationStart;
 
     WarmupInitialCache(final List<InitialCacheWarmer> initialCacheWarmers) {

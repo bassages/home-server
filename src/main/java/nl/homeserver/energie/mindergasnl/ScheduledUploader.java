@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 class ScheduledUploader {
     private final MindergasnlService mindergasnlService;
 
-    @Scheduled(cron = "${mindergasnl.scheduleduploader.cron}")
+    @Scheduled(cron = "${home-server.mindergasnl.scheduleduploader.cron}")
     void uploadMeterstandWhenEnabled() {
-        mindergasnlService.findOne()
+        mindergasnlService.findSettings()
                           .filter(MindergasnlSettings::isAutomatischUploaden)
-                          .ifPresent(mindergasnlService::uploadMeterstand);
+                          .ifPresent(mindergasnlService::uploadMostRecentMeterstand);
     }
 }

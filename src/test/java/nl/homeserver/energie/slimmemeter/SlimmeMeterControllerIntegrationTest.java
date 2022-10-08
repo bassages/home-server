@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create",
-                                  "cache.warmup.on-application-start:false" })
+                                  "home-server.cache.warmup.on-application-start:false" })
 class SlimmeMeterControllerIntegrationTest {
 
     @Autowired

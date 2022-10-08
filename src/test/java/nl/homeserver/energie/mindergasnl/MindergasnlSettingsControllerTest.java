@@ -35,14 +35,14 @@ class MindergasnlSettingsControllerTest {
     void givenMindergasnlSettingsExistWhenGetThenRetrievedFromService() {
         final MindergasnlSettings mindergasnlSettings = mock(MindergasnlSettings.class);
 
-        when(mindergasnlService.findOne()).thenReturn(Optional.of(mindergasnlSettings));
+        when(mindergasnlService.findSettings()).thenReturn(Optional.of(mindergasnlSettings));
 
         assertThat(mindergasnlSettingsController.get()).isSameAs(mindergasnlSettings);
     }
 
     @Test
     void givenNoMindergasnlSettingsExistWhenGetThenNullReturned() {
-        when(mindergasnlService.findOne()).thenReturn(Optional.empty());
+        when(mindergasnlService.findSettings()).thenReturn(Optional.empty());
 
         assertThat(mindergasnlSettingsController.get()).isNull();
     }

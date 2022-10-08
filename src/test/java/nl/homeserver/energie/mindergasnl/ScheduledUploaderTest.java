@@ -22,13 +22,13 @@ class ScheduledUploaderTest {
     @Test
     void givenNoMindergasnlSettingsExistWhenUploadMeterstandWhenEnabledThenNotUploaded() {
         // given
-        when(mindergasnlService.findOne()).thenReturn(Optional.empty());
+        when(mindergasnlService.findSettings()).thenReturn(Optional.empty());
 
         // when
         scheduledUploader.uploadMeterstandWhenEnabled();
 
         // Then
-        verify(mindergasnlService, times(0)).uploadMeterstand(any());
+        verify(mindergasnlService, times(0)).uploadMostRecentMeterstand(any());
     }
 
     @Test
@@ -36,26 +36,26 @@ class ScheduledUploaderTest {
         // given
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(false);
-        when(mindergasnlService.findOne()).thenReturn(Optional.of(mindergasnlSettings));
+        when(mindergasnlService.findSettings()).thenReturn(Optional.of(mindergasnlSettings));
 
         // when
         scheduledUploader.uploadMeterstandWhenEnabled();
 
         // then
-        verify(mindergasnlService, times(0)).uploadMeterstand(any());
+        verify(mindergasnlService, times(0)).uploadMostRecentMeterstand(any());
     }
 
     @Test
-    void givenAutomaticUploadIsEnabledWhenUploadMeterstandWhenEnabledThenUploaded() throws Exception {
+    void givenAutomaticUploadIsEnabledWhenUploadMeterstandWhenEnabledThenUploaded() {
         // given
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
         mindergasnlSettings.setAutomatischUploaden(true);
-        when(mindergasnlService.findOne()).thenReturn(Optional.of(mindergasnlSettings));
+        when(mindergasnlService.findSettings()).thenReturn(Optional.of(mindergasnlSettings));
 
         // when
         scheduledUploader.uploadMeterstandWhenEnabled();
 
         // then
-        verify(mindergasnlService).uploadMeterstand(mindergasnlSettings);
+        verify(mindergasnlService).uploadMostRecentMeterstand(mindergasnlSettings);
     }
 }

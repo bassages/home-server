@@ -14,7 +14,7 @@ class WarmupDailyCache {
 
     private final List<DailyCacheWarmer> dailyCacheWarmers;
 
-    @Value("${cache.warmup.daily}")
+    @Value("${home-server.cache.warmup.daily}")
     private boolean warmupCacheDaily;
 
     WarmupDailyCache(final List<DailyCacheWarmer> dailyCacheWarmers) {

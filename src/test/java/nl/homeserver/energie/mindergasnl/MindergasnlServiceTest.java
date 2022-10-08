@@ -3,9 +3,7 @@ package nl.homeserver.energie.mindergasnl;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.CaptureLogging;
-import nl.homeserver.DatePeriod;
 import nl.homeserver.energie.meterstand.Meterstand;
-import nl.homeserver.energie.meterstand.MeterstandOpDag;
 import nl.homeserver.energie.meterstand.MeterstandService;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
@@ -29,12 +27,9 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static java.time.Month.JANUARY;
-import static java.util.Collections.emptyList;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.energie.meterstand.MeterstandBuilder.aMeterstand;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
@@ -115,7 +110,7 @@ class MindergasnlServiceTest {
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.of(mindergasnlSettings));
 
         // when
-        final Optional<MindergasnlSettings> actual = mindergasnlService.findOne();
+        final Optional<MindergasnlSettings> actual = mindergasnlService.findSettings();
 
         // then
         assertThat(actual).contains(mindergasnlSettings);
@@ -127,7 +122,7 @@ class MindergasnlServiceTest {
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(Optional.empty());
 
         // when
-        final Optional<MindergasnlSettings> actualMinderGasnlSettings = mindergasnlService.findOne();
+        final Optional<MindergasnlSettings> actualMinderGasnlSettings = mindergasnlService.findSettings();
 
         // then
         assertThat(actualMinderGasnlSettings).isEmpty();
@@ -157,7 +152,7 @@ class MindergasnlServiceTest {
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_CREATED);
 
         // when
-        mindergasnlService.uploadMeterstand(mindergasnlSettings);
+        mindergasnlService.uploadMostRecentMeterstand(mindergasnlSettings);
 
         // then
         verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
@@ -203,7 +198,7 @@ class MindergasnlServiceTest {
                 .thenReturn(Optional.empty());
 
         // when
-        mindergasnlService.uploadMeterstand(mindergasnlSettings);
+        mindergasnlService.uploadMostRecentMeterstand(mindergasnlSettings);
 
         // then
         verify(meterstandService).getMeesteRecenteMeterstandOpDag(yesterday);
@@ -242,7 +237,7 @@ class MindergasnlServiceTest {
         when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_FORBIDDEN);
 
         // when
-        mindergasnlService.uploadMeterstand(mindergasnlSettings);
+        mindergasnlService.uploadMostRecentMeterstand(mindergasnlSettings);
 
         // then
         verify(closeableHttpClient).execute(httpUriRequestCaptor.capture());
@@ -276,7 +271,7 @@ class MindergasnlServiceTest {
         when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
 
         // when
-        mindergasnlService.uploadMeterstand(mindergasnlSettings);
+        mindergasnlService.uploadMostRecentMeterstand(mindergasnlSettings);
 
         // then
         final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
@@ -291,7 +286,7 @@ class MindergasnlServiceTest {
         when(mindergasnlSettingsRepository.findOneByIdIsNotNull()).thenReturn(mindergasnlSettings);
 
         // when
-        final Optional<MindergasnlSettings> actualResult = mindergasnlService.findOne();
+        final Optional<MindergasnlSettings> actualResult = mindergasnlService.findSettings();
 
         // then
         assertThat(actualResult).isSameAs(mindergasnlSettings);

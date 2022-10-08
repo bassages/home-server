@@ -13,7 +13,7 @@ class MindergasnlSettingsController {
 
     @GetMapping
     public MindergasnlSettings get() {
-        return mindergasnlService.findOne().orElse(null);
+        return mindergasnlService.findSettings().orElse(null);
     }
 
     @PostMapping
