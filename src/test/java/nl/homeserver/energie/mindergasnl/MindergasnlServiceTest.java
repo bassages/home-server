@@ -22,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -51,8 +50,6 @@ class MindergasnlServiceTest {
     MindergasnlSettingsRepository mindergasnlSettingsRepository;
     @Mock
     MeterstandService meterstandService;
-    @Mock
-    Provider<HttpClientBuilder> httpClientBuilderProvider;
     @Mock
     HttpClientBuilder httpClientBuilder;
     @Mock
@@ -153,7 +150,6 @@ class MindergasnlServiceTest {
         when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
                 .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
-        when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
         when(closeableHttpClient.execute(any())).thenReturn(closeableHttpResponse);
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
@@ -238,7 +234,6 @@ class MindergasnlServiceTest {
         when(meterstandService.getMeesteRecenteMeterstandOpDag(yesterday))
                 .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
-        when(httpClientBuilderProvider.get()).thenReturn(httpClientBuilder);
         when(httpClientBuilder.build()).thenReturn(closeableHttpClient);
         when(closeableHttpClient.execute(any())).thenReturn(closeableHttpResponse);
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
@@ -257,7 +252,7 @@ class MindergasnlServiceTest {
 
     @CaptureLogging(MindergasnlService.class)
     @Test
-    void givenHttpClientBuilderProviderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
+    void givenHttpClientBuilderThrowsExceptionWhenUploadMeterstandThenErrorLogged(
             final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
 
         // given
@@ -276,7 +271,7 @@ class MindergasnlServiceTest {
                 .thenReturn(Optional.of(yesterDaysMostRecentMeterstand));
 
         final RuntimeException runtimeException = new RuntimeException("FUBAR");
-        when(httpClientBuilderProvider.get()).thenThrow(runtimeException);
+        when(httpClientBuilder.build()).thenThrow(runtimeException);
 
         // when
         mindergasnlService.uploadMostRecentMeterstand(mindergasnlSettings);
