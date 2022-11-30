@@ -181,8 +181,8 @@ class MeterstandServiceTest {
 
         // then
         assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
-            assertThat(meterstandOpDag.getDag()).isEqualTo(today);
-            assertThat(meterstandOpDag.getMeterstand()).isSameAs(mostRecentMeterstandOfToday);
+            assertThat(meterstandOpDag.dag()).isEqualTo(today);
+            assertThat(meterstandOpDag.meterstand()).isSameAs(mostRecentMeterstandOfToday);
         });
     }
 
@@ -203,8 +203,8 @@ class MeterstandServiceTest {
 
         // then
         assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
-            assertThat(meterstandOpDag.getDag()).isEqualTo(yesterday);
-            assertThat(meterstandOpDag.getMeterstand()).isSameAs(mostRecentMeterstandOfYesterday);
+            assertThat(meterstandOpDag.dag()).isEqualTo(yesterday);
+            assertThat(meterstandOpDag.meterstand()).isSameAs(mostRecentMeterstandOfYesterday);
         });
     }
 
@@ -221,8 +221,8 @@ class MeterstandServiceTest {
 
         // then
         assertThat(meterstandPerDag).satisfiesExactly(meterstandOpDag -> {
-            assertThat(meterstandOpDag.getDag()).isEqualTo(tomorrow);
-            assertThat(meterstandOpDag.getMeterstand()).isNull();
+            assertThat(meterstandOpDag.dag()).isEqualTo(tomorrow);
+            assertThat(meterstandOpDag.meterstand()).isNull();
         });
     }
 }

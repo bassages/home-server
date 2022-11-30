@@ -58,7 +58,9 @@ class MeterstandControllerTest {
         final LocalDate from = LocalDate.of(2017, JANUARY, 1);
         final LocalDate to = LocalDate.of(2018, FEBRUARY, 2);
 
-        final List<MeterstandOpDag> meterReadingsPerDay = List.of(mock(MeterstandOpDag.class), mock(MeterstandOpDag.class));
+        final List<MeterstandOpDag> meterReadingsPerDay = List.of(
+                new MeterstandOpDag(LocalDate.now(), mock(Meterstand.class)),
+                new MeterstandOpDag(LocalDate.now(), mock(Meterstand.class)));
         when(meterstandService.getPerDag(DatePeriod.aPeriodWithToDate(from, to))).thenReturn(meterReadingsPerDay);
 
         // when
