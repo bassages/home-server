@@ -41,7 +41,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests()
             .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-            .requestMatchers("/", "/index.html", "*.js", "*.css", "/assets/**", "/api/allowed/**").permitAll()
+            .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/assets/**", "/api/allowed/**").permitAll()
             .requestMatchers(Paths.LOGIN).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
