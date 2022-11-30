@@ -62,12 +62,12 @@ class VerbruikServiceTest {
         // then
         assertThat(verbruikPerDag).satisfiesExactly(
                 verbruikKostenDay1 -> {
-                    assertThat(verbruikKostenDay1.getDag()).isEqualTo(from);
-                    assertThat(verbruikKostenDay1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
+                    assertThat(verbruikKostenDay1.dag()).isEqualTo(from);
+                    assertThat(verbruikKostenDay1.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay1);
                 },
                 verbruikKostenDay2 -> {
-                    assertThat(verbruikKostenDay2.getDag()).isEqualTo(from.plusDays(1));
-                    assertThat(verbruikKostenDay2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
+                    assertThat(verbruikKostenDay2.dag()).isEqualTo(from.plusDays(1));
+                    assertThat(verbruikKostenDay2.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForDay2);
                 });
     }
 
@@ -95,12 +95,12 @@ class VerbruikServiceTest {
         assertThat(verbruikPerUurOpDag).hasSize(24);
 
         final VerbruikInUurOpDag verbruikKostenForHour1 = verbruikPerUurOpDag.get(0);
-        assertThat(verbruikKostenForHour1.getUur()).isZero();
-        assertThat(verbruikKostenForHour1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour1);
+        assertThat(verbruikKostenForHour1.uur()).isZero();
+        assertThat(verbruikKostenForHour1.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour1);
 
         final VerbruikInUurOpDag verbruikKostenForHour2 = verbruikPerUurOpDag.get(1);
-        assertThat(verbruikKostenForHour2.getUur()).isEqualTo(1);
-        assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour2);
+        assertThat(verbruikKostenForHour2.uur()).isEqualTo(1);
+        assertThat(verbruikKostenForHour2.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForHour2);
 
         range(0, 24).forEach(hour ->
             verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
@@ -135,12 +135,12 @@ class VerbruikServiceTest {
         assertThat(verbruikPerMaandInJaar).hasSize(12);
 
         final VerbruikInMaandInJaar verbruikKostenForMonth1 = verbruikPerMaandInJaar.get(0);
-        assertThat(verbruikKostenForMonth1.getMaand()).isEqualTo(1);
-        assertThat(verbruikKostenForMonth1.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForJanuary);
+        assertThat(verbruikKostenForMonth1.maand()).isEqualTo(1);
+        assertThat(verbruikKostenForMonth1.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForJanuary);
 
         final VerbruikInMaandInJaar verbruikKostenForHour2 = verbruikPerMaandInJaar.get(1);
-        assertThat(verbruikKostenForHour2.getMaand()).isEqualTo(2);
-        assertThat(verbruikKostenForHour2.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
+        assertThat(verbruikKostenForHour2.maand()).isEqualTo(2);
+        assertThat(verbruikKostenForHour2.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
 
         range(1, 12).forEach(month -> {
                 final LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
@@ -181,12 +181,12 @@ class VerbruikServiceTest {
         // then
         assertThat(verbruikPerJaar).satisfiesExactly(
                 verbruikInJaar2018 -> {
-                    assertThat(verbruikInJaar2018.getJaar()).isEqualTo(2018);
-                    assertThat(verbruikInJaar2018.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
+                    assertThat(verbruikInJaar2018.jaar()).isEqualTo(2018);
+                    assertThat(verbruikInJaar2018.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2018);
                 },
                 verbruikInJaar2019 -> {
-                    assertThat(verbruikInJaar2019.getJaar()).isEqualTo(2019);
-                    assertThat(verbruikInJaar2019.getVerbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
+                    assertThat(verbruikInJaar2019.jaar()).isEqualTo(2019);
+                    assertThat(verbruikInJaar2019.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtFor2019);
                 }
         );
     }

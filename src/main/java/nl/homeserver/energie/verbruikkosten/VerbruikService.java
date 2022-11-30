@@ -66,7 +66,7 @@ class VerbruikService {
 
     VerbruikKostenOverzicht getGemiddeldeVerbruikEnKostenInPeriode(final DatePeriod period) {
         return getVerbruikPerDag(period).stream()
-                                        .map(VerbruikKostenOpDag::getVerbruikKostenOverzicht)
+                                        .map(VerbruikKostenOpDag::verbruikKostenOverzicht)
                                         .collect(collectingAndThen(toList(), VerbruikKostenOverzichten::new))
                                         .averageToSingle();
     }

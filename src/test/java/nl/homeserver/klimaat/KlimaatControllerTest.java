@@ -156,8 +156,8 @@ class KlimaatControllerTest {
 
         when(klimaatSensorService.getByCode(EXISTING_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
-        final GemiddeldeKlimaatPerMaand month1 = mock(GemiddeldeKlimaatPerMaand.class);
-        final GemiddeldeKlimaatPerMaand month2 = mock(GemiddeldeKlimaatPerMaand.class);
+        final GemiddeldeKlimaatPerMaand month1 = new GemiddeldeKlimaatPerMaand(LocalDate.now(), null);
+        final GemiddeldeKlimaatPerMaand month2 = new GemiddeldeKlimaatPerMaand(LocalDate.now(), null);
         final List<GemiddeldeKlimaatPerMaand> year = List.of(month1, month2);
 
         final List<List<GemiddeldeKlimaatPerMaand>> monthsInYears = List.of(year);

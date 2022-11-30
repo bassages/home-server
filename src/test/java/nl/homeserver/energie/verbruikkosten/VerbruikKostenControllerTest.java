@@ -48,7 +48,7 @@ class VerbruikKostenControllerTest {
 
     @Test
     void whenGetVerbruikPerDagThenDelegatedToVerbruikService() {
-        final List<VerbruikKostenOpDag> verbruikKostenPerDag = List.of(mock(VerbruikKostenOpDag.class));
+        final List<VerbruikKostenOpDag> verbruikKostenPerDag = List.of(new VerbruikKostenOpDag(LocalDate.now(), mock(VerbruikKostenOverzicht.class)));
         when(verbruikService.getVerbruikPerDag(datePeriodCaptor.capture())).thenReturn(verbruikKostenPerDag);
 
         final LocalDate from = LocalDate.of(2017, 4, 2);
@@ -64,7 +64,7 @@ class VerbruikKostenControllerTest {
 
     @Test
     void whenGetVerbruikPerUurOpDagThenDelegatedToVerbruikService() {
-        final List<VerbruikInUurOpDag> verbruikPerUurOpDag = List.of(mock(VerbruikInUurOpDag.class));
+        final List<VerbruikInUurOpDag> verbruikPerUurOpDag = List.of(new VerbruikInUurOpDag(2, mock(VerbruikKostenOverzicht.class)));
         final LocalDate day = LocalDate.of(2017, 4, 2);
         when(verbruikService.getVerbruikPerUurOpDag(day)).thenReturn(verbruikPerUurOpDag);
 
@@ -73,7 +73,7 @@ class VerbruikKostenControllerTest {
 
     @Test
     void whenGetVerbruikPerJaarThenDelegatedToVerbruikService() {
-        final List<VerbruikInJaar> verbruikPerJaar = List.of(mock(VerbruikInJaar.class));
+        final List<VerbruikInJaar> verbruikPerJaar = List.of(new VerbruikInJaar(2022, mock(VerbruikKostenOverzicht.class)));
         when(verbruikService.getVerbruikPerJaar()).thenReturn(verbruikPerJaar);
 
         assertThat(verbruikKostenController.getVerbruikPerJaar()).isEqualTo(verbruikPerJaar);
@@ -83,7 +83,7 @@ class VerbruikKostenControllerTest {
     void whenGetVerbruikPerMaandInJaarThenDelegatedToVerbruikService() {
         final int year = 2018;
 
-        final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = List.of(mock(VerbruikInMaandInJaar.class));
+        final List<VerbruikInMaandInJaar> verbruikPerMaandInJaar = List.of(new VerbruikInMaandInJaar(5, mock(VerbruikKostenOverzicht.class)));
         when(verbruikService.getVerbruikPerMaandInJaar(Year.of(year))).thenReturn(verbruikPerMaandInJaar);
 
         assertThat(verbruikKostenController.getVerbruikPerMaandInJaar(year)).isEqualTo(verbruikPerMaandInJaar);
