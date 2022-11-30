@@ -7,8 +7,8 @@ import lombok.ToString;
 import nl.homeserver.energie.StroomTariefIndicator;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 

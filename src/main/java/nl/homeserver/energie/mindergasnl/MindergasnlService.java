@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Provider;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -36,7 +35,7 @@ public class MindergasnlService {
 
     private final MindergasnlSettingsRepository mindergasnlSettingsRepository;
     private final MeterstandService meterstandService;
-    private final Provider<HttpClientBuilder> httpClientBuilder;
+    private final HttpClientBuilder httpClientBuilder;
     private final Clock clock;
 
     public Optional<MindergasnlSettings> findSettings() {
@@ -68,7 +67,7 @@ public class MindergasnlService {
     }
 
     private void upload(final MindergasnlSettings settings, final LocalDate day, final BigDecimal gasReading) {
-        try (final CloseableHttpClient httpClient = httpClientBuilder.get().build()){
+        try (final CloseableHttpClient httpClient = httpClientBuilder.build()){
             final HttpPost request = createRequest(day, gasReading, settings.getAuthenticatietoken());
             final CloseableHttpResponse response = httpClient.execute(request);
             logErrorWhenNoSuccess(response);

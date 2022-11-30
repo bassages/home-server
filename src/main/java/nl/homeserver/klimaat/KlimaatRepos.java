@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +23,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
             AND k.datumtijd >= :van
             AND k.datumtijd <= :totEnMet
       ORDER BY k.datumtijd
-         """)
+    """)
     List<Klimaat> findByKlimaatSensorCodeAndDatumtijdBetweenOrderByDatumtijd(@Param("sensorCode") String sensorCode,
                                                                              @Param("van") LocalDateTime van,
                                                                              @Param("totEnMet") LocalDateTime totEnMet);
@@ -42,7 +42,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
               ORDER BY temperatuur DESC
                  LIMIT :limit
                ) datums
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     List<Date> getPeakHighTemperatureDates(@Param("sensorCode") String sensorCode,
                                            @Param("van") LocalDate van,
                                            @Param("tot") LocalDate tot,
@@ -50,14 +50,15 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     @Nullable
     @Query(value = """
-        SELECT *
+        SELECT k.*
           FROM klimaat k
     INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id
          WHERE k.datum = :day
            AND ks.code = :sensorCode
       ORDER BY k.temperatuur DESC,
                k.datumtijd
-         LIMIT 1""", nativeQuery = true)
+         LIMIT 1
+    """, nativeQuery = true)
     Klimaat earliestHighestTemperatureOnDay(@Param("sensorCode") String sensorCode,
                                             @Param("day") LocalDate day);
 
@@ -74,7 +75,8 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                    AND k.datum < :tot
               ORDER BY temperatuur
                  LIMIT :limit
-               ) datums""", nativeQuery = true)
+               ) datums
+    """, nativeQuery = true)
     List<Date> getPeakLowTemperatureDates(@Param("sensorCode") String sensorCode,
                                           @Param("van") LocalDate van,
                                           @Param("tot") LocalDate tot,
@@ -82,7 +84,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     @Nullable
     @Query(value = """
-        SELECT *
+        SELECT k.*
           FROM klimaat k
     INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id
          WHERE k.datum = :day
@@ -90,7 +92,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
       ORDER BY k.temperatuur,
                k.datumtijd
          LIMIT 1
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     Klimaat earliestLowestTemperatureOnDay(@Param("sensorCode") String sensorCode,
                                            @Param("day") LocalDate day);
 
@@ -108,7 +110,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
               ORDER BY luchtvochtigheid DESC
                  LIMIT :limit
                ) datums
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     List<Date> getPeakHighHumidityDates(@Param("sensorCode") String sensorCode,
                                         @Param("van") LocalDate van,
                                         @Param("tot") LocalDate tot,
@@ -116,17 +118,17 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     @Nullable
     @Query(value = """
-        SELECT *
+        SELECT k.*
           FROM klimaat k
     INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id
-         WHERE k.datum = :date
+         WHERE k.datum = :day
            AND ks.code = :sensorCode
       ORDER BY k.luchtvochtigheid DESC,
                k.datumtijd
          LIMIT 1
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     Klimaat earliestHighestHumidityOnDay(@Param("sensorCode") String sensorCode,
-                                         @Param("date") LocalDate day);
+                                         @Param("day") LocalDate day);
 
     @Query(value = """
         SELECT datum
@@ -142,7 +144,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
               ORDER BY luchtvochtigheid
                  LIMIT :limit
                ) datums
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     List<Date> getPeakLowHumidityDates(@Param("sensorCode") String sensorCode,
                                        @Param("van") LocalDate van,
                                        @Param("tot") LocalDate tot,
@@ -150,7 +152,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
 
     @Nullable
     @Query(value = """
-        SELECT *
+        SELECT k.*
           FROM klimaat k
     INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id
          WHERE k.datum = :day
@@ -158,7 +160,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
       ORDER BY k.luchtvochtigheid,
                k.datumtijd
          LIMIT 1
-        """, nativeQuery = true)
+    """, nativeQuery = true)
     Klimaat earliestLowestHumidityOnDay(@Param("sensorCode")String sensorCode,
                                         @Param("day") LocalDate day);
 
@@ -169,7 +171,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
          WHERE k.klimaatSensor.code = :sensorCode
            AND k.datumtijd >= :van
            AND k.datumtijd < :tot
-        """)
+    """)
     BigDecimal getAverageTemperatuur(@Param("sensorCode") String sensorCode,
                                      @Param("van") LocalDateTime van,
                                      @Param("tot") LocalDateTime tot);
@@ -181,7 +183,7 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
          WHERE k.klimaatSensor.code = :sensorCode
            AND k.datumtijd >= :van
            AND k.datumtijd < :tot
-        """)
+    """)
     BigDecimal getAverageLuchtvochtigheid(@Param("sensorCode") String sensorCode,
                                           @Param("van") LocalDateTime van,
                                           @Param("tot") LocalDateTime tot);

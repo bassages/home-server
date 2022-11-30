@@ -6,7 +6,7 @@ import lombok.*;
 import nl.homeserver.energie.StroomTariefIndicator;
 
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

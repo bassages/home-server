@@ -1,16 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
-         updateCheck="false"
-         monitoring="off"
-         dynamicConfig="false">
+<eh:config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns:eh='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 https://www.ehcache.org/schema/ehcache-core-3.10.xsd">
 
-    <cache name="energyContractsInPeriod" maxEntriesLocalHeap="20" />
-    <cache name="gasVerbruikInPeriode" maxEntriesLocalHeap="100" />
-    <cache name="stroomVerbruikInPeriode" maxEntriesLocalHeap="100" />
-    <cache name="energieVerbruikInPeriode" maxEntriesLocalHeap="100"  />
-    <cache name="opgenomenVermogenHistory" maxEntriesLocalHeap="100" />
-    <cache name="meestRecenteMeterstandOpDag" maxEntriesLocalHeap="100" />
-    <cache name="klimaatInPeriod" maxEntriesLocalHeap="100" />
-    <cache name="averageKlimaatInMonth" maxEntriesLocalHeap="48" />
-    <cache name="standbyPower" maxEntriesLocalHeap="48" />
-</ehcache>
+    <!-- Default cache template -->
+     <eh:cache-template name="default-cache">
+        <eh:expiry>
+            <eh:tti unit="days">14</eh:tti>
+        </eh:expiry>
+    </eh:cache-template>
+
+    <!-- Cache configurations -->
+    <eh:cache alias="energyContractsInPeriod" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>20</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="gasVerbruikInPeriode" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="stroomVerbruikInPeriode" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="energieVerbruikInPeriode" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="opgenomenVermogenHistory" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="meestRecenteMeterstandOpDag" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="klimaatInPeriod" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>100</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="averageKlimaatInMonth" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>48</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+    <eh:cache alias="standbyPower" uses-template="default-cache">
+        <eh:resources>
+            <eh:heap>48</eh:heap>
+        </eh:resources>
+    </eh:cache>
+
+</eh:config>

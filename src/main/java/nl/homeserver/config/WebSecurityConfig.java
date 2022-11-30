@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.http.HttpStatus.RESET_CONTENT;
@@ -29,15 +30,19 @@ public class WebSecurityConfig {
             .csrf().disable()
             .headers().frameOptions().sameOrigin().and()
             .httpBasic().and()
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+            )
             .logout()
             .addLogoutHandler((request, response, authentication) -> response.setStatus(RESET_CONTENT.value()))
             .invalidateHttpSession(true)
-            .clearAuthentication(true).and()
-            .authorizeRequests()
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID").and()
+            .authorizeHttpRequests()
             .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-            .antMatchers("/", "/**/*.js", "/**/*.css", "/index.html", "/assets/**/*").permitAll()
-            .antMatchers(Paths.LOGIN).permitAll()
+            .requestMatchers("/", "/index.html", "*.js", "*.css", "/assets/**", "/api/allowed/**").permitAll()
+            .requestMatchers(Paths.LOGIN).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
 

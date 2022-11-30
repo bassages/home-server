@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.5'
+    id 'org.springframework.boot' version '3.0.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'com.github.ben-manes.versions' version '0.43.0'
     id 'jacoco'
@@ -86,25 +86,29 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-tomcat')
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
-    implementation('net.sf.ehcache:ehcache')
+    implementation('org.ehcache:ehcache:3.10.8')
+
+    implementation('javax.xml.bind:jaxb-api:2.3.1')
+    implementation('com.sun.xml.bind:jaxb-impl:2.3.2')
+    implementation('com.sun.xml.bind:jaxb-core:2.3.0.1')
+
     implementation('commons-io:commons-io:2.11.0')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.12.0')
     implementation('org.apache.httpcomponents:httpclient:4.5.13')
     implementation('org.apache.commons:commons-math3:3.6.1')
     implementation('javax.inject:javax.inject:1')
-    implementation('javax.xml.bind:jaxb-api:2.3.1')
     implementation('com.google.code.findbugs:jsr305:3.0.2')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
     testImplementation('org.assertj:assertj-core:3.23.1')
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.10.1')
+    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.11.1')
     testImplementation('org.awaitility:awaitility:4.2.0')
 
+    runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
     runtimeOnly('org.flywaydb:flyway-core')
     runtimeOnly('com.h2database:h2')
-    runtimeOnly('org.hibernate:hibernate-java8')
 }
 
 // Spring Boot Actuator’s info endpoint automatically publishes information about your build
