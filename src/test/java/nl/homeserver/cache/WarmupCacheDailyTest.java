@@ -21,7 +21,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 @ExtendWith(MockitoExtension.class)
 class WarmupCacheDailyTest {
 
-    static final String FIELDNAME_WARMUP_CACHE_DAILY = "warmupCacheDaily";
+    static final String FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED = "isWarmupCacheDailyEnabled";
 
     WarmupCacheDaily warmupCacheDaily;
 
@@ -63,10 +63,10 @@ class WarmupCacheDailyTest {
     }
 
     private void disableDailyCacheWarmup() {
-        setField(warmupCacheDaily, FIELDNAME_WARMUP_CACHE_DAILY, false);
+        setField(warmupCacheDaily, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, false);
     }
 
     private void enableDailyCachWarmup() {
-        setField(warmupCacheDaily, FIELDNAME_WARMUP_CACHE_DAILY, true);
+        setField(warmupCacheDaily, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, true);
     }
 }
