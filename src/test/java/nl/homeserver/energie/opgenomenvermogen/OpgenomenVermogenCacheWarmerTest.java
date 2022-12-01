@@ -36,10 +36,10 @@ class OpgenomenVermogenCacheWarmerTest {
     ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    void whenWarmupInitialCacheThenOpgenomenVermogenHistoryWarmedup() {
+    void whenWarmupCacheOnStartupThenOpgenomenVermogenHistoryWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        opgenomenVermogenCacheWarmer.warmupInitialCache();
+        opgenomenVermogenCacheWarmer.warmupCacheOnStartup();
 
         verify(opgenomenVermogenController, times(14))
                 .getOpgenomenVermogenHistory(fromDateCaptor.capture(),
@@ -82,10 +82,10 @@ class OpgenomenVermogenCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupDailyCacheThenOpgenomenVermogenHistoryWarmedup() {
+    void whenWarmupCacheDailyThenOpgenomenVermogenHistoryWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
-        opgenomenVermogenCacheWarmer.warmupDailyCache();
+        opgenomenVermogenCacheWarmer.warmupCacheDaily();
 
         verify(opgenomenVermogenController).getOpgenomenVermogenHistory(
                 LocalDate.of(2017, DECEMBER, 29),

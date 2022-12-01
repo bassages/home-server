@@ -87,11 +87,6 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
     implementation('org.ehcache:ehcache:3.10.8')
-
-    implementation('javax.xml.bind:jaxb-api:2.3.1')
-    implementation('com.sun.xml.bind:jaxb-impl:2.3.2')
-    implementation('com.sun.xml.bind:jaxb-core:2.3.0.1')
-
     implementation('commons-io:commons-io:2.11.0')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.12.0')

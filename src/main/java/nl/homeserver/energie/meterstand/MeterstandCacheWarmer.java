@@ -3,7 +3,7 @@ package nl.homeserver.energie.meterstand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
+import nl.homeserver.cache.StartupCacheWarmer;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -19,14 +19,14 @@ import static java.util.stream.LongStream.rangeClosed;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
+class MeterstandCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
     private static final Month[] MONTHS = Month.values();
 
     private final MeterstandController meterstandController;
     private final Clock clock;
 
     @Override
-    public void warmupInitialCache() {
+    public void warmupCacheOnStartup() {
         final LocalDate today = now(clock);
 
         log.info("Warmup of cache meterstandenPerDag");
@@ -39,7 +39,7 @@ class MeterstandCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
     }
 
     @Override
-    public void warmupDailyCache() {
+    public void warmupCacheDaily() {
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 

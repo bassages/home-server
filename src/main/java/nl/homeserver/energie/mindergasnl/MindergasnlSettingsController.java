@@ -23,8 +23,8 @@ class MindergasnlSettingsController {
 
     private MindergasnlSettings fromDto(final MindergasnlSettingsDto mindergasnlSettingsDto) {
         final MindergasnlSettings mindergasnlSettings = new MindergasnlSettings();
-        mindergasnlSettings.setAutomatischUploaden(mindergasnlSettingsDto.isAutomatischUploaden());
-        mindergasnlSettings.setAuthenticatietoken(mindergasnlSettingsDto.getAuthenticatietoken());
+        mindergasnlSettings.setAutomatischUploaden(mindergasnlSettingsDto.automatischUploaden());
+        mindergasnlSettings.setAuthenticatietoken(mindergasnlSettingsDto.authenticatietoken());
         return mindergasnlSettings;
     }
 }

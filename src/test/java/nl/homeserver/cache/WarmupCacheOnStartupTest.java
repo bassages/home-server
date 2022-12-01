@@ -13,43 +13,43 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
-class WarmupInitialCacheTest {
+class WarmupCacheOnStartupTest {
 
     private static final String FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START = "warmupCacheOnApplicationStart";
 
-    WarmupInitialCache warmupInitialCache;
+    WarmupCacheOnStartup warmupCacheOnStartup;
 
     @Mock
-    InitialCacheWarmer initialCacheWarmer;
+    StartupCacheWarmer startupCacheWarmer;
 
     @BeforeEach
     void setUp() {
-        warmupInitialCache = new WarmupInitialCache(List.of(initialCacheWarmer));
+        warmupCacheOnStartup = new WarmupCacheOnStartup(List.of(startupCacheWarmer));
     }
 
     @Test
     void givenWarmupDisabledWhenApplicationStartedThenNoWarmup() {
         setWarmupCacheDisabled();
 
-        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupCacheOnStartup.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verifyNoMoreInteractions(initialCacheWarmer);
+        verifyNoMoreInteractions(startupCacheWarmer);
     }
 
     @Test
     void givenWarmupEnabledWhenApplicationStartedThenWarmup() {
         setWarmupCacheEnabled();
 
-        warmupInitialCache.onApplicationEvent(mock(ApplicationReadyEvent.class));
+        warmupCacheOnStartup.onApplicationEvent(mock(ApplicationReadyEvent.class));
 
-        verify(initialCacheWarmer).warmupInitialCache();
+        verify(startupCacheWarmer).warmupCacheOnStartup();
     }
 
     private void setWarmupCacheDisabled() {
-        setField(warmupInitialCache, FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START, false);
+        setField(warmupCacheOnStartup, FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START, false);
     }
 
     private void setWarmupCacheEnabled() {
-        setField(warmupInitialCache, FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START, true);
+        setField(warmupCacheOnStartup, FIELDNAME_WARMUP_CACHE_ON_APPLICATION_START, true);
     }
 }

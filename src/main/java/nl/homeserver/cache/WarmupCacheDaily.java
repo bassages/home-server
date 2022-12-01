@@ -10,22 +10,22 @@ import java.util.List;
 
 @Slf4j
 @Component
-class WarmupDailyCache {
+class WarmupCacheDaily {
 
     private final List<DailyCacheWarmer> dailyCacheWarmers;
 
     @Value("${home-server.cache.warmup.daily}")
-    private boolean warmupCacheDaily;
+    private boolean isWarmupCacheDailyEnabled;
 
-    WarmupDailyCache(final List<DailyCacheWarmer> dailyCacheWarmers) {
+    WarmupCacheDaily(final List<DailyCacheWarmer> dailyCacheWarmers) {
         this.dailyCacheWarmers = dailyCacheWarmers;
     }
 
     @Scheduled(cron = HousekeepingSchedule.WARMUP_CACHE)
     public void considerDailyWarmup() {
-        if (warmupCacheDaily) {
+        if (isWarmupCacheDailyEnabled) {
             log.info("Warmup cache start");
-            dailyCacheWarmers.forEach(DailyCacheWarmer::warmupDailyCache);
+            dailyCacheWarmers.forEach(DailyCacheWarmer::warmupCacheDaily);
             log.info("Warmup cache completed");
         }
     }

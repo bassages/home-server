@@ -3,7 +3,7 @@ package nl.homeserver.energie.verbruikkosten;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
+import nl.homeserver.cache.StartupCacheWarmer;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -20,7 +20,7 @@ import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
+class VerbruikKostenCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
 
     private static final Month[] ALL_MONTHS = Month.values();
 
@@ -28,7 +28,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     private final Clock clock;
 
     @Override
-    public void warmupInitialCache() {
+    public void warmupCacheOnStartup() {
         final LocalDate today = now(clock);
         warmupVerbruikPerUurOpDag(today);
         warmupVerbruikPerDag(today);
@@ -67,7 +67,7 @@ class VerbruikKostenCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer 
     }
 
     @Override
-    public void warmupDailyCache() {
+    public void warmupCacheDaily() {
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 

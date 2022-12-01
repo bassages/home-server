@@ -3,7 +3,7 @@ package nl.homeserver.energie.standbypower;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.DailyCacheWarmer;
-import nl.homeserver.cache.InitialCacheWarmer;
+import nl.homeserver.cache.StartupCacheWarmer;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -13,18 +13,18 @@ import java.util.stream.Stream;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class StandbyPowerCacheWarmer implements InitialCacheWarmer, DailyCacheWarmer {
+class StandbyPowerCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
 
     private final StandbyPowerController standbyPowerController;
     private final Clock clock;
 
     @Override
-    public void warmupInitialCache() {
+    public void warmupCacheOnStartup() {
         warmupCache();
     }
 
     @Override
-    public void warmupDailyCache() {
+    public void warmupCacheDaily() {
         warmupCache();
     }
 

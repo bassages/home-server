@@ -26,12 +26,12 @@ class StandbyPowerCacheWarmerTest {
     Clock clock;
 
     @Test
-    void whenWarmupInitialCacheThenStandbyPowerCacheWarmedUp() {
+    void whenWarmupCacheOnStartupThenStandbyPowerCacheWarmedUp() {
         // given
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         // when
-        standbyPowerCacheWarmer.warmupInitialCache();
+        standbyPowerCacheWarmer.warmupCacheOnStartup();
 
         // then
         verify(standbyPowerController).getStandbyPower(2017);
@@ -40,12 +40,12 @@ class StandbyPowerCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupDailyCacheThenStandbyPowerCacheWarmedUp() {
+    void whenWarmupCacheDailyThenStandbyPowerCacheWarmedUp() {
         // given
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         // when
-        standbyPowerCacheWarmer.warmupDailyCache();
+        standbyPowerCacheWarmer.warmupCacheDaily();
 
         // then
         verify(standbyPowerController).getStandbyPower(2017);

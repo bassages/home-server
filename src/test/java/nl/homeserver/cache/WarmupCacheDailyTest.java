@@ -19,18 +19,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
-class WarmupDailyCacheTest {
+class WarmupCacheDailyTest {
 
     static final String FIELDNAME_WARMUP_CACHE_DAILY = "warmupCacheDaily";
 
-    WarmupDailyCache warmupDailyCache;
+    WarmupCacheDaily warmupCacheDaily;
 
     @Mock
     DailyCacheWarmer dailyCacheWarmer;
 
     @BeforeEach
     void setUp() {
-        warmupDailyCache = new WarmupDailyCache(List.of(dailyCacheWarmer));
+        warmupCacheDaily = new WarmupCacheDaily(List.of(dailyCacheWarmer));
     }
 
     @Test
@@ -39,23 +39,23 @@ class WarmupDailyCacheTest {
         disableDailyCacheWarmup();
 
         // when
-        warmupDailyCache.considerDailyWarmup();
+        warmupCacheDaily.considerDailyWarmup();
 
         // then
         verifyNoMoreInteractions(dailyCacheWarmer);
     }
 
-    @CaptureLogging(WarmupDailyCache.class)
+    @CaptureLogging(WarmupCacheDaily.class)
     @Test
     void givenWarmupEnabledWhenConsiderDailyWarmupThenWarmup(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
         // given
         enableDailyCachWarmup();
 
         // when
-        warmupDailyCache.considerDailyWarmup();
+        warmupCacheDaily.considerDailyWarmup();
 
         // then
-        verify(dailyCacheWarmer).warmupDailyCache();
+        verify(dailyCacheWarmer).warmupCacheDaily();
         assertThat(loggerEventCaptor.getAllValues())
                 .haveExactly(1, new ContainsMessageAtLevel("Warmup cache start", INFO))
                 .haveExactly(1, new ContainsMessageAtLevel("Warmup cache completed", INFO));
@@ -63,10 +63,10 @@ class WarmupDailyCacheTest {
     }
 
     private void disableDailyCacheWarmup() {
-        setField(warmupDailyCache, FIELDNAME_WARMUP_CACHE_DAILY, false);
+        setField(warmupCacheDaily, FIELDNAME_WARMUP_CACHE_DAILY, false);
     }
 
     private void enableDailyCachWarmup() {
-        setField(warmupDailyCache, FIELDNAME_WARMUP_CACHE_DAILY, true);
+        setField(warmupCacheDaily, FIELDNAME_WARMUP_CACHE_DAILY, true);
     }
 }

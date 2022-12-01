@@ -35,10 +35,10 @@ class MeterstandCacheWarmerTest {
     ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    void whenWarmupInitialCacheThenMeterstandenPerDagWarmedup() {
+    void whenWarmupCacheOnStartupThenMeterstandenPerDagWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
-        meterstandCacheWarmer.warmupInitialCache();
+        meterstandCacheWarmer.warmupCacheOnStartup();
 
         verify(meterstandController, times(13)).perDag(fromDateCaptor.capture(), toDateCaptor.capture());
 
@@ -76,10 +76,10 @@ class MeterstandCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupDailyCacheThenMeterstandenPerDagWarmedup() {
+    void whenWarmupCacheDailyThenMeterstandenPerDagWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
-        meterstandCacheWarmer.warmupDailyCache();
+        meterstandCacheWarmer.warmupCacheDaily();
 
         verify(meterstandController).perDag(LocalDate.of(2017, DECEMBER, 1), LocalDate.of(2017, DECEMBER, 31));
     }

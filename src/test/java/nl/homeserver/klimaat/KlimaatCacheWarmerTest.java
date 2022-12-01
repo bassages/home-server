@@ -2,7 +2,10 @@ package nl.homeserver.klimaat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
@@ -34,14 +37,14 @@ class KlimaatCacheWarmerTest {
     ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    void whenWarmupInitialCacheThenClimatePerDayWarmedup() {
+    void whenWarmupCacheOnStartupThenClimatePerDayWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         final String sensorCode = "SOME_NICE_CODE";
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
-        klimaatCacheWarmer.warmupInitialCache();
+        klimaatCacheWarmer.warmupCacheOnStartup();
 
         verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode),
                 fromDateCaptor.capture(), toDateCaptor.capture());
@@ -68,7 +71,7 @@ class KlimaatCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupInitialCacheThenClimateAveragesWarmedup() {
+    void whenWarmupCacheOnStartupThenClimateAveragesWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, JUNE, 30).atStartOfDay());
 
         final String sensorCode = "SOME_NICE_CODE";
@@ -76,25 +79,25 @@ class KlimaatCacheWarmerTest {
         when(klimaatController.getAllKlimaatSensors())
                 .thenReturn(List.of(aKlimaatSensor().withCode(sensorCode).build()));
 
-        klimaatCacheWarmer.warmupInitialCache();
+        klimaatCacheWarmer.warmupCacheOnStartup();
 
-        verify(klimaatController).getAverage(eq(sensorCode),
-                                             eq(SensorType.TEMPERATUUR.name()),
-                                             AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
-        verify(klimaatController).getAverage(eq(sensorCode),
-                                             eq(SensorType.LUCHTVOCHTIGHEID.name()),
-                                             AdditionalMatchers.aryEq(new int[]{2017, 2016, 2015}));
+        verify(klimaatController).getAverage(sensorCode,
+                                             SensorType.TEMPERATUUR.name(),
+                                             new int[]{2017, 2016, 2015});
+        verify(klimaatController).getAverage(sensorCode,
+                                             SensorType.LUCHTVOCHTIGHEID.name(),
+                                             new int[]{2017, 2016, 2015});
     }
 
     @Test
-    void whenWarmupDailyCacheThenClimatePerDayWarmedup() {
+    void whenWarmupCacheDailyThenClimatePerDayWarmedup() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
         final String sensorCode = "SOME_FANCY_SENSOR";
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
-        klimaatCacheWarmer.warmupDailyCache();
+        klimaatCacheWarmer.warmupCacheDaily();
 
         verify(klimaatController).findAllInPeriod(sensorCode,
                 LocalDate.of(2017, DECEMBER, 29), LocalDate.of(2017, DECEMBER, 30));

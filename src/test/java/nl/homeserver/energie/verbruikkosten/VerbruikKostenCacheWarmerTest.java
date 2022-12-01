@@ -39,10 +39,10 @@ class VerbruikKostenCacheWarmerTest {
     ArgumentCaptor<Integer> yearCaptor;
 
     @Test
-    void whenWarmupInitialCacheThenVerbruikPerUurOpDagWarmedup() {
+    void whenWarmupCacheOnStartupThenVerbruikPerUurOpDagWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        verbruikKostenCacheWarmer.warmupInitialCache();
+        verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
         verify(verbruikKostenController, times(14)).getVerbruikPerUurOpDag(dateCaptor.capture());
 
@@ -65,10 +65,10 @@ class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupInitialCacheThenVerbruikPerDagWarmedup() {
+    void whenWarmupCacheOnStartupThenVerbruikPerDagWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
-        verbruikKostenCacheWarmer.warmupInitialCache();
+        verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
         verify(verbruikKostenController, times(13)).getVerbruikPerDag(
                 fromDateCaptor.capture(), toDateCaptor.capture());
@@ -107,10 +107,10 @@ class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupInitialCacheThenVerbruikPerMaandInJaarWarmedup() {
+    void whenWarmupCacheOnStartupThenVerbruikPerMaandInJaarWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        verbruikKostenCacheWarmer.warmupInitialCache();
+        verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
         verify(verbruikKostenController, times(2)).getVerbruikPerMaandInJaar(yearCaptor.capture());
 
@@ -118,10 +118,10 @@ class VerbruikKostenCacheWarmerTest {
     }
 
     @Test
-    void whenWarmupInitialCacheThenVerbruikPerJaarWarmedup() {
+    void whenWarmupCacheOnStartupThenVerbruikPerJaarWarmedUp() {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
-        verbruikKostenCacheWarmer.warmupInitialCache();
+        verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
         verify(verbruikKostenController).getVerbruikPerJaar();
     }
