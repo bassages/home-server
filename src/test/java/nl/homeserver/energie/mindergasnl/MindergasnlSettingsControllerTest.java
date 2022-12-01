@@ -28,7 +28,9 @@ class MindergasnlSettingsControllerTest {
 
         when(mindergasnlService.save(any())).thenReturn(savedMindergasnlSettings);
 
-        assertThat(mindergasnlSettingsController.save(mock(MindergasnlSettingsDto.class))).isSameAs(savedMindergasnlSettings);
+        assertThat(mindergasnlSettingsController
+                .save(new MindergasnlSettingsDto(false, "xxxx")))
+                .isSameAs(savedMindergasnlSettings);
     }
 
     @Test
