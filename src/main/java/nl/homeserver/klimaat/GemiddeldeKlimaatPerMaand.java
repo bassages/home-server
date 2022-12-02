@@ -8,5 +8,4 @@ record GemiddeldeKlimaatPerMaand(
         LocalDate maand,
         @Nullable
         BigDecimal gemiddelde
-) {
-}
+) { }

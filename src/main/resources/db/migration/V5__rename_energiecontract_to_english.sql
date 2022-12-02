@@ -1,0 +1,5 @@
+ALTER TABLE energiecontract RENAME COLUMN stroom_per_kwh_normaal_tarief TO electricity_per_kwh_standard_tariff;
+ALTER TABLE energiecontract RENAME COLUMN stroom_per_kwh_dal_tarief TO electricity_per_kwh_off_peak_tariff;
+ALTER TABLE energiecontract RENAME COLUMN gas_per_kuub TO gas_per_cubic_meter;
+ALTER TABLE energiecontract RENAME COLUMN leverancier TO supplier_name;
+ALTER TABLE energiecontract RENAME TO energy_contract;

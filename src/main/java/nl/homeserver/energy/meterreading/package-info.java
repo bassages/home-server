@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package nl.homeserver.energy.meterreading;
+
+import javax.annotation.ParametersAreNonnullByDefault;

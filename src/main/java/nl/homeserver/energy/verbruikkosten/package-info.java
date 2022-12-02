@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package nl.homeserver.energy.verbruikkosten;
+
+import javax.annotation.ParametersAreNonnullByDefault;

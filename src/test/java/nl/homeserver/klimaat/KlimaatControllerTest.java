@@ -48,16 +48,15 @@ class KlimaatControllerTest {
         final String sensorCode = "LIVINGROOM";
         when(klimaatSensorService.getByCode(sensorCode)).thenReturn(Optional.of(klimaatSensor));
 
-        final KlimaatDto klimaatDto = new KlimaatDto();
-        klimaatDto.setTemperatuur(new BigDecimal("12.67"));
-        klimaatDto.setLuchtvochtigheid(new BigDecimal("60.2"));
+        final KlimaatDto klimaatDto = new KlimaatDto(1, now().atStartOfDay(),
+                new BigDecimal("12.67"), new BigDecimal("60.2"));
 
         klimaatController.add(sensorCode, klimaatDto);
 
         verify(incomingKlimaatService).add(klimaatCaptor.capture());
         assertThat(klimaatCaptor.getValue().getKlimaatSensor()).isSameAs(klimaatSensor);
-        assertThat(klimaatCaptor.getValue().getTemperatuur()).isEqualTo(klimaatDto.getTemperatuur());
-        assertThat(klimaatCaptor.getValue().getLuchtvochtigheid()).isEqualTo(klimaatDto.getLuchtvochtigheid());
+        assertThat(klimaatCaptor.getValue().getTemperatuur()).isEqualTo(klimaatDto.temperatuur());
+        assertThat(klimaatCaptor.getValue().getLuchtvochtigheid()).isEqualTo(klimaatDto.luchtvochtigheid());
     }
 
     @Test

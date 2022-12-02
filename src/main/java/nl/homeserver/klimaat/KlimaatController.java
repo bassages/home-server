@@ -34,9 +34,9 @@ class KlimaatController {
         final KlimaatSensor klimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
 
         final Klimaat klimaat = new Klimaat();
-        klimaat.setDatumtijd(klimaatDto.getDatumtijd());
-        klimaat.setLuchtvochtigheid(klimaatDto.getLuchtvochtigheid());
-        klimaat.setTemperatuur(klimaatDto.getTemperatuur());
+        klimaat.setDatumtijd(klimaatDto.datumtijd());
+        klimaat.setLuchtvochtigheid(klimaatDto.luchtvochtigheid());
+        klimaat.setTemperatuur(klimaatDto.temperatuur());
         klimaat.setKlimaatSensor(klimaatSensor);
 
         incomingKlimaatService.add(klimaat);

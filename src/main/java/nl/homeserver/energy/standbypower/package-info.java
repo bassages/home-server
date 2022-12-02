@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package nl.homeserver.energy.standbypower;
+
+import javax.annotation.ParametersAreNonnullByDefault;

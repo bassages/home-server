@@ -1,4 +1,0 @@
-@ParametersAreNonnullByDefault
-package nl.homeserver.energie.mindergasnl;
-
-import javax.annotation.ParametersAreNonnullByDefault;
