@@ -1,6 +1,5 @@
 package nl.homeserver;
 
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
@@ -18,15 +17,6 @@ class HomeServerApplicationTest {
         final Clock clock = homeServerApplication.getClock();
 
         assertThat(clock).isEqualTo(Clock.systemDefaultZone());
-    }
-
-    @Test
-    void whenGetHttpClientBuilderThenReturned() {
-        final HomeServerApplication homeServerApplication = new HomeServerApplication();
-
-        final HttpClientBuilder httpClientBuilder = homeServerApplication.getHttpClientBuilder();
-
-        assertThat(httpClientBuilder).isNotNull();
     }
 
     @Test

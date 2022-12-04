@@ -3,39 +3,33 @@ package nl.homeserver.energy.mindergasnl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.energy.meterreading.MeterstandService;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import nl.homeserver.energy.mindergasnl.MinderGasnlApi.MinderGasnlMeterReading;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MindergasnlService {
+class MindergasnlService {
 
     @Value("${home-server.mindergas.api.url}")
     protected String mindergasNlApiUrl;
 
-    static final String HEADER_NAME_CONTENT_TYPE = "content-type";
-    static final String HEADER_NAME_AUTH_TOKEN = "AUTH-TOKEN";
-
     private final MindergasnlSettingsRepository mindergasnlSettingsRepository;
     private final MeterstandService meterstandService;
-    private final HttpClientBuilder httpClientBuilder;
     private final Clock clock;
 
     public Optional<MindergasnlSettings> findSettings() {
@@ -67,38 +61,20 @@ public class MindergasnlService {
     }
 
     private void upload(final MindergasnlSettings settings, final LocalDate day, final BigDecimal gasReading) {
-        try (final CloseableHttpClient httpClient = httpClientBuilder.build()){
-            final HttpPost request = createRequest(day, gasReading, settings.getAuthenticatietoken());
-            final CloseableHttpResponse response = httpClient.execute(request);
-            logErrorWhenNoSuccess(response);
-        } catch (final Exception ex) {
-            log.error("Failed to upload to mindergas.nl", ex);
+        final WebClient client = WebClient.builder().baseUrl(mindergasNlApiUrl).build();
+        final HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder(WebClientAdapter.forClient(client)).build();
+        final MinderGasnlApi api = factory.createClient(MinderGasnlApi.class);
+
+        HttpStatusCode httpStatusCode;
+        try {
+            httpStatusCode = api
+                    .meterReading(settings.getAuthenticatietoken(), new MinderGasnlMeterReading(day, gasReading))
+                    .getStatusCode();
+        } catch (final WebClientResponseException e) {
+            httpStatusCode = e.getStatusCode();
         }
-    }
-
-    private HttpPost createRequest(final LocalDate day,
-                                   final BigDecimal gasReading,
-                                   final String authenticationToken) throws UnsupportedEncodingException {
-        final HttpPost request = new HttpPost(mindergasNlApiUrl);
-
-        final String message = """
-            { "date": "%s", "reading": %s }
-            """.formatted(day.format(ofPattern("yyyy-MM-dd")), gasReading.toString());
-
-        log.info("Upload to mindergas.nl: {}", message);
-
-        request.addHeader(HEADER_NAME_CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        request.addHeader(HEADER_NAME_AUTH_TOKEN, authenticationToken);
-
-        final StringEntity params = new StringEntity(message);
-        request.setEntity(params);
-        return request;
-    }
-
-    private void logErrorWhenNoSuccess(final CloseableHttpResponse response) {
-        final int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != 201) {
-            log.error("Failed to upload to mindergas.nl. HTTP status code: {}", statusCode);
+        if (httpStatusCode.value() != HttpStatus.CREATED.value()) {
+            log.error("Failed to upload to mindergas.nl. HTTP status code: {}", httpStatusCode.value());
         }
     }
 }

@@ -1,18 +1,14 @@
 package nl.homeserver;
 
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.Clock;
 import java.util.concurrent.Executor;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @SpringBootApplication
 @EnableAsync
@@ -31,11 +27,5 @@ public class HomeServerApplication {
     @Bean
     public Clock getClock() {
         return Clock.systemDefaultZone();
-    }
-
-    @Bean
-    @Scope(value = SCOPE_PROTOTYPE)
-    public HttpClientBuilder getHttpClientBuilder() {
-        return HttpClientBuilder.create();
     }
 }
