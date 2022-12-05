@@ -12,12 +12,12 @@ import java.time.LocalDate;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-interface MinderGasnlApi {
+public interface MinderGasnlApi {
     String HEADER_NAME_AUTH_TOKEN = "AUTH-TOKEN";
 
     @PostExchange(url = "/meter_readings", contentType = APPLICATION_JSON_VALUE)
-    ResponseEntity<Void> meterReading(@RequestHeader(HEADER_NAME_AUTH_TOKEN) String authToken,
-                                      @RequestBody MinderGasnlMeterReading meterReading);
+    public ResponseEntity<Void> meterReading(@RequestHeader(HEADER_NAME_AUTH_TOKEN) String authToken,
+                                             @RequestBody MinderGasnlMeterReading meterReading);
 
     record MinderGasnlMeterReading(
             @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd")
