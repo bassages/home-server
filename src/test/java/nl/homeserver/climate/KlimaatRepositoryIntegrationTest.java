@@ -1,6 +1,6 @@
 package nl.homeserver.climate;
 
-import static nl.homeserver.climate.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.climate.Klimaat.aKlimaat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -21,11 +21,11 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Test
     void whenDeleteByKlimaatSensorThenDeleted() {
-        final KlimaatSensor klimaatSensor = persistSensor(SENSOR_CODE_GARDEN);
+        final KlimaatSensor klimaatSensor = persistSensor();
 
-        entityManager.persist(aKlimaat().withDatumtijd(LocalDateTime.now().minusMinutes(15)).withKlimaatSensor(klimaatSensor).build());
-        entityManager.persist(aKlimaat().withDatumtijd(LocalDateTime.now().minusMinutes(10)).withKlimaatSensor(klimaatSensor).build());
-        entityManager.persist(aKlimaat().withDatumtijd(LocalDateTime.now().minusMinutes(5)).withKlimaatSensor(klimaatSensor).build());
+        entityManager.persist(aKlimaat().datumtijd(LocalDateTime.now().minusMinutes(15)).klimaatSensor(klimaatSensor).build());
+        entityManager.persist(aKlimaat().datumtijd(LocalDateTime.now().minusMinutes(10)).klimaatSensor(klimaatSensor).build());
+        entityManager.persist(aKlimaat().datumtijd(LocalDateTime.now().minusMinutes(5)).klimaatSensor(klimaatSensor).build());
 
         assertThat(klimaatRepository.findAll()).hasSize(3);
 
@@ -36,146 +36,135 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
     @Test
     void whenGetEarliestLowestTemperatureOnDayThenFound() {
-        final KlimaatSensor klimaatSensor = persistSensor(SENSOR_CODE_GARDEN);
+        final KlimaatSensor klimaatSensor = persistSensor();
 
-        LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.of(2022, 1, 1);
 
-        // Not lowest temperature
-        Klimaat klimaat1 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 0))
-                .withTemperatuur(new BigDecimal("20.01"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        // Not the lowest temperature
+        final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
+                                           .temperatuur(new BigDecimal("20.01"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat1);
 
         // Lowest temperature on day and earliest
-        Klimaat klimaat2 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 1))
-                .withTemperatuur(new BigDecimal("20.00"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat2 = aKlimaat().datumtijd(day.atTime(10, 1))
+                                           .temperatuur(new BigDecimal("20.00"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat2);
 
         // Lowest temperature on day, but not earliest
-        Klimaat klimaat3 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 2))
-                .withTemperatuur(new BigDecimal("20.00"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat3 = aKlimaat().datumtijd(day.atTime(10, 2))
+                                           .temperatuur(new BigDecimal("20.00"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat3);
 
-        Klimaat result = klimaatRepository.earliestLowestTemperatureOnDay(SENSOR_CODE_GARDEN, day);
+        final Klimaat result = klimaatRepository.earliestLowestTemperatureOnDay(SENSOR_CODE_GARDEN, day);
 
         assertThat(result).isEqualTo(klimaat2);
     }
 
     @Test
     void whenGetEarliestHighestTemperatureOnDayThenFound() {
-        final KlimaatSensor klimaatSensor = persistSensor(SENSOR_CODE_GARDEN);
+        final KlimaatSensor klimaatSensor = persistSensor();
 
-        LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.of(2022, 1, 1);
 
-        // Not highest temperature
-        Klimaat klimaat1 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 0))
-                .withTemperatuur(new BigDecimal("19.99"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        // Not the highest temperature
+        final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
+                                           .temperatuur(new BigDecimal("19.99"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat1);
 
         // Highest temperature on day and earliest
-        Klimaat klimaat2 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 1))
-                .withTemperatuur(new BigDecimal("20.00"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat2 = aKlimaat().datumtijd(day.atTime(10, 1))
+                                           .temperatuur(new BigDecimal("20.00"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat2);
 
         // Highest temperature on day, but not earliest
-        Klimaat klimaat3 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 2))
-                .withTemperatuur(new BigDecimal("20.00"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat3 = aKlimaat().datumtijd(day.atTime(10, 2))
+                                           .temperatuur(new BigDecimal("20.00"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat3);
 
-        Klimaat result = klimaatRepository.earliestHighestTemperatureOnDay(SENSOR_CODE_GARDEN, day);
+        final Klimaat result = klimaatRepository.earliestHighestTemperatureOnDay(SENSOR_CODE_GARDEN, day);
 
         assertThat(result).isEqualTo(klimaat2);
     }
 
     @Test
     void whenGetEarliestLowestHumidityOnDayThenFound() {
-        final KlimaatSensor klimaatSensor = persistSensor(SENSOR_CODE_GARDEN);
+        final KlimaatSensor klimaatSensor = persistSensor();
 
-        LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.of(2022, 1, 1);
 
-        // Not lowest humidity
-        Klimaat klimaat1 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 0))
-                .withLuchtvochtigheid(new BigDecimal("20.1"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        // Not the lowest humidity
+        final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
+                                           .luchtvochtigheid(new BigDecimal("20.1"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat1);
 
         // Lowest humidity on day and earliest
-        Klimaat klimaat2 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 1))
-                .withLuchtvochtigheid(new BigDecimal("20.0"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat2 = aKlimaat().datumtijd(day.atTime(10, 1))
+                                           .luchtvochtigheid(new BigDecimal("20.0"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat2);
 
         // Lowest humidity on day, but not earliest
-        Klimaat klimaat3 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 2))
-                .withLuchtvochtigheid(new BigDecimal("20.0"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat3 = aKlimaat().datumtijd(day.atTime(10, 2))
+                                           .luchtvochtigheid(new BigDecimal("20.0"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat3);
 
-        Klimaat result = klimaatRepository.earliestLowestHumidityOnDay(SENSOR_CODE_GARDEN, day);
+        final Klimaat result = klimaatRepository.earliestLowestHumidityOnDay(SENSOR_CODE_GARDEN, day);
 
         assertThat(result).isEqualTo(klimaat2);
     }
 
     @Test
     void whenGetEarliestHighestHumidityOnDayThenFound() {
-        final KlimaatSensor klimaatSensor = persistSensor(SENSOR_CODE_GARDEN);
+        final KlimaatSensor klimaatSensor = persistSensor();
 
-        LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.of(2022, 1, 1);
 
-        // Not highest humidity
-        Klimaat klimaat1 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 0))
-                .withLuchtvochtigheid(new BigDecimal("19.9"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        // Not the highest humidity
+        final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
+                                           .luchtvochtigheid(new BigDecimal("19.9"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat1);
 
         // Highest humidity on day and earliest
-        Klimaat klimaat2 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 1))
-                .withLuchtvochtigheid(new BigDecimal("20.0"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat2 = aKlimaat().datumtijd(day.atTime(10, 1))
+                                           .luchtvochtigheid(new BigDecimal("20.0"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat2);
 
         // Highest humidity on day, but not earliest
-        Klimaat klimaat3 = aKlimaat()
-                .withDatumtijd(day.atTime(10, 2))
-                .withLuchtvochtigheid(new BigDecimal("20.0"))
-                .withKlimaatSensor(klimaatSensor)
-                .build();
+        final Klimaat klimaat3 = aKlimaat().datumtijd(day.atTime(10, 2))
+                                           .luchtvochtigheid(new BigDecimal("20.0"))
+                                           .klimaatSensor(klimaatSensor)
+                                           .build();
         entityManager.persist(klimaat3);
 
-        Klimaat result = klimaatRepository.earliestHighestHumidityOnDay(SENSOR_CODE_GARDEN, day);
+        final Klimaat result = klimaatRepository.earliestHighestHumidityOnDay(SENSOR_CODE_GARDEN, day);
 
         assertThat(result).isEqualTo(klimaat2);
     }
 
-    private KlimaatSensor persistSensor(final String sensorCode) {
-        final KlimaatSensor klimaatSensor = KlimaatSensorBuilder.aKlimaatSensor().withCode(sensorCode).build();
+    private KlimaatSensor persistSensor() {
+        final KlimaatSensor klimaatSensor = KlimaatSensorBuilder.aKlimaatSensor()
+                .withCode(KlimaatRepositoryIntegrationTest.SENSOR_CODE_GARDEN).build();
         entityManager.persist(klimaatSensor);
         return klimaatSensor;
     }

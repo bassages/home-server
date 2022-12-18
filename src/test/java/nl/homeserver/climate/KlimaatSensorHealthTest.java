@@ -15,7 +15,7 @@ import java.util.List;
 import static java.time.Month.FEBRUARY;
 import static java.util.Collections.emptyList;
 import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
-import static nl.homeserver.climate.RealtimeKlimaatBuilder.aRealtimeKlimaat;
+import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -72,7 +72,7 @@ class KlimaatSensorHealthTest {
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
 
-        final RealtimeKlimaat klimaatThatIsTenMinutesOld = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusMinutes(10)).build();
+        final RealtimeKlimaat klimaatThatIsTenMinutesOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensor.getCode())).thenReturn(klimaatThatIsTenMinutesOld);
 
         // when
@@ -92,7 +92,7 @@ class KlimaatSensorHealthTest {
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
 
-        final RealtimeKlimaat klimaatThatIsMoreThanTenMinutesOld = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
+        final RealtimeKlimaat klimaatThatIsMoreThanTenMinutesOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensor.getCode())).thenReturn(klimaatThatIsMoreThanTenMinutesOld);
 
         // when
@@ -110,11 +110,11 @@ class KlimaatSensorHealthTest {
         timeTravelTo(clock, fixedLocalDateTime);
 
         final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().withCode("LivingRoom").build();
-        final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
+        final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorLivingRoom.getCode())).thenReturn(klimaatThatIsTooOld);
 
         final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().withCode("Garden").build();
-        final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusSeconds(10)).build();
+        final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorGarden.getCode())).thenReturn(klimaatThatIsVeryRecent);
 
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensorLivingRoom, klimaatSensorGarden));
@@ -137,11 +137,11 @@ class KlimaatSensorHealthTest {
         timeTravelTo(clock, fixedLocalDateTime);
 
         final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().withCode("LivingRoom").build();
-        final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusSeconds(10)).build();
+        final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorLivingRoom.getCode())).thenReturn(klimaatThatIsTooOld);
 
         final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().withCode("Garden").build();
-        final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().withDatumtijd(fixedLocalDateTime.minusSeconds(10)).build();
+        final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorGarden.getCode())).thenReturn(klimaatThatIsVeryRecent);
 
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensorLivingRoom, klimaatSensorGarden));

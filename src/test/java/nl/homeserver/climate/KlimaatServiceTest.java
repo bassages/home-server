@@ -15,7 +15,7 @@ import java.util.List;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.*;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.climate.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.climate.Klimaat.aKlimaat;
 import static nl.homeserver.climate.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.climate.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -46,7 +46,7 @@ class KlimaatServiceTest {
         final LocalDate to = from.plusDays(1);
         final int limit = 100;
 
-        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
         when(klimaatRepository.getPeakHighTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
@@ -67,7 +67,7 @@ class KlimaatServiceTest {
         final LocalDate to = from.plusDays(1);
         final int limit = 100;
 
-        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
         when(klimaatRepository.getPeakLowTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
@@ -88,7 +88,7 @@ class KlimaatServiceTest {
         final LocalDate to = from.plusDays(1);
         final int limit = 100;
 
-        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
         when(klimaatRepository.getPeakHighHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
@@ -109,7 +109,7 @@ class KlimaatServiceTest {
         final LocalDate to = from.plusDays(1);
         final int limit = 100;
 
-        final Klimaat klimaat = aKlimaat().withDatumtijd(from.atStartOfDay()).build();
+        final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
         final Date day = Date.valueOf(from);
         when(klimaatRepository.getPeakLowHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));

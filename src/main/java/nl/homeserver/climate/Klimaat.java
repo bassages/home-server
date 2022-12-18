@@ -12,15 +12,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 class Klimaat {
@@ -59,5 +59,23 @@ class Klimaat {
     public void setDatumtijd(@Nullable final LocalDateTime datumtijd) {
         this.datumtijd = datumtijd;
         this.datum = datumtijd == null ? null : datumtijd.toLocalDate();
+    }
+
+    public static KlimaatBuilder aKlimaat() {
+        return Klimaat.builder();
+    }
+
+    // IntelliJ: "Private field 'xxx' is assigned but never accessed", "Field can be converted to a local variable"
+    // Ignore because IntelliJ is not aware this is done to modify the Lombok builder.
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    public static class KlimaatBuilder {
+        private LocalDateTime datumtijd;
+        private LocalDate datum;
+
+        public KlimaatBuilder datumtijd(final @Nullable LocalDateTime datumtijd) {
+            this.datumtijd = datumtijd;
+            this.datum = datumtijd == null ? null : datumtijd.toLocalDate();
+            return this;
+        }
     }
 }

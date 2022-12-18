@@ -20,6 +20,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
 import static java.util.Comparator.comparing;
+import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 
 @Slf4j
 @Service
@@ -113,7 +114,7 @@ public class IncomingKlimaatService {
         publishEvent(klimaat);
         recentlyAddedKlimaatsPerKlimaatSensorCode.computeIfAbsent(klimaat.getKlimaatSensor().getCode(),
                                                                   klimaatSensorCode -> new ArrayList<>())
-                                                    .add(klimaat);
+                                                 .add(klimaat);
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
@@ -150,7 +151,8 @@ public class IncomingKlimaatService {
         final List<Klimaat> recentlyReceivedKlimaatForSensor =
                 recentlyAddedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>());
 
-        return getMostRecent(recentlyReceivedKlimaatForSensor).map(this::mapToRealtimeKlimaat)
+        return getMostRecent(recentlyReceivedKlimaatForSensor)
+                .map(this::mapToRealtimeKlimaat)
                 .orElse(null);
     }
 
@@ -164,24 +166,23 @@ public class IncomingKlimaatService {
     }
 
     private RealtimeKlimaat mapToRealtimeKlimaat(final Klimaat klimaat) {
-        final RealtimeKlimaat realtimeKlimaat = new RealtimeKlimaat();
-        realtimeKlimaat.setDatumtijd(klimaat.getDatumtijd());
-        realtimeKlimaat.setLuchtvochtigheid(klimaat.getLuchtvochtigheid());
-        realtimeKlimaat.setTemperatuur(klimaat.getTemperatuur());
-        realtimeKlimaat.setSensorCode(klimaat.getKlimaatSensor().getCode());
+        final RealtimeKlimaat.RealtimeKlimaatBuilder realtimeKlimaatBuilder = aRealtimeKlimaat()
+            .datumtijd(klimaat.getDatumtijd())
+            .luchtvochtigheid(klimaat.getLuchtvochtigheid())
+            .temperatuur(klimaat.getTemperatuur())
+            .sensorCode(klimaat.getKlimaatSensor().getCode());
 
         final List<Klimaat> klimaatsToDetermineTrendFor = getKlimaatsAddedInLastNumberOfMinutes(
-                klimaat.getKlimaatSensor().getCode(),
-                NR_OF_MINUTES_TO_DETERMINE_TREND_FOR);
+                klimaat.getKlimaatSensor().getCode(), NR_OF_MINUTES_TO_DETERMINE_TREND_FOR);
 
-        final Trend temperatureTrend = klimaatSensorValueTrendService.determineValueTrend(klimaatsToDetermineTrendFor,
-                                                                                          Klimaat::getTemperatuur);
-        realtimeKlimaat.setTemperatuurTrend(temperatureTrend);
+        final Trend temperatureTrend = klimaatSensorValueTrendService
+                .determineValueTrend(klimaatsToDetermineTrendFor, Klimaat::getTemperatuur);
+        realtimeKlimaatBuilder.temperatuurTrend(temperatureTrend);
 
-        final Trend humidityTrend = klimaatSensorValueTrendService.determineValueTrend(klimaatsToDetermineTrendFor,
-                                                                                       Klimaat::getLuchtvochtigheid);
-        realtimeKlimaat.setLuchtvochtigheidTrend(humidityTrend);
+        final Trend humidityTrend = klimaatSensorValueTrendService
+                .determineValueTrend(klimaatsToDetermineTrendFor, Klimaat::getLuchtvochtigheid);
+        realtimeKlimaatBuilder.luchtvochtigheidTrend(humidityTrend);
 
-        return realtimeKlimaat;
+        return realtimeKlimaatBuilder.build();
     }
 }

@@ -82,7 +82,7 @@ class KlimaatSensorHealth implements HealthIndicator {
     }
 
     private boolean isDown(final RealtimeKlimaat mostRecentRealtimeKlimaat) {
-        return mostRecentRealtimeKlimaat.getDatumtijd().isBefore(now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES));
+        return mostRecentRealtimeKlimaat.datumtijd().isBefore(now(clock).minusMinutes(MAXIMUM_KLIMAAT_AGE_IN_MINUTES));
     }
 
     private Map<KlimaatSensor, RealtimeKlimaat> getMostRecentlyRegisteredKlimaatPerSensor(
@@ -97,6 +97,6 @@ class KlimaatSensorHealth implements HealthIndicator {
     }
 
     private String formatDatumtijd(final RealtimeKlimaat mostRecent) {
-        return mostRecent.getDatumtijd().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        return mostRecent.datumtijd().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

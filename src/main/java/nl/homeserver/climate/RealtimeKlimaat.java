@@ -1,19 +1,20 @@
 package nl.homeserver.climate;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-class RealtimeKlimaat {
+@Builder
+record RealtimeKlimaat(
+    LocalDateTime datumtijd,
+    BigDecimal temperatuur,
+    BigDecimal luchtvochtigheid,
+    Trend temperatuurTrend,
+    Trend luchtvochtigheidTrend,
+    String sensorCode) {
 
-    private LocalDateTime datumtijd;
-    private BigDecimal temperatuur;
-    private BigDecimal luchtvochtigheid;
-    private Trend temperatuurTrend;
-    private Trend luchtvochtigheidTrend;
-    private String sensorCode;
+    static RealtimeKlimaatBuilder aRealtimeKlimaat() {
+        return RealtimeKlimaat.builder();
+    }
 }

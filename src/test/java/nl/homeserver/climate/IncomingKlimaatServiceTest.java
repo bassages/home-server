@@ -21,7 +21,7 @@ import java.util.function.Function;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.JANUARY;
 import static java.time.Month.SEPTEMBER;
-import static nl.homeserver.climate.KlimaatBuilder.aKlimaat;
+import static nl.homeserver.climate.Klimaat.aKlimaat;
 import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
-import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
 class IncomingKlimaatServiceTest {
@@ -63,12 +62,11 @@ class IncomingKlimaatServiceTest {
 
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        final Klimaat klimaat = aKlimaat()
-                .withDatumtijd(currentDateTime)
-                .withKlimaatSensor(klimaatSensor)
-                .withLuchtvochtigheid(new BigDecimal("56.13"))
-                .withTemperatuur(new BigDecimal("21.51"))
-                .build();
+        final Klimaat klimaat = aKlimaat().datumtijd(currentDateTime)
+                                          .klimaatSensor(klimaatSensor)
+                                          .luchtvochtigheid(new BigDecimal("56.13"))
+                                          .temperatuur(new BigDecimal("21.51"))
+                                          .build();
 
         when(klimaatSensorValueTrendService.determineValueTrend(anyList(), any(Function.class))).then(invocation -> {
             final Function<Klimaat, BigDecimal> sensorValueGetter = (Function<Klimaat, BigDecimal>) invocation.getArguments()[1];
@@ -86,12 +84,12 @@ class IncomingKlimaatServiceTest {
         verify(simpMessagingTemplate).convertAndSend(eq(IncomingKlimaatService.REALTIME_KLIMAAT_TOPIC), realtimeKlimaatCaptor.capture());
 
         final RealtimeKlimaat realtimeKlimaat = realtimeKlimaatCaptor.getValue();
-        assertThat(realtimeKlimaat.getDatumtijd()).isEqualTo(klimaat.getDatumtijd());
-        assertThat(realtimeKlimaat.getLuchtvochtigheid()).isEqualTo(klimaat.getLuchtvochtigheid());
-        assertThat(realtimeKlimaat.getTemperatuur()).isEqualTo(klimaat.getTemperatuur());
-        assertThat(realtimeKlimaat.getLuchtvochtigheidTrend()).isEqualTo(Trend.UP);
-        assertThat(realtimeKlimaat.getTemperatuurTrend()).isEqualTo(Trend.DOWN);
-        assertThat(realtimeKlimaat.getSensorCode()).isEqualTo(klimaatSensor.getCode());
+        assertThat(realtimeKlimaat.datumtijd()).isEqualTo(klimaat.getDatumtijd());
+        assertThat(realtimeKlimaat.luchtvochtigheid()).isEqualTo(klimaat.getLuchtvochtigheid());
+        assertThat(realtimeKlimaat.temperatuur()).isEqualTo(klimaat.getTemperatuur());
+        assertThat(realtimeKlimaat.luchtvochtigheidTrend()).isEqualTo(Trend.UP);
+        assertThat(realtimeKlimaat.temperatuurTrend()).isEqualTo(Trend.DOWN);
+        assertThat(realtimeKlimaat.sensorCode()).isEqualTo(klimaatSensor.getCode());
     }
 
     @Test
@@ -103,8 +101,8 @@ class IncomingKlimaatServiceTest {
 
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        final Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                          .withDatumtijd(currentDateTime)
+        final Klimaat klimaat = aKlimaat().klimaatSensor(klimaatSensor)
+                                          .datumtijd(currentDateTime)
                                           .build();
 
         incomingKlimaatService.add(klimaat);
@@ -120,8 +118,8 @@ class IncomingKlimaatServiceTest {
 
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        final Klimaat klimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                          .withDatumtijd(null)
+        final Klimaat klimaat = aKlimaat().klimaatSensor(klimaatSensor)
+                                          .datumtijd(null)
                                           .build();
 
         incomingKlimaatService.add(klimaat);
@@ -136,12 +134,12 @@ class IncomingKlimaatServiceTest {
 
         final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
 
-        final Klimaat oldKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                             .withDatumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
+        final Klimaat oldKlimaat = aKlimaat().klimaatSensor(klimaatSensor)
+                                             .datumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
                                              .build();
 
-        final Klimaat recentKlimaat = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                                .withDatumtijd(currentDateTime.minusMinutes(18))
+        final Klimaat recentKlimaat = aKlimaat().klimaatSensor(klimaatSensor)
+                                                .datumtijd(currentDateTime.minusMinutes(18))
                                                 .build();
 
         final List<Klimaat> recentlyReceivedKlimaats = new ArrayList<>();
@@ -151,8 +149,8 @@ class IncomingKlimaatServiceTest {
         final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
         recentlyReceivedKlimaatsPerKlimaatSensorCode.put(klimaatSensor.getCode(), recentlyReceivedKlimaats);
 
-        final Klimaat klimaatToAdd = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                               .withDatumtijd(currentDateTime)
+        final Klimaat klimaatToAdd = aKlimaat().klimaatSensor(klimaatSensor)
+                                               .datumtijd(currentDateTime)
                                                .build();
 
         incomingKlimaatService.add(klimaatToAdd);
@@ -173,25 +171,25 @@ class IncomingKlimaatServiceTest {
 
         when(klimaatSensorService.getOrCreateIfNonExists(SOME_SENSOR_CODE)).thenReturn(klimaatSensor);
 
-        final Klimaat recentValidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                                      .withDatumtijd(currentDateTime.minusMinutes(10))
-                                                      .withLuchtvochtigheid(new BigDecimal("25.00"))
-                                                      .withTemperatuur(new BigDecimal("20.00"))
+        final Klimaat recentValidKlimaat1 = aKlimaat().klimaatSensor(klimaatSensor)
+                                                      .datumtijd(currentDateTime.minusMinutes(10))
+                                                      .luchtvochtigheid(new BigDecimal("25.00"))
+                                                      .temperatuur(new BigDecimal("20.00"))
                                                       .build();
-        final Klimaat recentValidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                                      .withDatumtijd(currentDateTime.minusMinutes(5))
-                                                      .withLuchtvochtigheid(new BigDecimal("75.00"))
-                                                      .withTemperatuur(new BigDecimal("10.00"))
+        final Klimaat recentValidKlimaat2 = aKlimaat().klimaatSensor(klimaatSensor)
+                                                      .datumtijd(currentDateTime.minusMinutes(5))
+                                                      .luchtvochtigheid(new BigDecimal("75.00"))
+                                                      .temperatuur(new BigDecimal("10.00"))
                                                       .build();
-        final Klimaat recentInvalidKlimaat1 = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                                        .withDatumtijd(currentDateTime.minusMinutes(4))
-                                                        .withLuchtvochtigheid(ZERO) // ZERO = invalid
-                                                        .withTemperatuur(ZERO) // ZERO = invalid
+        final Klimaat recentInvalidKlimaat1 = aKlimaat().klimaatSensor(klimaatSensor)
+                                                        .datumtijd(currentDateTime.minusMinutes(4))
+                                                        .luchtvochtigheid(ZERO) // ZERO = invalid
+                                                        .temperatuur(ZERO) // ZERO = invalid
                                                         .build();
-        final  Klimaat recentInvalidKlimaat2 = aKlimaat().withKlimaatSensor(klimaatSensor)
-                                                         .withDatumtijd(currentDateTime.minusMinutes(3))
-                                                         .withLuchtvochtigheid(null) // null = invalid
-                                                         .withTemperatuur(null) // null = invalid
+        final  Klimaat recentInvalidKlimaat2 = aKlimaat().klimaatSensor(klimaatSensor)
+                                                         .datumtijd(currentDateTime.minusMinutes(3))
+                                                         .luchtvochtigheid(null) // null = invalid
+                                                         .temperatuur(null) // null = invalid
                                                          .build();
 
         final List<Klimaat> klimaats = List.of(recentValidKlimaat1, recentValidKlimaat2,
@@ -223,21 +221,21 @@ class IncomingKlimaatServiceTest {
         final LocalDate date = LocalDate.of(2016, SEPTEMBER, 1);
         timeTravelTo(clock, date.atStartOfDay());
 
-        final Klimaat klimaat1 = aKlimaat().withDatumtijd(date.atTime(12, 14, 41)).build();
-        final Klimaat klimaat2 = aKlimaat().withKlimaatSensor(aKlimaatSensor().withCode(SOME_SENSOR_CODE).build())
-                                           .withDatumtijd(date.atTime(23, 26, 8))
-                                           .withTemperatuur(new BigDecimal("23.7"))
-                                           .withLuchtvochtigheid(new BigDecimal("45.7"))
+        final Klimaat klimaat1 = aKlimaat().datumtijd(date.atTime(12, 14, 41)).build();
+        final Klimaat klimaat2 = aKlimaat().klimaatSensor(aKlimaatSensor().withCode(SOME_SENSOR_CODE).build())
+                                           .datumtijd(date.atTime(23, 26, 8))
+                                           .temperatuur(new BigDecimal("23.7"))
+                                           .luchtvochtigheid(new BigDecimal("45.7"))
                                            .build();
-        final Klimaat klimaat3 = aKlimaat().withDatumtijd(date.atTime(2, 0, 45)).build();
+        final Klimaat klimaat3 = aKlimaat().datumtijd(date.atTime(2, 0, 45)).build();
 
         getRecentlyReceivedKlimaatPerSensorCode().put(SOME_SENSOR_CODE, List.of(klimaat1, klimaat2, klimaat3));
 
         final RealtimeKlimaat mostRecent = incomingKlimaatService.getMostRecent(SOME_SENSOR_CODE);
-        assertThat(mostRecent.getSensorCode()).isEqualTo(SOME_SENSOR_CODE);
-        assertThat(mostRecent.getDatumtijd()).isEqualTo(klimaat2.getDatumtijd());
-        assertThat(mostRecent.getTemperatuur()).isEqualTo(klimaat2.getTemperatuur());
-        assertThat(mostRecent.getLuchtvochtigheid()).isEqualTo(klimaat2.getLuchtvochtigheid());
+        assertThat(mostRecent.sensorCode()).isEqualTo(SOME_SENSOR_CODE);
+        assertThat(mostRecent.datumtijd()).isEqualTo(klimaat2.getDatumtijd());
+        assertThat(mostRecent.temperatuur()).isEqualTo(klimaat2.getTemperatuur());
+        assertThat(mostRecent.luchtvochtigheid()).isEqualTo(klimaat2.getLuchtvochtigheid());
     }
 
     @SuppressWarnings("unchecked")
