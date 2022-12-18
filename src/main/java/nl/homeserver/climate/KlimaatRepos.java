@@ -1,17 +1,18 @@
 package nl.homeserver.climate;
 
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import javax.annotation.Nullable;
-import jakarta.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 @Transactional
 interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
@@ -150,19 +151,26 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                                        @Param("tot") LocalDate tot,
                                        @Param("limit") int limit);
 
-    @Nullable
     @Query(value = """
-        SELECT k.*
-          FROM klimaat k
-    INNER JOIN klimaat_sensor ks ON k.klimaat_sensor_id = ks.id
-         WHERE k.datum = :day
+        SELECT k
+          FROM Klimaat k
+          JOIN KlimaatSensor ks
+         WHERE EXTRACT(DAY FROM k.datumtijd) = EXTRACT(DAY FROM :day)
+           AND EXTRACT(MONTH FROM k.datumtijd) = EXTRACT(MONTH FROM :day)
+           AND EXTRACT(YEAR FROM k.datumtijd) = EXTRACT(YEAR FROM :day)
            AND ks.code = :sensorCode
       ORDER BY k.luchtvochtigheid,
                k.datumtijd
-         LIMIT 1
-    """, nativeQuery = true)
-    Klimaat earliestLowestHumidityOnDay(@Param("sensorCode")String sensorCode,
-                                        @Param("day") LocalDate day);
+    """)
+    List<Klimaat> earliestLowestHumiditiesOnDay(@Param("sensorCode") String sensorCode,
+                                                @Param("day") LocalDate day,
+                                                Pageable pageable);
+
+    @Nullable
+    default Klimaat earliestLowestHumidityOnDay(final String sensorCode, final LocalDate day) {
+        return earliestLowestHumiditiesOnDay(sensorCode, day, PageRequest.of(0, 1))
+                .stream().findFirst().orElse(null);
+    }
 
     @Nullable
     @Query(value = """
