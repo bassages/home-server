@@ -54,4 +54,8 @@ public class EnergyContract {
             default      -> ZERO;
         };
     }
+
+    public static EnergyContractBuilder anEnergyContract() {
+        return EnergyContract.builder();
+    }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JUNE;
-import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,7 +41,7 @@ class KlimaatCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         final String sensorCode = "SOME_NICE_CODE";
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
         klimaatCacheWarmer.warmupCacheOnStartup();
@@ -77,7 +77,7 @@ class KlimaatCacheWarmerTest {
         final String sensorCode = "SOME_NICE_CODE";
 
         when(klimaatController.getAllKlimaatSensors())
-                .thenReturn(List.of(aKlimaatSensor().withCode(sensorCode).build()));
+                .thenReturn(List.of(aKlimaatSensor().code(sensorCode).build()));
 
         klimaatCacheWarmer.warmupCacheOnStartup();
 
@@ -94,7 +94,7 @@ class KlimaatCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
         final String sensorCode = "SOME_FANCY_SENSOR";
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(sensorCode).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
         klimaatCacheWarmer.warmupCacheDaily();

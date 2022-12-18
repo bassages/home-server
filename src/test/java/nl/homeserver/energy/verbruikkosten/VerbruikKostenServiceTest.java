@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static java.util.Calendar.MAY;
+import static nl.homeserver.energy.energycontract.EnergyContract.anEnergyContract;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,11 +26,10 @@ class VerbruikKostenServiceTest {
         final VerbruikProvider verbruikProvider = mock(VerbruikProvider.class);
         when(verbruikProvider.getGasVerbruik(period)).thenReturn(new BigDecimal("300"));
 
-        final EnergyContract energyContract = EnergyContract.builder()
-                .validFrom(period.getFromDateTime().toLocalDate())
-                .validTo(period.getToDateTime().toLocalDate())
-                .gasPerCubicMeter(new BigDecimal("0.02"))
-                .build();
+        final EnergyContract energyContract = anEnergyContract().validFrom(period.getFromDateTime().toLocalDate())
+                                                                .validTo(period.getToDateTime().toLocalDate())
+                                                                .gasPerCubicMeter(new BigDecimal("0.02"))
+                                                                .build();
 
         // when
         final VerbruikKosten gasVerbruikKosten = verbruikKostenService.getGasVerbruikKosten(verbruikProvider, energyContract, period);
@@ -47,11 +47,10 @@ class VerbruikKostenServiceTest {
         final VerbruikProvider verbruikProvider = mock(VerbruikProvider.class);
         when(verbruikProvider.getGasVerbruik(period)).thenReturn(null);
 
-        final EnergyContract energyContract = EnergyContract.builder()
-                .validFrom(period.getFromDateTime().toLocalDate())
-                .validTo(period.getToDateTime().toLocalDate())
-                .gasPerCubicMeter(new BigDecimal("0.02"))
-                .build();
+        final EnergyContract energyContract = anEnergyContract().validFrom(period.getFromDateTime().toLocalDate())
+                                                                .validTo(period.getToDateTime().toLocalDate())
+                                                                .gasPerCubicMeter(new BigDecimal("0.02"))
+                                                                .build();
 
         // when
         final VerbruikKosten gasVerbruikKosten = verbruikKostenService.getGasVerbruikKosten(verbruikProvider, energyContract, period);
@@ -71,11 +70,10 @@ class VerbruikKostenServiceTest {
 
         when(verbruikProvider.getStroomVerbruik(period, stroomTariefIndicator)).thenReturn(new BigDecimal("300"));
 
-        final EnergyContract energyContract = EnergyContract.builder()
-                .validFrom(period.getFromDateTime().toLocalDate())
-                .validTo(period.getToDateTime().toLocalDate())
-                .electricityPerKwhStandardTariff(new BigDecimal("0.02"))
-                .build();
+        final EnergyContract energyContract = anEnergyContract().validFrom(period.getFromDateTime().toLocalDate())
+                                                                .validTo(period.getToDateTime().toLocalDate())
+                                                                .electricityPerKwhStandardTariff(new BigDecimal("0.02"))
+                                                                .build();
 
         // when
         final VerbruikKosten stroomVerbruikKosten = verbruikKostenService.getStroomVerbruikKosten(
@@ -95,11 +93,10 @@ class VerbruikKostenServiceTest {
         final VerbruikProvider verbruikProvider = mock(VerbruikProvider.class);
         when(verbruikProvider.getStroomVerbruik(period, stroomTariefIndicator)).thenReturn(null);
 
-        final EnergyContract energyContract = EnergyContract.builder()
-                .validFrom(period.getFromDateTime().toLocalDate())
-                .validTo(period.getToDateTime().toLocalDate())
-                .electricityPerKwhStandardTariff(new BigDecimal("0.02"))
-                .build();
+        final EnergyContract energyContract = anEnergyContract().validFrom(period.getFromDateTime().toLocalDate())
+                                                                .validTo(period.getToDateTime().toLocalDate())
+                                                                .electricityPerKwhStandardTariff(new BigDecimal("0.02"))
+                                                                .build();
 
         // when
         final VerbruikKosten stroomVerbruikKosten = verbruikKostenService.getStroomVerbruikKosten(

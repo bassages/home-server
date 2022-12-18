@@ -22,7 +22,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.JANUARY;
 import static java.time.Month.SEPTEMBER;
 import static nl.homeserver.climate.Klimaat.aKlimaat;
-import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -60,7 +60,7 @@ class IncomingKlimaatServiceTest {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 13).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         final Klimaat klimaat = aKlimaat().datumtijd(currentDateTime)
                                           .klimaatSensor(klimaatSensor)
@@ -99,7 +99,7 @@ class IncomingKlimaatServiceTest {
 
         final Map<String, List<Klimaat>> recentlyReceivedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         final Klimaat klimaat = aKlimaat().klimaatSensor(klimaatSensor)
                                           .datumtijd(currentDateTime)
@@ -116,7 +116,7 @@ class IncomingKlimaatServiceTest {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         final Klimaat klimaat = aKlimaat().klimaatSensor(klimaatSensor)
                                           .datumtijd(null)
@@ -132,7 +132,7 @@ class IncomingKlimaatServiceTest {
         final LocalDateTime currentDateTime = LocalDate.of(2016, JANUARY, 1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         final Klimaat oldKlimaat = aKlimaat().klimaatSensor(klimaatSensor)
                                              .datumtijd(currentDateTime.minusMinutes(18).minusSeconds(1))
@@ -167,7 +167,7 @@ class IncomingKlimaatServiceTest {
 
         final Map<String, List<Klimaat>> recentlyAddedKlimaatsPerKlimaatSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         when(klimaatSensorService.getOrCreateIfNonExists(SOME_SENSOR_CODE)).thenReturn(klimaatSensor);
 
@@ -222,7 +222,7 @@ class IncomingKlimaatServiceTest {
         timeTravelTo(clock, date.atStartOfDay());
 
         final Klimaat klimaat1 = aKlimaat().datumtijd(date.atTime(12, 14, 41)).build();
-        final Klimaat klimaat2 = aKlimaat().klimaatSensor(aKlimaatSensor().withCode(SOME_SENSOR_CODE).build())
+        final Klimaat klimaat2 = aKlimaat().klimaatSensor(aKlimaatSensor().code(SOME_SENSOR_CODE).build())
                                            .datumtijd(date.atTime(23, 26, 8))
                                            .temperatuur(new BigDecimal("23.7"))
                                            .luchtvochtigheid(new BigDecimal("45.7"))

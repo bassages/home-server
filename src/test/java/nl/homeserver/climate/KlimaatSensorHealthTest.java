@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.time.Month.FEBRUARY;
 import static java.util.Collections.emptyList;
-import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ class KlimaatSensorHealthTest {
     @Test
     void whenNoKlimaatExistsThenHealthIsUnknown() {
         // given
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code("LivingRoom").build();
 
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
         when(incomingKlimaatService.getMostRecent(klimaatSensor.getCode())).thenReturn(null);
@@ -69,7 +69,7 @@ class KlimaatSensorHealthTest {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code("LivingRoom").build();
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
 
         final RealtimeKlimaat klimaatThatIsTenMinutesOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10)).build();
@@ -89,7 +89,7 @@ class KlimaatSensorHealthTest {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode("LivingRoom").build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code("LivingRoom").build();
         when(klimaatSensorService.getAll()).thenReturn(List.of(klimaatSensor));
 
         final RealtimeKlimaat klimaatThatIsMoreThanTenMinutesOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
@@ -109,11 +109,11 @@ class KlimaatSensorHealthTest {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 
-        final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().withCode("LivingRoom").build();
+        final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().code("LivingRoom").build();
         final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusMinutes(10).minusSeconds(1)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorLivingRoom.getCode())).thenReturn(klimaatThatIsTooOld);
 
-        final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().withCode("Garden").build();
+        final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().code("Garden").build();
         final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorGarden.getCode())).thenReturn(klimaatThatIsVeryRecent);
 
@@ -136,11 +136,11 @@ class KlimaatSensorHealthTest {
         final LocalDateTime fixedLocalDateTime = LocalDate.of(2017, FEBRUARY, 5).atTime(10, 5);
         timeTravelTo(clock, fixedLocalDateTime);
 
-        final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().withCode("LivingRoom").build();
+        final KlimaatSensor klimaatSensorLivingRoom = aKlimaatSensor().code("LivingRoom").build();
         final RealtimeKlimaat klimaatThatIsTooOld = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorLivingRoom.getCode())).thenReturn(klimaatThatIsTooOld);
 
-        final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().withCode("Garden").build();
+        final KlimaatSensor klimaatSensorGarden = aKlimaatSensor().code("Garden").build();
         final RealtimeKlimaat klimaatThatIsVeryRecent = aRealtimeKlimaat().datumtijd(fixedLocalDateTime.minusSeconds(10)).build();
         when(incomingKlimaatService.getMostRecent(klimaatSensorGarden.getCode())).thenReturn(klimaatThatIsVeryRecent);
 

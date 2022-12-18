@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static nl.homeserver.climate.KlimaatSensorBuilder.aKlimaatSensor;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,7 +30,7 @@ class KlimaatSensorServiceTest {
     @Test
     void whenGetKlimaatSensorByCodeThenDelegatedToRepository() {
         // given
-        final KlimaatSensor klimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.of(klimaatSensor));
 
         // when
@@ -102,7 +102,7 @@ class KlimaatSensorServiceTest {
     @Test
     void givenExistingSensorCodeWhenGetOrCreateIfNonExistsThenReturned() {
         // given
-        final KlimaatSensor existingKlimaatSensor = aKlimaatSensor().withCode(SOME_SENSOR_CODE).build();
+        final KlimaatSensor existingKlimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
         when(klimaatSensorRepository.findFirstByCode(SOME_SENSOR_CODE)).thenReturn(Optional.of(existingKlimaatSensor));
 
         // when

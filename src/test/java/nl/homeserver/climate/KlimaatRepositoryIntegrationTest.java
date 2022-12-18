@@ -1,6 +1,7 @@
 package nl.homeserver.climate;
 
 import static nl.homeserver.climate.Klimaat.aKlimaat;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -163,8 +164,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     private KlimaatSensor persistSensor() {
-        final KlimaatSensor klimaatSensor = KlimaatSensorBuilder.aKlimaatSensor()
-                .withCode(KlimaatRepositoryIntegrationTest.SENSOR_CODE_GARDEN).build();
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SENSOR_CODE_GARDEN).build();
         entityManager.persist(klimaatSensor);
         return klimaatSensor;
     }

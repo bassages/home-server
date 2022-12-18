@@ -16,6 +16,7 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.*;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.climate.Klimaat.aKlimaat;
+import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static nl.homeserver.climate.SensorType.LUCHTVOCHTIGHEID;
 import static nl.homeserver.climate.SensorType.TEMPERATUUR;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
@@ -312,8 +313,11 @@ class KlimaatServiceTest {
 
     @Test
     void whenDeleteByKlimaatSensorThenDeletedByRepository() {
+        // given
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
+
         // when
-        klimaatService.deleteByKlimaatSensor(KlimaatSensorBuilder.aKlimaatSensor().withCode(SOME_SENSOR_CODE).build());
+        klimaatService.deleteByKlimaatSensor(klimaatSensor);
 
         // then
         verify(klimaatRepository).deleteByKlimaatSensorCode(SOME_SENSOR_CODE);

@@ -9,10 +9,11 @@ import jakarta.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 public class KlimaatSensor {
@@ -31,4 +32,8 @@ public class KlimaatSensor {
     @Setter
     @Nullable
     private String omschrijving;
+
+    static KlimaatSensorBuilder aKlimaatSensor() {
+        return KlimaatSensor.builder();
+    }
 }
