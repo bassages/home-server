@@ -26,7 +26,7 @@ import java.util.Optional;
 class MindergasnlService {
 
     @Value("${home-server.mindergas.api.url}")
-    protected String mindergasNlApiUrl;
+    String mindergasNlApiUrl;
 
     private final MindergasnlSettingsRepository mindergasnlSettingsRepository;
     private final MeterstandService meterstandService;
