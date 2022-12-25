@@ -100,7 +100,19 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     }
 
     @Test
-    void whenGetEarliestLowestHumidityOnDayThenFound() {
+    void givenNoDataExistsWhenGetEarliestLowestHumidityOnDayThenNoneFound() {
+        // given no data exists in the repository
+
+        // when
+        final Klimaat result = klimaatRepository.earliestLowestHumidityOnDay(
+                SENSOR_CODE_GARDEN, LocalDate.of(2022, 1, 1));
+
+        // then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void givenNoDataExistsWhenGetEarliestLowestHumidityOnDayThenFound() {
         final KlimaatSensor klimaatSensor = persistSensor();
 
         final LocalDate day = LocalDate.of(2022, 1, 1);
