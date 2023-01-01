@@ -2,6 +2,9 @@ package nl.homeserver.climate;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.JANUARY;
@@ -207,6 +211,54 @@ class IncomingKlimaatServiceTest {
         assertThat(savedKlimaat.getLuchtvochtigheid()).isEqualTo(new BigDecimal("50.0"));
         assertThat(savedKlimaat.getTemperatuur()).isEqualTo(new BigDecimal("15.00"));
         assertThat(savedKlimaat.getKlimaatSensor()).isEqualTo(klimaatSensor);
+    }
+
+    private static Stream<Arguments> timeRoundedToNearestMinuteParameters() {
+        return Stream.of(
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 14, 59),
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0)),
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0),
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0)),
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 1),
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0)),
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 29),
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0)),
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 30),
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 16, 0))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("timeRoundedToNearestMinuteParameters")
+    void whenSaveThenTimeRoundedToNearestMinute(
+            final LocalDateTime executionDateTime, final LocalDateTime expectedClimateDateTime) {
+        // given
+        timeTravelTo(clock, executionDateTime);
+
+        final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
+        when(klimaatSensorService.getOrCreateIfNonExists(SOME_SENSOR_CODE)).thenReturn(klimaatSensor);
+
+        final Map<String, List<Klimaat>> recentlyAddedClimatesPerSensorCode = getRecentlyReceivedKlimaatPerSensorCode();
+        final Klimaat climate = aKlimaat().klimaatSensor(klimaatSensor)
+                .datumtijd(executionDateTime.minusMinutes(1))
+                .luchtvochtigheid(new BigDecimal("25.00"))
+                .temperatuur(new BigDecimal("20.00"))
+                .build();
+        recentlyAddedClimatesPerSensorCode.put(klimaatSensor.getCode(), List.of(climate));
+
+        // when
+        incomingKlimaatService.save();
+
+        // then
+        verify(klimaatService).save(klimaatCaptor.capture());
+
+        final Klimaat savedKlimaat = klimaatCaptor.getValue();
+        assertThat(savedKlimaat.getDatumtijd()).isEqualTo(expectedClimateDateTime);
     }
 
     @Test

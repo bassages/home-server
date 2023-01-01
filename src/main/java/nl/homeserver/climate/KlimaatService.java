@@ -20,14 +20,13 @@ public class KlimaatService {
         klimaatRepository.save(klimaat);
     }
 
-    List<Klimaat> getInPeriod(final String klimaatSensorCode,
-                              final DatePeriod period) {
+    List<Klimaat> getInPeriod(final String climateSensorCode, final DatePeriod period) {
         final LocalDate today = LocalDate.now(clock);
 
         if (period.getEndDate().isBefore(today)) {
-            return klimaatServiceHelper.getPotentiallyCachedAllInPeriod(klimaatSensorCode, period);
+            return klimaatServiceHelper.getPotentiallyCachedAllInPeriod(climateSensorCode, period);
         } else {
-            return klimaatServiceHelper.getNotCachedAllInPeriod(klimaatSensorCode, period);
+            return klimaatServiceHelper.getNotCachedAllInPeriod(climateSensorCode, period);
         }
     }
 

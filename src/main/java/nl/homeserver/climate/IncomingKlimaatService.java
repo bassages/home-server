@@ -10,7 +10,6 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
@@ -19,6 +18,8 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.util.Comparator.comparing;
 import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 
@@ -47,10 +48,22 @@ public class IncomingKlimaatService {
 
     @Scheduled(cron = EVERY_X_MINUTES_PAST_THE_HOUR)
     void save() {
-        final LocalDateTime referenceDateTime = now(clock).truncatedTo(ChronoUnit.MINUTES);
+        final LocalDateTime referenceDateTime = determineReferenceDateTime();
         recentlyAddedKlimaatsPerKlimaatSensorCode.forEach(
                 (klimaatSensorCode, klimaats) ->
                         this.saveKlimaatWithAveragedRecentSensorValues(referenceDateTime, klimaatSensorCode));
+    }
+
+    private LocalDateTime determineReferenceDateTime() {
+        final LocalDateTime now = now(clock);
+        final LocalDateTime referenceDateTime;
+        if (now.getSecond() < 30) {
+            referenceDateTime = now.with(SECOND_OF_MINUTE, 0);
+        } else {
+            referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1)
+                                   .with(SECOND_OF_MINUTE, 0);
+        }
+        return referenceDateTime;
     }
 
     private void saveKlimaatWithAveragedRecentSensorValues(final LocalDateTime referenceDateTime,
