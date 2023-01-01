@@ -44,7 +44,8 @@ class VerbruikKostenInPeriodServiceTest {
 
         final EnergyContract energyContract1 = new EnergyContract();
         final EnergyContract energyContract2 = new EnergyContract();
-        when(energyContractService.findAllInInPeriod(period)).thenReturn(List.of(energyContract1, energyContract2));
+        when(energyContractService.findAllInInPeriod(period.toDatePeriod()))
+                .thenReturn(List.of(energyContract1, energyContract2));
 
         when(verbruikKostenService.getGasVerbruikKosten(verbruikProvider, energyContract1, period))
                 .thenReturn(new VerbruikKosten(new BigDecimal("1"), new BigDecimal("2.001")));
@@ -69,7 +70,8 @@ class VerbruikKostenInPeriodServiceTest {
 
         final EnergyContract energyContract1 = new EnergyContract();
         final EnergyContract energyContract2 = new EnergyContract();
-        when(energyContractService.findAllInInPeriod(period)).thenReturn(List.of(energyContract1, energyContract2));
+        when(energyContractService.findAllInInPeriod(period.toDatePeriod()))
+                .thenReturn(List.of(energyContract1, energyContract2));
 
         when(verbruikKostenService.getGasVerbruikKosten(verbruikProvider, energyContract1, period))
                 .thenReturn(new VerbruikKosten(new BigDecimal("1"), new BigDecimal("2.001")));
@@ -86,7 +88,7 @@ class VerbruikKostenInPeriodServiceTest {
     }
 
     @Test
-    void whenGetNotCachedStroomVerbruikInPeriodeThenEnergyContractsInPeriodIsConsidered() {
+    void whenGetNotCachedStroomVerbruikInFullDayThenEnergyContractsInPeriodIsConsidered() {
         // given
         final LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2016, JANUARY, 4).atStartOfDay();
@@ -94,7 +96,8 @@ class VerbruikKostenInPeriodServiceTest {
 
         final EnergyContract energyContract1 = new EnergyContract();
         final EnergyContract energyContract2 = new EnergyContract();
-        when(energyContractService.findAllInInPeriod(period)).thenReturn(List.of(energyContract1, energyContract2));
+        when(energyContractService.findAllInInPeriod(period.toDatePeriod()))
+                .thenReturn(List.of(energyContract1, energyContract2));
 
         final StroomTariefIndicator stroomTariefIndicator = NORMAAL;
         when(verbruikKostenService.getStroomVerbruikKosten(verbruikProvider, energyContract1, stroomTariefIndicator, period))
@@ -112,6 +115,33 @@ class VerbruikKostenInPeriodServiceTest {
     }
 
     @Test
+    void whenGetNotCachedStroomVerbruikInSingleHourOfDayThenEnergyContractsInPeriodIsConsidered() {
+        // given
+        final LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atTime(16, 0);
+        final LocalDateTime to = LocalDate.of(2016, JANUARY, 2).atTime(17, 0);
+        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
+
+        final EnergyContract energyContract1 = new EnergyContract();
+        final EnergyContract energyContract2 = new EnergyContract();
+        when(energyContractService.findAllInInPeriod(period.toDatePeriod()))
+                .thenReturn(List.of(energyContract1, energyContract2));
+
+        final StroomTariefIndicator stroomTariefIndicator = NORMAAL;
+        when(verbruikKostenService.getStroomVerbruikKosten(verbruikProvider, energyContract1, stroomTariefIndicator, period))
+                .thenReturn(new VerbruikKosten(BigDecimal.ONE, BigDecimal.ONE));
+        when(verbruikKostenService.getStroomVerbruikKosten(verbruikProvider, energyContract2, stroomTariefIndicator, period))
+                .thenReturn(new VerbruikKosten(BigDecimal.ONE, BigDecimal.ONE));
+
+        // when
+        final VerbruikKosten gasVerbruikInPeriode = verbruikKostenInPeriodService
+                .getNotCachedStroomVerbruikInPeriode(verbruikProvider, period, stroomTariefIndicator);
+
+        // then
+        assertThat(gasVerbruikInPeriode.getVerbruik()).isEqualTo(new BigDecimal("2"));
+        assertThat(gasVerbruikInPeriode.getKosten()).isEqualTo(new BigDecimal("2.000"));
+    }
+
+    @Test
     void whenGetPotentiallyCachedStroomVerbruikInPeriodeThenEnergyContractsInPeriodIsConsidered() {
         // given
         final LocalDateTime from = LocalDate.of(2016, JANUARY, 2).atStartOfDay();
@@ -120,7 +150,8 @@ class VerbruikKostenInPeriodServiceTest {
 
         final EnergyContract energyContract1 = new EnergyContract();
         final EnergyContract energyContract2 = new EnergyContract();
-        when(energyContractService.findAllInInPeriod(period)).thenReturn(List.of(energyContract1, energyContract2));
+        when(energyContractService.findAllInInPeriod(period.toDatePeriod()))
+                .thenReturn(List.of(energyContract1, energyContract2));
 
         final StroomTariefIndicator stroomTariefIndicator = NORMAAL;
         when(verbruikKostenService.getStroomVerbruikKosten(verbruikProvider, energyContract1, stroomTariefIndicator, period))

@@ -1,6 +1,6 @@
 package nl.homeserver.energy.energycontract;
 
-import nl.homeserver.DateTimePeriod;
+import nl.homeserver.DatePeriod;
 import nl.homeserver.cache.CacheService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static java.time.Month.APRIL;
 import static java.time.Month.JANUARY;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -114,15 +113,15 @@ class EnergyContractServiceTest {
 
     @Test
     void whenFindAllThenRetrievedFromRepository() {
-        final LocalDateTime from = LocalDate.of(2018, APRIL, 21).atStartOfDay();
-        final LocalDateTime to = from.plusDays(1);
-        final DateTimePeriod period = aPeriodWithToDateTime(from, to);
+        final LocalDate from = LocalDate.of(2018, APRIL, 21);
+        final LocalDate to = from.plusDays(1);
+        final DatePeriod period = aPeriodWithToDate(from, to);
 
-        final List<EnergyContract> energiecontractsInPeriod = List.of(mock(EnergyContract.class), mock(EnergyContract.class));
+        final List<EnergyContract> energyContractsInPeriod = List.of(mock(EnergyContract.class), mock(EnergyContract.class));
 
-        when(energyContractRepository.findValidInPeriod(from.toLocalDate(), to.toLocalDate()))
-                                      .thenReturn(energiecontractsInPeriod);
+        when(energyContractRepository.findValidInPeriod(from, to))
+                                      .thenReturn(energyContractsInPeriod);
 
-        assertThat(energyContractService.findAllInInPeriod(period)).isSameAs(energiecontractsInPeriod);
+        assertThat(energyContractService.findAllInInPeriod(period)).isSameAs(energyContractsInPeriod);
     }
 }

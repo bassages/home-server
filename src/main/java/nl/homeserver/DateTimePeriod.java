@@ -68,7 +68,12 @@ public class DateTimePeriod {
     }
 
     public DatePeriod toDatePeriod() {
-        return aPeriodWithToDate(startDateTime.toLocalDate(), toDateTime.toLocalDate());
+        final LocalDate fromDate = startDateTime.toLocalDate();
+        LocalDate toDate = toDateTime.toLocalDate();
+        if (toDate.equals(fromDate)) {
+            toDate = toDate.plusDays(1);
+        }
+        return aPeriodWithToDate(fromDate, toDate);
     }
 
     public List<LocalDate> getDays() {

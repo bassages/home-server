@@ -78,7 +78,7 @@ class DateTimePeriodTest {
     }
 
     @Test
-    void givenPeriodThatStartsOnGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsOnGivenDateTimeWhenGetStartsOnOrAfterThenTrue() {
         // given
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
@@ -90,7 +90,7 @@ class DateTimePeriodTest {
     }
 
     @Test
-    void givenPeriodThatStartsAfterGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsAfterGivenDateTimeWhenGetStartsOnOrAfterThenTrue() {
         // given
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
@@ -102,7 +102,7 @@ class DateTimePeriodTest {
     }
 
     @Test
-    void givenPeriodThatStartsBeforeGivenDateTimeWhengetStartsOnOrAfterThenTrue() {
+    void givenPeriodThatStartsBeforeGivenDateTimeWhenGetStartsOnOrAfterThenTrue() {
         // given
         final LocalDateTime start = LocalDate.of(2015, JANUARY, 1).atStartOfDay();
 
@@ -123,5 +123,36 @@ class DateTimePeriodTest {
 
         // then
         assertThat(period).hasToString("DateTimePeriod(startDateTime=2015-01-01T00:00, toDateTime=2015-01-11T00:00:00.000000001)");
+    }
+
+    @Test
+    void givenOneDayPeriodWhenToDatePeriodThenFullDayReturned() {
+        // given
+        final LocalDate fromDate = LocalDate.of(2015, JANUARY, 1);
+        final LocalDate toDate = LocalDate.of(2015, JANUARY, 2);
+        final DateTimePeriod dateTimePeriod = aPeriodWithToDateTime(fromDate.atStartOfDay(), toDate.atStartOfDay());
+
+        // when
+        final DatePeriod datePeriod = dateTimePeriod.toDatePeriod();
+
+        // then
+        assertThat(datePeriod.getFromDate()).isEqualTo(fromDate);
+        assertThat(datePeriod.getToDate()).isEqualTo(toDate);
+    }
+
+    @Test
+    void givenOneHourPeriodWhenToDatePeriodThenFullDayReturned() {
+        // given
+        final LocalDate fromDate = LocalDate.of(2015, JANUARY, 1);
+        final LocalDateTime from = fromDate.atTime(15, 0);
+        final LocalDateTime to = LocalDate.of(2015, JANUARY, 1).atTime(15, 0);
+        final DateTimePeriod dateTimePeriod = aPeriodWithToDateTime(from, to);
+
+        // when
+        final DatePeriod datePeriod = dateTimePeriod.toDatePeriod();
+
+        // then
+        assertThat(datePeriod.getFromDate()).isEqualTo(fromDate);
+        assertThat(datePeriod.getToDate()).isEqualTo(fromDate.plusDays(1));
     }
 }

@@ -2,7 +2,7 @@ package nl.homeserver.energy.energycontract;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import nl.homeserver.DateTimePeriod;
+import nl.homeserver.DatePeriod;
 import nl.homeserver.cache.CacheService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -49,9 +49,8 @@ public class EnergyContractService {
     }
 
     @Cacheable(cacheNames = CACHE_NAME_ENERGY_CONTRACTS_IN_PERIOD)
-    public List<EnergyContract> findAllInInPeriod(final DateTimePeriod period) {
-        return energyContractRepository.findValidInPeriod(
-                period.getFromDateTime().toLocalDate(), period.getToDateTime().toLocalDate());
+    public List<EnergyContract> findAllInInPeriod(final DatePeriod period) {
+        return energyContractRepository.findValidInPeriod(period.getFromDate(), period.getToDate());
     }
 
     public EnergyContract getById(final long id) {

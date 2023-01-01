@@ -25,6 +25,7 @@ class EnergyContractRepositoryIntegrationTest extends RepositoryIntegrationTest 
 
     @Test
     void givenMultipleEnergyContractsWhenFindValidInInPeriodThenFound() {
+        // given
         final var energyContract2017 = energyContractWithZeroTariff()
                 .validFrom(LocalDate.of(2017, JANUARY, 1))
                 .validTo(LocalDate.of(2018, JANUARY, 1))
@@ -43,6 +44,7 @@ class EnergyContractRepositoryIntegrationTest extends RepositoryIntegrationTest 
                 .build();
         entityManager.persist(energyContractFrom2019);
 
+        // when / then
         assertThat(energyContractRepository.findValidInPeriod(LocalDate.of(2016, JANUARY, 1), LocalDate.of(2017, JANUARY, 1)))
                                            .isEmpty();
 

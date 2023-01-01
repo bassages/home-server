@@ -28,7 +28,7 @@ public class VerbruikKostenInPeriodService {
 
     public VerbruikKosten getNotCachedGasVerbruikInPeriode(final VerbruikProvider verbruikProvider,
                                                            final DateTimePeriod period) {
-        return energyContractService.findAllInInPeriod(period)
+        return energyContractService.findAllInInPeriod(period.toDatePeriod())
                 .stream()
                 .map(energyContract -> verbruikKostenService.getGasVerbruikKosten(verbruikProvider, energyContract, period))
                 .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
@@ -46,7 +46,7 @@ public class VerbruikKostenInPeriodService {
     public VerbruikKosten getNotCachedStroomVerbruikInPeriode(final VerbruikProvider verbruikProvider,
                                                               final DateTimePeriod period,
                                                               final StroomTariefIndicator stroomTariefIndicator) {
-        return energyContractService.findAllInInPeriod(period)
+        return energyContractService.findAllInInPeriod(period.toDatePeriod())
                 .stream()
                 .map(energyContract -> verbruikKostenService.getStroomVerbruikKosten(verbruikProvider, energyContract, stroomTariefIndicator, period))
                 .collect(collectingAndThen(toList(), VerbruikenEnKosten::new))
