@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -167,7 +168,7 @@ class VerbruikKostenCacheWarmerTest {
     @Test
     void whenWarmupCacheDailyThenVerbruikPerMaandInJaarWarmedUpForYesterdaysYear() {
         // given
-        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, JANUARY, 1).atTime(13, 20));
 
         // when
         verbruikKostenCacheWarmer.warmupCacheDaily();
