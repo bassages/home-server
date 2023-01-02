@@ -60,7 +60,7 @@ public class IncomingKlimaatService {
         if (now.getSecond() < 30) {
             referenceDateTime = now.with(SECOND_OF_MINUTE, 0);
         } else {
-            referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1)
+            referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1L)
                                    .with(SECOND_OF_MINUTE, 0);
         }
         return referenceDateTime;
