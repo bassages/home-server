@@ -40,10 +40,13 @@ class VerbruikKostenCacheWarmerTest {
 
     @Test
     void whenWarmupCacheOnStartupThenVerbruikPerUurOpDagWarmedUp() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
+        // when
         verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
+        // then
         verify(verbruikKostenController, times(14)).getVerbruikPerUurOpDag(dateCaptor.capture());
 
         assertThat(dateCaptor.getAllValues()).containsExactly(
@@ -66,10 +69,13 @@ class VerbruikKostenCacheWarmerTest {
 
     @Test
     void whenWarmupCacheOnStartupThenVerbruikPerDagWarmedUp() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
+        // when
         verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
+        // then
         verify(verbruikKostenController, times(13)).getVerbruikPerDag(
                 fromDateCaptor.capture(), toDateCaptor.capture());
 
@@ -108,21 +114,78 @@ class VerbruikKostenCacheWarmerTest {
 
     @Test
     void whenWarmupCacheOnStartupThenVerbruikPerMaandInJaarWarmedUp() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
+        // when
         verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
+        // then
         verify(verbruikKostenController, times(2)).getVerbruikPerMaandInJaar(yearCaptor.capture());
-
         assertThat(yearCaptor.getAllValues()).containsExactly(2016, 2017);
     }
 
     @Test
     void whenWarmupCacheOnStartupThenVerbruikPerJaarWarmedUp() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
+        // when
         verbruikKostenCacheWarmer.warmupCacheOnStartup();
 
+        // then
         verify(verbruikKostenController).getVerbruikPerJaar();
     }
+
+    @Test
+    void whenWarmupCacheDailyThenVerbruikPerUurOpDagWarmedUpForYesterday() {
+        // given
+        final LocalDate today = LocalDate.of(2017, DECEMBER, 30);
+        timeTravelTo(clock, today.atTime(13, 20));
+
+        // when
+        verbruikKostenCacheWarmer.warmupCacheDaily();
+
+        // then
+        verify(verbruikKostenController).getVerbruikPerUurOpDag(today.minusDays(1));
+    }
+
+    @Test
+    void whenWarmupCacheDailyThenVerbruikPerDagWarmedUpForCurrentMonth() {
+        // given
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
+
+        // when
+        verbruikKostenCacheWarmer.warmupCacheDaily();
+
+        // then
+        verify(verbruikKostenController).getVerbruikPerDag(
+                LocalDate.of(2017, DECEMBER, 1),
+                LocalDate.of(2017, DECEMBER, 31));
+    }
+
+    @Test
+    void whenWarmupCacheDailyThenVerbruikPerMaandInJaarWarmedUpForYesterdaysYear() {
+        // given
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
+
+        // when
+        verbruikKostenCacheWarmer.warmupCacheDaily();
+
+        // then
+        verify(verbruikKostenController).getVerbruikPerMaandInJaar(2016);
+    }
+
+    @Test
+    void whenWarmupCacheDailyThenVerbruikPerJaarWarmedUp() {
+        // given
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
+
+        // when
+        verbruikKostenCacheWarmer.warmupCacheDaily();
+
+        // then
+        verify(verbruikKostenController).getVerbruikPerJaar();
+    }
+
 }
