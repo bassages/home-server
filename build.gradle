@@ -97,7 +97,7 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('org.assertj:assertj-core:3.22.2')
+    testImplementation('org.assertj:assertj-core:3.24.2')
     testImplementation('nl.jqno.equalsverifier:equalsverifier:3.12.3')
     testImplementation('org.awaitility:awaitility:4.2.0')
     testImplementation('com.squareup.okhttp3:okhttp:4.10.0')
