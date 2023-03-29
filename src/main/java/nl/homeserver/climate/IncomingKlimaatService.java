@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
@@ -18,8 +19,7 @@ import java.util.stream.Stream;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.time.LocalDateTime.now;
-import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
-import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+import static java.time.temporal.ChronoField.*;
 import static java.util.Comparator.comparing;
 import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 
@@ -60,8 +60,14 @@ public class IncomingKlimaatService {
         if (now.getSecond() < 30) {
             referenceDateTime = now.with(SECOND_OF_MINUTE, 0);
         } else {
-            referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1L)
-                                   .with(SECOND_OF_MINUTE, 0);
+            if (now.get(MINUTE_OF_HOUR) == 59) {
+                referenceDateTime = now.with(HOUR_OF_DAY, now.get(HOUR_OF_DAY) + 1L)
+                        .with(MINUTE_OF_HOUR, 0)
+                        .with(SECOND_OF_MINUTE, 0);
+            } else {
+                referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1L)
+                        .with(SECOND_OF_MINUTE, 0);
+            }
         }
         return referenceDateTime;
     }

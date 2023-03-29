@@ -229,7 +229,10 @@ class IncomingKlimaatServiceTest {
                         LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 0)),
                 Arguments.of(
                         LocalDate.of(2016, JANUARY, 1).atTime(10, 15, 30),
-                        LocalDate.of(2016, JANUARY, 1).atTime(10, 16, 0))
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 16, 0)),
+                Arguments.of(
+                        LocalDate.of(2016, JANUARY, 1).atTime(10, 59, 59),
+                        LocalDate.of(2016, JANUARY, 1).atTime(11, 0, 0))
         );
     }
 
