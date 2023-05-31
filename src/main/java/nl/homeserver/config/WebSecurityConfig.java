@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.http.HttpStatus.RESET_CONTENT;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class WebSecurityConfig {
@@ -23,31 +24,41 @@ public class WebSecurityConfig {
         this.unauthenticatedRequestHandler = unauthenticatedRequestHandler;
     }
 
+    @SuppressWarnings("Convert2MethodRef")
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .headers().frameOptions().sameOrigin().and()
-            .httpBasic().and()
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+            .csrf((csrf) -> csrf.disable())
+            .headers((headers) ->
+                headers.frameOptions((frameOptions) -> frameOptions.sameOrigin())
             )
-            .logout()
-            .addLogoutHandler((request, response, authentication) -> response.setStatus(RESET_CONTENT.value()))
-            .invalidateHttpSession(true)
-            .clearAuthentication(true)
-            .deleteCookies("JSESSIONID", "remember-me").and()
-            .authorizeHttpRequests()
-            .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-            .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/assets/**").permitAll()
-            .requestMatchers(Paths.LOGIN).permitAll()
-            .anyRequest().authenticated().and()
-            .rememberMe().alwaysRemember(true).and()
-            .exceptionHandling().authenticationEntryPoint(unauthenticatedRequestHandler);
+            .httpBasic(withDefaults())
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+            )
+            .logout((logout) ->
+                logout
+                .addLogoutHandler((request, response, authentication) -> response.setStatus(RESET_CONTENT.value()))
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID", "remember-me")
+            )
+            .authorizeHttpRequests((authorizeHttpRequests) ->
+                authorizeHttpRequests
+                    .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                    .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/assets/**").permitAll()
+                    .requestMatchers(Paths.LOGIN).permitAll()
+                    .anyRequest().authenticated()
+            )
+            .rememberMe((rememberMe) ->
+                rememberMe.alwaysRemember(true))
+            .exceptionHandling((exceptionHandling) ->
+                exceptionHandling.authenticationEntryPoint(unauthenticatedRequestHandler)
+            );
 
         if (enableSsl) {
-            http.requiresChannel().anyRequest().requiresSecure();
+            http.requiresChannel((requiresChannel) -> requiresChannel.anyRequest().requiresSecure());
         }
         return http.build();
     }
