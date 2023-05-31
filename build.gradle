@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.6'
+    id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'com.github.ben-manes.versions' version '0.46.0'
     id 'jacoco'
-    id "org.sonarqube" version '4.0.0.2929'
+    id "org.sonarqube" version '4.2.0.3129'
 }
 
 def homeFrontendVersion = '1.13.0'
@@ -72,8 +72,8 @@ jar {
 }
 
 dependencies {
-    annotationProcessor('org.projectlombok:lombok:1.18.26')
-    compileOnly('org.projectlombok:lombok:1.18.26')
+    annotationProcessor('org.projectlombok:lombok:1.18.28')
+    compileOnly('org.projectlombok:lombok:1.18.28')
 
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-cache')
@@ -88,7 +88,7 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
     implementation('org.ehcache:ehcache:3.10.8')
-    implementation('commons-io:commons-io:2.11.0')
+    implementation('commons-io:commons-io:2.12.0')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.12.0')
     implementation('org.apache.commons:commons-math3:3.6.1')
@@ -97,7 +97,7 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.14.1')
+    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.14.2')
     testImplementation('org.awaitility:awaitility:4.2.0')
     testImplementation('com.squareup.okhttp3:okhttp:4.11.0')
     testImplementation('com.squareup.okhttp3:mockwebserver:4.11.0')
