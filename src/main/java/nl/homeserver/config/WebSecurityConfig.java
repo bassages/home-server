@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.http.HttpStatus.RESET_CONTENT;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -47,8 +48,13 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                     .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                    .requestMatchers("/", "/*.html", "/*.js", "/*.css", "/assets/**").permitAll()
-                    .requestMatchers(Paths.LOGIN).permitAll()
+                    .requestMatchers(
+                            new AntPathRequestMatcher("/"),
+                            new AntPathRequestMatcher("/*.html"),
+                            new AntPathRequestMatcher("/*.js"),
+                            new AntPathRequestMatcher("/*.css"),
+                            new AntPathRequestMatcher("/assets/**")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Paths.LOGIN)).permitAll()
                     .anyRequest().authenticated()
             )
             .rememberMe((rememberMe) ->
