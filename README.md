@@ -94,3 +94,13 @@ Furthermore read the following acticle [Handshake failure scenarios on Baeldung]
 KeyStore Explorer is an open source GUI replacement for the Java command-line utilities keytool and jarsigner. 
 https://keystore-explorer.org/
 
+## Common development tasks
+
+### Update versions
+
+#### Gradle
+For this, you can use the following command: `gradlew wrapper --gradle-version <new version>`
+
+### Dependencies
+For this, you can use the following command: `gradlew dependencyUpdates`.
+Inspect the output of the command, update build.gradle manually and test if the application still builds and executes correctly.
