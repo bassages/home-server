@@ -79,11 +79,12 @@ class StandbyPowerServiceTest {
 
         final Optional<StandbyPowerInPeriod> optionalStandbyPower = standbyPowerService.getStandbyPower(month);
 
-        assertThat(optionalStandbyPower).hasValueSatisfying(standbyPower-> {
+        assertThat(optionalStandbyPower).hasValueSatisfying(standbyPower -> {
             assertThat(standbyPower.getFromDate()).isEqualTo(from.toLocalDate());
             assertThat(standbyPower.getToDate()).isEqualTo(to.toLocalDate());
             assertThat(standbyPower.getPercentageOfTotalPeriod()).isEqualTo(new BigDecimal("30.00"));
             assertThat(standbyPower.getStandbyPower()).isEqualTo(10);
+            assertThat(standbyPower.getApproxYearlyUsageKwh()).isEqualTo(88);
             assertThat(standbyPower.getTotalCostsOfPower()).isEqualTo(new BigDecimal("200"));
             assertThat(standbyPower.getCostsOfStandByPower()).isEqualTo(new BigDecimal("50"));
             assertThat(standbyPower.getPercentageOfTotalCost()).isEqualTo(new BigDecimal("25"));
