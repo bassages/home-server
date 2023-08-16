@@ -1,6 +1,5 @@
 package nl.homeserver.energy.standbypower;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.homeserver.DatePeriod;
@@ -10,9 +9,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static java.math.RoundingMode.HALF_UP;
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = PRIVATE)
 class StandbyPowerInPeriod {
 
     private LocalDate fromDate;
@@ -20,18 +20,21 @@ class StandbyPowerInPeriod {
     private BigDecimal percentageOfTotalPeriod;
 
     private Integer standbyPower;
+    private Integer approxYearlyUsageKwh;
     private BigDecimal costsOfStandByPower;
     private BigDecimal totalCostsOfPower;
     private BigDecimal percentageOfTotalCost;
 
     StandbyPowerInPeriod(final DatePeriod period,
                          final int standbyPower,
+                         final int approxYearlyUsageKwh,
                          final BigDecimal percentageOfTotalPeriod,
                          final VerbruikKostenOverzicht standByPowerVko,
                          final VerbruikKostenOverzicht actualVko) {
         this.fromDate = period.getFromDate();
         this.toDate = period.getToDate();
         this.standbyPower = standbyPower;
+        this.approxYearlyUsageKwh = approxYearlyUsageKwh;
         this.percentageOfTotalPeriod = percentageOfTotalPeriod;
 
         this.costsOfStandByPower = standByPowerVko.getTotaalStroomKosten();

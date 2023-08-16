@@ -21,6 +21,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.RoundingMode.HALF_UP;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.apache.commons.lang3.ObjectUtils.max;
 import static org.apache.commons.lang3.ObjectUtils.min;
@@ -31,6 +32,7 @@ import static org.apache.commons.lang3.ObjectUtils.min;
 class StandbyPowerService {
 
     private static final String CACHE_NAME_STANDBY_POWER = "standbyPower";
+    private static final BigDecimal NUMBER_OF_HOURS_IN_YEAR = BigDecimal.valueOf(365).multiply(BigDecimal.valueOf(24));
 
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;
     private final VerbruikKostenOverzichtService verbruikKostenOverzichtService;
@@ -64,10 +66,14 @@ class StandbyPowerService {
         final DateTimePeriod period = datePeriod.toDateTimePeriod();
 
         final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(period.getFromDateTime(), period.getToDateTime());
-
         if (mostCommonWattInPeriod == null) {
             return Optional.empty();
         }
+
+        final int approxYearlyUsageKwh = NUMBER_OF_HOURS_IN_YEAR.multiply(
+                        BigDecimal.valueOf(mostCommonWattInPeriod).setScale(3, HALF_UP).divide(BigDecimal.valueOf(1000), HALF_UP))
+                .setScale(0, HALF_UP)
+                .intValueExact();
 
         final List<NumberOfRecordsPerWatt> numberOfRecordsInRange = opgenomenVermogenRepository.numberOfRecordsInRange(
                 period.getFromDateTime(), period.getToDateTime(), mostCommonWattInPeriod - 2, mostCommonWattInPeriod + 2);
@@ -78,14 +84,14 @@ class StandbyPowerService {
         final long totalNumberOfRecordsInQuarter = opgenomenVermogenRepository.countNumberOfRecordsInPeriod(period.getFromDateTime(), period.getToDateTime());
 
         final BigDecimal percentageInStandByPower = BigDecimal.valueOf(numberOfRecordsInStandbyPower)
-                                                              .divide(BigDecimal.valueOf(totalNumberOfRecordsInQuarter), 2, RoundingMode.HALF_UP)
+                                                              .divide(BigDecimal.valueOf(totalNumberOfRecordsInQuarter), 2, HALF_UP)
                                                               .multiply(BigDecimal.valueOf(100));
 
         final VerbruikKostenOverzicht actualVko = getActualVko(period);
         final VerbruikKostenOverzicht standByPowerVko = getStandbyPowerVko(mostCommonWattInPeriod, period);
 
         final StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(
-                datePeriod, mostCommonWattInPeriod, percentageInStandByPower, standByPowerVko, actualVko);
+                datePeriod, mostCommonWattInPeriod, approxYearlyUsageKwh, percentageInStandByPower, standByPowerVko, actualVko);
 
         return Optional.of(standbyPowerInPeriod);
     }
