@@ -39,8 +39,8 @@ public class CachingConfiguration {
     @SuppressWarnings("unused")
     @Bean
     public CacheManager ehCacheManager() {
-        CachingProvider provider = Caching.getCachingProvider();
-        CacheManager cacheManager = provider.getCacheManager();
+        final CachingProvider provider = Caching.getCachingProvider();
+        final CacheManager cacheManager = provider.getCacheManager();
         CACHES.forEach((name, maxNrOfHeapEntries) -> cacheManager.createCache(name, fromEhcacheCacheConfiguration(
                 heapCacheConfigBuiler(maxNrOfHeapEntries))));
         return cacheManager;
