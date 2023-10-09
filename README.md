@@ -104,3 +104,11 @@ For this, you can use the following command: `gradlew wrapper --gradle-version <
 ### Dependencies
 For this, you can use the following command: `gradlew dependencyUpdates`.
 Inspect the output of the command, update build.gradle manually and test if the application still builds and executes correctly.
+
+### JDK
+On the Raspberry PI, the *Liberica JDK* distribution is used.
+See the [downloads page](https://bell-sw.com/pages/downloads/) and look for "Linux" :arrow_right: "ARM" :arrow_right: ".tar.gz".
+On the RPI:
+- download it: `cd /opt`, `sudo wget <URL of the file to be downloaded>`
+- unpack it (`sudo tar xvfz <name of the file>.tar.gz`)
+- update [./etc/script/start-home-server.sh]

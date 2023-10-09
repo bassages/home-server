@@ -31,7 +31,7 @@ public class WebSecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .headers(headers ->
-                headers.frameOptions((frameOptions) -> frameOptions.sameOrigin())
+                headers.frameOptions(frameOptions -> frameOptions.sameOrigin())
             )
             .httpBasic(withDefaults())
             .sessionManagement(session ->
@@ -61,7 +61,7 @@ public class WebSecurityConfig {
             );
 
         if (enableSsl) {
-            http.requiresChannel((requiresChannel) -> requiresChannel.anyRequest().requiresSecure());
+            http.requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresSecure());
         }
         return http.build();
     }
