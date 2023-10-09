@@ -29,23 +29,21 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http
-            .csrf((csrf) -> csrf.disable())
-            .headers((headers) ->
+            .csrf(csrf -> csrf.disable())
+            .headers(headers ->
                 headers.frameOptions((frameOptions) -> frameOptions.sameOrigin())
             )
             .httpBasic(withDefaults())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             )
-            .logout((logout) ->
-                logout
+            .logout(logout -> logout
                 .addLogoutHandler((request, response, authentication) -> response.setStatus(RESET_CONTENT.value()))
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID", "remember-me")
             )
-            .authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
+            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                     .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                     .requestMatchers(
@@ -57,8 +55,7 @@ public class WebSecurityConfig {
                     .requestMatchers(new AntPathRequestMatcher(Paths.LOGIN)).permitAll()
                     .anyRequest().authenticated()
             )
-            .rememberMe((rememberMe) ->
-                rememberMe.alwaysRemember(true))
+            .rememberMe(rememberMe -> rememberMe.alwaysRemember(true))
             .exceptionHandling((exceptionHandling) ->
                 exceptionHandling.authenticationEntryPoint(unauthenticatedRequestHandler)
             );
