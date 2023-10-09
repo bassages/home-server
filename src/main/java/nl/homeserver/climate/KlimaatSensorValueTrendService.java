@@ -12,7 +12,6 @@ import java.util.function.Function;
 import static java.util.Objects.nonNull;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 import static nl.homeserver.climate.Trend.*;
-import static org.apache.commons.collections4.CollectionUtils.size;
 
 @Service
 class KlimaatSensorValueTrendService {
@@ -30,7 +29,7 @@ class KlimaatSensorValueTrendService {
     Trend determineValueTrend(final List<Klimaat> klimaats, final Function<Klimaat, BigDecimal> sensorValueGetter) {
         final List<Klimaat> validklimaats = getValidKlimaats(klimaats, sensorValueGetter);
 
-        if (size(validklimaats) < MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {
+        if (validklimaats.size() < MINIMUM_NUMBER_OF_ITEMS_TO_DETERMINE_TREND) {
             return UNKNOWN;
         }
 
