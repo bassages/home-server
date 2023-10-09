@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -31,7 +32,7 @@ public class WebSecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .headers(headers ->
-                headers.frameOptions(frameOptions -> frameOptions.sameOrigin())
+                headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
             .httpBasic(withDefaults())
             .sessionManagement(session ->
@@ -56,7 +57,7 @@ public class WebSecurityConfig {
                     .anyRequest().authenticated()
             )
             .rememberMe(rememberMe -> rememberMe.alwaysRemember(true))
-            .exceptionHandling((exceptionHandling) ->
+            .exceptionHandling(exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(unauthenticatedRequestHandler)
             );
 
