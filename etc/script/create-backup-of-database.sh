@@ -1,14 +1,12 @@
 #!/bin/bash
-echo "Stop service"
-sudo service home-server stop
+set -e
 
-echo "Wait until service stopped"
-sleep 10
+echo "Stop service"
+sudo systemctl stop home-server
 
 echo "Copy database"
 today=`date +%Y%m%d%H%M%S`
-#cp -R database home-server.database.backup.${today}
-zip -r home-server.database.backup.${today}.zip database/
+zip -r -dd home-server.database.backup.${today}.zip database/
 
 echo "Start service"
-sudo service home-server start
+sudo systemctl start home-server

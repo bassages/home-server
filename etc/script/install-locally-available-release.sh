@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ ! "$1" ]]
 then
@@ -16,13 +17,13 @@ then
 fi
 
 echo "[INFO] Stopping service"
-sudo service home-server stop
+sudo systemctl stop home-server
 
 echo "[INFO] Updating symbolic link to ${release}"
 ln -sf "${release}" home-server.jar
 
-echo "[INFO] Wait 20 seconds until service is stopped"
-sleep 20s
+echo "[INFO] Wait 5 seconds to make sure that the service is stopped"
+sleep 5s
 
 echo "[INFO] Starting service"
-sudo service home-server start
+sudo systemctl home-server start

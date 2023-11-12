@@ -1,0 +1,13 @@
+[Unit]
+Description=Home Server
+After=network.target
+
+[Service]
+ExecStart=/home/pi/home-server/start-home-server.sh
+Restart=always
+WorkingDirectory=/home/pi/home-server
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
