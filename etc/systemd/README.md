@@ -22,3 +22,8 @@ View service status:
 ```
 sudo systemctl status home-server
 ```
+
+Reload changes made to home-server.service:
+```
+sudo systemctl daemon-reload
+```
