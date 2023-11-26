@@ -112,3 +112,18 @@ On the RPI:
 - download it: `cd /opt`, `sudo wget <URL of the file to be downloaded>`
 - unpack it (`sudo tar xvfz <name of the file>.tar.gz`)
 - update [./etc/script/start-home-server.sh]
+
+## Compact database file
+1. Login in to the application
+2. Go to the H2 console, eg:
+   ```
+   http://home:9090/h2-console/
+   ```
+3. Connect with the following connection string
+   ```
+   jdbc:h2:~/home-server/database/home-server-database;DB_CLOSE_ON_EXIT=FALSE
+   ```
+4. Execute the following SQL statement:
+   ```   
+   SHUTDOWN COMPACT
+   ```
