@@ -62,7 +62,7 @@ class MindergasnlService {
 
     private void upload(final MindergasnlSettings settings, final LocalDate day, final BigDecimal gasReading) {
         final WebClient client = WebClient.builder().baseUrl(mindergasNlApiUrl).build();
-        final HttpServiceProxyFactory factory = HttpServiceProxyFactory.builder(WebClientAdapter.forClient(client)).build();
+        final HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(WebClientAdapter.create(client)).build();
         final MinderGasnlApi api = factory.createClient(MinderGasnlApi.class);
 
         HttpStatusCode httpStatusCode;
