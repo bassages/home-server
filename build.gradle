@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.3'
+    id 'org.springframework.boot' version '3.2.4'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'com.github.ben-manes.versions' version '0.51.0'
     id 'jacoco'
-    id "org.sonarqube" version '4.4.1.3373'
+    id "org.sonarqube" version '5.0.0.4638'
 }
 
 def homeFrontendVersion = '1.17.0'
@@ -72,8 +72,8 @@ jar {
 }
 
 dependencies {
-    annotationProcessor('org.projectlombok:lombok:1.18.30')
-    compileOnly('org.projectlombok:lombok:1.18.30')
+    annotationProcessor('org.projectlombok:lombok:1.18.32')
+    compileOnly('org.projectlombok:lombok:1.18.32')
 
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-cache')
@@ -97,8 +97,8 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
-    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.15.8')
-    testImplementation('org.awaitility:awaitility:4.2.0')
+    testImplementation('nl.jqno.equalsverifier:equalsverifier:3.16')
+    testImplementation('org.awaitility:awaitility:4.2.1')
     testImplementation('com.squareup.okhttp3:okhttp:4.12.0')
     testImplementation('com.squareup.okhttp3:mockwebserver:4.12.0')
     testImplementation('org.skyscreamer:jsonassert:1.5.1')
