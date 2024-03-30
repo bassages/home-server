@@ -8,12 +8,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG;
+
 @RequiredArgsConstructor
 @Service
 public class MostResentMeterstandOpDagService {
-
-    private static final String CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG = "meestRecenteMeterstandOpDag";
-
     private final MeterstandRepository meterstandRepository;
 
     @Cacheable(cacheNames = CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG)

@@ -317,7 +317,7 @@ class KlimaatServiceTest {
         final KlimaatSensor klimaatSensor = aKlimaatSensor().code(SOME_SENSOR_CODE).build();
 
         // when
-        klimaatService.deleteByKlimaatSensor(klimaatSensor);
+        klimaatService.deleteByClimateSensor(klimaatSensor);
 
         // then
         verify(klimaatRepository).deleteByKlimaatSensorCode(SOME_SENSOR_CODE);

@@ -8,24 +8,28 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
 import static java.time.Month.DECEMBER;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MeterstandCacheWarmerTest {
+class MeterstandCacheMaintainerTest {
 
     @InjectMocks
-    MeterstandCacheWarmer meterstandCacheWarmer;
+    MeterstandCacheMaintainer meterstandCacheMaintainer;
 
     @Mock
     MeterstandController meterstandController;
+    @Mock
+    CacheManager cacheManager;
     @Mock
     Clock clock;
 
@@ -35,11 +39,14 @@ class MeterstandCacheWarmerTest {
     ArgumentCaptor<LocalDate> toDateCaptor;
 
     @Test
-    void whenWarmupCacheOnStartupThenMeterstandenPerDagWarmedUp() {
+    void whenWarmupCacheOnStartupThenMeterstandenPerDagMaintained() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
-        meterstandCacheWarmer.warmupCacheOnStartup();
+        // when
+        meterstandCacheMaintainer.warmupCacheOnStartup();
 
+        // then
         verify(meterstandController, times(13)).perDag(fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
@@ -75,12 +82,20 @@ class MeterstandCacheWarmerTest {
         );
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    void whenWarmupCacheDailyThenMeterstandenPerDagWarmedUp() {
+    void whenMaintainCacheDailyThenMeterstandenPerDagMaintained() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
 
-        meterstandCacheWarmer.warmupCacheDaily();
+        final Cache cache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG)).thenReturn(cache);
 
+        // when
+        meterstandCacheMaintainer.maintainCacheDaily();
+
+        // then
+        verify(cache).clear();
         verify(meterstandController).perDag(LocalDate.of(2017, DECEMBER, 1), LocalDate.of(2017, DECEMBER, 31));
     }
 }

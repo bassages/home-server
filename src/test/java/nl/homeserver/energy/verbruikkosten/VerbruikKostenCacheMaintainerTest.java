@@ -8,25 +8,29 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static nl.homeserver.CachingConfiguration.*;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class VerbruikKostenCacheWarmerTest {
+class VerbruikKostenCacheMaintainerTest {
 
     @InjectMocks
-    VerbruikKostenCacheWarmer verbruikKostenCacheWarmer;
+    VerbruikKostenCacheMaintainer verbruikKostenCacheMaintainer;
 
     @Mock
     VerbruikKostenController verbruikKostenController;
+    @Mock
+    CacheManager cacheManager;
     @Mock
     Clock clock;
 
@@ -45,7 +49,7 @@ class VerbruikKostenCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         // when
-        verbruikKostenCacheWarmer.warmupCacheOnStartup();
+        verbruikKostenCacheMaintainer.warmupCacheOnStartup();
 
         // then
         verify(verbruikKostenController, times(14)).getVerbruikPerUurOpDag(dateCaptor.capture());
@@ -74,7 +78,7 @@ class VerbruikKostenCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
 
         // when
-        verbruikKostenCacheWarmer.warmupCacheOnStartup();
+        verbruikKostenCacheMaintainer.warmupCacheOnStartup();
 
         // then
         verify(verbruikKostenController, times(13)).getVerbruikPerDag(
@@ -119,7 +123,7 @@ class VerbruikKostenCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         // when
-        verbruikKostenCacheWarmer.warmupCacheOnStartup();
+        verbruikKostenCacheMaintainer.warmupCacheOnStartup();
 
         // then
         verify(verbruikKostenController, times(2)).getVerbruikPerMaandInJaar(yearCaptor.capture());
@@ -132,61 +136,92 @@ class VerbruikKostenCacheWarmerTest {
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         // when
-        verbruikKostenCacheWarmer.warmupCacheOnStartup();
+        verbruikKostenCacheMaintainer.warmupCacheOnStartup();
 
         // then
         verify(verbruikKostenController).getVerbruikPerJaar();
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     void whenWarmupCacheDailyThenVerbruikPerUurOpDagWarmedUpForYesterday() {
         // given
         final LocalDate today = LocalDate.of(2017, DECEMBER, 30);
         timeTravelTo(clock, today.atTime(13, 20));
 
+        final Cache gasCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)).thenReturn(gasCache);
+        final Cache stroomCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)).thenReturn(stroomCache);
+
         // when
-        verbruikKostenCacheWarmer.warmupCacheDaily();
+        verbruikKostenCacheMaintainer.maintainCacheDaily();
 
         // then
+        verify(gasCache).clear();
+        verify(stroomCache).clear();
         verify(verbruikKostenController).getVerbruikPerUurOpDag(today.minusDays(1));
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    void whenWarmupCacheDailyThenVerbruikPerDagWarmedUpForCurrentMonth() {
+    void whenMaintainCacheDailyThenVerbruikPerDagMaintainedForCurrentMonth() {
         // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
+        final Cache stroomCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)).thenReturn(stroomCache);
+        final Cache gasCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)).thenReturn(gasCache);
+
         // when
-        verbruikKostenCacheWarmer.warmupCacheDaily();
+        verbruikKostenCacheMaintainer.maintainCacheDaily();
 
         // then
+        verify(stroomCache).clear();
+        verify(gasCache).clear();
         verify(verbruikKostenController).getVerbruikPerDag(
                 LocalDate.of(2017, DECEMBER, 1),
                 LocalDate.of(2017, DECEMBER, 31));
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    void whenWarmupCacheDailyThenVerbruikPerMaandInJaarWarmedUpForYesterdaysYear() {
+    void whenMaintainCacheDailyThenVerbruikPerMaandInJaarMaintainedForYesterdaysYear() {
         // given
         timeTravelTo(clock, LocalDate.of(2017, JANUARY, 1).atTime(13, 20));
 
+        final Cache stroomCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)).thenReturn(stroomCache);
+        final Cache gasCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)).thenReturn(gasCache);
+
         // when
-        verbruikKostenCacheWarmer.warmupCacheDaily();
+        verbruikKostenCacheMaintainer.maintainCacheDaily();
 
         // then
+        verify(stroomCache).clear();
+        verify(gasCache).clear();
         verify(verbruikKostenController).getVerbruikPerMaandInJaar(2016);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    void whenWarmupCacheDailyThenVerbruikPerJaarWarmedUp() {
+    void whenMaintainCacheDailyThenVerbruikPerJaarMaintained() {
         // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
+        final Cache stroomCache = mock(Cache.class);
+
+        when(cacheManager.getCache(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE)).thenReturn(stroomCache);
+        final Cache gasCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE)).thenReturn(gasCache);
 
         // when
-        verbruikKostenCacheWarmer.warmupCacheDaily();
+        verbruikKostenCacheMaintainer.maintainCacheDaily();
 
         // then
+        verify(stroomCache).clear();
+        verify(gasCache).clear();
         verify(verbruikKostenController).getVerbruikPerJaar();
     }
-
 }

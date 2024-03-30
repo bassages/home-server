@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.groupingBy;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY;
 
 @Slf4j
 @Service
@@ -36,7 +37,7 @@ public class OpgenomenVermogenHousekeeping {
     public void start() {
         log.info("Start housekeeping of OpgenomenVermogen");
         findDaysToCleanup().forEach(this::cleanup);
-        cacheService.clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
+        cacheService.clear(CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
         log.info("Finished housekeeping of OpgenomenVermogen");
     }
 

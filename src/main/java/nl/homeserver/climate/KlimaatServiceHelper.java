@@ -11,16 +11,16 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_CLIMATE_IN_PERIOD;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Service
 @RequiredArgsConstructor
 public class KlimaatServiceHelper {
-    private static final String CACHE_NAME_AVERAGE_KLIMAAT_IN_MONTH = "averageKlimaatInMonth";
-
     private final KlimaatRepos klimaatRepository;
 
-    @Cacheable(cacheNames = CACHE_NAME_AVERAGE_KLIMAAT_IN_MONTH)
+    @Cacheable(cacheNames = CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH)
     public GemiddeldeKlimaatPerMaand getPotentiallyCachedAverageInMonthOfYear(final String sensorCode,
                                                                               final SensorType sensorType,
                                                                               final YearMonth yearMonth) {
@@ -46,7 +46,7 @@ public class KlimaatServiceHelper {
         };
     }
 
-    @Cacheable(cacheNames = "klimaatInPeriod")
+    @Cacheable(cacheNames = CACHE_NAME_CLIMATE_IN_PERIOD)
     public List<Klimaat> getPotentiallyCachedAllInPeriod(final String klimaatSensorCode, final DatePeriod period) {
         return getNotCachedAllInPeriod(klimaatSensorCode, period);
     }

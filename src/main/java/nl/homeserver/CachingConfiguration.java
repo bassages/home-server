@@ -22,16 +22,23 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 @EnableCaching
 public class CachingConfiguration {
 
+    public static final String CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH = "averageClimateInMonth";
+    public static final String CACHE_NAME_CLIMATE_IN_PERIOD = "climateInPeriod";
+    public static final String CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG = "meestRecenteMeterstandOpDag";
+    public static final String CACHE_NAME_STANDBY_POWER = "standbyPower";
+    public static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
+    public static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
+    public static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
+
     private static final Map<String, Integer> CACHES = Map.of(
             "energyContractsInPeriod", 20,
-            "gasVerbruikInPeriode", 100,
-            "stroomVerbruikInPeriode", 100,
-            "energieVerbruikInPeriode",100,
-            "opgenomenVermogenHistory", 100,
-            "meestRecenteMeterstandOpDag",100,
-            "klimaatInPeriod", 100,
-            "averageKlimaatInMonth", 48,
-            "standbyPower", 48
+            CACHE_NAME_GAS_VERBRUIK_IN_PERIODE, 100,
+            CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE, 100,
+            CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY, 100,
+            CACHE_NAME_MEEST_RECENTE_METERSTAND_OP_DAG,100,
+            CACHE_NAME_CLIMATE_IN_PERIOD, 100,
+            CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH, 48,
+            CACHE_NAME_STANDBY_POWER, 48
     );
 
     // IntelliJ: "Method '...' is never used"

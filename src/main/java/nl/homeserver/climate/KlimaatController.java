@@ -53,7 +53,7 @@ class KlimaatController {
     @DeleteMapping("sensors/{sensorCode}")
     public void delete(@PathVariable("sensorCode") final String sensorCode) {
         final KlimaatSensor existingKlimaatSensor = getKlimaatSensorExpectingOne(sensorCode);
-        klimaatService.deleteByKlimaatSensor(existingKlimaatSensor);
+        klimaatService.deleteByClimateSensor(existingKlimaatSensor);
         klimaatSensorService.delete(existingKlimaatSensor);
     }
 

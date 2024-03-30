@@ -112,7 +112,7 @@ public class KlimaatService {
                                 .toList();
     }
 
-    void deleteByKlimaatSensor(final KlimaatSensor klimaatSensor) {
+    void deleteByClimateSensor(final KlimaatSensor klimaatSensor) {
         this.klimaatRepository.deleteByKlimaatSensorCode(klimaatSensor.getCode());
     }
 }

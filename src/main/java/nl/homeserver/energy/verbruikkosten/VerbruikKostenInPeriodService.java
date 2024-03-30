@@ -9,13 +9,12 @@ import org.springframework.stereotype.Service;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
 
 @RequiredArgsConstructor
 @Service
 public class VerbruikKostenInPeriodService {
-
-    public static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
-    public static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
 
     private final EnergyContractService energyContractService;
     private final VerbruikKostenService verbruikKostenService;

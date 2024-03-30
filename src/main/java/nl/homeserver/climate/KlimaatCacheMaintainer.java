@@ -2,24 +2,28 @@ package nl.homeserver.climate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.DailyCacheMaintainer;
 import nl.homeserver.cache.StartupCacheWarmer;
 import org.springframework.stereotype.Component;
 
+import javax.cache.CacheManager;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.time.LocalDate.now;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_CLIMATE_IN_PERIOD;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class KlimaatCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
+class KlimaatCacheMaintainer implements StartupCacheWarmer, DailyCacheMaintainer {
 
     private final KlimaatController klimaatController;
+    private final CacheManager cacheManager;
     private final Clock clock;
 
     @Override
@@ -44,7 +48,10 @@ class KlimaatCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
     }
 
     @Override
-    public void warmupCacheDaily() {
+    public void maintainCacheDaily() {
+        cacheManager.getCache(CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH).clear();
+        cacheManager.getCache(CACHE_NAME_CLIMATE_IN_PERIOD).clear();
+
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 

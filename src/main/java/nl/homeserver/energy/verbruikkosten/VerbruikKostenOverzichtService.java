@@ -16,9 +16,6 @@ import static nl.homeserver.energy.StroomTariefIndicator.NORMAAL;
 @Service
 public class VerbruikKostenOverzichtService {
 
-    public static final String CACHE_NAME_GAS_VERBRUIK_IN_PERIODE = "gasVerbruikInPeriode";
-    public static final String CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE = "stroomVerbruikInPeriode";
-
     private final VerbruikKostenInPeriodService verbruikKostenInPeriodService;
     private final Clock clock;
 

@@ -2,10 +2,11 @@ package nl.homeserver.energy.verbruikkosten;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nl.homeserver.cache.DailyCacheWarmer;
+import nl.homeserver.cache.DailyCacheMaintainer;
 import nl.homeserver.cache.StartupCacheWarmer;
 import org.springframework.stereotype.Component;
 
+import javax.cache.CacheManager;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
@@ -15,16 +16,19 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.LongStream.rangeClosed;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-class VerbruikKostenCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer {
+class VerbruikKostenCacheMaintainer implements StartupCacheWarmer, DailyCacheMaintainer {
 
     private static final Month[] ALL_MONTHS = Month.values();
 
     private final VerbruikKostenController verbruikKostenController;
+    private final CacheManager cacheManager;
     private final Clock clock;
 
     @Override
@@ -61,13 +65,11 @@ class VerbruikKostenCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer 
                          .forEach(yearsToSubTract -> verbruikKostenController.getVerbruikPerMaandInJaar(today.minusYears(yearsToSubTract).getYear()));
     }
 
-    private void warmupVerbruikPerJaar() {
-        log.info("Warmup of cache verbruikPerJaar");
-        verbruikKostenController.getVerbruikPerJaar();
-    }
-
     @Override
-    public void warmupCacheDaily() {
+    public void maintainCacheDaily() {
+        cacheManager.getCache(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE).clear();
+        cacheManager.getCache(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE).clear();
+
         final LocalDate today = now(clock);
         final LocalDate yesterday = today.minusDays(1);
 
@@ -81,5 +83,10 @@ class VerbruikKostenCacheWarmer implements StartupCacheWarmer, DailyCacheWarmer 
         verbruikKostenController.getVerbruikPerMaandInJaar(yesterday.getYear());
 
         warmupVerbruikPerJaar();
+    }
+
+    private void warmupVerbruikPerJaar() {
+        log.info("Warmup of caches verbruikPerJaar");
+        verbruikKostenController.getVerbruikPerJaar();
     }
 }

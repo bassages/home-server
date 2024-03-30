@@ -8,12 +8,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.cache.Cache;
+import javax.cache.CacheManager;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JUNE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_CLIMATE_IN_PERIOD;
 import static nl.homeserver.climate.KlimaatSensor.aKlimaatSensor;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,13 +25,15 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class KlimaatCacheWarmerTest {
+class KlimaatCacheMaintainerTest {
 
     @InjectMocks
-    KlimaatCacheWarmer klimaatCacheWarmer;
+    KlimaatCacheMaintainer klimaatCacheMaintainer;
 
     @Mock
     KlimaatController klimaatController;
+    @Mock
+    CacheManager cacheManager;
     @Mock
     Clock clock;
 
@@ -44,7 +50,7 @@ class KlimaatCacheWarmerTest {
         final KlimaatSensor klimaatSensor = aKlimaatSensor().code(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
-        klimaatCacheWarmer.warmupCacheOnStartup();
+        klimaatCacheMaintainer.warmupCacheOnStartup();
 
         verify(klimaatController, times(7)).findAllInPeriod(eq(sensorCode),
                 fromDateCaptor.capture(), toDateCaptor.capture());
@@ -79,7 +85,7 @@ class KlimaatCacheWarmerTest {
         when(klimaatController.getAllKlimaatSensors())
                 .thenReturn(List.of(aKlimaatSensor().code(sensorCode).build()));
 
-        klimaatCacheWarmer.warmupCacheOnStartup();
+        klimaatCacheMaintainer.warmupCacheOnStartup();
 
         verify(klimaatController).getAverage(sensorCode,
                                              SensorType.TEMPERATUUR.name(),
@@ -89,18 +95,28 @@ class KlimaatCacheWarmerTest {
                                              new int[]{2017, 2016, 2015});
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    void whenWarmupCacheDailyThenClimatePerDayWarmedup() {
+    void whenMaintainCacheDailyThenClimatePerDayMaintained() {
+        // given
         timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(0, 5));
+
+        final Cache climateInPeriodCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_CLIMATE_IN_PERIOD)).thenReturn(climateInPeriodCache);
+        final Cache averageClimateInMonthCache = mock(Cache.class);
+        when(cacheManager.getCache(CACHE_NAME_AVERAGE_CLIMATE_IN_MONTH)).thenReturn(averageClimateInMonthCache);
 
         final String sensorCode = "SOME_FANCY_SENSOR";
         final KlimaatSensor klimaatSensor = aKlimaatSensor().code(sensorCode).build();
         when(klimaatController.getAllKlimaatSensors()).thenReturn(List.of(klimaatSensor));
 
-        klimaatCacheWarmer.warmupCacheDaily();
+        // when
+        klimaatCacheMaintainer.maintainCacheDaily();
 
+        // then
+        verify(climateInPeriodCache).clear();
+        verify(averageClimateInMonthCache).clear();
         verify(klimaatController).findAllInPeriod(sensorCode,
                 LocalDate.of(2017, DECEMBER, 29), LocalDate.of(2017, DECEMBER, 30));
     }
-
 }

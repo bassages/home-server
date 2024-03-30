@@ -15,13 +15,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
 import static java.math.RoundingMode.HALF_UP;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STANDBY_POWER;
 import static nl.homeserver.DatePeriod.aPeriodWithToDate;
 import static org.apache.commons.lang3.ObjectUtils.max;
 import static org.apache.commons.lang3.ObjectUtils.min;
@@ -31,7 +31,6 @@ import static org.apache.commons.lang3.ObjectUtils.min;
 @RequiredArgsConstructor
 class StandbyPowerService {
 
-    private static final String CACHE_NAME_STANDBY_POWER = "standbyPower";
     private static final BigDecimal NUMBER_OF_HOURS_IN_YEAR = BigDecimal.valueOf(365).multiply(BigDecimal.valueOf(24));
 
     private final OpgenomenVermogenRepository opgenomenVermogenRepository;

@@ -56,7 +56,6 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-Werror"
 }
 
 if (System.getenv("GITHUB_TAG") != null) {

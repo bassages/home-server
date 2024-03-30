@@ -19,18 +19,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
-class WarmupCacheDailyTest {
+class DailyCacheMaintenanceTest {
 
-    static final String FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED = "isWarmupCacheDailyEnabled";
+    static final String FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED = "isDailyCacheMaintenanceEnabled";
 
-    WarmupCacheDaily warmupCacheDaily;
+    DailyCacheMaintenance dailyCacheMaintenance;
 
     @Mock
-    DailyCacheWarmer dailyCacheWarmer;
+    DailyCacheMaintainer dailyCacheMaintainer;
 
     @BeforeEach
     void setUp() {
-        warmupCacheDaily = new WarmupCacheDaily(List.of(dailyCacheWarmer));
+        dailyCacheMaintenance = new DailyCacheMaintenance(List.of(dailyCacheMaintainer));
     }
 
     @Test
@@ -39,34 +39,34 @@ class WarmupCacheDailyTest {
         disableDailyCacheWarmup();
 
         // when
-        warmupCacheDaily.considerDailyWarmup();
+        dailyCacheMaintenance.considerDailyWarmup();
 
         // then
-        verifyNoMoreInteractions(dailyCacheWarmer);
+        verifyNoMoreInteractions(dailyCacheMaintainer);
     }
 
-    @CaptureLogging(WarmupCacheDaily.class)
+    @CaptureLogging(DailyCacheMaintenance.class)
     @Test
     void givenWarmupEnabledWhenConsiderDailyWarmupThenWarmup(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
         // given
         enableDailyCachWarmup();
 
         // when
-        warmupCacheDaily.considerDailyWarmup();
+        dailyCacheMaintenance.considerDailyWarmup();
 
         // then
-        verify(dailyCacheWarmer).warmupCacheDaily();
+        verify(dailyCacheMaintainer).maintainCacheDaily();
         assertThat(loggerEventCaptor.getAllValues())
-                .haveExactly(1, new ContainsMessageAtLevel("Warmup cache start", INFO))
-                .haveExactly(1, new ContainsMessageAtLevel("Warmup cache completed", INFO));
+                .haveExactly(1, new ContainsMessageAtLevel("Maintaining cache start", INFO))
+                .haveExactly(1, new ContainsMessageAtLevel("Maintaining cache completed", INFO));
 
     }
 
     private void disableDailyCacheWarmup() {
-        setField(warmupCacheDaily, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, false);
+        setField(dailyCacheMaintenance, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, false);
     }
 
     private void enableDailyCachWarmup() {
-        setField(warmupCacheDaily, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, true);
+        setField(dailyCacheMaintenance, FIELDNAME_IS_WARMUP_CACHE_DAILY_ENABLED, true);
     }
 }

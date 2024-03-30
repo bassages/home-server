@@ -236,7 +236,7 @@ class KlimaatControllerTest {
 
         final InOrder inOrder = inOrder(klimaatService, klimaatSensorService);
         inOrder.verify(klimaatSensorService).getByCode(EXISTING_SENSOR_CODE);
-        inOrder.verify(klimaatService).deleteByKlimaatSensor(klimaatSensor);
+        inOrder.verify(klimaatService).deleteByClimateSensor(klimaatSensor);
         inOrder.verify(klimaatSensorService).delete(klimaatSensor);
     }
 

@@ -188,5 +188,5 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                                           @Param("van") LocalDateTime van,
                                           @Param("tot") LocalDateTime tot);
 
-    void deleteByKlimaatSensorCode(String klimaatSensorCode);
+    void deleteByKlimaatSensorCode(String climateSensorCode);
 }

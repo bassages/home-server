@@ -15,14 +15,13 @@ import java.util.stream.LongStream;
 
 import static java.time.LocalDateTime.from;
 import static java.util.Comparator.comparingInt;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY;
 import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
 import static nl.homeserver.DateTimeUtil.toMillisSinceEpoch;
 
 @Service
 @RequiredArgsConstructor
 public class OpgenomenVermogenService {
-
-    static final String CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY = "opgenomenVermogenHistory";
 
     static final String TOPIC = "/topic/opgenomen-vermogen";
 

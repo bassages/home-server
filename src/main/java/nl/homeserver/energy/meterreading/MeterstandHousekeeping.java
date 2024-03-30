@@ -3,7 +3,6 @@ package nl.homeserver.energy.meterreading;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.cache.CacheService;
-import nl.homeserver.energy.verbruikkosten.VerbruikKostenOverzichtService;
 import nl.homeserver.housekeeping.HousekeepingSchedule;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,8 @@ import java.util.Map;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
 
 @Slf4j
 @Service
@@ -63,8 +64,8 @@ class MeterstandHousekeeping {
     }
 
     private void clearCachesThatUsesPossibleDeletedMeterstanden() {
-        cacheService.clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
-        cacheService.clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        cacheService.clear(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        cacheService.clear(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
     }
 
     private void cleanupMeterStandenInOneHour(final int hour, final List<Meterstand> meterstandenInOneHour) {

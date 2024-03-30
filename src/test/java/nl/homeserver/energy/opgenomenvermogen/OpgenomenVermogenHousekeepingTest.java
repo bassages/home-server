@@ -19,6 +19,7 @@ import java.util.List;
 
 import static ch.qos.logback.classic.Level.DEBUG;
 import static java.time.Month.JANUARY;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY;
 import static nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
@@ -44,7 +45,7 @@ class OpgenomenVermogenHousekeepingTest {
 
         opgenomenVermogenHousekeeping.start();
 
-        verify(cacheService).clear(OpgenomenVermogenService.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
+        verify(cacheService).clear(CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY);
     }
 
     @Test

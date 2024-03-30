@@ -4,7 +4,6 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.CaptureLogging;
 import nl.homeserver.ContainsMessageAtLevel;
 import nl.homeserver.cache.CacheService;
-import nl.homeserver.energy.verbruikkosten.VerbruikKostenOverzichtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,6 +20,8 @@ import java.util.List;
 
 import static ch.qos.logback.classic.Level.DEBUG;
 import static java.time.Month.JANUARY;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
 import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
@@ -46,12 +47,15 @@ class MeterstandHousekeepingTest {
 
     @Test
     void whenCleanUpThenCachesCleared() {
+        // given
         useSystemDefaultClock(clock);
 
+        // when
         meterstandHousekeeping.start();
 
-        verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
-        verify(cacheService).clear(VerbruikKostenOverzichtService.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
+        // then
+        verify(cacheService).clear(CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE);
+        verify(cacheService).clear(CACHE_NAME_GAS_VERBRUIK_IN_PERIODE);
     }
 
     @Test
