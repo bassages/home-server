@@ -87,7 +87,7 @@ dependencies {
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
     implementation('org.ehcache:ehcache:3.10.8')
-    implementation('commons-io:commons-io:2.16.0')
+    implementation('commons-io:commons-io:2.16.1')
     implementation('org.apache.commons:commons-collections4:4.4')
     implementation('org.apache.commons:commons-lang3:3.14.0')
     implementation('org.apache.commons:commons-math3:3.6.1')
