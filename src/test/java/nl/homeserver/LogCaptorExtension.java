@@ -24,7 +24,7 @@ public class LogCaptorExtension implements BeforeTestExecutionCallback, AfterTes
                                                  .map(annotatedElement -> annotatedElement.getAnnotation(CaptureLogging.class))
                                                  .orElseThrow(() -> new RuntimeException("Unable to find annotation"));
         logger = (Logger) getLogger(annotation.value());
-        logger.setLevel(Level.ALL);
+        logger.setLevel(Level.TRACE);
         mockAppender = mock(Appender.class);
         loggingEventCaptor = ArgumentCaptor.forClass(LoggingEvent.class);
         doAnswer(invocation -> null).when(mockAppender).doAppend(loggingEventCaptor.capture());
