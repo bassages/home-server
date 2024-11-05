@@ -4,7 +4,6 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.Month;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.SEPTEMBER;
