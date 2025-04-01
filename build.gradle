@@ -71,8 +71,8 @@ jar {
 }
 
 dependencies {
-    annotationProcessor('org.projectlombok:lombok:1.18.36')
-    compileOnly('org.projectlombok:lombok:1.18.36')
+    annotationProcessor('org.projectlombok:lombok:1.18.38')
+    compileOnly('org.projectlombok:lombok:1.18.38')
 
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('org.springframework.boot:spring-boot-starter-cache')
