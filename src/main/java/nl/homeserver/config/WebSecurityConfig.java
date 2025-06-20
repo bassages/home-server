@@ -1,5 +1,8 @@
 package nl.homeserver.config;
 
+import static org.springframework.http.HttpStatus.RESET_CONTENT;
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -9,10 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import static org.springframework.http.HttpStatus.RESET_CONTENT;
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 @Configuration
 public class WebSecurityConfig {
@@ -48,12 +48,12 @@ public class WebSecurityConfig {
                     .requestMatchers(EndpointRequest.to("status", "info")).permitAll()
                     .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                     .requestMatchers(
-                            new AntPathRequestMatcher("/"),
-                            new AntPathRequestMatcher("/*.html"),
-                            new AntPathRequestMatcher("/*.js"),
-                            new AntPathRequestMatcher("/*.css"),
-                            new AntPathRequestMatcher("/assets/**")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Paths.LOGIN)).permitAll()
+                            PathPatternRequestMatcher.withDefaults().matcher("/"),
+                            PathPatternRequestMatcher.withDefaults().matcher("/*.html"),
+                            PathPatternRequestMatcher.withDefaults().matcher("/*.js"),
+                            PathPatternRequestMatcher.withDefaults().matcher("/*.css"),
+                            PathPatternRequestMatcher.withDefaults().matcher("/assets/**")).permitAll()
+                    .requestMatchers(PathPatternRequestMatcher.withDefaults().matcher(Paths.LOGIN)).permitAll()
                     .anyRequest().authenticated()
             )
             .rememberMe(rememberMe -> rememberMe.alwaysRemember(true))
@@ -62,7 +62,7 @@ public class WebSecurityConfig {
             );
 
         if (enableSsl) {
-            http.requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresSecure());
+            http.redirectToHttps(withDefaults());
         }
         return http.build();
     }
