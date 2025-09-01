@@ -86,7 +86,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     compileOnly('org.springframework.boot:spring-boot-devtools')
 
-    implementation('org.ehcache:ehcache:3.10.8')
+    implementation('org.ehcache:ehcache:3.11.1')
     implementation('commons-io:commons-io:2.20.0')
     implementation('org.apache.commons:commons-collections4:4.5.0')
     implementation('org.apache.commons:commons-lang3:3.18.0')
