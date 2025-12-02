@@ -1,23 +1,22 @@
 package nl.homeserver.energy.meterreading;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.housekeeping.HousekeepingSchedule;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.groupingBy;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
 
-import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
-import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
-import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -45,7 +44,6 @@ class MeterstandHousekeeping {
         final LocalDate today = LocalDate.now(clock);
         return meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                                    .stream()
-                                   .map(Date::toLocalDate)
                                    .toList();
     }
 
@@ -74,10 +72,10 @@ class MeterstandHousekeeping {
         if (meterstandenInOneHour.size() > NR_OF_ROWS_TO_KEEP_PER_HOUR) {
             meterstandenInOneHour.sort(comparing(Meterstand::getDateTime));
 
-            final Meterstand firstMeterstandInHour = meterstandenInOneHour.get(0);
+            final Meterstand firstMeterstandInHour = meterstandenInOneHour.getFirst();
             meterstandenInOneHour.remove(firstMeterstandInHour);
 
-            final Meterstand lastMeterstandInHour = meterstandenInOneHour.get(meterstandenInOneHour.size() - 1);
+            final Meterstand lastMeterstandInHour = meterstandenInOneHour.getLast();
             meterstandenInOneHour.remove(lastMeterstandInHour);
 
             if (log.isDebugEnabled()) {

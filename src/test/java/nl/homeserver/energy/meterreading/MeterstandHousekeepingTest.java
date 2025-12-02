@@ -1,5 +1,25 @@
 package nl.homeserver.energy.meterreading;
 
+import static ch.qos.logback.classic.Level.DEBUG;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import ch.qos.logback.classic.spi.LoggingEvent;
 import nl.homeserver.CaptureLogging;
 import nl.homeserver.ContainsMessageAtLevel;
@@ -11,23 +31,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.sql.Date;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static ch.qos.logback.classic.Level.DEBUG;
-import static java.time.Month.JANUARY;
-import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
-import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
-import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static nl.homeserver.util.TimeMachine.useSystemDefaultClock;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MeterstandHousekeepingTest {
@@ -78,10 +81,8 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Date dayToCleanupAsSqlDate = mock(Date.class);
-        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
+                                 .thenReturn(List.of(dayToCleanup));
 
         final Meterstand meterstand = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         when(meterstandRepository.findByDateTimeBetween(any(), any())).thenReturn(List.of(meterstand));
@@ -100,10 +101,8 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Date dayToCleanupAsSqlDate = mock(Date.class);
-        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
+                                 .thenReturn(List.of(dayToCleanup));
 
         final Meterstand meterstand1 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withDateTime(dayToCleanup.atTime(12, 15, 0)).build();
@@ -137,10 +136,8 @@ class MeterstandHousekeepingTest {
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
         timeTravelTo(clock, currentDateTime);
 
-        final Date dayToCleanupAsSqlDate = mock(Date.class);
-        when(dayToCleanupAsSqlDate.toLocalDate()).thenReturn(dayToCleanup);
         when(meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
-                                 .thenReturn(List.of(dayToCleanupAsSqlDate));
+                                 .thenReturn(List.of(dayToCleanup));
 
         final Meterstand meterstand1 = aMeterstand().withId(1).withDateTime(dayToCleanup.atTime(12, 0, 0)).build();
         final Meterstand meterstand2 = aMeterstand().withId(2).withDateTime(dayToCleanup.atTime(12, 15, 0)).build();

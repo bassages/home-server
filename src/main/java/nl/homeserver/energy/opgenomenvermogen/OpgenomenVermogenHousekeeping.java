@@ -1,22 +1,21 @@
 package nl.homeserver.energy.opgenomenvermogen;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import nl.homeserver.cache.CacheService;
-import nl.homeserver.housekeeping.HousekeepingSchedule;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.groupingBy;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY;
 
-import java.sql.Date;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.groupingBy;
-import static nl.homeserver.CachingConfiguration.CACHE_NAME_OPGENOMEN_VERMOGEN_HISTORY;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import nl.homeserver.cache.CacheService;
+import nl.homeserver.housekeeping.HousekeepingSchedule;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -45,7 +44,6 @@ public class OpgenomenVermogenHousekeeping {
         final LocalDate today = LocalDate.now(clock);
         return opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(today.minusMonths(NUMBER_OF_MONTHS_TO_LOOK_BACK), today, MAX_NR_OF_ROWS_PER_DAY)
                 .stream()
-                .map(Date::toLocalDate)
                 .toList();
     }
 
