@@ -1,15 +1,14 @@
 package nl.homeserver.energy.opgenomenvermogen;
 
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import javax.annotation.Nullable;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.annotation.Nullable;
+import jakarta.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVermogen, Long> {
@@ -52,7 +51,7 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
             HAVING nr_of_records > :maxNrOfRowsPerDay
           ORDER BY nr_of_records DESC
        )""", nativeQuery = true)
-    List<Date> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+    List<LocalDate> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
                                                      @Param("toDate") LocalDate toDate,
                                                      @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 

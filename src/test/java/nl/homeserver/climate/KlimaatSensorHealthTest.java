@@ -5,7 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.Status;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -19,7 +20,6 @@ import static nl.homeserver.climate.RealtimeKlimaat.aRealtimeKlimaat;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.boot.actuate.health.Status.*;
 
 @ExtendWith(MockitoExtension.class)
 class KlimaatSensorHealthTest {
@@ -47,7 +47,7 @@ class KlimaatSensorHealthTest {
 
         // then
         assertThat(health.getDetails()).containsEntry("message", "No Klimaat registered yet.");
-        assertThat(health.getStatus()).isEqualTo(UNKNOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
@@ -60,7 +60,7 @@ class KlimaatSensorHealthTest {
 
         // then
         assertThat(health.getDetails()).containsEntry("message", "No KlimaatSensors found.");
-        assertThat(health.getStatus()).isEqualTo(UNKNOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
@@ -80,7 +80,7 @@ class KlimaatSensorHealthTest {
 
         // then
         assertThat(health.getDetails()).containsEntry("message", "LivingRoom (UP) - Most recent valid klimaat was saved at 2017-02-05T09:55:00.");
-        assertThat(health.getStatus()).isEqualTo(UP);
+        assertThat(health.getStatus()).isEqualTo(Status.UP);
     }
 
     @Test
@@ -100,7 +100,7 @@ class KlimaatSensorHealthTest {
 
         // then
         assertThat(health.getDetails()).containsEntry("message", "LivingRoom (DOWN) - Most recent valid klimaat was saved at 2017-02-05T09:54:59. Which is more than 10 minutes ago.");
-        assertThat(health.getStatus()).isEqualTo(DOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.DOWN);
     }
 
     @Test
@@ -127,7 +127,7 @@ class KlimaatSensorHealthTest {
         assertThat(message)
                 .contains("LivingRoom (DOWN) - Most recent valid klimaat was saved at 2017-02-05T09:54:59. Which is more than 10 minutes ago.")
                 .contains("Garden (UP) - Most recent valid klimaat was saved at 2017-02-05T10:04:50.");
-        assertThat(health.getStatus()).isEqualTo(DOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.DOWN);
     }
 
     @Test
@@ -154,6 +154,6 @@ class KlimaatSensorHealthTest {
         assertThat(message)
                 .contains("LivingRoom (UP) - Most recent valid klimaat was saved at 2017-02-05T10:04:50.")
                 .contains("Garden (UP) - Most recent valid klimaat was saved at 2017-02-05T10:04:50.");
-        assertThat(health.getStatus()).isEqualTo(UP);
+        assertThat(health.getStatus()).isEqualTo(Status.UP);
     }
 }

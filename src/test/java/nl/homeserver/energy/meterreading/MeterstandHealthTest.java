@@ -5,7 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.Status;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -16,7 +17,6 @@ import static java.time.Month.FEBRUARY;
 import static nl.homeserver.util.TimeMachine.timeTravelTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.boot.actuate.health.Status.*;
 
 @ExtendWith(MockitoExtension.class)
 class MeterstandHealthTest {
@@ -36,7 +36,7 @@ class MeterstandHealthTest {
         final Health health = meterstandHealth.health();
 
         assertThat(health.getDetails()).containsEntry("message", "No Meterstand registered yet");
-        assertThat(health.getStatus()).isEqualTo(UNKNOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
     }
 
     @Test
@@ -50,7 +50,7 @@ class MeterstandHealthTest {
         final Health health = meterstandHealth.health();
 
         assertThat(health.getDetails()).containsEntry("message", "Most recent valid Meterstand was saved at 2017-02-05T10:00:00");
-        assertThat(health.getStatus()).isEqualTo(UP);
+        assertThat(health.getStatus()).isEqualTo(Status.UP);
     }
 
     @Test
@@ -64,6 +64,6 @@ class MeterstandHealthTest {
         final Health health = meterstandHealth.health();
 
         assertThat(health.getDetails()).containsEntry("message", "Most recent valid Meterstand was saved at 2017-02-05T09:59:59. Which is more than 5 minutes ago.");
-        assertThat(health.getStatus()).isEqualTo(DOWN);
+        assertThat(health.getStatus()).isEqualTo(Status.DOWN);
     }
 }

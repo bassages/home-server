@@ -1,18 +1,17 @@
 package nl.homeserver.energy.meterreading;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
-import static org.assertj.core.api.Assertions.assertThat;
+import nl.homeserver.RepositoryIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
@@ -40,11 +39,10 @@ class MeterstandRepositoryIntegrationTest extends RepositoryIntegrationTest {
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 8)).build());
         entityManager.persist(aMeterstand().withDateTime(dayBeforeToDateWith2Records.atTime(12, 0, 1)).build());
 
-        final List<Date> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
+        final List<LocalDate> datesWithMoreThan2RowsBeforeToDate = meterstandRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
         assertThat(datesWithMoreThan2RowsBeforeToDate)
                 .singleElement()
-                .extracting(Date::toLocalDate)
                 .isEqualTo(dayBeforeToDateWith3Records);
     }
 

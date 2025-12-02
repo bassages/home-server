@@ -96,6 +96,8 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
+    testImplementation('org.springframework.boot:spring-boot-data-jpa-test')
+    testImplementation('org.springframework.boot:spring-boot-webmvc-test')
     testImplementation('nl.jqno.equalsverifier:equalsverifier:4.2.4')
     testImplementation('org.awaitility:awaitility:4.3.0')
     testImplementation('com.squareup.okhttp3:okhttp:5.3.2')

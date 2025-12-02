@@ -1,9 +1,11 @@
 package nl.homeserver.climate;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.stereotype.Component;
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.springframework.boot.health.contributor.Health.down;
+import static org.springframework.boot.health.contributor.Health.unknown;
+import static org.springframework.boot.health.contributor.Health.up;
 
 import java.time.Clock;
 import java.time.format.DateTimeFormatter;
@@ -13,12 +15,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-import static java.time.LocalDateTime.now;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.springframework.boot.actuate.health.Health.*;
-import static org.springframework.boot.actuate.health.Status.DOWN;
-import static org.springframework.boot.actuate.health.Status.UP;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -69,11 +70,11 @@ class KlimaatSensorHealth implements HealthIndicator {
 
         if (isDown(mostRecentlyReceivedKlimaatForSensor)) {
             return format("%s (%s) - Most recent valid klimaat was saved at %s. Which is more than %d minutes ago.",
-                          klimaatSensor.getCode(), DOWN,
+                          klimaatSensor.getCode(), Status.DOWN,
                           formatDatumtijd(mostRecentlyReceivedKlimaatForSensor), MAXIMUM_KLIMAAT_AGE_IN_MINUTES);
         }
         return format("%s (%s) - Most recent valid klimaat was saved at %s.",
-                      klimaatSensor.getCode(), UP,
+                      klimaatSensor.getCode(), Status.UP,
                       formatDatumtijd(mostRecentlyReceivedKlimaatForSensor));
     }
 

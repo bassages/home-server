@@ -1,17 +1,16 @@
 package nl.homeserver.energy.opgenomenvermogen;
 
-import nl.homeserver.RepositoryIntegrationTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
-
 import static java.time.Month.JANUARY;
 import static nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import nl.homeserver.RepositoryIntegrationTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
@@ -39,11 +38,10 @@ class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTe
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(dayBeforeToDateWith2Records.atTime(12, 0, 8)).build());
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(dayBeforeToDateWith2Records.atTime(12, 0, 1)).build());
 
-        final List<Date> datesWithMoreThan2RowsBeforeToDate = opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
+        final List<LocalDate> datesWithMoreThan2RowsBeforeToDate = opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(fromDate, toDate, 2);
 
         assertThat(datesWithMoreThan2RowsBeforeToDate)
                 .singleElement()
-                .extracting(Date::toLocalDate)
                 .isEqualTo(dayBeforeToDateWith3Records);
     }
 

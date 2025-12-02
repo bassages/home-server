@@ -1,15 +1,14 @@
 package nl.homeserver.energy.meterreading;
 
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import jakarta.transaction.Transactional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Transactional
 public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
@@ -71,7 +70,7 @@ public interface MeterstandRepository extends JpaRepository<Meterstand, Long> {
          HAVING nr_of_records > :maxNrOfRowsPerDay
        ORDER BY nr_of_records DESC
         )""", nativeQuery = true)
-    List<Date> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
+    List<LocalDate> findDatesBeforeToDateWithMoreRowsThan(@Param("fromDate") LocalDate fromDate,
                                                      @Param("toDate") LocalDate toDate,
                                                      @Param("maxNrOfRowsPerDay") int maxNrOfRowsPerDay);
 }
