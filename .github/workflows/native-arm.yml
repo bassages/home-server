@@ -1,0 +1,40 @@
+name: Build ARM native executable
+
+on:
+  push:
+    branches: [ native ]
+  workflow_dispatch:
+
+jobs:
+  native-build:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM Java 25
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image: true
+
+      - name: Verify environment
+        run: |
+          java -version
+          native-image --version
+          uname -m
+
+      - name: Build native executable
+        run: |
+          ./gradlew nativeCompile \
+            --no-parallel \
+            -Dorg.gradle.daemon=false
+
+      - name: Upload native binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-linux-arm64
+          path: build/native/nativeCompile/*
