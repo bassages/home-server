@@ -1,10 +1,14 @@
 [
   {
-    "name": "org.hibernate.resource.jdbc.internal.ResourceRegistryLogger_$logger",
+    "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
     "allDeclaredConstructors": true
   },
   {
     "name": "org.hibernate.boot.archive.scan.internal.ScannerLogger_$logger",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.hibernate.resource.jdbc.internal.ResourceRegistryLogger_$logger",
     "allDeclaredConstructors": true
   },
   {
@@ -20,7 +24,52 @@
     "allDeclaredConstructors": true
   },
   {
-    "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
-    "allDeclaredConstructors": true
+    "name": "org.hibernate.boot.models.annotations.internal.CacheAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.TableAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.ColumnAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.EntityAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.IdAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.GeneratedValueAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.JoinColumnAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [
+      { "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }
+    ]
   }
 ]
