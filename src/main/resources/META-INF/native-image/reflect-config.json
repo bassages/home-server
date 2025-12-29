@@ -1,17 +1,26 @@
 [
   {
-    "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
-    "allDeclaredConstructors": true,
-    "condition": { "typeReachable": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard" }
+    "name": "org.hibernate.resource.jdbc.internal.ResourceRegistryLogger_$logger",
+    "allDeclaredConstructors": true
   },
   {
     "name": "org.hibernate.boot.archive.scan.internal.ScannerLogger_$logger",
-    "allDeclaredConstructors": true,
-    "condition": { "typeReachable": "org.hibernate.boot.archive.scan.internal.ScannerLogger" }
+    "allDeclaredConstructors": true
   },
   {
     "name": "org.hibernate.internal.CoreMessageLogger_$logger",
-    "allDeclaredConstructors": true,
-    "condition": { "typeReachable": "org.hibernate.internal.CoreMessageLogger" }
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.hibernate.engine.internal.NaturalIdLogging_$logger",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.hibernate.service.internal.ServiceLogger_$logger",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
+    "allDeclaredConstructors": true
   }
 ]
