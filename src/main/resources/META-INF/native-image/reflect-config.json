@@ -142,5 +142,10 @@
     "name": "org.hibernate.boot.models.annotations.internal.OverrideDeleteAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideRestrictionAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
   }
 ]
