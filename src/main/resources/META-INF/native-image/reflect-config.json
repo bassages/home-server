@@ -1,0 +1,7 @@
+[
+  {
+    "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
+    "allDeclaredConstructors": true,
+    "condition": { "typeReachable": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard" }
+  }
+]
