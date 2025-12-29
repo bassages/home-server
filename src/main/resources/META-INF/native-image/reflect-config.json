@@ -147,5 +147,41 @@
     "name": "org.hibernate.boot.models.annotations.internal.OverrideRestrictionAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.annotations.SQLInsert",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.SQLUpdate",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.SQLDelete",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLInserts",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLUpdates",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLDeletes",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation",
+    "allDeclaredFields": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideInsertAnnotation",
+    "allDeclaredFields": true,
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
   }
 ]
