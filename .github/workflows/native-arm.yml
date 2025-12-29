@@ -27,11 +27,12 @@ jobs:
           native-image --version
           uname -m
 
-      - name: Build native executable
+      - name: Build native executable for Pi 3
         run: |
           ./gradlew nativeCompile \
             --no-parallel \
-            -Dorg.gradle.daemon=false
+            -Dorg.gradle.daemon=false \
+            -Dorg.graalvm.native.buildArgs="--target-arch=arm64,-march=armv8-a"
 
       - name: Upload native binary
         uses: actions/upload-artifact@v4
