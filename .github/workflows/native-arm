@@ -2,7 +2,7 @@ name: Build ARM native executable
 
 on:
   push:
-    branches: [ native ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
