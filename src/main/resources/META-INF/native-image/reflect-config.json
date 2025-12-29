@@ -3,5 +3,15 @@
     "name": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
     "allDeclaredConstructors": true,
     "condition": { "typeReachable": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard" }
+  },
+  {
+    "name": "org.hibernate.boot.archive.scan.internal.ScannerLogger_$logger",
+    "allDeclaredConstructors": true,
+    "condition": { "typeReachable": "org.hibernate.boot.archive.scan.internal.ScannerLogger" }
+  },
+  {
+    "name": "org.hibernate.internal.CoreMessageLogger_$logger",
+    "allDeclaredConstructors": true,
+    "condition": { "typeReachable": "org.hibernate.internal.CoreMessageLogger" }
   }
 ]
