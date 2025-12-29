@@ -25,6 +25,7 @@ jacocoTestReport {
 graalvmNative {
     binaries {
         main {
+            verbose = true
             buildArgs.addAll([
                 // Ensures the binary uses standard ARMv8 features 
                 // supported by Pi 3/4 and QEMU
