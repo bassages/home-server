@@ -22,6 +22,19 @@ jacocoTestReport {
     }
 }
 
+graalvmNative {
+    binaries {
+        main {
+            buildArgs.addAll([
+                "--target-arch=arm64",
+                "-march=armv8-a",
+                "--no-fallback",
+                "--initialize-at-build-time"
+            ])
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
     testLogging {
