@@ -26,8 +26,9 @@ graalvmNative {
     binaries {
         main {
             buildArgs.addAll([
-                "--target-arch=arm64",
-                "-march=armv8-a",
+                // Ensures the binary uses standard ARMv8 features 
+                // supported by Pi 3/4 and QEMU
+                "-march=compatibility", 
                 "--no-fallback",
                 "--initialize-at-build-time"
             ])
