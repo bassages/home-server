@@ -1,2 +1,2 @@
 #!/bin/bash
-exec /opt/jdk-21.0.1+12/bin/java -Duser.timezone=Europe/Amsterdam -Xms512m -Xmx600m -jar home-server*.jar
+exec /opt/graalvm-community-openjdk-25.0.1+8.1/bin/java -Duser.timezone=Europe/Amsterdam -Xms512m -Xmx512m -jar home-server*.jar
