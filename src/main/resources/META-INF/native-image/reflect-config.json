@@ -97,5 +97,35 @@
     "name": "org.hibernate.boot.models.annotations.internal.OneToOneAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideInsertAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideUpdateAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideDeleteAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.SQLUpdateAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.SQLDeleteAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
   }
 ]
