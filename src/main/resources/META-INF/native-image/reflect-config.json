@@ -147,5 +147,19 @@
     "name": "org.hibernate.boot.models.annotations.internal.OneToOneAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "jakarta.persistence.Enumerated",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.EnumeratedAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.BasicAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
   }
 ]
