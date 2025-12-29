@@ -161,5 +161,15 @@
     "name": "org.hibernate.boot.models.annotations.internal.BasicAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.TemporalAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.LobAnnotation",
+    "queryAllDeclaredConstructors": true,
+    "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
   }
 ]
