@@ -27,6 +27,12 @@ jobs:
           native-image --version
           uname -m
           
+      - name: Build native executable for Pi 3
+        run: |
+          ./gradlew nativeCompile \
+            --no-parallel \
+            -Dorg.gradle.daemon=false
+
       - name: Smoke test native executable
         run: |
           echo "--- Starting Smoke Test ---"
@@ -51,12 +57,6 @@ jobs:
             exit 1
           fi
           
-      - name: Build native executable for Pi 3
-        run: |
-          ./gradlew nativeCompile \
-            --no-parallel \
-            -Dorg.gradle.daemon=false
-
       - name: Upload native binary
         uses: actions/upload-artifact@v4
         with:
