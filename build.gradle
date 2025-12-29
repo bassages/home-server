@@ -1,3 +1,6 @@
+group = 'nl.homeserver' 
+version = '0.0.0-SNAPSHOT'
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.0'
