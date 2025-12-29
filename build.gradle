@@ -32,6 +32,9 @@ graalvmNative {
                 "--no-fallback"
             ])
         }
+        metadataRepository {
+            enabled.set(true)
+        }
     }
 }
 
