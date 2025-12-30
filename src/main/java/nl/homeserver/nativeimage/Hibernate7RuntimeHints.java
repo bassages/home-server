@@ -10,34 +10,24 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
 
     @Override
     public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-        // 1. Register the Mapping Helper and SPI Context
-        // ModelsContext is the parameter type Hibernate couldn't resolve in your last crash
-        List<String> coreSpi = List.of(
-            "org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper",
-            "org.hibernate.models.spi.ModelsContext",
-            "org.hibernate.models.internal.OrmAnnotationDescriptor",
-            "org.hibernate.models.internal.OrmAnnotationDescriptor$DynamicCreator"
+        // 1. The Core Helper - Needs full access to its internal static maps
+        hints.reflection().registerType(
+            TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
+            builder -> builder.withMembers(
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.ACCESS_DECLARED_FIELDS,
+                MemberCategory.ACCESS_DECLARED_METHODS
+            )
         );
 
-        for (String spi : coreSpi) {
-            hints.reflection().registerType(TypeReference.of(spi),
-                builder -> builder.withMembers(
-                    MemberCategory.INVOKE_PUBLIC_METHODS,
-                    MemberCategory.INVOKE_DECLARED_METHODS,
-                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                    MemberCategory.ACCESS_DECLARED_FIELDS
-                )
-            );
-        }
-
-        // 2. Register Annotation Interfaces as Proxies
+        // 2. The Annotation Mirror/Proxy
+        // Hibernate 7 MUST be able to proxy these to convert them to "Usage" models
         List<String> annotations = List.of(
             "org.hibernate.annotations.SQLInsert",
             "org.hibernate.annotations.SQLUpdate",
             "org.hibernate.annotations.SQLDelete",
-            "org.hibernate.annotations.SQLRestriction",
-            "org.hibernate.annotations.Cache",
-            "jakarta.persistence.Enumerated"
+            "org.hibernate.annotations.SQLRestriction"
         );
         for (String ann : annotations) {
             hints.proxies().registerJdkProxy(TypeReference.of(ann));
@@ -45,32 +35,39 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
                 builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS));
         }
 
-        // 3. Register Internal Models and their Descriptors
-        // Added CacheAnnotation here to fix your specific NoSuchMethodException
-        List<String> models = List.of(
+        // 3. The Models and DESCRIPTORS
+        // The error "no override form" happens because Hibernate can't find the static DESCRIPTOR field
+        List<String> internalModels = List.of(
             "SQLInsertAnnotation", "OverrideInsertAnnotation",
             "SQLUpdateAnnotation", "OverrideUpdateAnnotation",
             "SQLDeleteAnnotation", "OverrideDeleteAnnotation",
             "SQLRestrictionAnnotation", "OverrideRestrictionAnnotation",
-            "EnumeratedAnnotation", "BasicAnnotation", "CacheAnnotation",
-            "TableAnnotation", "EntityAnnotation", "InheritanceAnnotation"
+            "CacheAnnotation"
         );
 
-        for (String model : models) {
+        for (String model : internalModels) {
             String fqn = "org.hibernate.boot.models.annotations.internal." + model;
-            // The class itself
+            
+            // The Wrapper
             hints.reflection().registerType(TypeReference.of(fqn), 
                 builder -> builder.withMembers(
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, 
                     MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
                     MemberCategory.INVOKE_PUBLIC_METHODS
                 ));
-            // The Descriptor inner class (The link to the annotation)
+
+            // The Descriptor (CRITICAL: Needs Field Access for the static DESCRIPTOR field)
             hints.reflection().registerType(TypeReference.of(fqn + "$Descriptor"), 
                 builder -> builder.withMembers(
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, 
-                    MemberCategory.INVOKE_PUBLIC_METHODS
+                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                    MemberCategory.ACCESS_DECLARED_FIELDS,
+                    MemberCategory.INVOKE_DECLARED_METHODS
                 ));
         }
+        
+        // 4. Register the SPI context
+        hints.reflection().registerType(TypeReference.of("org.hibernate.models.spi.ModelsContext"),
+            builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS));
     }
 }
