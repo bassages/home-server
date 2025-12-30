@@ -5,7 +5,6 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.53.0'
     id 'jacoco'
     id 'org.sonarqube' version '7.1.0.6387'
-    id 'org.graalvm.buildtools.native' version '0.10.3'
 }
 
 group = 'nl.homeserver' 
@@ -22,23 +21,6 @@ jacocoTestReport {
         xml.required = true
         csv.required = false
         html.required = false
-    }
-}
-
-graalvmNative {
-    binaries {
-        main {
-            verbose = true
-            buildArgs.addAll([
-                // Ensures the binary uses standard ARMv8 features 
-                // supported by Pi 3/4 and QEMU
-                "-march=compatibility", 
-                "--no-fallback"
-            ])
-        }
-    }
-    metadataRepository {
-        enabled.set(true)
     }
 }
 
