@@ -1,16 +1,19 @@
 package nl.homeserver;
 
+import nl.homeserver.nativeimage.Hibernate7RuntimeHints;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.annotation.ImportRuntimeHints;
 
 import java.time.Clock;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
+@ImportRuntimeHints(Hibernate7RuntimeHints.class)
 @EnableAsync
 @EnableScheduling
 public class HomeServerApplication {
