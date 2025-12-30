@@ -4,64 +4,54 @@ import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
 
     @Override
     public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-        List<String> classesToRegister = new ArrayList<>();
+        // 1. Register the Mapping Helper
+        hints.reflection().registerType(
+            TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
+            builder -> builder.withMembers(
+                MemberCategory.INVOKE_PUBLIC_METHODS,
+                MemberCategory.INVOKE_DECLARED_METHODS,
+                MemberCategory.ACCESS_DECLARED_FIELDS
+            )
+        );
 
-        // Core Internal Annotation Wrappers and their Descriptors
-        // The '$Descriptor' is the "Missing Link" Hibernate 7.1 needs
-        classesToRegister.addAll(List.of(
-            "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation",
-            "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.OverrideInsertAnnotation",
-            "org.hibernate.boot.models.annotations.internal.OverrideInsertAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.SQLUpdateAnnotation",
-            "org.hibernate.boot.models.annotations.internal.SQLUpdateAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.OverrideUpdateAnnotation",
-            "org.hibernate.boot.models.annotations.internal.OverrideUpdateAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.SQLDeleteAnnotation",
-            "org.hibernate.boot.models.annotations.internal.SQLDeleteAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.OverrideDeleteAnnotation",
-            "org.hibernate.boot.models.annotations.internal.OverrideDeleteAnnotation$Descriptor",
-            "org.hibernate.boot.models.annotations.internal.EnumeratedAnnotation",
-            "org.hibernate.boot.models.annotations.internal.BasicAnnotation"
-        ));
-
-        for (String className : classesToRegister) {
-            hints.reflection().registerType(TypeReference.of(className), 
-                builder -> builder.withMembers(
-                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                    MemberCategory.INVOKE_PUBLIC_METHODS
-                )
-            );
-        }
-
-        // Public interfaces and repeatable containers
-        List<String> interfaces = List.of(
+        // 2. Register Annotation Interfaces as Proxies
+        // Hibernate 7 uses these to read @SQLInsert values
+        List<String> annotations = List.of(
             "org.hibernate.annotations.SQLInsert",
             "org.hibernate.annotations.SQLUpdate",
             "org.hibernate.annotations.SQLDelete",
-            "jakarta.persistence.Enumerated",
-            "org.hibernate.annotations.DialectOverride$SQLInserts",
-            "org.hibernate.annotations.DialectOverride$SQLUpdates",
-            "org.hibernate.annotations.DialectOverride$SQLDeletes"
+            "org.hibernate.annotations.SQLRestriction",
+            "jakarta.persistence.Enumerated"
         );
-
-        for (String intrf : interfaces) {
-            hints.reflection().registerType(TypeReference.of(intrf),
-                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS)
-            );
+        for (String ann : annotations) {
+            hints.proxies().registerJdkProxy(TypeReference.of(ann));
+            hints.reflection().registerType(TypeReference.of(ann), 
+                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS));
         }
 
-        // The helper class that performs the lookup
-        hints.reflection().registerType(
-            TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
-            builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS)
+        // 3. Register Internal Models and their Descriptors
+        List<String> models = List.of(
+            "SQLInsertAnnotation", "OverrideInsertAnnotation",
+            "SQLUpdateAnnotation", "OverrideUpdateAnnotation",
+            "SQLDeleteAnnotation", "OverrideDeleteAnnotation",
+            "SQLRestrictionAnnotation", "OverrideRestrictionAnnotation",
+            "EnumeratedAnnotation", "BasicAnnotation"
         );
+
+        for (String model : models) {
+            String fqn = "org.hibernate.boot.models.annotations.internal." + model;
+            // The class itself
+            hints.reflection().registerType(TypeReference.of(fqn), 
+                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS));
+            // The Descriptor inner class (The link to the annotation)
+            hints.reflection().registerType(TypeReference.of(fqn + "$Descriptor"), 
+                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS));
+        }
     }
 }
