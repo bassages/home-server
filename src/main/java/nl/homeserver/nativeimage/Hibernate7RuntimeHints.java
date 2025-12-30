@@ -11,8 +11,8 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
     @Override
     public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
         
-        // List of core internal classes that must exist for SQL Overrides and Enums
-        List<String> hibernateClasses = List.of(
+        // Internal classes that provide the "Override Form" Hibernate is looking for
+        List<String> hibernateInternalClasses = List.of(
             "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation",
             "org.hibernate.boot.models.annotations.internal.SQLUpdateAnnotation",
             "org.hibernate.boot.models.annotations.internal.SQLDeleteAnnotation",
@@ -27,26 +27,31 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
             "org.hibernate.boot.models.annotations.internal.EntityAnnotation",
             "org.hibernate.boot.models.annotations.internal.IdAnnotation",
             "org.hibernate.boot.models.annotations.internal.GeneratedValueAnnotation",
-            "org.hibernate.boot.models.annotations.internal.JoinColumnAnnotation"
+            "org.hibernate.boot.models.annotations.internal.JoinColumnAnnotation",
+            "org.hibernate.boot.models.annotations.internal.SQLRestrictionAnnotation",
+            "org.hibernate.boot.models.annotations.internal.OverrideRestrictionAnnotation"
         );
 
-        // Register each one for reflection
-        for (String className : hibernateClasses) {
+        for (String className : hibernateInternalClasses) {
             hints.reflection().registerType(TypeReference.of(className), 
                 builder -> builder.withMembers(
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                    MemberCategory.DECLARED_FIELDS, // Fixed the deprecated PUBLIC_FIELDS
+                    MemberCategory.ACCESS_DECLARED_FIELDS, // Fixed: Modern replacement for DECLARED_FIELDS
                     MemberCategory.INVOKE_PUBLIC_METHODS
                 )
             );
         }
 
-        // Register the Annotation interfaces themselves
+        // The public Annotation interfaces
         List<String> annotationInterfaces = List.of(
             "org.hibernate.annotations.SQLInsert",
             "org.hibernate.annotations.SQLUpdate",
             "org.hibernate.annotations.SQLDelete",
-            "jakarta.persistence.Enumerated"
+            "org.hibernate.annotations.SQLRestriction",
+            "jakarta.persistence.Enumerated",
+            "org.hibernate.annotations.DialectOverride$SQLInserts",
+            "org.hibernate.annotations.DialectOverride$SQLUpdates",
+            "org.hibernate.annotations.DialectOverride$SQLDeletes"
         );
 
         for (String ann : annotationInterfaces) {
@@ -55,9 +60,13 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
             );
         }
 
-        // Specifically register the Helper that Hibernate uses for mapping
-        hints.reflection().registerType(TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
-            builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.DECLARED_FIELDS)
+        // The core mapping helper
+        hints.reflection().registerType(
+            TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
+            builder -> builder.withMembers(
+                MemberCategory.INVOKE_PUBLIC_METHODS, 
+                MemberCategory.ACCESS_DECLARED_FIELDS
+            )
         );
     }
 }
