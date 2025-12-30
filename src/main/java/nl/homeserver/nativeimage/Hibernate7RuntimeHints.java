@@ -10,23 +10,33 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
 
     @Override
     public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-        // 1. Register the Mapping Helper
-        hints.reflection().registerType(
-            TypeReference.of("org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper"),
-            builder -> builder.withMembers(
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.ACCESS_DECLARED_FIELDS
-            )
+        // 1. Register the Mapping Helper and SPI Context
+        // ModelsContext is the parameter type Hibernate couldn't resolve in your last crash
+        List<String> coreSpi = List.of(
+            "org.hibernate.boot.model.internal.DialectOverridesAnnotationHelper",
+            "org.hibernate.models.spi.ModelsContext",
+            "org.hibernate.models.internal.OrmAnnotationDescriptor",
+            "org.hibernate.models.internal.OrmAnnotationDescriptor$DynamicCreator"
         );
 
+        for (String spi : coreSpi) {
+            hints.reflection().registerType(TypeReference.of(spi),
+                builder -> builder.withMembers(
+                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                    MemberCategory.INVOKE_DECLARED_METHODS,
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.ACCESS_DECLARED_FIELDS
+                )
+            );
+        }
+
         // 2. Register Annotation Interfaces as Proxies
-        // Hibernate 7 uses these to read @SQLInsert values
         List<String> annotations = List.of(
             "org.hibernate.annotations.SQLInsert",
             "org.hibernate.annotations.SQLUpdate",
             "org.hibernate.annotations.SQLDelete",
             "org.hibernate.annotations.SQLRestriction",
+            "org.hibernate.annotations.Cache",
             "jakarta.persistence.Enumerated"
         );
         for (String ann : annotations) {
@@ -36,22 +46,31 @@ public class Hibernate7RuntimeHints implements RuntimeHintsRegistrar {
         }
 
         // 3. Register Internal Models and their Descriptors
+        // Added CacheAnnotation here to fix your specific NoSuchMethodException
         List<String> models = List.of(
             "SQLInsertAnnotation", "OverrideInsertAnnotation",
             "SQLUpdateAnnotation", "OverrideUpdateAnnotation",
             "SQLDeleteAnnotation", "OverrideDeleteAnnotation",
             "SQLRestrictionAnnotation", "OverrideRestrictionAnnotation",
-            "EnumeratedAnnotation", "BasicAnnotation"
+            "EnumeratedAnnotation", "BasicAnnotation", "CacheAnnotation",
+            "TableAnnotation", "EntityAnnotation", "InheritanceAnnotation"
         );
 
         for (String model : models) {
             String fqn = "org.hibernate.boot.models.annotations.internal." + model;
             // The class itself
             hints.reflection().registerType(TypeReference.of(fqn), 
-                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS));
+                builder -> builder.withMembers(
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, 
+                    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS
+                ));
             // The Descriptor inner class (The link to the annotation)
             hints.reflection().registerType(TypeReference.of(fqn + "$Descriptor"), 
-                builder -> builder.withMembers(MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS));
+                builder -> builder.withMembers(
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, 
+                    MemberCategory.INVOKE_PUBLIC_METHODS
+                ));
         }
     }
 }
