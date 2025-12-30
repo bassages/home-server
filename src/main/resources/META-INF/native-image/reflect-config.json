@@ -171,5 +171,33 @@
     "name": "org.hibernate.boot.models.annotations.internal.LobAnnotation",
     "queryAllDeclaredConstructors": true,
     "methods": [{ "name": "<init>", "parameterTypes": ["org.hibernate.models.spi.ModelsContext"] }]
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride",
+    "allDeclaredClasses": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLInsert",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLUpdate",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.annotations.DialectOverride$SQLDelete",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.OverrideInsertAnnotation$Descriptor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true
+  },
+  {
+    "name": "org.hibernate.boot.models.annotations.internal.SQLInsertAnnotation$Descriptor",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true,
+    "queryAllDeclaredConstructors": true
   }
 ]
