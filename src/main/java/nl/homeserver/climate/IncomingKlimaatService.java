@@ -57,15 +57,15 @@ public class IncomingKlimaatService {
         final LocalDateTime now = now(clock);
         final LocalDateTime referenceDateTime;
         if (now.getSecond() < 30) {
-            referenceDateTime = now.with(SECOND_OF_MINUTE, 0);
+            referenceDateTime = now.withSecond(0);
         } else {
-            if (now.get(MINUTE_OF_HOUR) == 59) {
-                referenceDateTime = now.with(HOUR_OF_DAY, now.get(HOUR_OF_DAY) + 1L)
-                        .with(MINUTE_OF_HOUR, 0)
-                        .with(SECOND_OF_MINUTE, 0);
+            if (now.getMinute() == 59) {
+                referenceDateTime = now.with(HOUR_OF_DAY, now.getHour() + 1L)
+                                       .withMinute(0)
+                                       .withSecond(0);
             } else {
-                referenceDateTime = now.with(MINUTE_OF_HOUR, now.get(MINUTE_OF_HOUR) + 1L)
-                        .with(SECOND_OF_MINUTE, 0);
+                referenceDateTime = now.with(MINUTE_OF_HOUR, now.getMinute() + 1L)
+                                       .withSecond(0);
             }
         }
         return referenceDateTime;
@@ -136,6 +136,15 @@ public class IncomingKlimaatService {
         cleanUpRecentlyReceivedKlimaatsPerSensorCode();
     }
 
+    RealtimeKlimaat getMostRecent(final String klimaatSensorCode) {
+        final List<Klimaat> recentlyReceivedKlimaatForSensor =
+                recentlyAddedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>());
+
+        return getMostRecent(recentlyReceivedKlimaatForSensor)
+                .map(this::mapToRealtimeKlimaat)
+                .orElse(null);
+    }
+
     private void cleanUpRecentlyReceivedKlimaatsPerSensorCode() {
         final int maxNrOfMinutes = IntStream.of(NR_OF_MINUTES_TO_DETERMINE_TREND_FOR,
                                                 NR_OF_MINUTES_TO_SAVE_AVERAGE_KLIMAAT_FOR)
@@ -163,15 +172,6 @@ public class IncomingKlimaatService {
 
     private boolean isValidKlimaatValue(@Nullable final BigDecimal value) {
         return value != null && value.compareTo(ZERO) != 0;
-    }
-
-    public RealtimeKlimaat getMostRecent(final String klimaatSensorCode) {
-        final List<Klimaat> recentlyReceivedKlimaatForSensor =
-                recentlyAddedKlimaatsPerKlimaatSensorCode.getOrDefault(klimaatSensorCode, new ArrayList<>());
-
-        return getMostRecent(recentlyReceivedKlimaatForSensor)
-                .map(this::mapToRealtimeKlimaat)
-                .orElse(null);
     }
 
     private Optional<Klimaat> getMostRecent(final List<Klimaat> klimaats) {
