@@ -10,7 +10,7 @@ plugins {
 group = 'nl.homeserver' 
 version = '0.0.0-SNAPSHOT'
 
-def homeFrontendVersion = '1.17.0'
+def homeFrontendVersion = '1.18.0'
 
 jacoco {
     toolVersion = '0.8.14'
