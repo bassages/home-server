@@ -1,5 +1,32 @@
 package nl.homeserver.energy.verbruikkosten;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
+import static java.time.Month.NOVEMBER;
+import static java.time.Month.OCTOBER;
+import static java.time.Month.SEPTEMBER;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_GAS_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.CachingConfiguration.CACHE_NAME_STROOM_VERBRUIK_IN_PERIODE;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -7,19 +34,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.YearMonth;
-
-import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
-import static nl.homeserver.CachingConfiguration.*;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VerbruikKostenCacheMaintainerTest {
@@ -75,7 +89,7 @@ class VerbruikKostenCacheMaintainerTest {
     @Test
     void whenWarmupCacheOnStartupThenVerbruikPerDagWarmedUp() {
         // given
-        timeTravelTo(clock, LocalDate.of(2017, 12, 30).atTime(13, 20));
+        timeTravelTo(clock, LocalDate.of(2017, DECEMBER, 30).atTime(13, 20));
 
         // when
         verbruikKostenCacheMaintainer.warmupCacheOnStartup();
@@ -85,35 +99,35 @@ class VerbruikKostenCacheMaintainerTest {
                 fromDateCaptor.capture(), toDateCaptor.capture());
 
         assertThat(fromDateCaptor.getAllValues()).containsExactly(
-                LocalDate.of(2016, 12, 1),
-                LocalDate.of(2017, 1, 1),
-                LocalDate.of(2017, 2, 1),
-                LocalDate.of(2017, 3, 1),
-                LocalDate.of(2017, 4, 1),
-                LocalDate.of(2017, 5, 1),
-                LocalDate.of(2017, 6, 1),
-                LocalDate.of(2017, 7, 1),
-                LocalDate.of(2017, 8, 1),
-                LocalDate.of(2017, 9, 1),
-                LocalDate.of(2017, 10, 1),
-                LocalDate.of(2017, 11, 1),
-                LocalDate.of(2017, 12, 1)
+                LocalDate.of(2016, DECEMBER, 1),
+                LocalDate.of(2017, JANUARY, 1),
+                LocalDate.of(2017, FEBRUARY, 1),
+                LocalDate.of(2017, MARCH, 1),
+                LocalDate.of(2017, APRIL, 1),
+                LocalDate.of(2017, MAY, 1),
+                LocalDate.of(2017, JUNE, 1),
+                LocalDate.of(2017, JULY, 1),
+                LocalDate.of(2017, AUGUST, 1),
+                LocalDate.of(2017, SEPTEMBER, 1),
+                LocalDate.of(2017, OCTOBER, 1),
+                LocalDate.of(2017, NOVEMBER, 1),
+                LocalDate.of(2017, DECEMBER, 1)
         );
 
         assertThat(toDateCaptor.getAllValues()).containsExactly(
-                YearMonth.of(2016, 12).atEndOfMonth(),
-                YearMonth.of(2017, 1).atEndOfMonth(),
-                YearMonth.of(2017, 2).atEndOfMonth(),
-                YearMonth.of(2017, 3).atEndOfMonth(),
-                YearMonth.of(2017, 4).atEndOfMonth(),
-                YearMonth.of(2017, 5).atEndOfMonth(),
-                YearMonth.of(2017, 6).atEndOfMonth(),
-                YearMonth.of(2017, 7).atEndOfMonth(),
-                YearMonth.of(2017, 8).atEndOfMonth(),
-                YearMonth.of(2017, 9).atEndOfMonth(),
-                YearMonth.of(2017, 10).atEndOfMonth(),
-                YearMonth.of(2017, 11).atEndOfMonth(),
-                YearMonth.of(2017, 12).atEndOfMonth()
+                YearMonth.of(2016, DECEMBER).atEndOfMonth(),
+                YearMonth.of(2017, JANUARY).atEndOfMonth(),
+                YearMonth.of(2017, FEBRUARY).atEndOfMonth(),
+                YearMonth.of(2017, MARCH).atEndOfMonth(),
+                YearMonth.of(2017, APRIL).atEndOfMonth(),
+                YearMonth.of(2017, MAY).atEndOfMonth(),
+                YearMonth.of(2017, JUNE).atEndOfMonth(),
+                YearMonth.of(2017, JULY).atEndOfMonth(),
+                YearMonth.of(2017, AUGUST).atEndOfMonth(),
+                YearMonth.of(2017, SEPTEMBER).atEndOfMonth(),
+                YearMonth.of(2017, OCTOBER).atEndOfMonth(),
+                YearMonth.of(2017, NOVEMBER).atEndOfMonth(),
+                YearMonth.of(2017, DECEMBER).atEndOfMonth()
         );
     }
 

@@ -1,5 +1,22 @@
 package nl.homeserver.energy.standbypower;
 
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Optional;
+
 import nl.homeserver.energy.opgenomenvermogen.NumberOfRecordsPerWatt;
 import nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenRepository;
 import nl.homeserver.energy.verbruikkosten.ActuallyRegisteredVerbruikProvider;
@@ -11,23 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.util.List;
-import java.util.Optional;
-
-import static java.time.Month.FEBRUARY;
-import static java.time.Month.JANUARY;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenBuilder.aOpgenomenVermogen;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StandbyPowerServiceTest {
@@ -49,7 +49,7 @@ class StandbyPowerServiceTest {
 
     @Test
     void whenGetStandbyPowerThenReturned() {
-        final YearMonth month = YearMonth.of(2018, 1);
+        final YearMonth month = YearMonth.of(2018, JANUARY);
         final LocalDateTime from = LocalDate.of(2018, JANUARY, 1).atStartOfDay();
         final LocalDateTime to = LocalDate.of(2018, FEBRUARY, 1).atStartOfDay();
 

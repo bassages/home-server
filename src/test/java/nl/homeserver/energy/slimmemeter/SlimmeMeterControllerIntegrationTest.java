@@ -1,5 +1,6 @@
 package nl.homeserver.energy.slimmemeter;
 
+import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -65,14 +66,14 @@ class SlimmeMeterControllerIntegrationTest {
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
 
         final Meterstand savedMeterstand = meterstandCaptor.getValue();
-        assertThat(savedMeterstand.getDateTime()).isEqualTo(LocalDateTime.of(2018, 5, 3, 13, 14, 15));
+        assertThat(savedMeterstand.getDateTime()).isEqualTo(LocalDateTime.of(2018, MAY, 3, 13, 14, 15));
         assertThat(savedMeterstand.getStroomTariefIndicator()).isEqualTo(StroomTariefIndicator.NORMAAL);
         assertThat(savedMeterstand.getStroomTarief1()).isEqualTo(new BigDecimal("12.422"));
         assertThat(savedMeterstand.getStroomTarief2()).isEqualTo(new BigDecimal("26.241"));
         assertThat(savedMeterstand.getGas()).isEqualTo(new BigDecimal("664.242"));
 
         final OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenCaptor.getValue();
-        assertThat(savedOpgenomenVermogen.getDatumtijd()).isEqualTo(LocalDateTime.of(2018, 5, 3, 13, 14, 15));
+        assertThat(savedOpgenomenVermogen.getDatumtijd()).isEqualTo(LocalDateTime.of(2018, MAY, 3, 13, 14, 15));
         assertThat(savedOpgenomenVermogen.getWatt()).isEqualTo(640);
         assertThat(savedOpgenomenVermogen.getTariefIndicator()).isEqualTo(StroomTariefIndicator.NORMAAL);
     }

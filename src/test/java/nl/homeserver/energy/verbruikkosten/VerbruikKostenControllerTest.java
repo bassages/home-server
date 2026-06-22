@@ -1,5 +1,15 @@
 package nl.homeserver.energy.verbruikkosten;
 
+import static java.time.Month.APRIL;
+import static java.time.Month.MAY;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.Year;
+import java.util.List;
+
 import nl.homeserver.DatePeriod;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,14 +19,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.Year;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VerbruikKostenControllerTest {
@@ -35,8 +37,8 @@ class VerbruikKostenControllerTest {
         final VerbruikKostenOverzicht verbruikKostenOverzicht = mock(VerbruikKostenOverzicht.class);
         when(verbruikService.getGemiddeldeVerbruikEnKostenInPeriode(datePeriodCaptor.capture())).thenReturn(verbruikKostenOverzicht);
 
-        final LocalDate from = LocalDate.of(2017, 4, 2);
-        final LocalDate to = LocalDate.of(2017, 5, 19);
+        final LocalDate from = LocalDate.of(2017, APRIL, 2);
+        final LocalDate to = LocalDate.of(2017, MAY, 19);
 
         final VerbruikKostenOverzicht gemiddeldeVerbruikPerDagInPeriode = verbruikKostenController.getGemiddeldeVerbruikPerDag(from, to);
 
@@ -51,8 +53,8 @@ class VerbruikKostenControllerTest {
         final List<VerbruikKostenOpDag> verbruikKostenPerDag = List.of(new VerbruikKostenOpDag(LocalDate.now(), mock(VerbruikKostenOverzicht.class)));
         when(verbruikService.getVerbruikPerDag(datePeriodCaptor.capture())).thenReturn(verbruikKostenPerDag);
 
-        final LocalDate from = LocalDate.of(2017, 4, 2);
-        final LocalDate to = LocalDate.of(2017, 5, 19);
+        final LocalDate from = LocalDate.of(2017, APRIL, 2);
+        final LocalDate to = LocalDate.of(2017, MAY, 19);
 
         final List<VerbruikKostenOpDag> verbruikPerDag = verbruikKostenController.getVerbruikPerDag(from, to);
 
@@ -65,7 +67,7 @@ class VerbruikKostenControllerTest {
     @Test
     void whenGetVerbruikPerUurOpDagThenDelegatedToVerbruikService() {
         final List<VerbruikInUurOpDag> verbruikPerUurOpDag = List.of(new VerbruikInUurOpDag(2, mock(VerbruikKostenOverzicht.class)));
-        final LocalDate day = LocalDate.of(2017, 4, 2);
+        final LocalDate day = LocalDate.of(2017, APRIL, 2);
         when(verbruikService.getVerbruikPerUurOpDag(day)).thenReturn(verbruikPerUurOpDag);
 
         assertThat(verbruikKostenController.getVerbruikPerUurOpDag(day)).isEqualTo(verbruikPerUurOpDag);

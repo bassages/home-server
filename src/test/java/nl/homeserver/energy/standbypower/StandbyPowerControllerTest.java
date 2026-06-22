@@ -1,10 +1,21 @@
 package nl.homeserver.energy.standbypower;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static java.time.Month.APRIL;
+import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.JULY;
+import static java.time.Month.JUNE;
+import static java.time.Month.MARCH;
+import static java.time.Month.MAY;
+import static java.time.Month.NOVEMBER;
+import static java.time.Month.OCTOBER;
+import static java.time.Month.SEPTEMBER;
+import static nl.homeserver.util.TimeMachine.timeTravelTo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -12,11 +23,11 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.Month.JANUARY;
-import static nl.homeserver.util.TimeMachine.timeTravelTo;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class StandbyPowerControllerTest {
@@ -47,18 +58,18 @@ class StandbyPowerControllerTest {
         final StandbyPowerInPeriod standByPower11 = mock(StandbyPowerInPeriod.class);
         final StandbyPowerInPeriod standByPower12 = mock(StandbyPowerInPeriod.class);
 
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 1))).thenReturn(Optional.of(standByPower1));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 2))).thenReturn(Optional.of(standByPower2));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 3))).thenReturn(Optional.of(standByPower3));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 4))).thenReturn(Optional.of(standByPower4));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 5))).thenReturn(Optional.of(standByPower5));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 6))).thenReturn(Optional.of(standByPower6));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 7))).thenReturn(Optional.of(standByPower7));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 8))).thenReturn(Optional.of(standByPower8));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 9))).thenReturn(Optional.of(standByPower9));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 10))).thenReturn(Optional.of(standByPower10));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 11))).thenReturn(Optional.of(standByPower11));
-        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, 12))).thenReturn(Optional.of(standByPower12));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, JANUARY))).thenReturn(Optional.of(standByPower1));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, FEBRUARY))).thenReturn(Optional.of(standByPower2));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, MARCH))).thenReturn(Optional.of(standByPower3));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, APRIL))).thenReturn(Optional.of(standByPower4));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, MAY))).thenReturn(Optional.of(standByPower5));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, JUNE))).thenReturn(Optional.of(standByPower6));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, JULY))).thenReturn(Optional.of(standByPower7));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, AUGUST))).thenReturn(Optional.of(standByPower8));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, SEPTEMBER))).thenReturn(Optional.of(standByPower9));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, OCTOBER))).thenReturn(Optional.of(standByPower10));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, NOVEMBER))).thenReturn(Optional.of(standByPower11));
+        when(standbyPowerService.getStandbyPower(YearMonth.of(2018, DECEMBER))).thenReturn(Optional.of(standByPower12));
 
         final List<StandbyPowerInPeriod> standbyPower = standbyPowerController.getStandbyPower(2018);
 
