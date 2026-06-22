@@ -39,7 +39,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void whenGetEarliestLowestTemperatureOnDayThenFound() {
         final KlimaatSensor klimaatSensor = persistSensor();
 
-        final LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.parse("2022-01-01");
 
         // Not the lowest temperature
         final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
@@ -71,7 +71,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void whenGetEarliestHighestTemperatureOnDayThenFound() {
         final KlimaatSensor klimaatSensor = persistSensor();
 
-        final LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.parse("2022-01-01");
 
         // Not the highest temperature
         final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
@@ -105,7 +105,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
 
         // when
         final Klimaat result = klimaatRepository.earliestLowestHumidityOnDay(
-                SENSOR_CODE_GARDEN, LocalDate.of(2022, 1, 1));
+                SENSOR_CODE_GARDEN, LocalDate.parse("2022-01-01"));
 
         // then
         assertThat(result).isNull();
@@ -115,7 +115,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void givenNoDataExistsWhenGetEarliestLowestHumidityOnDayThenFound() {
         final KlimaatSensor klimaatSensor = persistSensor();
 
-        final LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.parse("2022-01-01");
 
         // Not the lowest humidity
         final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))
@@ -147,7 +147,7 @@ class KlimaatRepositoryIntegrationTest extends RepositoryIntegrationTest {
     void whenGetEarliestHighestHumidityOnDayThenFound() {
         final KlimaatSensor klimaatSensor = persistSensor();
 
-        final LocalDate day = LocalDate.of(2022, 1, 1);
+        final LocalDate day = LocalDate.parse("2022-01-01");
 
         // Not the highest humidity
         final Klimaat klimaat1 = aKlimaat().datumtijd(day.atTime(10, 0))

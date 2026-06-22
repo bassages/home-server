@@ -152,33 +152,33 @@ class KlimaatServiceTest {
                 year2017 -> assertThat(year2017)
                     .hasSize(12)
                     .satisfiesExactly(
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 1, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 2, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 3, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 4, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 5, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 6, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 7, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 8, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 9, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 10, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 11, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2017, 12, 1))),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-02-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-03-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-04-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-05-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-06-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-07-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-08-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-09-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01"))),
                 year2018 -> assertThat(year2018)
                     .hasSize(12)
                     .satisfiesExactly(
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 1, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 2, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 3, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 4, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 5, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 6, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 7, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 8, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 9, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 10, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 11, 1)),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.of(2018, 12, 1))));
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-01-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-02-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-03-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-04-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-05-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-06-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-07-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-08-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-09-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-10-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-11-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2018-12-01"))));
     }
 
     @Test
@@ -233,7 +233,7 @@ class KlimaatServiceTest {
         // then
         assertThat(averagePerMonthInYears).hasSize(1);
 
-        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.get(0);
+        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.getFirst();
         assertThat(monthsInOneYear).hasSize(12);
         assertThat(monthsInOneYear).extracting(GemiddeldeKlimaatPerMaand::gemiddelde).containsOnlyNulls();
 
@@ -255,7 +255,7 @@ class KlimaatServiceTest {
         // then
         assertThat(averagePerMonthInYears).hasSize(1);
 
-        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.get(0);
+        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.getFirst();
         assertThat(monthsInOneYear).hasSize(12);
 
         verify(klimaatServiceHelper, times(12)).getPotentiallyCachedAverageInMonthOfYear(
@@ -279,7 +279,7 @@ class KlimaatServiceTest {
         // then
         assertThat(averagePerMonthInYears).hasSize(1);
 
-        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.get(0);
+        final List<GemiddeldeKlimaatPerMaand> monthsInOneYear = averagePerMonthInYears.getFirst();
         assertThat(monthsInOneYear).hasSize(12);
 
         final InOrder inOrder = inOrder(klimaatServiceHelper);

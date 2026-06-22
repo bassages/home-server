@@ -1,5 +1,24 @@
 package nl.homeserver.energy.verbruikkosten;
 
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.JANUARY;
+import static java.time.Month.MARCH;
+import static java.util.stream.IntStream.range;
+import static nl.homeserver.DatePeriod.aPeriodWithToDate;
+import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
+import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import nl.homeserver.DatePeriod;
 import nl.homeserver.energy.meterreading.Meterstand;
 import nl.homeserver.energy.meterreading.MeterstandService;
@@ -8,21 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.util.List;
-import java.util.Optional;
-
-import static java.time.Month.*;
-import static java.util.stream.IntStream.range;
-import static nl.homeserver.DatePeriod.aPeriodWithToDate;
-import static nl.homeserver.DateTimePeriod.aPeriodWithToDateTime;
-import static nl.homeserver.energy.meterreading.MeterstandBuilder.aMeterstand;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VerbruikServiceTest {
@@ -142,11 +146,10 @@ class VerbruikServiceTest {
         assertThat(verbruikKostenForHour2.maand()).isEqualTo(2);
         assertThat(verbruikKostenForHour2.verbruikKostenOverzicht()).isSameAs(verbruikKostenOverzichtForFebruary);
 
-        range(1, 12).forEach(month -> {
+        Arrays.stream(Month.values()).forEach(month -> {
                 final LocalDateTime from = LocalDate.of(year, month, 1).atStartOfDay();
-                final LocalDateTime to = LocalDate.of(year, month + 1, 1).atStartOfDay();
-                verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(
-                        aPeriodWithToDateTime(from, to), actuallyRegisteredVerbruikProvider);
+                final LocalDateTime to = from.plusMonths(1);
+                verify(verbruikKostenOverzichtService).getVerbruikEnKostenOverzicht(aPeriodWithToDateTime(from, to), actuallyRegisteredVerbruikProvider);
             }
         );
     }
