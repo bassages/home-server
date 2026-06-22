@@ -161,9 +161,9 @@ class KlimaatServiceTest {
                         gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-07-01")),
                         gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-08-01")),
                         gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-09-01")),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01")),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01")),
-                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-01-01"))),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-10-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-11-01")),
+                        gemiddeldeKlimaatPerMaand -> assertThat(gemiddeldeKlimaatPerMaand.maand()).isEqualTo(LocalDate.parse("2017-12-01"))),
                 year2018 -> assertThat(year2018)
                     .hasSize(12)
                     .satisfiesExactly(
