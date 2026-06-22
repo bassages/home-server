@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.sql.Date;
 import java.time.*;
 import java.util.List;
 
@@ -49,7 +48,7 @@ class KlimaatServiceTest {
 
         final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
-        final Date day = Date.valueOf(from);
+        final LocalDate day = from;
         when(klimaatRepository.getPeakHighTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestHighestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
@@ -70,7 +69,7 @@ class KlimaatServiceTest {
 
         final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
-        final Date day = Date.valueOf(from);
+        final LocalDate day = from;
         when(klimaatRepository.getPeakLowTemperatureDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestLowestTemperatureOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
@@ -91,7 +90,7 @@ class KlimaatServiceTest {
 
         final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
-        final Date day = Date.valueOf(from);
+        final LocalDate day = from;
         when(klimaatRepository.getPeakHighHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestHighestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
@@ -112,7 +111,7 @@ class KlimaatServiceTest {
 
         final Klimaat klimaat = aKlimaat().datumtijd(from.atStartOfDay()).build();
 
-        final Date day = Date.valueOf(from);
+        final LocalDate day = from;
         when(klimaatRepository.getPeakLowHumidityDates(SOME_SENSOR_CODE, from, to, limit)).thenReturn(List.of(day));
         when(klimaatRepository.earliestLowestHumidityOnDay(SOME_SENSOR_CODE, from)).thenReturn(klimaat);
 
@@ -285,13 +284,13 @@ class KlimaatServiceTest {
         final InOrder inOrder = inOrder(klimaatServiceHelper);
 
         inOrder.verify(klimaatServiceHelper).getPotentiallyCachedAverageInMonthOfYear(
-                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, 1));
+                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, JANUARY));
         inOrder.verify(klimaatServiceHelper).getPotentiallyCachedAverageInMonthOfYear(
-                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, 2));
+                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, FEBRUARY));
         inOrder.verify(klimaatServiceHelper).getPotentiallyCachedAverageInMonthOfYear(
-                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, 3));
+                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, MARCH));
         inOrder.verify(klimaatServiceHelper).getPotentiallyCachedAverageInMonthOfYear(
-                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, 4));
+                SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, APRIL));
 
         inOrder.verify(klimaatServiceHelper).getNotCachedAverageInMonthOfYear(
                 SOME_SENSOR_CODE, sensorType, YearMonth.of(currentYear, currentMonth));

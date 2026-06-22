@@ -83,7 +83,6 @@ public class KlimaatService {
     private List<Klimaat> getLowestTemperature(final String sensorCode, final DatePeriod period, final int limit) {
         return klimaatRepository.getPeakLowTemperatureDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
-                                .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestLowestTemperatureOnDay(sensorCode, day))
                                 .toList();
     }
@@ -91,7 +90,6 @@ public class KlimaatService {
     private List<Klimaat> getLowestHumidity(final String sensorCode, final DatePeriod period, final int limit) {
         return klimaatRepository.getPeakLowHumidityDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
-                                .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestLowestHumidityOnDay(sensorCode, day))
                                 .toList();
     }
@@ -99,7 +97,6 @@ public class KlimaatService {
     private List<Klimaat> getHighestTemperature(final String sensorCode, final DatePeriod period, final int limit) {
         return klimaatRepository.getPeakHighTemperatureDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
-                                .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestHighestTemperatureOnDay(sensorCode, day))
                                 .toList();
     }
@@ -107,7 +104,6 @@ public class KlimaatService {
     private List<Klimaat> getHighestHumidity(final String sensorCode, final DatePeriod period, final int limit) {
         return klimaatRepository.getPeakHighHumidityDates(sensorCode, period.getFromDate(), period.getToDate(), limit)
                                 .stream()
-                                .map(java.sql.Date::toLocalDate)
                                 .map(day -> klimaatRepository.earliestHighestHumidityOnDay(sensorCode, day))
                                 .toList();
     }

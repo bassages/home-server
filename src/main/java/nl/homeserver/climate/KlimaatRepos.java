@@ -1,7 +1,6 @@
 package nl.homeserver.climate;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,10 +42,10 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  LIMIT :limit
                ) datums
     """, nativeQuery = true)
-    List<Date> getPeakHighTemperatureDates(@Param("sensorCode") String sensorCode,
-                                           @Param("van") LocalDate van,
-                                           @Param("tot") LocalDate tot,
-                                           @Param("limit") int limit);
+    List<LocalDate> getPeakHighTemperatureDates(@Param("sensorCode") String sensorCode,
+                                                @Param("van") LocalDate van,
+                                                @Param("tot") LocalDate tot,
+                                                @Param("limit") int limit);
 
     @Nullable
     @Query(value = """
@@ -77,10 +76,10 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  LIMIT :limit
                ) datums
     """, nativeQuery = true)
-    List<Date> getPeakLowTemperatureDates(@Param("sensorCode") String sensorCode,
-                                          @Param("van") LocalDate van,
-                                          @Param("tot") LocalDate tot,
-                                          @Param("limit") int limit);
+    List<LocalDate> getPeakLowTemperatureDates(@Param("sensorCode") String sensorCode,
+                                               @Param("van") LocalDate van,
+                                               @Param("tot") LocalDate tot,
+                                               @Param("limit") int limit);
 
     @Nullable
     @Query(value = """
@@ -111,10 +110,10 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  LIMIT :limit
                ) datums
     """, nativeQuery = true)
-    List<Date> getPeakHighHumidityDates(@Param("sensorCode") String sensorCode,
-                                        @Param("van") LocalDate van,
-                                        @Param("tot") LocalDate tot,
-                                        @Param("limit") int limit);
+    List<LocalDate> getPeakHighHumidityDates(@Param("sensorCode") String sensorCode,
+                                             @Param("van") LocalDate van,
+                                             @Param("tot") LocalDate tot,
+                                             @Param("limit") int limit);
 
     @Nullable
     @Query(value = """
@@ -145,10 +144,10 @@ interface KlimaatRepos extends JpaRepository<Klimaat, Long> {
                  LIMIT :limit
                ) datums
     """, nativeQuery = true)
-    List<Date> getPeakLowHumidityDates(@Param("sensorCode") String sensorCode,
-                                       @Param("van") LocalDate van,
-                                       @Param("tot") LocalDate tot,
-                                       @Param("limit") int limit);
+    List<LocalDate> getPeakLowHumidityDates(@Param("sensorCode") String sensorCode,
+                                            @Param("van") LocalDate van,
+                                            @Param("tot") LocalDate tot,
+                                            @Param("limit") int limit);
 
     @Nullable
     @Query(value = """
