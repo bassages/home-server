@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.6'
+    id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.github.ben-manes.versions' version '0.54.0'
     id 'jacoco'
-    id 'org.sonarqube' version '7.3.0.8198'
+    id 'org.sonarqube' version '7.3.1.8318'
 }
 
 group = 'nl.homeserver' 
@@ -100,13 +100,13 @@ dependencies {
     implementation('com.google.code.findbugs:jsr305:3.0.2')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation('org.springframework.security:spring-security-test:7.1.0')
     testImplementation('org.springframework.boot:spring-boot-data-jpa-test')
     testImplementation('org.springframework.boot:spring-boot-webmvc-test')
     testImplementation('nl.jqno.equalsverifier:equalsverifier:4.5')
     testImplementation('org.awaitility:awaitility:4.3.0')
-    testImplementation('com.squareup.okhttp3:okhttp:5.3.2')
-    testImplementation('com.squareup.okhttp3:mockwebserver:5.3.2')
+    testImplementation('com.squareup.okhttp3:okhttp:5.4.0')
+    testImplementation('com.squareup.okhttp3:mockwebserver:5.4.0')
     testImplementation('org.skyscreamer:jsonassert:1.5.3')
 
     runtimeOnly("org.springframework.boot:spring-boot-properties-migrator")
