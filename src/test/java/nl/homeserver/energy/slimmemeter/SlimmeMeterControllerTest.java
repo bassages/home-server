@@ -25,6 +25,7 @@ import java.util.List;
 import static java.math.BigDecimal.TEN;
 import static nl.homeserver.energy.StroomTariefIndicator.NORMAAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,32 +46,32 @@ class SlimmeMeterControllerTest {
 
     @Test
     void whenSaveThenMeterstandAndOpgenomenVermogenSaved() {
-        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
+        final DsmrReading dsmrReading = new DsmrReading();
         final LocalDateTime dateTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
-        dsmr42Reading.setDatumtijd(dateTime);
+        dsmrReading.setDatumtijd(dateTime);
         final StroomTariefIndicator stroomTariefIndicator = NORMAAL;
-        dsmr42Reading.setStroomTariefIndicator((int) stroomTariefIndicator.getId());
-        dsmr42Reading.setGas(new BigDecimal("201.876234"));
-        dsmr42Reading.setStroomTarief1(new BigDecimal("352.907511"));
-        dsmr42Reading.setStroomTarief2(new BigDecimal("2341.234345"));
-        dsmr42Reading.setStroomOpgenomenVermogenInWatt(424);
-        dsmr42Reading.setAantalSpanningsDippenInFaseL1(100);
-        dsmr42Reading.setAantalSpanningsDippenInFaseL2(200);
-        dsmr42Reading.setAantalStroomStoringenInAlleFases(300);
-        dsmr42Reading.setAantalSpanningsDippenInFaseL1(80);
-        dsmr42Reading.setAantalSpanningsDippenInFaseL2(132);
-        dsmr42Reading.setTekstBericht("Hello Kitty");
-        dsmr42Reading.setTekstBerichtCodes("HK");
-        dsmr42Reading.setMeterIdentificatieGas("MIG");
-        dsmr42Reading.setMeterIdentificatieStroom("MIS");
-        dsmr42Reading.setAantalLangeStroomStoringenInAlleFases(431);
+        dsmrReading.setStroomTariefIndicator((int) stroomTariefIndicator.getId());
+        dsmrReading.setGas(new BigDecimal("201.876234"));
+        dsmrReading.setStroomTarief1(new BigDecimal("352.907511"));
+        dsmrReading.setStroomTarief2(new BigDecimal("2341.234345"));
+        dsmrReading.setStroomOpgenomenVermogenInWatt(424);
+        dsmrReading.setAantalSpanningsDippenInFaseL1(100);
+        dsmrReading.setAantalSpanningsDippenInFaseL2(200);
+        dsmrReading.setAantalStroomStoringenInAlleFases(300);
+        dsmrReading.setAantalSpanningsDippenInFaseL1(80);
+        dsmrReading.setAantalSpanningsDippenInFaseL2(132);
+        dsmrReading.setTekstBericht("Hello Kitty");
+        dsmrReading.setTekstBerichtCodes("HK");
+        dsmrReading.setMeterIdentificatieGas("MIG");
+        dsmrReading.setMeterIdentificatieStroom("MIS");
+        dsmrReading.setAantalLangeStroomStoringenInAlleFases(431);
 
         final LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
         langeStroomStoring.setDatumtijdEinde(LocalDateTime.now());
         langeStroomStoring.setDuurVanStoringInSeconden(120L);
-        dsmr42Reading.setLangeStroomStoringen(List.of(langeStroomStoring));
+        dsmrReading.setLangeStroomStoringen(List.of(langeStroomStoring));
 
-        slimmeMeterController.save(dsmr42Reading);
+        slimmeMeterController.save(dsmrReading);
 
         verify(meterstandService).save(meterstandCaptor.capture());
         final Meterstand savedMeterstand = meterstandCaptor.getValue();
@@ -82,26 +83,60 @@ class SlimmeMeterControllerTest {
 
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(dateTime);
-        assertThat(opgenomenVermogenCaptor.getValue().getWatt()).isEqualTo(dsmr42Reading.getStroomOpgenomenVermogenInWatt());
+        assertThat(opgenomenVermogenCaptor.getValue().getWatt()).isEqualTo(dsmrReading.getStroomOpgenomenVermogenInWatt());
         assertThat(opgenomenVermogenCaptor.getValue().getTariefIndicator()).isEqualTo(stroomTariefIndicator);
+    }
+
+    @Test
+    void whenSaveTwiceWithinTenSecondsThenSecondReadingNotSaved() {
+        // given
+        final LocalDateTime firstReadingTime = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
+        final DsmrReading firstDsmrReading = createBasicDsmrReading(firstReadingTime);
+
+        final LocalDateTime secondReadingTime = firstReadingTime.plusSeconds(9);
+        final DsmrReading secondDsmrReading = createBasicDsmrReading(secondReadingTime);
+
+        // when
+        slimmeMeterController.save(firstDsmrReading);
+        slimmeMeterController.save(secondDsmrReading);
+
+        // then
+        verify(meterstandService, times(1)).save(meterstandCaptor.capture());
+        verify(opgenomenVermogenService, times(1)).save(opgenomenVermogenCaptor.capture());
+
+        assertThat(meterstandCaptor.getValue().getDateTime()).isEqualTo(firstReadingTime);
+        assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(firstReadingTime);
     }
 
     @CaptureLogging(SlimmeMeterController.class)
     @Test
     void whenSaveThenLoggedAtLevelInfo(final ArgumentCaptor<LoggingEvent> loggerEventCaptor) {
         // given
-        final Dsmr42Reading dsmr42Reading = new Dsmr42Reading();
-        dsmr42Reading.setStroomTariefIndicator((int) NORMAAL.getId());
-        dsmr42Reading.setGas(TEN);
-        dsmr42Reading.setStroomTarief1(TEN);
-        dsmr42Reading.setStroomTarief2(TEN);
+        final LocalDateTime now = LocalDate.of(2016, Month.NOVEMBER, 12).atTime(14, 18);
+
+        final DsmrReading dsmrReading = new DsmrReading();
+        dsmrReading.setDatumtijd(now);
+        dsmrReading.setStroomTariefIndicator((int) NORMAAL.getId());
+        dsmrReading.setGas(TEN);
+        dsmrReading.setStroomTarief1(TEN);
+        dsmrReading.setStroomTarief2(TEN);
 
         // when
-        slimmeMeterController.save(dsmr42Reading);
+        slimmeMeterController.save(dsmrReading);
 
         // then
         final LoggingEvent loggingEvent = loggerEventCaptor.getValue();
         assertThat(loggingEvent.getLevel()).isEqualTo(Level.INFO);
-        assertThat(loggingEvent.getFormattedMessage()).startsWith("Dsmr42Reading(");
+        assertThat(loggingEvent.getFormattedMessage()).startsWith("DsmrReading(");
+    }
+
+    private DsmrReading createBasicDsmrReading(final LocalDateTime localDateTime) {
+        final DsmrReading dsmrReading = new DsmrReading();
+        dsmrReading.setDatumtijd(localDateTime);
+        dsmrReading.setStroomTariefIndicator((int) NORMAAL.getId());
+        dsmrReading.setGas(TEN);
+        dsmrReading.setStroomTarief1(TEN);
+        dsmrReading.setStroomTarief2(TEN);
+        return dsmrReading;
     }
 }

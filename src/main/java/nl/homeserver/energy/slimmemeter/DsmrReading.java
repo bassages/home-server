@@ -11,7 +11,7 @@ import java.util.List;
 
 @Setter
 @ToString
-class Dsmr42Reading {
+class DsmrReading {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Getter
@@ -42,6 +42,8 @@ class Dsmr42Reading {
 
     private Integer aantalSpanningsDippenInFaseL2;
 
+    private Integer aantalSpanningsDippenInFaseL3;
+
     private String tekstBericht;
 
     private String tekstBerichtCodes;
@@ -49,4 +51,17 @@ class Dsmr42Reading {
     private Integer aantalLangeStroomStoringenInAlleFases;
 
     private List<LangeStroomStoring> langeStroomStoringen;
+
+    private BigDecimal voltageL1;
+    private BigDecimal voltageL2;
+    private BigDecimal voltageL3;
+
+    private BigDecimal directGeleverdVermogenL1;
+    private BigDecimal directGeleverdVermogenL2;
+    private BigDecimal directGeleverdVermogenL3;
+
+    private BigDecimal directTeruggeleverdVermogenL1;
+    private BigDecimal directTeruggeleverdVermogenL2;
+    private BigDecimal directTeruggeleverdVermogenL3;
+
 }

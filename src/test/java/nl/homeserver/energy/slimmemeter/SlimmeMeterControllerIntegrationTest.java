@@ -2,6 +2,8 @@ package nl.homeserver.energy.slimmemeter;
 
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,7 +32,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(MockitoExtension.class)
-@DirtiesContext
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {"spring.jpa.hibernate.ddl-auto=create",
@@ -76,5 +78,30 @@ class SlimmeMeterControllerIntegrationTest {
         assertThat(savedOpgenomenVermogen.getDatumtijd()).isEqualTo(LocalDateTime.of(2018, MAY, 3, 13, 14, 15));
         assertThat(savedOpgenomenVermogen.getWatt()).isEqualTo(640);
         assertThat(savedOpgenomenVermogen.getTariefIndicator()).isEqualTo(StroomTariefIndicator.NORMAAL);
+    }
+
+    @Test
+    void whenPostValidRequestTwiceWithinTenSecondsThenSecondReadingNotSaved() throws Exception {
+        final String first = """
+                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2}
+                """;
+        final String second = """
+                {"datumtijd":"2018-05-03T13:14:24","stroomOpgenomenVermogenInWatt":641,"stroomTarief1":12.423,"stroomTarief2":26.242,"gas":664.243,"stroomTariefIndicator":2}
+                """;
+
+        mockMvc.perform(post("/api/slimmemeter")
+                        .with(user("john@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(first))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/slimmemeter")
+                        .with(user("john@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(second))
+                .andExpect(status().isCreated());
+
+        verify(meterstandService, times(1)).save(any(Meterstand.class));
+        verify(opgenomenVermogenService, times(1)).save(any(OpgenomenVermogen.class));
     }
 }
