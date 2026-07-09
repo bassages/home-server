@@ -1,0 +1,15 @@
+###
+POST http://localhost:8080/api/slimmemeter
+Content-Type: application/json
+Authorization: Basic home home
+
+{
+  "datumtijd": "2026-06-23T16:50:32.495636",
+  "stroomOpgenomenVermogenInWatt": 1234,
+  "stroomTarief1": 5.003,
+  "stroomTarief2": 10.004,
+  "stroomTariefIndicator": 1,
+  "gas": 0.128,
+  "meterIdentificatieStroom": "ELEC-20260706",
+  "meterIdentificatieGas": "GAS-20260706"
+}

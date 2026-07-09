@@ -15,25 +15,37 @@ interface VerbruikRepository extends JpaRepository<Meterstand, Long> {
 
     @Nullable
     @Query(value = """
-        SELECT (MAX(stroom_tarief2) - MIN(stroom_tarief2))
-          FROM meterstand
-         WHERE date_time >= :van AND date_time < :tot
-         """, nativeQuery = true)
+        SELECT SUM(stroom_verbruik)
+          FROM (
+                SELECT (MAX(stroom_tarief2) - MIN(stroom_tarief2)) AS stroom_verbruik
+                  FROM meterstand
+                 WHERE date_time >= :van AND date_time < :tot
+                 GROUP BY meter_id_electricity
+               ) meterstanden_per_meter
+        """, nativeQuery = true)
     BigDecimal getStroomVerbruikNormaalTariefInPeriod(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Nullable
     @Query(value = """
-        SELECT (MAX(stroom_tarief1) - MIN(stroom_tarief1))
-          FROM meterstand
-         WHERE date_time >= :van AND date_time < :tot
-         """, nativeQuery = true)
+        SELECT SUM(stroom_verbruik)
+          FROM (
+                SELECT (MAX(stroom_tarief1) - MIN(stroom_tarief1)) AS stroom_verbruik
+                  FROM meterstand
+                 WHERE date_time >= :van AND date_time < :tot
+                 GROUP BY meter_id_electricity
+               ) meterstanden_per_meter
+        """, nativeQuery = true)
     BigDecimal getStroomVerbruikDalTariefInPeriod(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 
     @Nullable
     @Query(value = """
-        SELECT MAX(gas) - MIN(gas)
-          FROM meterstand
-         WHERE date_time >= :van AND date_time < :tot
+        SELECT SUM(gas_verbruik)
+          FROM (
+                SELECT MAX(gas) - MIN(gas) AS gas_verbruik
+                  FROM meterstand
+                 WHERE date_time >= :van AND date_time < :tot
+                 GROUP BY meter_id_gas
+               ) meterstanden_per_meter
         """, nativeQuery = true)
     BigDecimal getGasVerbruikInPeriod(@Param("van") LocalDateTime van, @Param("tot") LocalDateTime tot);
 }

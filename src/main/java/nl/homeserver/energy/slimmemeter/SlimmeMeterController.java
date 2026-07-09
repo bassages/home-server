@@ -1,5 +1,10 @@
 package nl.homeserver.energy.slimmemeter;
 
+import static java.math.RoundingMode.HALF_UP;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.homeserver.config.Paths;
@@ -10,12 +15,11 @@ import nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogen;
 import nl.homeserver.energy.opgenomenvermogen.OpgenomenVermogenService;
 import org.apache.commons.lang3.builder.RecursiveToStringStyle;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-import static java.math.RoundingMode.HALF_UP;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -29,7 +33,7 @@ class SlimmeMeterController {
     private LocalDateTime lastTimeMeterReadingWasSaved = null;
 
     private static final int GAS_SCALE = 3;
-    private static final int STROOM_SCALE = 3;
+    private static final int ELECTRICITY_SCALE = 3;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,18 +42,20 @@ class SlimmeMeterController {
             log.info(dsmrReading.toString(), new RecursiveToStringStyle());
         }
 
-        if (itIsTimeToStoreNewMeterreading(dsmrReading)) {
+        if (itIsTimeToStoreNewMeterReading(dsmrReading)) {
             lastTimeMeterReadingWasSaved = dsmrReading.getDatumtijd();
-            saveMeterstand(dsmrReading);
+            saveMeterReading(dsmrReading);
             saveOpgenomenVermogen(dsmrReading);
+        } else {
+            log.debug("Ignoring meter reading because it is too soon after the last one. Last saved: {}, current: {}", lastTimeMeterReadingWasSaved, dsmrReading.getDatumtijd());
         }
     }
 
-    private boolean itIsTimeToStoreNewMeterreading(final DsmrReading dsmrReading) {
+    private boolean itIsTimeToStoreNewMeterReading(final DsmrReading dsmrReading) {
         return lastTimeMeterReadingWasSaved == null || Duration.between(lastTimeMeterReadingWasSaved, dsmrReading.getDatumtijd()).getSeconds() >= 10;
     }
 
-    private void saveMeterstand(final @RequestBody DsmrReading dsmrReading) {
+    private void saveMeterReading(final @RequestBody DsmrReading dsmrReading) {
         final Meterstand meterstand = mapToMeterStand(dsmrReading);
         meterstandService.save(meterstand);
     }
@@ -64,8 +70,10 @@ class SlimmeMeterController {
         meterstand.setDateTime(dsmrReading.getDatumtijd());
         meterstand.setStroomTariefIndicator(StroomTariefIndicator.byId(dsmrReading.getStroomTariefIndicator().shortValue()));
         meterstand.setGas(dsmrReading.getGas().setScale(GAS_SCALE, HALF_UP));
-        meterstand.setStroomTarief1(dsmrReading.getStroomTarief1().setScale(STROOM_SCALE, HALF_UP));
-        meterstand.setStroomTarief2(dsmrReading.getStroomTarief2().setScale(STROOM_SCALE, HALF_UP));
+        meterstand.setStroomTarief1(dsmrReading.getStroomTarief1().setScale(ELECTRICITY_SCALE, HALF_UP));
+        meterstand.setStroomTarief2(dsmrReading.getStroomTarief2().setScale(ELECTRICITY_SCALE, HALF_UP));
+        meterstand.setMeterIdElectricity(dsmrReading.getMeterIdentificatieStroom());
+        meterstand.setMeterIdGas(dsmrReading.getMeterIdentificatieGas());
         return meterstand;
     }
 

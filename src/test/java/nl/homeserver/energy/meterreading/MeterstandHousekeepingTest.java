@@ -150,8 +150,8 @@ class MeterstandHousekeepingTest {
         meterstandHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-                .haveExactly(1, new ContainsMessageAtLevel("Keep first in hour 12: Meterstand(id=1, dateTime=2016-01-01T12:00, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand(id=3, dateTime=2016-01-01T12:30, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG))
-                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand(id=2, dateTime=2016-01-01T12:15, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, stroomTariefIndicator=ONBEKEND)", DEBUG));
+                .haveExactly(1, new ContainsMessageAtLevel("Keep first in hour 12: Meterstand(id=1, dateTime=2016-01-01T12:00, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, meterIdElectricity=UNKNOWN_E_METER, meterIdGas=UNKNOWN_G_METER, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Keep last in hour 12: Meterstand(id=3, dateTime=2016-01-01T12:30, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, meterIdElectricity=UNKNOWN_E_METER, meterIdGas=UNKNOWN_G_METER, stroomTariefIndicator=ONBEKEND)", DEBUG))
+                .haveExactly(1, new ContainsMessageAtLevel("Delete: Meterstand(id=2, dateTime=2016-01-01T12:15, date=2016-01-01, stroomTarief1=0.000, stroomTarief2=0.000, gas=0.000, meterIdElectricity=UNKNOWN_E_METER, meterIdGas=UNKNOWN_G_METER, stroomTariefIndicator=ONBEKEND)", DEBUG));
     }
 }

@@ -62,8 +62,8 @@ class SlimmeMeterControllerTest {
         dsmrReading.setAantalSpanningsDippenInFaseL2(132);
         dsmrReading.setTekstBericht("Hello Kitty");
         dsmrReading.setTekstBerichtCodes("HK");
-        dsmrReading.setMeterIdentificatieGas("MIG");
-        dsmrReading.setMeterIdentificatieStroom("MIS");
+        dsmrReading.setMeterIdentificatieGas("METER_ID_GAS");
+        dsmrReading.setMeterIdentificatieStroom("METER_ID_ELEC");
         dsmrReading.setAantalLangeStroomStoringenInAlleFases(431);
 
         final LangeStroomStoring langeStroomStoring = new LangeStroomStoring();
@@ -80,6 +80,8 @@ class SlimmeMeterControllerTest {
         assertThat(savedMeterstand.getStroomTariefIndicator()).isEqualTo(stroomTariefIndicator);
         assertThat(savedMeterstand.getStroomTarief1()).isEqualTo(new BigDecimal("352.908"));
         assertThat(savedMeterstand.getStroomTarief2()).isEqualTo(new BigDecimal("2341.234"));
+        assertThat(savedMeterstand.getMeterIdElectricity()).isEqualTo("METER_ID_ELEC");
+        assertThat(savedMeterstand.getMeterIdGas()).isEqualTo("METER_ID_GAS");
 
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(dateTime);
@@ -105,6 +107,8 @@ class SlimmeMeterControllerTest {
         verify(opgenomenVermogenService, times(1)).save(opgenomenVermogenCaptor.capture());
 
         assertThat(meterstandCaptor.getValue().getDateTime()).isEqualTo(firstReadingTime);
+        assertThat(meterstandCaptor.getValue().getMeterIdElectricity()).isEqualTo("METER_ID_ELEC");
+        assertThat(meterstandCaptor.getValue().getMeterIdGas()).isEqualTo("METER_ID_GAS");
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(firstReadingTime);
     }
 
@@ -137,6 +141,8 @@ class SlimmeMeterControllerTest {
         dsmrReading.setGas(TEN);
         dsmrReading.setStroomTarief1(TEN);
         dsmrReading.setStroomTarief2(TEN);
+        dsmrReading.setMeterIdentificatieGas("METER_ID_GAS");
+        dsmrReading.setMeterIdentificatieStroom("METER_ID_ELEC");
         return dsmrReading;
     }
 }

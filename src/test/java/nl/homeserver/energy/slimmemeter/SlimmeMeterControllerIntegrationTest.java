@@ -55,7 +55,7 @@ class SlimmeMeterControllerIntegrationTest {
     @Test
     void whenPostValidRequestToMeterstandEndpointThenMeterstandAndOpgenomenVermogenSaved() throws Exception {
         final String content = """
-                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2}
+                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2,"meterIdentificatieStroom":"METER_ID_ELEC","meterIdentificatieGas":"METER_ID_GAS"}
                 """;
 
         mockMvc.perform(post("/api/slimmemeter")
@@ -73,6 +73,8 @@ class SlimmeMeterControllerIntegrationTest {
         assertThat(savedMeterstand.getStroomTarief1()).isEqualTo(new BigDecimal("12.422"));
         assertThat(savedMeterstand.getStroomTarief2()).isEqualTo(new BigDecimal("26.241"));
         assertThat(savedMeterstand.getGas()).isEqualTo(new BigDecimal("664.242"));
+        assertThat(savedMeterstand.getMeterIdElectricity()).isEqualTo("METER_ID_ELEC");
+        assertThat(savedMeterstand.getMeterIdGas()).isEqualTo("METER_ID_GAS");
 
         final OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenCaptor.getValue();
         assertThat(savedOpgenomenVermogen.getDatumtijd()).isEqualTo(LocalDateTime.of(2018, MAY, 3, 13, 14, 15));
@@ -83,10 +85,10 @@ class SlimmeMeterControllerIntegrationTest {
     @Test
     void whenPostValidRequestTwiceWithinTenSecondsThenSecondReadingNotSaved() throws Exception {
         final String first = """
-                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2}
+                {"datumtijd":"2018-05-03T13:14:15","stroomOpgenomenVermogenInWatt":640,"stroomTarief1":12.422,"stroomTarief2":26.241,"gas":664.242,"stroomTariefIndicator":2,"meterIdentificatieStroom":"METER_ID_ELEC","meterIdentificatieGas":"METER_ID_GAS"}
                 """;
         final String second = """
-                {"datumtijd":"2018-05-03T13:14:24","stroomOpgenomenVermogenInWatt":641,"stroomTarief1":12.423,"stroomTarief2":26.242,"gas":664.243,"stroomTariefIndicator":2}
+                {"datumtijd":"2018-05-03T13:14:24","stroomOpgenomenVermogenInWatt":641,"stroomTarief1":12.423,"stroomTarief2":26.242,"gas":664.243,"stroomTariefIndicator":2,"meterIdentificatieStroom":"METER_ID_ELEC","meterIdentificatieGas":"METER_ID_GAS"}
                 """;
 
         mockMvc.perform(post("/api/slimmemeter")

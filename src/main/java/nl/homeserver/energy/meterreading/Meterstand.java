@@ -45,6 +45,16 @@ public class Meterstand {
     @Setter
     private BigDecimal gas;
 
+    @Column(nullable = false, length = 20)
+    @Getter
+    @Setter
+    private String meterIdElectricity;
+
+    @Column(nullable = false, length = 20)
+    @Getter
+    @Setter
+    private String meterIdGas;
+
     @Column(nullable = false, precision = 1)
     private short stroomTariefIndicator;
 

@@ -32,8 +32,10 @@ class DsmrReading {
     @Getter
     private BigDecimal gas;
 
+    @Getter
     private String meterIdentificatieStroom;
 
+    @Getter
     private String meterIdentificatieGas;
 
     private Integer aantalStroomStoringenInAlleFases;
@@ -52,16 +54,16 @@ class DsmrReading {
 
     private List<LangeStroomStoring> langeStroomStoringen;
 
-    private BigDecimal voltageL1;
-    private BigDecimal voltageL2;
-    private BigDecimal voltageL3;
+    private Integer voltageL1;
+    private Integer voltageL2;
+    private Integer voltageL3;
 
-    private BigDecimal directGeleverdVermogenL1;
-    private BigDecimal directGeleverdVermogenL2;
-    private BigDecimal directGeleverdVermogenL3;
+    private Integer directGeleverdVermogenL1InWatt;
+    private Integer directGeleverdVermogenL2InWatt;
+    private Integer directGeleverdVermogenL3InWatt;
 
-    private BigDecimal directTeruggeleverdVermogenL1;
-    private BigDecimal directTeruggeleverdVermogenL2;
-    private BigDecimal directTeruggeleverdVermogenL3;
+    private Integer directTeruggeleverdVermogenL1InWatt;
+    private Integer directTeruggeleverdVermogenL2InWatt;
+    private Integer directTeruggeleverdVermogenL3InWatt;
 
 }

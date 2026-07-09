@@ -14,6 +14,8 @@ public class MeterstandBuilder {
     private BigDecimal stroomTarief2 = new BigDecimal("0.000");
     private BigDecimal gas = new BigDecimal("0.000");
     private StroomTariefIndicator stroomTariefIndicator = StroomTariefIndicator.ONBEKEND;
+    private String meterIdentificatieStroom = "UNKNOWN_E_METER";
+    private String meterIdentificatieGas = "UNKNOWN_G_METER";
 
     private MeterstandBuilder() {
         // Hide public constructor
@@ -34,7 +36,7 @@ public class MeterstandBuilder {
     }
 
     public MeterstandBuilder withStroomTarief2(final BigDecimal stroomTarief2) {
-        this.stroomTarief1 = stroomTarief2;
+        this.stroomTarief2 = stroomTarief2;
         return this;
     }
 
@@ -53,6 +55,16 @@ public class MeterstandBuilder {
         return this;
     }
 
+    public MeterstandBuilder withMeterIdentificatieStroom(final String meterIdentificatieStroom) {
+        this.meterIdentificatieStroom = meterIdentificatieStroom;
+        return this;
+    }
+
+    public MeterstandBuilder withMeterIdentificatieGas(final String meterIdentificatieGas) {
+        this.meterIdentificatieGas = meterIdentificatieGas;
+        return this;
+    }
+
     public Meterstand build() {
         final Meterstand meterstand = new Meterstand();
         meterstand.setStroomTariefIndicator(stroomTariefIndicator);
@@ -61,6 +73,8 @@ public class MeterstandBuilder {
         meterstand.setStroomTarief1(stroomTarief1);
         meterstand.setStroomTarief2(stroomTarief2);
         meterstand.setGas(gas);
+        meterstand.setMeterIdElectricity(meterIdentificatieStroom);
+        meterstand.setMeterIdGas(meterIdentificatieGas);
         return meterstand;
     }
 }
