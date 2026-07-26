@@ -129,7 +129,7 @@ class OpgenomenVermogenHousekeepingTest {
         opgenomenVermogenHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, datum=2016-01-01, activePowerTotalInWatts=0, tariefIndicator=NORMAAL)", DEBUG))
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, datum=2016-01-01, activePowerTotalInWatts=0, tariefIndicator=NORMAAL)", DEBUG));
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, datum=2016-01-01, activePowerTotalInWatts=0, activePowerL1InWatts=0, activePowerL2InWatts=0, activePowerL3InWatts=0, tariefIndicator=NORMAAL)", DEBUG))
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, datum=2016-01-01, activePowerTotalInWatts=0, activePowerL1InWatts=0, activePowerL2InWatts=0, activePowerL3InWatts=0, tariefIndicator=NORMAAL)", DEBUG));
     }
 }

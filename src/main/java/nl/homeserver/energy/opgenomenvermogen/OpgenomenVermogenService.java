@@ -82,6 +82,9 @@ public class OpgenomenVermogenService {
         result.setTariefIndicator(opgenomenVermogen.getTariefIndicator());
         result.setDatumtijd(period.getFromDateTime());
         result.setActivePowerTotalInWatts(opgenomenVermogen.getActivePowerTotalInWatts());
+        result.setActivePowerL1InWatts(opgenomenVermogen.getActivePowerL1InWatts());
+        result.setActivePowerL2InWatts(opgenomenVermogen.getActivePowerL2InWatts());
+        result.setActivePowerL3InWatts(opgenomenVermogen.getActivePowerL3InWatts());
         return result;
     }
 
@@ -90,6 +93,9 @@ public class OpgenomenVermogenService {
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
         opgenomenVermogen.setActivePowerTotalInWatts(0);
+        opgenomenVermogen.setActivePowerL1InWatts(0);
+        opgenomenVermogen.setActivePowerL2InWatts(0);
+        opgenomenVermogen.setActivePowerL3InWatts(0);
         return opgenomenVermogen;
     }
 }

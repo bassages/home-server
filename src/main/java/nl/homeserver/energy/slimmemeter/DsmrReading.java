@@ -56,8 +56,11 @@ class DsmrReading {
     private Integer voltageL2;
     private Integer voltageL3;
 
+    @Getter
     private Integer directGeleverdVermogenL1InWatt;
+    @Getter
     private Integer directGeleverdVermogenL2InWatt;
+    @Getter
     private Integer directGeleverdVermogenL3InWatt;
 
     private Integer directTeruggeleverdVermogenL1InWatt;

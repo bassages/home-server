@@ -55,6 +55,9 @@ class SlimmeMeterControllerTest {
         dsmrReading.setStroomTarief1(new BigDecimal("352.907511"));
         dsmrReading.setStroomTarief2(new BigDecimal("2341.234345"));
         dsmrReading.setStroomOpgenomenVermogenInWatt(424);
+        dsmrReading.setDirectGeleverdVermogenL1InWatt(101);
+        dsmrReading.setDirectGeleverdVermogenL2InWatt(202);
+        dsmrReading.setDirectGeleverdVermogenL3InWatt(121);
         dsmrReading.setAantalSpanningsDippenInFaseL1(100);
         dsmrReading.setAantalSpanningsDippenInFaseL2(200);
         dsmrReading.setAantalStroomStoringenInAlleFases(300);
@@ -86,6 +89,9 @@ class SlimmeMeterControllerTest {
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(dateTime);
         assertThat(opgenomenVermogenCaptor.getValue().getActivePowerTotalInWatts()).isEqualTo(dsmrReading.getStroomOpgenomenVermogenInWatt());
+        assertThat(opgenomenVermogenCaptor.getValue().getActivePowerL1InWatts()).isEqualTo(101);
+        assertThat(opgenomenVermogenCaptor.getValue().getActivePowerL2InWatts()).isEqualTo(202);
+        assertThat(opgenomenVermogenCaptor.getValue().getActivePowerL3InWatts()).isEqualTo(121);
         assertThat(opgenomenVermogenCaptor.getValue().getTariefIndicator()).isEqualTo(stroomTariefIndicator);
     }
 

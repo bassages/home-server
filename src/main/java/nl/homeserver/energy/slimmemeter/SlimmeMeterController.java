@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Nullable;
+
 @Slf4j
 @RestController
 @RequestMapping(Paths.API + "/slimmemeter")
@@ -81,7 +83,14 @@ class SlimmeMeterController {
         final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(dsmrReading.getDatumtijd());
         opgenomenVermogen.setActivePowerTotalInWatts(dsmrReading.getStroomOpgenomenVermogenInWatt());
+        opgenomenVermogen.setActivePowerL1InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL1InWatt()));
+        opgenomenVermogen.setActivePowerL2InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL2InWatt()));
+        opgenomenVermogen.setActivePowerL3InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL3InWatt()));
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmrReading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;
+    }
+
+    private int defaultIfNull(@Nullable final Integer activePowerInWatts) {
+        return activePowerInWatts == null ? 0 : activePowerInWatts;
     }
 }
