@@ -34,7 +34,7 @@ public class OpgenomenVermogen {
     @NotNull
     @Getter
     @Setter
-    private int watt;
+    private int activePowerTotalInWatts;
 
     @NotNull
     private short tariefIndicator;

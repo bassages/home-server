@@ -58,13 +58,13 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
     @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Nullable
     @Query(value = """
-        SELECT watt
+        SELECT active_power_total_in_watts
           FROM opgenomen_vermogen
          WHERE datumtijd >= :fromDate AND datumtijd < :toDate
-      GROUP BY watt
+      GROUP BY active_power_total_in_watts
       ORDER BY COUNT(id) DESC
          LIMIT 1""", nativeQuery = true)
-    Integer findMostCommonWattInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
+    Integer findMostCommonActivePowerTotalInWattsInPeriod(@Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate);
 
     @Query(value = """
         SELECT COUNT(id)
@@ -75,12 +75,13 @@ public interface OpgenomenVermogenRepository extends JpaRepository<OpgenomenVerm
 
     @SuppressWarnings({"SqlNoDataSourceInspection", "SqlResolve"})
     @Query(value = """
-        SELECT watt, COUNT(id) AS numberOfRecords
+        SELECT active_power_total_in_watts AS activePowerTotalInWatts, COUNT(id) AS numberOfRecords
           FROM opgenomen_vermogen
          WHERE datumtijd >= :fromDateTime AND datumtijd < :toDateTime
-           AND watt >= :fromWatt AND watt < :toWatt
-      GROUP BY watt""", nativeQuery = true)
+           AND active_power_total_in_watts >= :fromActivePowerTotalInWatts AND active_power_total_in_watts < :toActivePowerTotalInWatts
+      GROUP BY active_power_total_in_watts""", nativeQuery = true)
     List<NumberOfRecordsPerWatt> numberOfRecordsInRange(@Param("fromDateTime") LocalDateTime fromDateTime,
                                                         @Param("toDateTime") LocalDateTime toDate,
-                                                        @Param("fromWatt") int fromWatt, @Param("toWatt") int toWatt);
+                                                        @Param("fromActivePowerTotalInWatts") int fromActivePowerTotalInWatts,
+                                                        @Param("toActivePowerTotalInWatts") int toActivePowerTotalInWatts);
 }

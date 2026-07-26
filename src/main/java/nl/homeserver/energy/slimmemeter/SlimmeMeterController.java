@@ -80,7 +80,7 @@ class SlimmeMeterController {
     private OpgenomenVermogen mapToOpgenomenVermogen(final DsmrReading dsmrReading) {
         final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(dsmrReading.getDatumtijd());
-        opgenomenVermogen.setWatt(dsmrReading.getStroomOpgenomenVermogenInWatt());
+        opgenomenVermogen.setActivePowerTotalInWatts(dsmrReading.getStroomOpgenomenVermogenInWatt());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmrReading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;
     }

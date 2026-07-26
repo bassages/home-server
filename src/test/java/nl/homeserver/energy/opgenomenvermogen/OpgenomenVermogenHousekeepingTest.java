@@ -64,7 +64,7 @@ class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    void givengivenMultipleOpgenomenVermogenInOneMinuteWithSameWattWhenCleanupThenMostRecentInMinuteIsKept() {
+    void givenMultipleOpgenomenVermogenInOneMinuteWithSameActivePowerTotalInWattsWhenCleanupThenMostRecentInMinuteIsKept() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -73,9 +73,9 @@ class OpgenomenVermogenHousekeepingTest {
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                         .thenReturn(List.of(dayToCleanup));
 
-        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(1).build();
-        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(1).build();
-        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withActivePowerTotalInWatts(1).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withActivePowerTotalInWatts(1).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withActivePowerTotalInWatts(1).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                                         .thenReturn(List.of(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
@@ -87,7 +87,7 @@ class OpgenomenVermogenHousekeepingTest {
     }
 
     @Test
-    void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentWattWhenCleanupThenHighestWattIsKept() {
+    void givenMultipleOpgenomenVermogenInOneMinuteWithDifferentActivePowerTotalInWattsWhenCleanupThenHighestActivePowerTotalInWattsIsKept() {
         final LocalDate dayToCleanup = LocalDate.of(2016, JANUARY, 1);
 
         final LocalDateTime currentDateTime = dayToCleanup.plusDays(1).atStartOfDay();
@@ -96,9 +96,9 @@ class OpgenomenVermogenHousekeepingTest {
         when(opgenomenVermogenRepository.findDatesBeforeToDateWithMoreRowsThan(any(), any(), anyInt()))
                                         .thenReturn(List.of(dayToCleanup));
 
-        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withWatt(3).build();
-        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withWatt(2).build();
-        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withWatt(1).build();
+        final OpgenomenVermogen opgenomenVermogen1 = aOpgenomenVermogen().withId(1).withDatumTijd(dayToCleanup.atTime(0, 0, 0)).withActivePowerTotalInWatts(3).build();
+        final OpgenomenVermogen opgenomenVermogen2 = aOpgenomenVermogen().withId(2).withDatumTijd(dayToCleanup.atTime(0, 0, 10)).withActivePowerTotalInWatts(2).build();
+        final OpgenomenVermogen opgenomenVermogen3 = aOpgenomenVermogen().withId(3).withDatumTijd(dayToCleanup.atTime(0, 0, 20)).withActivePowerTotalInWatts(1).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(dayToCleanup.atStartOfDay(), dayToCleanup.plusDays(1).atStartOfDay()))
                                         .thenReturn(List.of(opgenomenVermogen1, opgenomenVermogen2, opgenomenVermogen3));
@@ -129,7 +129,7 @@ class OpgenomenVermogenHousekeepingTest {
         opgenomenVermogenHousekeeping.start();
 
         assertThat(loggerEventCaptor.getAllValues())
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, datum=2016-01-01, watt=0, tariefIndicator=NORMAAL)", DEBUG))
-            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, datum=2016-01-01, watt=0, tariefIndicator=NORMAAL)", DEBUG));
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=2, datumtijd=2016-01-01T00:00:01, datum=2016-01-01, activePowerTotalInWatts=0, tariefIndicator=NORMAAL)", DEBUG))
+            .haveExactly(1, new ContainsMessageAtLevel("OpgenomenVermogen(id=1, datumtijd=2016-01-01T00:00, datum=2016-01-01, activePowerTotalInWatts=0, tariefIndicator=NORMAAL)", DEBUG));
     }
 }

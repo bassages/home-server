@@ -85,7 +85,7 @@ class SlimmeMeterControllerTest {
 
         verify(opgenomenVermogenService).save(opgenomenVermogenCaptor.capture());
         assertThat(opgenomenVermogenCaptor.getValue().getDatumtijd()).isEqualTo(dateTime);
-        assertThat(opgenomenVermogenCaptor.getValue().getWatt()).isEqualTo(dsmrReading.getStroomOpgenomenVermogenInWatt());
+        assertThat(opgenomenVermogenCaptor.getValue().getActivePowerTotalInWatts()).isEqualTo(dsmrReading.getStroomOpgenomenVermogenInWatt());
         assertThat(opgenomenVermogenCaptor.getValue().getTariefIndicator()).isEqualTo(stroomTariefIndicator);
     }
 

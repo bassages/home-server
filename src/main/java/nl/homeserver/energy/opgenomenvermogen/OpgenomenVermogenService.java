@@ -71,7 +71,7 @@ public class OpgenomenVermogenService {
                                                                final DateTimePeriod period) {
         return opgenomenVermogens.stream()
                                  .filter(opgenomenVermogen -> period.isWithinPeriod(opgenomenVermogen.getDatumtijd()))
-                                 .max(comparingInt(OpgenomenVermogen::getWatt))
+                                 .max(comparingInt(OpgenomenVermogen::getActivePowerTotalInWatts))
                                  .map(o -> this.mapToOpgenomenVermogen(o, period))
                                  .orElse(this.mapToEmptyOpgenomenVermogen(period.getFromDateTime()));
     }
@@ -81,7 +81,7 @@ public class OpgenomenVermogenService {
         final OpgenomenVermogen result = new OpgenomenVermogen();
         result.setTariefIndicator(opgenomenVermogen.getTariefIndicator());
         result.setDatumtijd(period.getFromDateTime());
-        result.setWatt(opgenomenVermogen.getWatt());
+        result.setActivePowerTotalInWatts(opgenomenVermogen.getActivePowerTotalInWatts());
         return result;
     }
 
@@ -89,7 +89,7 @@ public class OpgenomenVermogenService {
         final OpgenomenVermogen opgenomenVermogen = new OpgenomenVermogen();
         opgenomenVermogen.setDatumtijd(datumtijd);
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.ONBEKEND);
-        opgenomenVermogen.setWatt(0);
+        opgenomenVermogen.setActivePowerTotalInWatts(0);
         return opgenomenVermogen;
     }
 }

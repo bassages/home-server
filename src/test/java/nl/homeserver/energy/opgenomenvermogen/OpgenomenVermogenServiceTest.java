@@ -38,13 +38,13 @@ class OpgenomenVermogenServiceTest {
         final LocalDate day = LocalDate.of(2018, JANUARY, 6);
         final DatePeriod period = DatePeriod.of(day);
 
-        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(0, 0)).withWatt(100).build();
-        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(2, 0)).withWatt(401).build();
-        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(11, 59)).withWatt(400).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(0, 0)).withActivePowerTotalInWatts(100).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(2, 0)).withActivePowerTotalInWatts(401).build();
+        final OpgenomenVermogen opgenomenVermogenInFirstHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(11, 59)).withActivePowerTotalInWatts(400).build();
 
-        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(12, 0)).withWatt(500).build();
-        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(14, 0)).withWatt(601).build();
-        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(23, 59)).withWatt(600).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay1 = aOpgenomenVermogen().withDatumTijd(day.atTime(12, 0)).withActivePowerTotalInWatts(500).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay2 = aOpgenomenVermogen().withDatumTijd(day.atTime(14, 0)).withActivePowerTotalInWatts(601).build();
+        final OpgenomenVermogen opgenomenVermogenInSecondHalfOfDay3 = aOpgenomenVermogen().withDatumTijd(day.atTime(23, 59)).withActivePowerTotalInWatts(600).build();
 
         when(opgenomenVermogenRepository.getOpgenomenVermogen(period.getFromDate().atStartOfDay(), period.getToDate().atStartOfDay()))
                                         .thenReturn(List.of(opgenomenVermogenInFirstHalfOfDay1, opgenomenVermogenInFirstHalfOfDay2, opgenomenVermogenInFirstHalfOfDay3,
@@ -54,7 +54,7 @@ class OpgenomenVermogenServiceTest {
         final List<OpgenomenVermogen> history = opgenomenVermogenService.getHistory(period, Duration.ofHours(12));
 
         // then
-        assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
+        assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getActivePowerTotalInWatts)
                            .containsExactly(tuple(day.atTime(0, 0), 401),
                                             tuple(day.atTime(12, 0), 601),
                                             tuple(day.plusDays(1).atTime(0, 0), 0));
@@ -100,7 +100,7 @@ class OpgenomenVermogenServiceTest {
         final List<OpgenomenVermogen> history = opgenomenVermogenService.getPotentiallyCachedHistory(period, Duration.ofHours(4));
 
         // then
-        assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getWatt)
+        assertThat(history).extracting(OpgenomenVermogen::getDatumtijd, OpgenomenVermogen::getActivePowerTotalInWatts)
                 .containsExactly(tuple(day.atTime(0, 0), 0),
                                  tuple(day.atTime(4, 0), 0),
                                  tuple(day.atTime(8, 0), 0),

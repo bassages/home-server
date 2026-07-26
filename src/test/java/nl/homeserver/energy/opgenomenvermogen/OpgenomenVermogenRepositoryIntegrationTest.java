@@ -46,21 +46,21 @@ class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTe
     }
 
     @Test
-    void shouldFindMostCommonWattInPeriod() {
+    void shouldFindMostCommonActivePowerTotalInWattsInPeriod() {
         final LocalDate day = LocalDate.of(2017, JANUARY, 10);
 
-        entityManager.persist(aOpgenomenVermogen().withWatt(2).withDatumTijd(day.atStartOfDay()).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.atStartOfDay().plusMinutes(1)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.atStartOfDay().plusMinutes(2)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(2).withDatumTijd(day.atStartOfDay()).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.atStartOfDay().plusMinutes(1)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.atStartOfDay().plusMinutes(2)).build());
 
         // Day after period should not be considered
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(1)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(2)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(3)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(1)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(2)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.plusDays(1).atStartOfDay().plusMinutes(3)).build());
 
-        final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
+        final Integer mostCommonActivePowerTotalInWattsInPeriod = opgenomenVermogenRepository.findMostCommonActivePowerTotalInWattsInPeriod(day.atStartOfDay(), day.plusDays(1).atStartOfDay());
 
-        assertThat(mostCommonWattInPeriod).isEqualTo(10);
+        assertThat(mostCommonActivePowerTotalInWattsInPeriod).isEqualTo(10);
     }
 
     @Test
@@ -83,14 +83,14 @@ class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTe
     void shouldGetNumberOfRecordsInRange() {
         final LocalDate day = LocalDate.of(2017, JANUARY, 10);
 
-        entityManager.persist(aOpgenomenVermogen().withWatt(9).withDatumTijd(day.atStartOfDay()).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(9).withDatumTijd(day.atStartOfDay()).build());
 
-        entityManager.persist(aOpgenomenVermogen().withWatt(10).withDatumTijd(day.atStartOfDay().plusMinutes(1)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(11).withDatumTijd(day.atStartOfDay().plusMinutes(2)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(11).withDatumTijd(day.atStartOfDay().plusMinutes(3)).build());
-        entityManager.persist(aOpgenomenVermogen().withWatt(19).withDatumTijd(day.atStartOfDay().plusMinutes(4)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(10).withDatumTijd(day.atStartOfDay().plusMinutes(1)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(11).withDatumTijd(day.atStartOfDay().plusMinutes(2)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(11).withDatumTijd(day.atStartOfDay().plusMinutes(3)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(19).withDatumTijd(day.atStartOfDay().plusMinutes(4)).build());
 
-        entityManager.persist(aOpgenomenVermogen().withWatt(20).withDatumTijd(day.atStartOfDay().plusMinutes(5)).build());
+        entityManager.persist(aOpgenomenVermogen().withActivePowerTotalInWatts(20).withDatumTijd(day.atStartOfDay().plusMinutes(5)).build());
 
         entityManager.persist(aOpgenomenVermogen().withDatumTijd(day.plusDays(1).atStartOfDay()).build());
 
@@ -98,7 +98,7 @@ class OpgenomenVermogenRepositoryIntegrationTest extends RepositoryIntegrationTe
                 day.atStartOfDay(), day.plusDays(1).atStartOfDay(), 10, 20);
 
         assertThat(numberOfRecordsPerWatt).extracting(NumberOfRecordsPerWatt::getNumberOfRecords,
-                                                      NumberOfRecordsPerWatt::getWatt)
+                                                      NumberOfRecordsPerWatt::getActivePowerTotalInWatts)
                                           .containsExactlyInAnyOrder(tuple(1L, 10L),
                                                                      tuple(2L, 11L),
                                                                      tuple(1L, 19L));

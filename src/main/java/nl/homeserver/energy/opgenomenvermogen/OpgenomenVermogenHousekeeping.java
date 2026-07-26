@@ -86,8 +86,8 @@ public class OpgenomenVermogenHousekeeping {
     }
 
     private OpgenomenVermogen getOpgenomenVermogenToKeepInMinute(final List<OpgenomenVermogen> opgenomenVermogenInOneMinute) {
-        final Comparator<OpgenomenVermogen> byHighestWattThenDatumtijd = comparingInt(OpgenomenVermogen::getWatt).thenComparing(OpgenomenVermogen::getDatumtijd);
+        final Comparator<OpgenomenVermogen> byHighestActivePowerTotalInWattsThenDatumtijd = comparingInt(OpgenomenVermogen::getActivePowerTotalInWatts).thenComparing(OpgenomenVermogen::getDatumtijd);
         return opgenomenVermogenInOneMinute.stream()
-                                           .max(byHighestWattThenDatumtijd).orElse(null);
+                                           .max(byHighestActivePowerTotalInWattsThenDatumtijd).orElse(null);
     }
 }

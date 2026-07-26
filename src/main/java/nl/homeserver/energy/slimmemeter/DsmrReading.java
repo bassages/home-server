@@ -41,9 +41,7 @@ class DsmrReading {
     private Integer aantalStroomStoringenInAlleFases;
 
     private Integer aantalSpanningsDippenInFaseL1;
-
     private Integer aantalSpanningsDippenInFaseL2;
-
     private Integer aantalSpanningsDippenInFaseL3;
 
     private String tekstBericht;

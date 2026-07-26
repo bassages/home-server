@@ -64,18 +64,18 @@ class StandbyPowerService {
     private Optional<StandbyPowerInPeriod> forPeriod(final DatePeriod datePeriod) {
         final DateTimePeriod period = datePeriod.toDateTimePeriod();
 
-        final Integer mostCommonWattInPeriod = opgenomenVermogenRepository.findMostCommonWattInPeriod(period.getFromDateTime(), period.getToDateTime());
-        if (mostCommonWattInPeriod == null) {
+        final Integer mostCommonActivePowerTotalInWattsInPeriod = opgenomenVermogenRepository.findMostCommonActivePowerTotalInWattsInPeriod(period.getFromDateTime(), period.getToDateTime());
+        if (mostCommonActivePowerTotalInWattsInPeriod == null) {
             return Optional.empty();
         }
 
         final int approxYearlyUsageKwh = NUMBER_OF_HOURS_IN_YEAR.multiply(
-                        BigDecimal.valueOf(mostCommonWattInPeriod).setScale(3, HALF_UP).divide(BigDecimal.valueOf(1000), HALF_UP))
+                        BigDecimal.valueOf(mostCommonActivePowerTotalInWattsInPeriod).setScale(3, HALF_UP).divide(BigDecimal.valueOf(1000), HALF_UP))
                 .setScale(0, HALF_UP)
                 .intValueExact();
 
         final List<NumberOfRecordsPerWatt> numberOfRecordsInRange = opgenomenVermogenRepository.numberOfRecordsInRange(
-                period.getFromDateTime(), period.getToDateTime(), mostCommonWattInPeriod - 2, mostCommonWattInPeriod + 2);
+                period.getFromDateTime(), period.getToDateTime(), mostCommonActivePowerTotalInWattsInPeriod - 2, mostCommonActivePowerTotalInWattsInPeriod + 2);
 
         final long numberOfRecordsInStandbyPower = numberOfRecordsInRange.stream()
                                                                          .mapToLong(NumberOfRecordsPerWatt::getNumberOfRecords)
@@ -87,10 +87,10 @@ class StandbyPowerService {
                                                               .multiply(BigDecimal.valueOf(100));
 
         final VerbruikKostenOverzicht actualVko = getActualVko(period);
-        final VerbruikKostenOverzicht standByPowerVko = getStandbyPowerVko(mostCommonWattInPeriod, period);
+        final VerbruikKostenOverzicht standByPowerVko = getStandbyPowerVko(mostCommonActivePowerTotalInWattsInPeriod, period);
 
         final StandbyPowerInPeriod standbyPowerInPeriod = new StandbyPowerInPeriod(
-                datePeriod, mostCommonWattInPeriod, approxYearlyUsageKwh, percentageInStandByPower, standByPowerVko, actualVko);
+                datePeriod, mostCommonActivePowerTotalInWattsInPeriod, approxYearlyUsageKwh, percentageInStandByPower, standByPowerVko, actualVko);
 
         return Optional.of(standbyPowerInPeriod);
     }

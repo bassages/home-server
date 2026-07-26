@@ -56,7 +56,7 @@ class StandbyPowerServiceTest {
         when(opgenomenVermogenRepository.getOldest()).thenReturn(aOpgenomenVermogen().withDatumTijd(from).build());
         when(opgenomenVermogenRepository.getMostRecent()).thenReturn(aOpgenomenVermogen().withDatumTijd(to).build());
 
-        when(opgenomenVermogenRepository.findMostCommonWattInPeriod(from, to)).thenReturn(10);
+        when(opgenomenVermogenRepository.findMostCommonActivePowerTotalInWattsInPeriod(from, to)).thenReturn(10);
 
         when(opgenomenVermogenRepository.countNumberOfRecordsInPeriod(from, to)).thenReturn(10L);
 

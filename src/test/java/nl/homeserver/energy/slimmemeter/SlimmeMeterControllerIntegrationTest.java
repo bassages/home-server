@@ -78,7 +78,7 @@ class SlimmeMeterControllerIntegrationTest {
 
         final OpgenomenVermogen savedOpgenomenVermogen = opgenomenVermogenCaptor.getValue();
         assertThat(savedOpgenomenVermogen.getDatumtijd()).isEqualTo(LocalDateTime.of(2018, MAY, 3, 13, 14, 15));
-        assertThat(savedOpgenomenVermogen.getWatt()).isEqualTo(640);
+        assertThat(savedOpgenomenVermogen.getActivePowerTotalInWatts()).isEqualTo(640);
         assertThat(savedOpgenomenVermogen.getTariefIndicator()).isEqualTo(StroomTariefIndicator.NORMAAL);
     }
 

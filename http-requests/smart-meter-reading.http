@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Basic home home
 
 {
-  "datumtijd": "2026-06-23T16:50:32.495636",
+  "datumtijd": "{{$isoTimestamp}}",
   "stroomOpgenomenVermogenInWatt": 1234,
   "stroomTarief1": 5.003,
   "stroomTarief2": 10.004,
