@@ -130,11 +130,10 @@ bootRun {
 }
 
 processResources.doLast {
-    println '-----------------------------------------------------------------------------------'
-    println 'Download frontend release zip'
+    println '------'
+    println "Download frontend release zip (version: ${homeFrontendVersion})"
     ant.get(src: "https://github.com/bassages/home-frontend/releases/download/${homeFrontendVersion}/home-frontend.zip", dest: 'build')
-
     println 'Unzip frontend release artifact to be included in static resources of backend artifact'
     ant.unzip(src: 'build/home-frontend.zip', dest: 'build/resources/main/static')
-    println '-----------------------------------------------------------------------------------'
+    println '------'
 }
