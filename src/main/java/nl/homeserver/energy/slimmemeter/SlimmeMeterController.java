@@ -86,6 +86,9 @@ class SlimmeMeterController {
         opgenomenVermogen.setActivePowerL1InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL1InWatt()));
         opgenomenVermogen.setActivePowerL2InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL2InWatt()));
         opgenomenVermogen.setActivePowerL3InWatts(defaultIfNull(dsmrReading.getDirectGeleverdVermogenL3InWatt()));
+        opgenomenVermogen.setVoltageL1(dsmrReading.getVoltageL1());
+        opgenomenVermogen.setVoltageL2(dsmrReading.getVoltageL2());
+        opgenomenVermogen.setVoltageL3(dsmrReading.getVoltageL3());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmrReading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;
     }

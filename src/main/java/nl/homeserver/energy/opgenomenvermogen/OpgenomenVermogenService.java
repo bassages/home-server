@@ -85,6 +85,9 @@ public class OpgenomenVermogenService {
         result.setActivePowerL1InWatts(opgenomenVermogen.getActivePowerL1InWatts());
         result.setActivePowerL2InWatts(opgenomenVermogen.getActivePowerL2InWatts());
         result.setActivePowerL3InWatts(opgenomenVermogen.getActivePowerL3InWatts());
+        result.setVoltageL1(opgenomenVermogen.getVoltageL1());
+        result.setVoltageL2(opgenomenVermogen.getVoltageL2());
+        result.setVoltageL3(opgenomenVermogen.getVoltageL3());
         return result;
     }
 

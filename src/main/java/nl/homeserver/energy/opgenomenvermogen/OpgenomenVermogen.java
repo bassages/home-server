@@ -32,7 +32,6 @@ public class OpgenomenVermogen {
     private LocalDate datum;
 
     @NotNull
-    @Column(name = "active_power_total_in_watts")
     @Getter
     @Setter
     private int activePowerTotalInWatts;
@@ -51,6 +50,21 @@ public class OpgenomenVermogen {
     @Getter
     @Setter
     private int activePowerL3InWatts;
+
+    @Column
+    @Getter
+    @Setter
+    private Integer voltageL1;
+
+    @Column
+    @Getter
+    @Setter
+    private Integer voltageL2;
+
+    @Column
+    @Getter
+    @Setter
+    private Integer voltageL3;
 
     @NotNull
     private short tariefIndicator;

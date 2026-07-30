@@ -52,8 +52,11 @@ class DsmrReading {
 
     private List<LangeStroomStoring> langeStroomStoringen;
 
+    @Getter
     private Integer voltageL1;
+    @Getter
     private Integer voltageL2;
+    @Getter
     private Integer voltageL3;
 
     @Getter
