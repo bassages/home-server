@@ -89,6 +89,9 @@ class SlimmeMeterController {
         opgenomenVermogen.setVoltageL1(dsmrReading.getVoltageL1());
         opgenomenVermogen.setVoltageL2(dsmrReading.getVoltageL2());
         opgenomenVermogen.setVoltageL3(dsmrReading.getVoltageL3());
+        opgenomenVermogen.setInstantaneousCurrentL1Ampere(dsmrReading.getInstantaneousCurrentL1Ampere());
+        opgenomenVermogen.setInstantaneousCurrentL2Ampere(dsmrReading.getInstantaneousCurrentL2Ampere());
+        opgenomenVermogen.setInstantaneousCurrentL3Ampere(dsmrReading.getInstantaneousCurrentL3Ampere());
         opgenomenVermogen.setTariefIndicator(StroomTariefIndicator.byId(dsmrReading.getStroomTariefIndicator().shortValue()));
         return opgenomenVermogen;
     }

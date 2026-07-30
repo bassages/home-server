@@ -15,7 +15,10 @@ Authorization: Basic home home
   "voltageL1": 229,
   "voltageL2": 231,
   "voltageL3": 230,
+  "instantaneousCurrentL1Ampere": 6,
+  "instantaneousCurrentL2Ampere": 5,
+  "instantaneousCurrentL3Ampere": 7,
   "directGeleverdVermogenL1InWatt": 410,
   "directGeleverdVermogenL2InWatt": 405,
-  "directGeleverdVermogenL3InWatt": 419,
+  "directGeleverdVermogenL3InWatt": 419
 }

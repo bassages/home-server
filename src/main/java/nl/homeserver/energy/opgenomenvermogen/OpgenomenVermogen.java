@@ -3,6 +3,7 @@ package nl.homeserver.energy.opgenomenvermogen;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,59 +15,55 @@ import java.time.LocalDateTime;
 
 @ToString
 @Entity
+@Getter
+@Setter
 public class OpgenomenVermogen {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    @Getter
-    @Setter
     private long id;
 
     @Column(nullable = false, unique = true)
-    @Getter
+    @Setter(AccessLevel.NONE)
     private LocalDateTime datumtijd;
 
     @Column
-    @Getter
+    @Setter(AccessLevel.NONE)
     private LocalDate datum;
 
     @NotNull
-    @Getter
-    @Setter
     private int activePowerTotalInWatts;
 
     @NotNull
-    @Getter
-    @Setter
     private int activePowerL1InWatts;
 
     @NotNull
-    @Getter
-    @Setter
     private int activePowerL2InWatts;
 
     @NotNull
-    @Getter
-    @Setter
     private int activePowerL3InWatts;
 
     @Column
-    @Getter
-    @Setter
     private Integer voltageL1;
 
     @Column
-    @Getter
-    @Setter
     private Integer voltageL2;
 
     @Column
-    @Getter
-    @Setter
     private Integer voltageL3;
 
+    @Transient
+    private Integer instantaneousCurrentL1Ampere;
+
+    @Transient
+    private Integer instantaneousCurrentL2Ampere;
+
+    @Transient
+    private Integer instantaneousCurrentL3Ampere;
+
     @NotNull
+    @Setter(AccessLevel.NONE)
     private short tariefIndicator;
 
     public StroomTariefIndicator getTariefIndicator() {
