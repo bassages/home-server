@@ -44,13 +44,13 @@ public class OpgenomenVermogen {
     @NotNull
     private int activePowerL3InWatts;
 
-    @Column
+    @Transient
     private Integer voltageL1;
 
-    @Column
+    @Transient
     private Integer voltageL2;
 
-    @Column
+    @Transient
     private Integer voltageL3;
 
     @Transient
