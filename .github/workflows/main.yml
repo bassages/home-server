@@ -34,7 +34,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build with Gradle and start SonarQube analysis
-        run: ./gradlew build jacocoTestReport sonarqube
+        run: ./gradlew build jacocoTestReport sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
