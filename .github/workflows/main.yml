@@ -53,10 +53,8 @@ jobs:
           echo "base_repo=${{ github.event.pull_request.base.repo.full_name }}"
           echo "is_fork=${{ github.event.pull_request.head.repo.fork }}"
 
-      - name: Run SonarCloud Scan
+      - name: Run tests and Sonar analysis
         if: ${{ env.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork)) }}
-        uses: SonarSource/sonarqube-scan-action@v8
+        run: ./gradlew --no-daemon build sonar
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
