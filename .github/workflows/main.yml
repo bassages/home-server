@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     steps:
       - name: Echo (debug) action details
@@ -41,8 +43,6 @@ jobs:
             exit 1
           fi
           echo "SONAR_TOKEN is present"
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Echo PR metadata (debug)
         if: ${{ github.event_name == 'pull_request' }}
@@ -54,9 +54,9 @@ jobs:
           echo "is_fork=${{ github.event.pull_request.head.repo.fork }}"
 
       - name: Run SonarCloud Scan
-        if: ${{ secrets.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork)) }}
+        if: ${{ env.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork)) }}
         uses: SonarSource/sonarqube-scan-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
