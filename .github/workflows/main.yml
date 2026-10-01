@@ -35,26 +35,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Verify Sonar token presence
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          if [ -z "${SONAR_TOKEN}" ]; then
-            echo "SONAR_TOKEN is empty in this run context"
-            exit 1
-          fi
-          echo "SONAR_TOKEN is present"
+      - name: Run tests and build
+        run: ./gradlew --no-daemon build
 
-      - name: Echo PR metadata (debug)
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "event_name=${{ github.event_name }}"
-          echo "actor=${{ github.actor }}"
-          echo "head_repo=${{ github.event.pull_request.head.repo.full_name }}"
-          echo "base_repo=${{ github.event.pull_request.base.repo.full_name }}"
-          echo "is_fork=${{ github.event.pull_request.head.repo.fork }}"
-
-      - name: Run tests and Sonar analysis
-        if: ${{ env.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork)) }}
-        run: ./gradlew --no-daemon build sonar
+      # Repository Actions secrets are not available to fork PRs. Dependabot uses
+      # separate secrets and should not be allowed to block dependency-update PRs
+      # with an unauthorized SonarCloud analysis.
+      - name: Run Sonar analysis
+        if: ${{ env.SONAR_TOKEN != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork && github.actor != 'dependabot[bot]')) }}
+        run: ./gradlew --no-daemon sonar
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
