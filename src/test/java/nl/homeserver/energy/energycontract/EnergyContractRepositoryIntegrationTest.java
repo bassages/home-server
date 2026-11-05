@@ -68,6 +68,29 @@ class EnergyContractRepositoryIntegrationTest extends RepositoryIntegrationTest 
 
     }
 
+    @Test
+    void givenFutureEnergyContractWhenFindingCurrentAndPeriodThenFutureContractIsOnlyReturnedForFuturePeriod() {
+        final LocalDate currentDate = LocalDate.of(2026, NOVEMBER, 4);
+        final LocalDate futureDate = LocalDate.of(2027, JANUARY, 1);
+        final var currentEnergyContract = energyContractWithZeroTariff()
+                .validFrom(LocalDate.of(2026, JANUARY, 1))
+                .validTo(futureDate)
+                .build();
+        entityManager.persist(currentEnergyContract);
+        final var futureEnergyContract = energyContractWithZeroTariff()
+                .validFrom(futureDate)
+                .validTo(null)
+                .build();
+        entityManager.persist(futureEnergyContract);
+
+        assertThat(energyContractRepository.findFirstByValidFromLessThanEqualOrderByValidFromDesc(currentDate))
+                .isEqualTo(currentEnergyContract);
+        assertThat(energyContractRepository.findValidInPeriod(currentDate, futureDate))
+                .containsExactly(currentEnergyContract);
+        assertThat(energyContractRepository.findValidInPeriod(futureDate, futureDate.plusDays(1)))
+                .containsExactly(futureEnergyContract);
+    }
+
     EnergyContract.EnergyContractBuilder energyContractWithZeroTariff() {
         return EnergyContract.builder()
                 .gasPerCubicMeter(ZERO)
